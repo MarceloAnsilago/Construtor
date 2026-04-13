@@ -7,9 +7,15 @@ CConstrutorDialog ExtDialog;
 int OnInit()
   {
    if(!ExtDialog.Create(ChartID(),"ConstrutorUI",0,30,30,1030,700))
-      return(INIT_FAILED);
+     {
+      Print("Construtor: dialog create failed");
+      return(INIT_SUCCEEDED);
+     }
    if(!ExtDialog.Run())
-      return(INIT_FAILED);
+     {
+      Print("Construtor: dialog run failed");
+      return(INIT_SUCCEEDED);
+     }
    return(INIT_SUCCEEDED);
   }
 
