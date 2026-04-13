@@ -408,6 +408,8 @@ private:
    CLabel            m_section_direcao_note;
    CLabel            m_label_compra;
    CLabel            m_label_venda;
+   CComboBox         m_combo_compra;
+   CComboBox         m_combo_venda;
    CRadioGroup       m_radio_compra;
    CRadioGroup       m_radio_venda;
 
@@ -578,8 +580,8 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_combo_mercado,OnChangeMercado)
    ON_EVENT(ON_CHANGE,m_combo_operacional,OnChangeTipoOperacional)
    ON_EVENT(ON_CHANGE,m_combo_modo,OnChangeModo)
-   ON_EVENT(ON_CHANGE,m_radio_compra,OnChangeCompra)
-   ON_EVENT(ON_CHANGE,m_radio_venda,OnChangeVenda)
+   ON_EVENT(ON_CHANGE,m_combo_compra,OnChangeCompra)
+   ON_EVENT(ON_CHANGE,m_combo_venda,OnChangeVenda)
    ON_EVENT(ON_CHANGE,m_combo_horario_inicial_hora,OnChangeHorarioInicialHora)
    ON_EVENT(ON_CHANGE,m_combo_horario_inicial_min,OnChangeHorarioInicialMin)
    ON_EVENT(ON_CHANGE,m_combo_horario_final_hora,OnChangeHorarioFinalHora)
@@ -962,6 +964,37 @@ bool CConstrutorDialog::CreateTab1Form(void)
    if(!m_combo_modo.AddItem("Cada tick",CONSTRUTOR_CADA_TICK))
       return(false);
    if(!m_combo_modo.AddItem("Cada segundo",CONSTRUTOR_CADA_SEGUNDO))
+      return(false);
+
+   if(!CreateText(m_section_direcao_title,m_name+"SectionDirecaoTitle",right_x1 + 18,cards_y1 + 16,"Direcao operacional",COLOR_TEXT_DARK,12))
+      return(false);
+   if(!CreateText(m_section_direcao_note,m_name+"SectionDirecaoNote",right_x1 + 18,cards_y1 + 38,"Escolha se o robo pode operar compra e venda.",COLOR_TEXT_MUTED,8))
+      return(false);
+
+   if(!CreatePanelBlock(m_card_compra,m_name+"CardCompra",right_x1 + 14,cards_y1 + 80,right_x2 - 14,cards_y1 + 146,COLOR_SECTION_BG,COLOR_SECTION_BORDER))
+      return(false);
+   if(!CreateText(m_label_compra,m_name+"LabelCompra",right_x1 + 28,cards_y1 + 92,"Operar na compra",COLOR_TEXT_DARK,10))
+      return(false);
+   if(!m_combo_compra.Create(m_chart_id,m_name+"ComboCompra",m_subwin,right_x1 + 28,cards_y1 + 112,right_x2 - 28,cards_y1 + 136))
+      return(false);
+   if(!Add(m_combo_compra))
+      return(false);
+   if(!m_combo_compra.AddItem("Sim",1))
+      return(false);
+   if(!m_combo_compra.AddItem("Nao",0))
+      return(false);
+
+   if(!CreatePanelBlock(m_card_venda,m_name+"CardVenda",right_x1 + 14,cards_y1 + 160,right_x2 - 14,cards_y1 + 226,COLOR_SECTION_BG,COLOR_SECTION_BORDER))
+      return(false);
+   if(!CreateText(m_label_venda,m_name+"LabelVenda",right_x1 + 28,cards_y1 + 172,"Operar na venda",COLOR_TEXT_DARK,10))
+      return(false);
+   if(!m_combo_venda.Create(m_chart_id,m_name+"ComboVenda",m_subwin,right_x1 + 28,cards_y1 + 192,right_x2 - 28,cards_y1 + 216))
+      return(false);
+   if(!Add(m_combo_venda))
+      return(false);
+   if(!m_combo_venda.AddItem("Sim",1))
+      return(false);
+   if(!m_combo_venda.AddItem("Nao",0))
       return(false);
 
    SetTab1ControlsVisible(false);
@@ -1503,6 +1536,14 @@ void CConstrutorDialog::SetTab1ControlsVisible(const bool visible)
    SetControlVisible(m_combo_mercado,visible);
    SetControlVisible(m_combo_operacional,visible);
    SetControlVisible(m_combo_modo,visible);
+   SetControlVisible(m_section_direcao_title,visible);
+   SetControlVisible(m_section_direcao_note,visible);
+   SetControlVisible(m_card_compra,visible);
+   SetControlVisible(m_card_venda,visible);
+   SetControlVisible(m_label_compra,visible);
+   SetControlVisible(m_label_venda,visible);
+   SetControlVisible(m_combo_compra,visible);
+   SetControlVisible(m_combo_venda,visible);
   }
 
 void CConstrutorDialog::SetTab2ControlsVisible(const bool visible)
@@ -1590,8 +1631,8 @@ void CConstrutorDialog::AtualizarControlesComConfig(void)
    m_combo_mercado.SelectByValue((int)g_config.mercado);
    m_combo_operacional.SelectByValue((int)g_config.tipo_operacional);
    m_combo_modo.SelectByValue((int)g_config.modo_processamento);
-   SyncRadioGroup(m_radio_compra,g_config.operar_compra ? 1 : 0);
-   SyncRadioGroup(m_radio_venda,g_config.operar_venda ? 1 : 0);
+   m_combo_compra.SelectByValue(g_config.operar_compra ? 1 : 0);
+   m_combo_venda.SelectByValue(g_config.operar_venda ? 1 : 0);
    m_combo_horario_inicial_hora.SelectByValue(g_config.horario_inicial_hora);
    m_combo_horario_inicial_min.SelectByValue(g_config.horario_inicial_min);
    m_combo_horario_final_hora.SelectByValue(g_config.horario_final_hora);
@@ -1635,8 +1676,8 @@ void CConstrutorDialog::AtualizarConfigComControles(const bool marcar_reexecucao
    g_config.mercado              = (ENUM_CONSTRUTOR_MERCADO)LimitarInteiro((int)m_combo_mercado.Value(),0,1);
    g_config.tipo_operacional     = (ENUM_CONSTRUTOR_TIPO_OPERACIONAL)LimitarInteiro((int)m_combo_operacional.Value(),0,1);
    g_config.modo_processamento   = (ENUM_CONSTRUTOR_PROCESSAMENTO)LimitarInteiro((int)m_combo_modo.Value(),0,1);
-   g_config.operar_compra        = (m_radio_compra.Value() != 0);
-   g_config.operar_venda         = (m_radio_venda.Value() != 0);
+   g_config.operar_compra        = (m_combo_compra.Value() != 0);
+   g_config.operar_venda         = (m_combo_venda.Value() != 0);
    g_config.horario_inicial_hora = LimitarInteiro((int)m_combo_horario_inicial_hora.Value(),0,23);
    g_config.horario_inicial_min  = LimitarInteiro((int)m_combo_horario_inicial_min.Value(),0,59);
    g_config.horario_final_hora   = LimitarInteiro((int)m_combo_horario_final_hora.Value(),0,23);
