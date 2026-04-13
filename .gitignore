@@ -1,3 +1,7 @@
 *
 !.gitignore
-!EaMin.mq5
+!README.md
+!Construtor/
+!Construtor.mq5
+!Construtor/ConstrutorDialog.mqh
+!Construtor/README.md
