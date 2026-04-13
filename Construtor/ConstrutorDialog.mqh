@@ -15,7 +15,7 @@
 #include <Controls\ComboBox.mqh>
 #include <Controls\RadioGroup.mqh>
 
-#define TAB_COUNT 10
+#define TAB_COUNT 11
 
 enum ENUM_CONSTRUTOR_MERCADO
   {
@@ -147,7 +147,8 @@ string g_tab_names[TAB_COUNT] =
    "7. Trailing stop",
    "8. Saidas parciais",
    "9. Sinais",
-   "10. Ajustes finais"
+   "10. Ajustes finais",
+   "11. Painel"
   };
 
 string g_tab_roles[TAB_COUNT] =
@@ -161,7 +162,8 @@ string g_tab_roles[TAB_COUNT] =
    "Travamento progressivo",
    "Escalonamento de saidas",
    "Motor de sinais",
-   "Revisao e acabamento"
+   "Revisao e acabamento",
+   "Modo compacto"
   };
 
 string g_tab_summaries[TAB_COUNT] =
@@ -175,7 +177,8 @@ string g_tab_summaries[TAB_COUNT] =
    "Cuida do trailing para proteger lucro de forma progressiva.",
    "Permite dividir a saida em etapas e niveis planejados.",
    "Agrupa os gatilhos tecnicos que vao gerar entradas e saidas.",
-   "Fecha a construcao com conferencias e ultimos refinamentos."
+   "Fecha a construcao com conferencias e ultimos refinamentos.",
+   "Contrai e expande a janela do construtor."
   };
 
 string g_tab_notes[TAB_COUNT] =
@@ -189,7 +192,8 @@ string g_tab_notes[TAB_COUNT] =
    "- Espaco reservado para trailing stop.",
    "- Espaco reservado para saidas parciais.",
    "- Espaco reservado para indicadores, filtros e sinais.",
-   "- Espaco reservado para ajustes finais e revisao."
+   "- Espaco reservado para ajustes finais e revisao.",
+   "- Alterna a janela entre modo completo e modo compacto."
   };
 
 struct SConfiguracaoPainel
@@ -377,6 +381,7 @@ private:
    CButton           m_tab_8;
    CButton           m_tab_9;
    CButton           m_tab_10;
+   CButton           m_tab_11;
 
    CLabel            m_section_principal_title;
    CLabel            m_section_principal_note;
@@ -462,6 +467,8 @@ private:
    CButton           m_button_execute;
 
    int               m_active_tab;
+   bool              m_painel_compacto;
+   CRect             m_rect_original;
 
 public:
                      CConstrutorDialog(void);
@@ -490,6 +497,7 @@ protected:
    CButton          *TabButtonByIndex(const int index);
    void              StyleTabButton(CButton &button,const bool active);
    void              SelectTab(const int index);
+   void              AplicarModoPainel(const bool compacto);
    void              SetTab1ControlsVisible(const bool visible);
    void              SetTab2ControlsVisible(const bool visible);
    void              SetTab3ControlsVisible(const bool visible);
@@ -513,6 +521,7 @@ protected:
    void              OnClickTab8(void);
    void              OnClickTab9(void);
    void              OnClickTab10(void);
+   void              OnClickTab11(void);
    void              OnEndEditNome(void);
    void              OnChangeMercado(void);
    void              OnChangeModo(void);
@@ -552,6 +561,7 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CLICK,m_tab_8,OnClickTab8)
    ON_EVENT(ON_CLICK,m_tab_9,OnClickTab9)
    ON_EVENT(ON_CLICK,m_tab_10,OnClickTab10)
+   ON_EVENT(ON_CLICK,m_tab_11,OnClickTab11)
    ON_EVENT(ON_END_EDIT,m_edit_nome,OnEndEditNome)
    ON_EVENT(ON_CHANGE,m_radio_mercado,OnChangeMercado)
    ON_EVENT(ON_CHANGE,m_radio_modo,OnChangeModo)
@@ -581,7 +591,8 @@ EVENT_MAP_END(CAppDialog)
 
 CConstrutorDialog ExtDialog;
 
-CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(-1)
+CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(-1),
+                                             m_painel_compacto(false)
   {
   }
 
@@ -594,6 +605,7 @@ bool CConstrutorDialog::Create(const long chart,const string name,const int subw
      }
 
    Caption("Construtor Visual  |  Arraste pelo topo");
+   m_rect_original.SetBound(x1,y1,x2,y2);
 
    if(!CreateSidebar())
      {
@@ -815,6 +827,8 @@ bool CConstrutorDialog::CreateSidebar(void)
    if(!CreateTabButton(m_tab_9,m_name+"Tab9",g_tab_names[8],tab_x1,first_y + (tab_height + tab_gap) * 8,tab_x2,first_y + (tab_height + tab_gap) * 8 + tab_height))
       return(false);
    if(!CreateTabButton(m_tab_10,m_name+"Tab10",g_tab_names[9],tab_x1,first_y + (tab_height + tab_gap) * 9,tab_x2,first_y + (tab_height + tab_gap) * 9 + tab_height))
+      return(false);
+   if(!CreateTabButton(m_tab_11,m_name+"Tab11",g_tab_names[10],tab_x1,first_y + (tab_height + tab_gap) * 10,tab_x2,first_y + (tab_height + tab_gap) * 10 + tab_height))
       return(false);
 
    return(true);
@@ -1435,6 +1449,7 @@ CButton *CConstrutorDialog::TabButtonByIndex(const int index)
       case 7: return((CButton *)GetPointer(m_tab_8));
       case 8: return((CButton *)GetPointer(m_tab_9));
       case 9: return((CButton *)GetPointer(m_tab_10));
+      case 10: return((CButton *)GetPointer(m_tab_11));
      }
 
    return(NULL);
@@ -1445,6 +1460,56 @@ void CConstrutorDialog::StyleTabButton(CButton &button,const bool active)
    button.Color(active ? clrWhite : COLOR_TAB_TEXT);
    button.ColorBackground(active ? COLOR_ACCENT : COLOR_TAB_BG);
    button.ColorBorder(active ? C'255,213,148' : COLOR_TAB_BORDER);
+  }
+
+void CConstrutorDialog::AplicarModoPainel(const bool compacto)
+  {
+   if(m_painel_compacto == compacto)
+      return;
+
+   const int compact_sidebar_width = 206;
+   const int compact_work_width = 220;
+   const int compact_extra_height = 24;
+   const int compact_total_width = 16 + compact_sidebar_width + 16 + compact_work_width + 16;
+   const int compact_total_height = m_rect_original.Height() + compact_extra_height;
+   const int restored_sidebar_height = m_rect_original.Height() - 32;
+   const int restored_work_width = m_rect_original.Width() - 254;
+
+   if(compacto)
+     {
+      Size(compact_total_width,compact_total_height);
+      const int compact_client_height = ClientAreaHeight();
+      m_sidebar.Size(compact_sidebar_width,compact_client_height - 32);
+      m_content.Size(compact_work_width,compact_client_height - 32);
+      SetControlVisible(m_content_strip,false);
+      SetControlVisible(m_divider,false);
+      SetControlVisible(m_content_tag,false);
+      SetControlVisible(m_content_title,false);
+      SetControlVisible(m_content_summary,false);
+      SetControlVisible(m_content_line_1,false);
+      SetControlVisible(m_content_line_2,false);
+      SetControlVisible(m_content_line_3,false);
+     }
+   else
+     {
+      Size(m_rect_original.Width(),m_rect_original.Height());
+      const int restored_client_width = ClientAreaWidth();
+      const int restored_client_height = ClientAreaHeight();
+      m_sidebar.Size(compact_sidebar_width,restored_client_height - 32);
+      m_content.Size(restored_client_width - 254,restored_client_height - 32);
+      SetControlVisible(m_content_strip,true);
+      SetControlVisible(m_divider,true);
+      SetControlVisible(m_content_tag,true);
+      SetControlVisible(m_content_title,true);
+      SetControlVisible(m_content_summary,true);
+      SetControlVisible(m_content_line_1,true);
+      SetControlVisible(m_content_line_2,true);
+      SetControlVisible(m_content_line_3,true);
+     }
+
+   m_painel_compacto = compacto;
+   StyleTabButton(m_tab_11,m_painel_compacto);
+   ChartRedraw(m_chart_id);
   }
 
 void CConstrutorDialog::SetControlVisible(CWnd &control,const bool visible)
@@ -1763,6 +1828,15 @@ void CConstrutorDialog::SelectTab(const int index)
    if(index < 0 || index >= TAB_COUNT)
       return;
 
+   if(index == 10)
+     {
+      AplicarModoPainel(!m_painel_compacto);
+      return;
+     }
+
+   if(m_painel_compacto)
+      AplicarModoPainel(false);
+
    m_active_tab = index;
 
    for(int i = 0; i < TAB_COUNT; i++)
@@ -1771,7 +1845,7 @@ void CConstrutorDialog::SelectTab(const int index)
       if(button == NULL)
          continue;
 
-      StyleTabButton(*button,(i == index));
+      StyleTabButton(*button,(i == 10 ? m_painel_compacto : (i == index)));
      }
 
    m_content_tag.Text(StringFormat("ABA %02d",index + 1));
@@ -1843,6 +1917,7 @@ void CConstrutorDialog::OnClickTab7(void)  { SelectTab(6); }
 void CConstrutorDialog::OnClickTab8(void)  { SelectTab(7); }
 void CConstrutorDialog::OnClickTab9(void)  { SelectTab(8); }
 void CConstrutorDialog::OnClickTab10(void) { SelectTab(9); }
+void CConstrutorDialog::OnClickTab11(void) { SelectTab(10); }
 
 void CConstrutorDialog::OnEndEditNome(void)
   {
@@ -2002,8 +2077,7 @@ void CConstrutorDialog::OnClickExecutar(void)
 
 void CConstrutorDialog::OnClickButtonClose(void)
   {
-   Visible(true);
-   ChartRedraw(m_chart_id);
+   ExpertRemove();
   }
 
 int OnInit()
