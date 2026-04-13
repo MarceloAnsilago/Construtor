@@ -23,6 +23,12 @@ enum ENUM_CONSTRUTOR_MERCADO
    CONSTRUTOR_FOREX = 1
   };
 
+enum ENUM_CONSTRUTOR_TIPO_OPERACIONAL
+  {
+   CONSTRUTOR_DAY_TRADE = 0,
+   CONSTRUTOR_SWING_TRADE = 1
+  };
+
 enum ENUM_CONSTRUTOR_PROCESSAMENTO
   {
    CONSTRUTOR_CADA_TICK = 0,
@@ -85,8 +91,9 @@ enum ENUM_CANDLE_REFERENCIA
   };
 
 input group "1. Inf. Iniciais";
-input string                        InpNomeEstrategia       = "";
+input string                        InpNomeEstrategia       = "Minha estrategia";
 input ENUM_CONSTRUTOR_MERCADO       InpMercado              = CONSTRUTOR_B3;
+input ENUM_CONSTRUTOR_TIPO_OPERACIONAL InpTipoOperacional    = CONSTRUTOR_DAY_TRADE;
 input ENUM_CONSTRUTOR_PROCESSAMENTO InpModoProcessamento    = CONSTRUTOR_CADA_TICK;
 input bool                          InpOperarCompra         = true;
 input bool                          InpOperarVenda          = true;
@@ -168,7 +175,7 @@ string g_tab_roles[TAB_COUNT] =
 
 string g_tab_summaries[TAB_COUNT] =
   {
-   "Define nome, mercado, processamento e direcao inicial do robo.",
+   "Define nome, mercado, tipo operacional e processamento inicial do robo.",
    "Organiza periodos, sessoes e limites de horario para operar.",
    "Define timeframe, volume inicial e spread maximo da partida.",
    "Liga ou desliga o stop loss inicial e define a base de calculo.",
@@ -200,6 +207,7 @@ struct SConfiguracaoPainel
   {
    string                         nome_estrategia;
    ENUM_CONSTRUTOR_MERCADO        mercado;
+   ENUM_CONSTRUTOR_TIPO_OPERACIONAL tipo_operacional;
    ENUM_CONSTRUTOR_PROCESSAMENTO  modo_processamento;
    bool                           operar_compra;
    bool                           operar_venda;
@@ -255,6 +263,7 @@ void CarregarConfiguracaoDosInputs()
   {
    g_config.nome_estrategia    = TextoLimpo(InpNomeEstrategia);
    g_config.mercado            = InpMercado;
+   g_config.tipo_operacional   = InpTipoOperacional;
    g_config.modo_processamento = InpModoProcessamento;
    g_config.operar_compra      = InpOperarCompra;
    g_config.operar_venda       = InpOperarVenda;
@@ -387,11 +396,13 @@ private:
    CLabel            m_section_principal_note;
    CLabel            m_label_nome;
    CLabel            m_label_mercado;
+   CLabel            m_label_operacional;
    CLabel            m_label_modo;
 
    CEdit             m_edit_nome;
-   CRadioGroup       m_radio_mercado;
-   CRadioGroup       m_radio_modo;
+   CComboBox         m_combo_mercado;
+   CComboBox         m_combo_operacional;
+   CComboBox         m_combo_modo;
 
    CLabel            m_section_direcao_title;
    CLabel            m_section_direcao_note;
@@ -524,6 +535,7 @@ protected:
    void              OnClickTab11(void);
    void              OnEndEditNome(void);
    void              OnChangeMercado(void);
+   void              OnChangeTipoOperacional(void);
    void              OnChangeModo(void);
    void              OnChangeCompra(void);
    void              OnChangeVenda(void);
@@ -563,8 +575,9 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CLICK,m_tab_10,OnClickTab10)
    ON_EVENT(ON_CLICK,m_tab_11,OnClickTab11)
    ON_EVENT(ON_END_EDIT,m_edit_nome,OnEndEditNome)
-   ON_EVENT(ON_CHANGE,m_radio_mercado,OnChangeMercado)
-   ON_EVENT(ON_CHANGE,m_radio_modo,OnChangeModo)
+   ON_EVENT(ON_CHANGE,m_combo_mercado,OnChangeMercado)
+   ON_EVENT(ON_CHANGE,m_combo_operacional,OnChangeTipoOperacional)
+   ON_EVENT(ON_CHANGE,m_combo_modo,OnChangeModo)
    ON_EVENT(ON_CHANGE,m_radio_compra,OnChangeCompra)
    ON_EVENT(ON_CHANGE,m_radio_venda,OnChangeVenda)
    ON_EVENT(ON_CHANGE,m_combo_horario_inicial_hora,OnChangeHorarioInicialHora)
@@ -617,6 +630,12 @@ bool CConstrutorDialog::Create(const long chart,const string name,const int subw
       Print("Construtor: CreateContent falhou");
       return(false);
      }
+   if(!CreateTab1Form())
+     {
+      Print("Construtor: CreateTab1Form falhou");
+      return(false);
+     }
+   AtualizarControlesComConfig();
    ChartRedraw(m_chart_id);
    SelectTab(0);
    return(true);
@@ -870,37 +889,34 @@ bool CConstrutorDialog::CreateContent(void)
 
 bool CConstrutorDialog::CreateTab1Form(void)
   {
-   return(true);
-
-   const int client_width  = ClientAreaWidth();
+   const int client_width = ClientAreaWidth();
    const int client_height = ClientAreaHeight();
-   const int content_x1    = 238;
-   const int content_x2    = client_width - 16;
-   const int content_y2    = client_height - 16;
-   const int section_y1   = 232;
-   const int section_y2   = content_y2 - 74;
-   const int left_x1      = content_x1 + 28;
-   const int right_margin = 28;
-   const int gap_x        = 18;
-   const int usable_width = (content_x2 - content_x1) - left_x1 + content_x1 - right_margin;
-   const int section_w    = (usable_width - gap_x) / 2;
-   const int left_x2      = left_x1 + section_w;
-   const int right_x1     = left_x2 + gap_x;
-   const int right_x2     = content_x2 - right_margin;
+   const int content_x1 = 238;
+   const int content_x2 = client_width - 16;
+   const int cards_x1 = content_x1 + 28;
+   const int cards_x2 = content_x2 - 28;
+   const int cards_y1 = 248;
+   const int cards_y2 = client_height - 34;
+   const int cards_gap = 36;
+   const int cards_width = ((cards_x2 - cards_x1) - cards_gap) / 2;
+   const int left_x1 = cards_x1;
+   const int left_x2 = left_x1 + cards_width;
+   const int right_x1 = left_x2 + cards_gap;
+   const int right_x2 = cards_x2;
 
-   if(!CreatePanelBlock(m_section_principal,m_name+"SectionPrincipal",left_x1,section_y1,left_x2,section_y2,COLOR_SECTION_BG,COLOR_SECTION_BORDER))
+   if(!CreatePanelBlock(m_section_principal,m_name+"SectionPrincipal",left_x1,cards_y1,left_x2,cards_y2,COLOR_SECTION_BG,COLOR_SECTION_BORDER))
       return(false);
-   if(!CreatePanelBlock(m_section_direcao,m_name+"SectionDirecao",right_x1,section_y1,right_x2,section_y2,COLOR_SECTION_BG,COLOR_SECTION_BORDER))
-      return(false);
-
-   if(!CreateText(m_section_principal_title,m_name+"SectionPrincipalTitle",left_x1 + 18,section_y1 + 16,"Parametros obrigatorios",COLOR_TEXT_DARK,12))
-      return(false);
-   if(!CreateText(m_section_principal_note,m_name+"SectionPrincipalNote",left_x1 + 18,section_y1 + 38,"Inputs carregam no inicio e alimentam o painel.",COLOR_TEXT_MUTED,8))
+   if(!CreatePanelBlock(m_section_direcao,m_name+"SectionDirecao",right_x1,cards_y1,right_x2,cards_y2,COLOR_SECTION_BG,COLOR_SECTION_BORDER))
       return(false);
 
-   if(!CreateText(m_label_nome,m_name+"LabelNome",left_x1 + 18,section_y1 + 70,"Nome da estrategia",COLOR_TEXT_DARK,10))
+   if(!CreateText(m_section_principal_title,m_name+"SectionPrincipalTitle",left_x1 + 18,cards_y1 + 16,"Informacoes basicas",COLOR_TEXT_DARK,12))
       return(false);
-   if(!m_edit_nome.Create(m_chart_id,m_name+"EditNome",m_subwin,left_x1 + 18,section_y1 + 90,left_x2 - 18,section_y1 + 114))
+   if(!CreateText(m_section_principal_note,m_name+"SectionPrincipalNote",left_x1 + 18,cards_y1 + 38,"Os seletores abaixo refletem os inputs do EA e vice versa.",COLOR_TEXT_MUTED,8))
+      return(false);
+
+   if(!CreateText(m_label_nome,m_name+"LabelNome",left_x1 + 18,cards_y1 + 72,"Nome da Estrategia",COLOR_TEXT_DARK,10))
+      return(false);
+   if(!m_edit_nome.Create(m_chart_id,m_name+"EditNome",m_subwin,left_x1 + 18,cards_y1 + 92,left_x2 - 18,cards_y1 + 116))
       return(false);
    if(!m_edit_nome.Font("Segoe UI"))
       return(false);
@@ -915,63 +931,40 @@ bool CConstrutorDialog::CreateTab1Form(void)
    if(!Add(m_edit_nome))
       return(false);
 
-   if(!CreateText(m_label_mercado,m_name+"LabelMercado",left_x1 + 18,section_y1 + 130,"Mercado desejado",COLOR_TEXT_DARK,10))
+   if(!CreateText(m_label_mercado,m_name+"LabelMercado",left_x1 + 18,cards_y1 + 132,"Mercado desejado",COLOR_TEXT_DARK,10))
       return(false);
-   if(!CreateRadioCard(m_card_mercado,m_name+"CardMercado",left_x1 + 14,section_y1 + 152,left_x2 - 14,section_y1 + 210))
+   if(!m_combo_mercado.Create(m_chart_id,m_name+"ComboMercado",m_subwin,left_x1 + 18,cards_y1 + 152,left_x2 - 18,cards_y1 + 176))
       return(false);
-   if(!m_radio_mercado.Create(m_chart_id,m_name+"RadioMercado",m_subwin,left_x1 + 18,section_y1 + 156,left_x2 - 18,section_y1 + 192))
+   if(!Add(m_combo_mercado))
       return(false);
-   if(!m_radio_mercado.AddItem("B3",CONSTRUTOR_B3))
+   if(!m_combo_mercado.AddItem("B3",CONSTRUTOR_B3))
       return(false);
-   if(!m_radio_mercado.AddItem("Forex",CONSTRUTOR_FOREX))
-      return(false);
-   if(!Add(m_radio_mercado))
+   if(!m_combo_mercado.AddItem("Forex",CONSTRUTOR_FOREX))
       return(false);
 
-   if(!CreateText(m_label_modo,m_name+"LabelModo",left_x1 + 18,section_y1 + 218,"Modo de processamento",COLOR_TEXT_DARK,10))
+   if(!CreateText(m_label_operacional,m_name+"LabelOperacional",left_x1 + 18,cards_y1 + 188,"Tipo operacional",COLOR_TEXT_DARK,10))
       return(false);
-   if(!CreateRadioCard(m_card_modo,m_name+"CardModo",left_x1 + 14,section_y1 + 240,left_x2 - 14,section_y1 + 298))
+   if(!m_combo_operacional.Create(m_chart_id,m_name+"ComboOperacional",m_subwin,left_x1 + 18,cards_y1 + 208,left_x2 - 18,cards_y1 + 232))
       return(false);
-   if(!m_radio_modo.Create(m_chart_id,m_name+"RadioModo",m_subwin,left_x1 + 18,section_y1 + 244,left_x2 - 18,section_y1 + 280))
+   if(!Add(m_combo_operacional))
       return(false);
-   if(!m_radio_modo.AddItem("A cada tick",CONSTRUTOR_CADA_TICK))
+   if(!m_combo_operacional.AddItem("Day trade",CONSTRUTOR_DAY_TRADE))
       return(false);
-   if(!m_radio_modo.AddItem("A cada segundo",CONSTRUTOR_CADA_SEGUNDO))
-      return(false);
-   if(!Add(m_radio_modo))
+   if(!m_combo_operacional.AddItem("Swing trade",CONSTRUTOR_SWING_TRADE))
       return(false);
 
-   if(!CreateText(m_section_direcao_title,m_name+"SectionDirecaoTitle",right_x1 + 18,section_y1 + 16,"Direcao operacional",COLOR_TEXT_DARK,12))
+   if(!CreateText(m_label_modo,m_name+"LabelModo",left_x1 + 18,cards_y1 + 244,"Modo de processamento",COLOR_TEXT_DARK,10))
       return(false);
-   if(!CreateText(m_section_direcao_note,m_name+"SectionDirecaoNote",right_x1 + 18,section_y1 + 38,"Executa so com compra, venda ou ambas habilitadas.",COLOR_TEXT_MUTED,8))
+   if(!m_combo_modo.Create(m_chart_id,m_name+"ComboModo",m_subwin,left_x1 + 18,cards_y1 + 264,left_x2 - 18,cards_y1 + 288))
       return(false);
-
-   if(!CreateText(m_label_compra,m_name+"LabelCompra",right_x1 + 18,section_y1 + 82,"Deseja operar na compra?",COLOR_TEXT_DARK,10))
+   if(!Add(m_combo_modo))
       return(false);
-   if(!CreateRadioCard(m_card_compra,m_name+"CardCompra",right_x1 + 14,section_y1 + 106,right_x2 - 14,section_y1 + 164))
+   if(!m_combo_modo.AddItem("Cada tick",CONSTRUTOR_CADA_TICK))
       return(false);
-   if(!m_radio_compra.Create(m_chart_id,m_name+"RadioCompra",m_subwin,right_x1 + 18,section_y1 + 110,right_x2 - 18,section_y1 + 146))
-      return(false);
-   if(!m_radio_compra.AddItem("Sim",1))
-      return(false);
-   if(!m_radio_compra.AddItem("Nao",0))
-      return(false);
-   if(!Add(m_radio_compra))
+   if(!m_combo_modo.AddItem("Cada segundo",CONSTRUTOR_CADA_SEGUNDO))
       return(false);
 
-   if(!CreateText(m_label_venda,m_name+"LabelVenda",right_x1 + 18,section_y1 + 170,"Deseja operar na venda?",COLOR_TEXT_DARK,10))
-      return(false);
-   if(!CreateRadioCard(m_card_venda,m_name+"CardVenda",right_x1 + 14,section_y1 + 194,right_x2 - 14,section_y1 + 252))
-      return(false);
-   if(!m_radio_venda.Create(m_chart_id,m_name+"RadioVenda",m_subwin,right_x1 + 18,section_y1 + 198,right_x2 - 18,section_y1 + 234))
-      return(false);
-   if(!m_radio_venda.AddItem("Sim",1))
-      return(false);
-   if(!m_radio_venda.AddItem("Nao",0))
-      return(false);
-   if(!Add(m_radio_venda))
-      return(false);
-
+   SetTab1ControlsVisible(false);
    return(true);
   }
 
@@ -1538,16 +1531,12 @@ void CConstrutorDialog::SetTab1ControlsVisible(const bool visible)
    SetControlVisible(m_section_principal_note,visible);
    SetControlVisible(m_label_nome,visible);
    SetControlVisible(m_label_mercado,visible);
+   SetControlVisible(m_label_operacional,visible);
    SetControlVisible(m_label_modo,visible);
    SetControlVisible(m_edit_nome,visible);
-   SetControlVisible(m_radio_mercado,visible);
-   SetControlVisible(m_radio_modo,visible);
-   SetControlVisible(m_section_direcao_title,visible);
-   SetControlVisible(m_section_direcao_note,visible);
-   SetControlVisible(m_label_compra,visible);
-   SetControlVisible(m_label_venda,visible);
-   SetControlVisible(m_radio_compra,visible);
-   SetControlVisible(m_radio_venda,visible);
+   SetControlVisible(m_combo_mercado,visible);
+   SetControlVisible(m_combo_operacional,visible);
+   SetControlVisible(m_combo_modo,visible);
   }
 
 void CConstrutorDialog::SetTab2ControlsVisible(const bool visible)
@@ -1632,8 +1621,9 @@ void CConstrutorDialog::AtualizarControlesComConfig(void)
    g_bloquear_sincronizacao = true;
 
    m_edit_nome.Text(g_config.nome_estrategia);
-   SyncRadioGroup(m_radio_mercado,(long)g_config.mercado);
-   SyncRadioGroup(m_radio_modo,(long)g_config.modo_processamento);
+   m_combo_mercado.SelectByValue((int)g_config.mercado);
+   m_combo_operacional.SelectByValue((int)g_config.tipo_operacional);
+   m_combo_modo.SelectByValue((int)g_config.modo_processamento);
    SyncRadioGroup(m_radio_compra,g_config.operar_compra ? 1 : 0);
    SyncRadioGroup(m_radio_venda,g_config.operar_venda ? 1 : 0);
    m_combo_horario_inicial_hora.SelectByValue(g_config.horario_inicial_hora);
@@ -1676,8 +1666,9 @@ void CConstrutorDialog::AtualizarConfigComControles(const bool marcar_reexecucao
    SConfiguracaoPainel anterior = g_config;
 
    g_config.nome_estrategia    = TextoLimpo(m_edit_nome.Text());
-   g_config.mercado              = (ENUM_CONSTRUTOR_MERCADO)LimitarInteiro((int)m_radio_mercado.Value(),0,1);
-   g_config.modo_processamento   = (ENUM_CONSTRUTOR_PROCESSAMENTO)LimitarInteiro((int)m_radio_modo.Value(),0,1);
+   g_config.mercado              = (ENUM_CONSTRUTOR_MERCADO)LimitarInteiro((int)m_combo_mercado.Value(),0,1);
+   g_config.tipo_operacional     = (ENUM_CONSTRUTOR_TIPO_OPERACIONAL)LimitarInteiro((int)m_combo_operacional.Value(),0,1);
+   g_config.modo_processamento   = (ENUM_CONSTRUTOR_PROCESSAMENTO)LimitarInteiro((int)m_combo_modo.Value(),0,1);
    g_config.operar_compra        = (m_radio_compra.Value() != 0);
    g_config.operar_venda         = (m_radio_venda.Value() != 0);
    g_config.horario_inicial_hora = LimitarInteiro((int)m_combo_horario_inicial_hora.Value(),0,23);
@@ -1715,6 +1706,7 @@ void CConstrutorDialog::AtualizarConfigComControles(const bool marcar_reexecucao
    const bool alterou =
       (g_config.nome_estrategia != anterior.nome_estrategia) ||
       (g_config.mercado != anterior.mercado) ||
+      (g_config.tipo_operacional != anterior.tipo_operacional) ||
       (g_config.modo_processamento != anterior.modo_processamento) ||
       (g_config.operar_compra != anterior.operar_compra) ||
       (g_config.operar_venda != anterior.operar_venda) ||
@@ -1854,6 +1846,7 @@ void CConstrutorDialog::SelectTab(const int index)
    m_content_line_1.Text(g_tab_notes[index]);
    m_content_line_2.Text("- Area vazia para reconstruir os controles desta aba.");
    m_content_line_3.Text("- O layout atual serve apenas como base visual e navegacao.");
+   SetTab1ControlsVisible(index == 0);
    ChartRedraw(m_chart_id);
    return;
 
@@ -1925,6 +1918,13 @@ void CConstrutorDialog::OnEndEditNome(void)
   }
 
 void CConstrutorDialog::OnChangeMercado(void)
+  {
+   if(g_bloquear_sincronizacao)
+      return;
+   AtualizarConfigComControles(true);
+  }
+
+void CConstrutorDialog::OnChangeTipoOperacional(void)
   {
    if(g_bloquear_sincronizacao)
       return;
