@@ -170,7 +170,7 @@ string g_tab_roles[TAB_COUNT] =
    "Escalonamento de saidas",
    "Motor de sinais",
    "Revisao e acabamento",
-   "Modo compacto"
+   "Painel geral"
   };
 
 string g_tab_summaries[TAB_COUNT] =
@@ -185,7 +185,7 @@ string g_tab_summaries[TAB_COUNT] =
    "Permite dividir a saida em etapas e niveis planejados.",
    "Agrupa os gatilhos tecnicos que vao gerar entradas e saidas.",
    "Fecha a construcao com conferencias e ultimos refinamentos.",
-   "Contrai e expande a janela do construtor."
+   "Espaco reservado para o painel geral do construtor."
   };
 
 string g_tab_notes[TAB_COUNT] =
@@ -1457,51 +1457,17 @@ void CConstrutorDialog::StyleTabButton(CButton &button,const bool active)
 
 void CConstrutorDialog::AplicarModoPainel(const bool compacto)
   {
-   if(m_painel_compacto == compacto)
-      return;
-
-   const int compact_sidebar_width = 206;
-   const int compact_work_width = 220;
-   const int compact_extra_height = 24;
-   const int compact_total_width = 16 + compact_sidebar_width + 16 + compact_work_width + 16;
-   const int compact_total_height = m_rect_original.Height() + compact_extra_height;
-   const int restored_sidebar_height = m_rect_original.Height() - 32;
-   const int restored_work_width = m_rect_original.Width() - 254;
-
-   if(compacto)
-     {
-      Size(compact_total_width,compact_total_height);
-      const int compact_client_height = ClientAreaHeight();
-      m_sidebar.Size(compact_sidebar_width,compact_client_height - 32);
-      m_content.Size(compact_work_width,compact_client_height - 32);
-      SetControlVisible(m_content_strip,false);
-      SetControlVisible(m_divider,false);
-      SetControlVisible(m_content_tag,false);
-      SetControlVisible(m_content_title,false);
-      SetControlVisible(m_content_summary,false);
-      SetControlVisible(m_content_line_1,false);
-      SetControlVisible(m_content_line_2,false);
-      SetControlVisible(m_content_line_3,false);
-     }
-   else
-     {
-      Size(m_rect_original.Width(),m_rect_original.Height());
-      const int restored_client_width = ClientAreaWidth();
-      const int restored_client_height = ClientAreaHeight();
-      m_sidebar.Size(compact_sidebar_width,restored_client_height - 32);
-      m_content.Size(restored_client_width - 254,restored_client_height - 32);
-      SetControlVisible(m_content_strip,true);
-      SetControlVisible(m_divider,true);
-      SetControlVisible(m_content_tag,true);
-      SetControlVisible(m_content_title,true);
-      SetControlVisible(m_content_summary,true);
-      SetControlVisible(m_content_line_1,true);
-      SetControlVisible(m_content_line_2,true);
-      SetControlVisible(m_content_line_3,true);
-     }
-
-   m_painel_compacto = compacto;
-   StyleTabButton(m_tab_11,m_painel_compacto);
+   Size(m_rect_original.Width(),m_rect_original.Height());
+   SetControlVisible(m_content_strip,true);
+   SetControlVisible(m_divider,true);
+   SetControlVisible(m_content_tag,true);
+   SetControlVisible(m_content_title,true);
+   SetControlVisible(m_content_summary,true);
+   SetControlVisible(m_content_line_1,true);
+   SetControlVisible(m_content_line_2,true);
+   SetControlVisible(m_content_line_3,true);
+   SetTab1ControlsVisible(m_active_tab == 0);
+   m_painel_compacto = false;
    ChartRedraw(m_chart_id);
   }
 
@@ -1820,15 +1786,6 @@ void CConstrutorDialog::SelectTab(const int index)
    if(index < 0 || index >= TAB_COUNT)
       return;
 
-   if(index == 10)
-     {
-      AplicarModoPainel(!m_painel_compacto);
-      return;
-     }
-
-   if(m_painel_compacto)
-      AplicarModoPainel(false);
-
    m_active_tab = index;
 
    for(int i = 0; i < TAB_COUNT; i++)
@@ -1837,7 +1794,7 @@ void CConstrutorDialog::SelectTab(const int index)
       if(button == NULL)
          continue;
 
-      StyleTabButton(*button,(i == 10 ? m_painel_compacto : (i == index)));
+      StyleTabButton(*button,(i == index));
      }
 
    m_content_tag.Text(StringFormat("ABA %02d",index + 1));
