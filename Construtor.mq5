@@ -34,6 +34,7 @@ input double InpStopMovelCandlesDistancia = 0.0;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopMovelCandlesPosicao = CONSTRUTOR_MEDIA_MAXIMA;
 input int InpStopMovelCandlesCount = 1;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopMovelCandlesCountPosicao = CONSTRUTOR_MEDIA_MAXIMA;
+input ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR InpStopMovelIndicador = CONSTRUTOR_STOP_IND_ATR;
 input int InpStopCalculoMediaQtdCandles = 3;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopCalculoMediaBase = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_BASE_MULTIPLICAR InpStopCalculoMultiplicarBase = CONSTRUTOR_MULTIPLICAR_CORPO;
@@ -80,6 +81,7 @@ void LoadInputsToSettings(void)
    g_settings.stop_movel_candles_posicao=InpStopMovelCandlesPosicao;
    g_settings.stop_movel_candles_count=InpStopMovelCandlesCount;
    g_settings.stop_movel_candles_count_posicao=InpStopMovelCandlesCountPosicao;
+   g_settings.stop_movel_indicador=InpStopMovelIndicador;
    g_settings.stop_calculo_media_qtd_candles=InpStopCalculoMediaQtdCandles;
    g_settings.stop_calculo_media_base=InpStopCalculoMediaBase;
    g_settings.stop_calculo_multiplicar_base=InpStopCalculoMultiplicarBase;

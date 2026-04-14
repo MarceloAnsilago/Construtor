@@ -91,6 +91,15 @@ enum ENUM_CONSTRUTOR_POSICAO_REFERENCIA
    CONSTRUTOR_POSICAO_ANTIPENULTIMO=3
   };
 
+enum ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR
+  {
+   CONSTRUTOR_STOP_IND_ATR=0,
+   CONSTRUTOR_STOP_IND_MEDIA_MOVEL=1,
+   CONSTRUTOR_STOP_IND_PARABOLIC_SAR=2,
+   CONSTRUTOR_STOP_IND_BOLLINGER=3,
+   CONSTRUTOR_STOP_IND_ENVELOPES=4
+  };
+
 enum ENUM_CONSTRUTOR_STOP_MOVEL_MODO
   {
    CONSTRUTOR_STOP_MOVEL_PADRAO=0,
@@ -138,6 +147,7 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_movel_candles_posicao;
    int                          stop_movel_candles_count;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_movel_candles_count_posicao;
+   ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR stop_movel_indicador;
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
@@ -274,6 +284,7 @@ private:
    CComboBox         m_tab5_card_candles_count_pos_combo;
    CPanel            m_tab5_card_indicador;
    CCheckBox         m_tab5_card_indicador_check;
+   CComboBox         m_tab5_card_indicador_combo;
    int               m_active_tab;
    string            m_tab_titles[TAB_COUNT];
    string            m_tab_notes[TAB_COUNT];
@@ -1435,6 +1446,17 @@ bool CConstrutorDialog::CreateTab5(void)
    if(!m_tab5_page.Add(m_tab5_card_indicador_check))
       return(false);
 
+   if(!m_tab5_card_indicador_combo.Create(m_chart_id,"ConstrutorTab5CardIndicadorCombo",m_subwin,500,182,684,206))
+      return(false);
+   m_tab5_card_indicador_combo.AddItem("ATR",CONSTRUTOR_STOP_IND_ATR);
+   m_tab5_card_indicador_combo.AddItem("Media movel",CONSTRUTOR_STOP_IND_MEDIA_MOVEL);
+   m_tab5_card_indicador_combo.AddItem("Parabolic SAR",CONSTRUTOR_STOP_IND_PARABOLIC_SAR);
+   m_tab5_card_indicador_combo.AddItem("Bandas de Bollinger",CONSTRUTOR_STOP_IND_BOLLINGER);
+   m_tab5_card_indicador_combo.AddItem("Envelopes",CONSTRUTOR_STOP_IND_ENVELOPES);
+   m_tab5_card_indicador_combo.SelectByValue(CONSTRUTOR_STOP_IND_ATR);
+   if(!m_tab5_page.Add(m_tab5_card_indicador_combo))
+      return(false);
+
    SetTab5Visible(false);
    return(true);
   }
@@ -1555,6 +1577,7 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab5_card_candles_pos_combo.SelectByValue((long)m_settings.stop_movel_candles_posicao);
    m_tab5_card_candles_count_spin.Value((double)m_settings.stop_movel_candles_count);
    m_tab5_card_candles_count_pos_combo.SelectByValue((long)m_settings.stop_movel_candles_count_posicao);
+   m_tab5_card_indicador_combo.SelectByValue((long)m_settings.stop_movel_indicador);
    m_tab5_updating_checks=true;
    m_tab5_card_padrao_check.Checked(false);
    m_tab5_card_candles_check.Checked(false);
@@ -1676,6 +1699,7 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.stop_movel_candles_posicao=(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab5_card_candles_pos_combo.Value();
    m_settings.stop_movel_candles_count=(int)m_tab5_card_candles_count_spin.Value();
    m_settings.stop_movel_candles_count_posicao=(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab5_card_candles_count_pos_combo.Value();
+   m_settings.stop_movel_indicador=(ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR)m_tab5_card_indicador_combo.Value();
    if(m_tab5_card_candles_check.Checked())
       m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_CANDLES;
    else if(m_tab5_card_indicador_check.Checked())
