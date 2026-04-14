@@ -12,6 +12,48 @@
 #include <Controls\Edit.mqh>
 #include <Controls\ComboBox.mqh>
 
+enum ENUM_CONSTRUTOR_MERCADO
+  {
+   CONSTRUTOR_MERCADO_B3=0,
+   CONSTRUTOR_MERCADO_FOREX=1
+  };
+
+enum ENUM_CONSTRUTOR_TIPO_OPERACIONAL
+  {
+   CONSTRUTOR_TIPO_DAY_TRADE=0,
+   CONSTRUTOR_TIPO_SWING_TRADE=1
+  };
+
+enum ENUM_CONSTRUTOR_MODO_PROCESSAMENTO
+  {
+   CONSTRUTOR_MODO_CADA_TICK=0,
+   CONSTRUTOR_MODO_CADA_SEGUNDO=1
+  };
+
+enum ENUM_CONSTRUTOR_SIM_NAO
+  {
+   CONSTRUTOR_NAO=0,
+   CONSTRUTOR_SIM=1
+  };
+
+struct SConstrutorSettings
+  {
+   string                       estrategia_nome;
+   ENUM_CONSTRUTOR_MERCADO      mercado;
+   ENUM_CONSTRUTOR_TIPO_OPERACIONAL tipo_operacional;
+   ENUM_CONSTRUTOR_MODO_PROCESSAMENTO modo_processamento;
+   ENUM_CONSTRUTOR_SIM_NAO      operar_compra;
+   ENUM_CONSTRUTOR_SIM_NAO      operar_venda;
+   int                          inicio_hora;
+   int                          inicio_minuto;
+   int                          fim_hora;
+   int                          fim_minuto;
+   ENUM_CONSTRUTOR_SIM_NAO      zerar_posicoes;
+   string                       horario_zeragem;
+  };
+
+extern SConstrutorSettings g_settings;
+
 class CConstrutorDialog : public CAppDialog
   {
 private:
@@ -25,6 +67,7 @@ private:
    CButton           m_tabs[TAB_COUNT];
    CLabel            m_page_title;
    CLabel            m_page_note;
+   CButton           m_execute_button;
    CWndContainer     m_tab1_page;
    CWndContainer     m_tab2_page;
    CPanel            m_tab1_card_left;
@@ -64,12 +107,15 @@ private:
    int               m_active_tab;
    string            m_tab_titles[TAB_COUNT];
    string            m_tab_notes[TAB_COUNT];
+   SConstrutorSettings m_settings;
+   bool              m_settings_bound;
 
 public:
                      CConstrutorDialog(void);
    virtual bool      Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2);
    virtual void      Destroy(const int reason=REASON_PROGRAM);
    virtual bool      OnEvent(const int id,const long &lparam,const double &dparam,const string &sparam);
+   void              BindSettings(const SConstrutorSettings &settings);
 
 private:
    void              InitTabData(void);
@@ -79,20 +125,31 @@ private:
    bool              CreateTabs(void);
    bool              CreateTab1(void);
    bool              CreateTab2(void);
+   bool              CreateExecuteButton(void);
    void              SetTab1Visible(const bool visible);
    void              SetTab2Visible(const bool visible);
    void              SelectTab(const int index);
    void              UpdateTabVisuals(void);
+   void              LoadSettingsToControls(void);
+   void              StoreControlsToSettings(void);
    bool              OnTabClick(const int index);
+   bool              OnExecuteClick(void);
   };
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
+   ON_EVENT(ON_CLICK,m_execute_button,OnExecuteClick)
    ON_INDEXED_EVENT(ON_CLICK,m_tabs,OnTabClick)
 EVENT_MAP_END(CAppDialog)
 
-CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0)
+CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false)
   {
    InitTabData();
+  }
+
+void CConstrutorDialog::BindSettings(const SConstrutorSettings &settings)
+  {
+   m_settings=settings;
+   m_settings_bound=true;
   }
 
 void CConstrutorDialog::InitTabData(void)
@@ -154,6 +211,9 @@ bool CConstrutorDialog::CreateLayout(void)
       return(false);
    if(!CreateTab2())
       return(false);
+   if(!CreateExecuteButton())
+      return(false);
+   LoadSettingsToControls();
    return(true);
   }
 
@@ -448,7 +508,7 @@ bool CConstrutorDialog::CreateTab2(void)
    if(!m_tab2_page.Add(m_tab2_start_min_combo))
       return(false);
 
-   if(!m_tab2_end_label.Create(m_chart_id,"ConstrutorTab2EndLabel",m_subwin,20,119,0,0))
+   if(!m_tab2_end_label.Create(m_chart_id,"ConstrutorTab2EndLabel",m_subwin,20,135,0,0))
       return(false);
    m_tab2_end_label.Text("Fim das operacoes");
    m_tab2_end_label.FontSize(10);
@@ -456,7 +516,7 @@ bool CConstrutorDialog::CreateTab2(void)
    if(!m_tab2_page.Add(m_tab2_end_label))
       return(false);
 
-   if(!m_tab2_end_hour_label.Create(m_chart_id,"ConstrutorTab2EndHourLabel",m_subwin,20,141,0,0))
+   if(!m_tab2_end_hour_label.Create(m_chart_id,"ConstrutorTab2EndHourLabel",m_subwin,20,157,0,0))
       return(false);
    m_tab2_end_hour_label.Text("Hora");
    m_tab2_end_hour_label.FontSize(9);
@@ -464,7 +524,7 @@ bool CConstrutorDialog::CreateTab2(void)
    if(!m_tab2_page.Add(m_tab2_end_hour_label))
       return(false);
 
-   if(!m_tab2_end_hour_combo.Create(m_chart_id,"ConstrutorTab2EndHourCombo",m_subwin,20,161,142,185))
+   if(!m_tab2_end_hour_combo.Create(m_chart_id,"ConstrutorTab2EndHourCombo",m_subwin,20,177,142,201))
       return(false);
    for(int i=0;i<24;i++)
       m_tab2_end_hour_combo.AddItem(StringFormat("%02d",i),i);
@@ -472,7 +532,7 @@ bool CConstrutorDialog::CreateTab2(void)
    if(!m_tab2_page.Add(m_tab2_end_hour_combo))
       return(false);
 
-   if(!m_tab2_end_min_label.Create(m_chart_id,"ConstrutorTab2EndMinLabel",m_subwin,164,141,0,0))
+   if(!m_tab2_end_min_label.Create(m_chart_id,"ConstrutorTab2EndMinLabel",m_subwin,164,157,0,0))
       return(false);
    m_tab2_end_min_label.Text("Min");
    m_tab2_end_min_label.FontSize(9);
@@ -480,7 +540,7 @@ bool CConstrutorDialog::CreateTab2(void)
    if(!m_tab2_page.Add(m_tab2_end_min_label))
       return(false);
 
-   if(!m_tab2_end_min_combo.Create(m_chart_id,"ConstrutorTab2EndMinCombo",m_subwin,164,161,316,185))
+   if(!m_tab2_end_min_combo.Create(m_chart_id,"ConstrutorTab2EndMinCombo",m_subwin,164,177,316,201))
       return(false);
    for(int i=0;i<60;i++)
       m_tab2_end_min_combo.AddItem(StringFormat("%02d",i),i);
@@ -523,6 +583,21 @@ bool CConstrutorDialog::CreateTab2(void)
    return(true);
   }
 
+bool CConstrutorDialog::CreateExecuteButton(void)
+  {
+   if(!m_execute_button.Create(m_chart_id,"ConstrutorExecuteButton",m_subwin,816,610,964,636))
+      return(false);
+   m_execute_button.Text("Executar");
+   m_execute_button.FontSize(11);
+   m_execute_button.Color(clrWhite);
+   m_execute_button.ColorBackground(C'226,114,64');
+   m_execute_button.ColorBorder(C'240,140,86');
+   m_execute_button.Locking(false);
+   if(!Add(m_execute_button))
+      return(false);
+   return(true);
+  }
+
 void CConstrutorDialog::SetTab1Visible(const bool visible)
   {
    if(visible)
@@ -553,6 +628,45 @@ void CConstrutorDialog::SelectTab(const int index)
    ChartRedraw();
   }
 
+void CConstrutorDialog::LoadSettingsToControls(void)
+  {
+   if(!m_settings_bound)
+      return;
+
+   m_tab1_name_edit.Text(m_settings.estrategia_nome);
+   m_tab1_market_combo.SelectByValue((long)m_settings.mercado);
+   m_tab1_oper_combo.SelectByValue((long)m_settings.tipo_operacional);
+   m_tab1_mode_combo.SelectByValue((long)m_settings.modo_processamento);
+   m_tab1_buy_combo.SelectByValue((long)m_settings.operar_compra);
+   m_tab1_sell_combo.SelectByValue((long)m_settings.operar_venda);
+
+   m_tab2_start_hour_combo.SelectByValue((long)m_settings.inicio_hora);
+   m_tab2_start_min_combo.SelectByValue((long)m_settings.inicio_minuto);
+   m_tab2_end_hour_combo.SelectByValue((long)m_settings.fim_hora);
+   m_tab2_end_min_combo.SelectByValue((long)m_settings.fim_minuto);
+   m_tab2_zero_combo.SelectByValue((long)m_settings.zerar_posicoes);
+   m_tab2_zero_time_edit.Text(m_settings.horario_zeragem);
+  }
+
+void CConstrutorDialog::StoreControlsToSettings(void)
+  {
+   if(!m_settings_bound)
+      return;
+
+   m_settings.estrategia_nome    =m_tab1_name_edit.Text();
+   m_settings.mercado            =(ENUM_CONSTRUTOR_MERCADO)m_tab1_market_combo.Value();
+   m_settings.tipo_operacional   =(ENUM_CONSTRUTOR_TIPO_OPERACIONAL)m_tab1_oper_combo.Value();
+   m_settings.modo_processamento =(ENUM_CONSTRUTOR_MODO_PROCESSAMENTO)m_tab1_mode_combo.Value();
+   m_settings.operar_compra      =(ENUM_CONSTRUTOR_SIM_NAO)m_tab1_buy_combo.Value();
+   m_settings.operar_venda       =(ENUM_CONSTRUTOR_SIM_NAO)m_tab1_sell_combo.Value();
+   m_settings.inicio_hora        =(int)m_tab2_start_hour_combo.Value();
+   m_settings.inicio_minuto      =(int)m_tab2_start_min_combo.Value();
+   m_settings.fim_hora           =(int)m_tab2_end_hour_combo.Value();
+   m_settings.fim_minuto         =(int)m_tab2_end_min_combo.Value();
+   m_settings.zerar_posicoes     =(ENUM_CONSTRUTOR_SIM_NAO)m_tab2_zero_combo.Value();
+   m_settings.horario_zeragem    =m_tab2_zero_time_edit.Text();
+  }
+
 void CConstrutorDialog::UpdateTabVisuals(void)
   {
    for(int i=0; i<TAB_COUNT; i++)
@@ -568,6 +682,17 @@ void CConstrutorDialog::UpdateTabVisuals(void)
 bool CConstrutorDialog::OnTabClick(const int index)
   {
    SelectTab(index);
+   return(true);
+  }
+
+bool CConstrutorDialog::OnExecuteClick(void)
+  {
+   StoreControlsToSettings();
+   if(m_settings_bound)
+     {
+      g_settings=m_settings;
+      Print("Construtor: configuracao aplicada pelo painel");
+     }
    return(true);
   }
 
