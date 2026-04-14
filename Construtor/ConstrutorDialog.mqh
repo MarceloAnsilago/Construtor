@@ -885,7 +885,7 @@ bool CConstrutorDialog::CreateTab4(void)
 
    if(!m_tab4_card_calc_mode_check.Create(m_chart_id,"ConstrutorTab4CardCalcModeCheck",m_subwin,216,170,386,190))
       return(false);
-   m_tab4_card_calc_mode_check.Text("Automatico");
+   m_tab4_card_calc_mode_check.Text("Cálculo");
    m_tab4_card_calc_mode_check.Color(C'91,78,64');
    m_tab4_card_calc_mode_check.ColorBackground(C'233,220,203');
    m_tab4_card_calc_mode_check.Checked(false);
