@@ -91,6 +91,13 @@ enum ENUM_CONSTRUTOR_POSICAO_REFERENCIA
    CONSTRUTOR_POSICAO_ANTIPENULTIMO=3
   };
 
+enum ENUM_CONSTRUTOR_STOP_MOVEL_MODO
+  {
+   CONSTRUTOR_STOP_MOVEL_PADRAO=0,
+   CONSTRUTOR_STOP_MOVEL_CANDLES=1,
+   CONSTRUTOR_STOP_MOVEL_INDICADOR=2
+  };
+
 struct SConstrutorSettings
   {
    string                       estrategia_nome;
@@ -117,6 +124,7 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo_referencia;
    ENUM_CONSTRUTOR_SIM_NAO      stop_movel;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS tipo_stop_movel;
+   ENUM_CONSTRUTOR_STOP_MOVEL_MODO stop_movel_modo;
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
@@ -231,12 +239,19 @@ private:
    CComboBox         m_tab5_use_combo;
    CLabel            m_tab5_type_label;
    CComboBox         m_tab5_type_combo;
+   CPanel            m_tab5_card_padrao;
+   CCheckBox         m_tab5_card_padrao_check;
+   CPanel            m_tab5_card_candles;
+   CCheckBox         m_tab5_card_candles_check;
+   CPanel            m_tab5_card_indicador;
+   CCheckBox         m_tab5_card_indicador_check;
    int               m_active_tab;
    string            m_tab_titles[TAB_COUNT];
    string            m_tab_notes[TAB_COUNT];
    SConstrutorSettings m_settings;
    bool              m_settings_bound;
    bool              m_tab4_updating_checks;
+   bool              m_tab5_updating_checks;
 
 public:
                      CConstrutorDialog(void);
@@ -275,6 +290,9 @@ private:
    bool              OnTab4CalcRefOuterChange(void);
    bool              OnTab4CalcModeChange(void);
    bool              OnTab4CalcRefChange(void);
+   bool              OnTab5PadraoChange(void);
+   bool              OnTab5CandlesChange(void);
+   bool              OnTab5IndicadorChange(void);
   };
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
@@ -286,6 +304,9 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_tab4_card_calc_ref_outer_check,OnTab4CalcRefOuterChange)
    ON_EVENT(ON_CHANGE,m_tab4_card_calc_mode_check,OnTab4CalcModeChange)
    ON_EVENT(ON_CHANGE,m_tab4_card_calc_ref_check,OnTab4CalcRefChange)
+   ON_EVENT(ON_CHANGE,m_tab5_card_padrao_check,OnTab5PadraoChange)
+   ON_EVENT(ON_CHANGE,m_tab5_card_candles_check,OnTab5CandlesChange)
+   ON_EVENT(ON_CHANGE,m_tab5_card_indicador_check,OnTab5IndicadorChange)
 EVENT_MAP_END(CAppDialog)
 
 CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false), m_tab4_updating_checks(false)
@@ -1192,6 +1213,60 @@ bool CConstrutorDialog::CreateTab5(void)
    if(!m_tab5_page.Add(m_tab5_type_combo))
       return(false);
 
+   if(!m_tab5_card_padrao.Create(m_chart_id,"ConstrutorTab5CardPadrao",m_subwin,20,124,230,362))
+      return(false);
+   m_tab5_card_padrao.ColorBackground(clrNONE);
+   m_tab5_card_padrao.ColorBorder(C'197,168,136');
+   m_tab5_card_padrao.BorderType(BORDER_FLAT);
+   m_tab5_card_padrao.ZOrder(12);
+   if(!m_tab5_page.Add(m_tab5_card_padrao))
+      return(false);
+
+   if(!m_tab5_card_padrao_check.Create(m_chart_id,"ConstrutorTab5CardPadraoCheck",m_subwin,34,136,214,156))
+      return(false);
+   m_tab5_card_padrao_check.Text("Padrao");
+   m_tab5_card_padrao_check.Color(C'91,78,64');
+   m_tab5_card_padrao_check.ColorBackground(C'233,220,203');
+   m_tab5_card_padrao_check.Checked(false);
+   if(!m_tab5_page.Add(m_tab5_card_padrao_check))
+      return(false);
+
+   if(!m_tab5_card_candles.Create(m_chart_id,"ConstrutorTab5CardCandles",m_subwin,253,124,463,362))
+      return(false);
+   m_tab5_card_candles.ColorBackground(clrNONE);
+   m_tab5_card_candles.ColorBorder(C'197,168,136');
+   m_tab5_card_candles.BorderType(BORDER_FLAT);
+   m_tab5_card_candles.ZOrder(13);
+   if(!m_tab5_page.Add(m_tab5_card_candles))
+      return(false);
+
+   if(!m_tab5_card_candles_check.Create(m_chart_id,"ConstrutorTab5CardCandlesCheck",m_subwin,267,136,433,156))
+      return(false);
+   m_tab5_card_candles_check.Text("Candles");
+   m_tab5_card_candles_check.Color(C'91,78,64');
+   m_tab5_card_candles_check.ColorBackground(C'233,220,203');
+   m_tab5_card_candles_check.Checked(false);
+   if(!m_tab5_page.Add(m_tab5_card_candles_check))
+      return(false);
+
+   if(!m_tab5_card_indicador.Create(m_chart_id,"ConstrutorTab5CardIndicador",m_subwin,486,124,696,362))
+      return(false);
+   m_tab5_card_indicador.ColorBackground(clrNONE);
+   m_tab5_card_indicador.ColorBorder(C'197,168,136');
+   m_tab5_card_indicador.BorderType(BORDER_FLAT);
+   m_tab5_card_indicador.ZOrder(14);
+   if(!m_tab5_page.Add(m_tab5_card_indicador))
+      return(false);
+
+   if(!m_tab5_card_indicador_check.Create(m_chart_id,"ConstrutorTab5CardIndicadorCheck",m_subwin,500,136,678,156))
+      return(false);
+   m_tab5_card_indicador_check.Text("Indicador");
+   m_tab5_card_indicador_check.Color(C'91,78,64');
+   m_tab5_card_indicador_check.ColorBackground(C'233,220,203');
+   m_tab5_card_indicador_check.Checked(false);
+   if(!m_tab5_page.Add(m_tab5_card_indicador_check))
+      return(false);
+
    SetTab5Visible(false);
    return(true);
   }
@@ -1306,6 +1381,17 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab4_card_calc_ref_pos_combo.SelectByValue((long)m_settings.stop_calculo_referencia_posicao);
    m_tab5_use_combo.SelectByValue((long)m_settings.stop_movel);
    m_tab5_type_combo.SelectByValue((long)m_settings.tipo_stop_movel);
+   m_tab5_updating_checks=true;
+   m_tab5_card_padrao_check.Checked(false);
+   m_tab5_card_candles_check.Checked(false);
+   m_tab5_card_indicador_check.Checked(false);
+   if(m_settings.stop_movel_modo==CONSTRUTOR_STOP_MOVEL_CANDLES)
+      m_tab5_card_candles_check.Checked(true);
+   else if(m_settings.stop_movel_modo==CONSTRUTOR_STOP_MOVEL_INDICADOR)
+      m_tab5_card_indicador_check.Checked(true);
+   else
+      m_tab5_card_padrao_check.Checked(true);
+   m_tab5_updating_checks=false;
     m_tab4_updating_checks=true;
      if(m_settings.stop_fixo==CONSTRUTOR_SIM)
        {
@@ -1401,6 +1487,12 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.stop_calculo_referencia_posicao=(ENUM_CONSTRUTOR_POSICAO_REFERENCIA)m_tab4_card_calc_ref_pos_combo.Value();
    m_settings.stop_movel=(ENUM_CONSTRUTOR_SIM_NAO)m_tab5_use_combo.Value();
    m_settings.tipo_stop_movel=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab5_type_combo.Value();
+   if(m_tab5_card_candles_check.Checked())
+      m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_CANDLES;
+   else if(m_tab5_card_indicador_check.Checked())
+      m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_INDICADOR;
+   else
+      m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_PADRAO;
    m_settings.stop_fixo_distancia=StringToDouble(m_tab4_card_fixed_dist_edit.Text());
   }
 
@@ -1538,6 +1630,51 @@ bool CConstrutorDialog::OnTab4CalcRefChange(void)
       m_tab4_card_calc_check.Checked(true);
      }
    m_tab4_updating_checks=false;
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab5PadraoChange(void)
+  {
+   if(m_tab5_updating_checks)
+      return(true);
+
+   if(m_tab5_card_padrao_check.Checked())
+     {
+      m_tab5_updating_checks=true;
+      m_tab5_card_candles_check.Checked(false);
+      m_tab5_card_indicador_check.Checked(false);
+      m_tab5_updating_checks=false;
+     }
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab5CandlesChange(void)
+  {
+   if(m_tab5_updating_checks)
+      return(true);
+
+   if(m_tab5_card_candles_check.Checked())
+     {
+      m_tab5_updating_checks=true;
+      m_tab5_card_padrao_check.Checked(false);
+      m_tab5_card_indicador_check.Checked(false);
+      m_tab5_updating_checks=false;
+     }
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab5IndicadorChange(void)
+  {
+   if(m_tab5_updating_checks)
+      return(true);
+
+   if(m_tab5_card_indicador_check.Checked())
+     {
+      m_tab5_updating_checks=true;
+      m_tab5_card_padrao_check.Checked(false);
+      m_tab5_card_candles_check.Checked(false);
+      m_tab5_updating_checks=false;
+     }
    return(true);
   }
 
