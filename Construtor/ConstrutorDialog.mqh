@@ -30,6 +30,31 @@ enum ENUM_CONSTRUTOR_MODO_PROCESSAMENTO
    CONSTRUTOR_MODO_CADA_SEGUNDO=1
   };
 
+enum ENUM_CONSTRUTOR_TEMPO_GRAFICO
+  {
+   CONSTRUTOR_CORRENTE=0,
+   CONSTRUTOR_M1=1,
+   CONSTRUTOR_M2=2,
+   CONSTRUTOR_M3=3,
+   CONSTRUTOR_M4=4,
+   CONSTRUTOR_M5=5,
+   CONSTRUTOR_M6=6,
+   CONSTRUTOR_M10=7,
+   CONSTRUTOR_M12=8,
+   CONSTRUTOR_M15=9,
+   CONSTRUTOR_M30=10,
+   CONSTRUTOR_H1=11,
+   CONSTRUTOR_H2=12,
+   CONSTRUTOR_H3=13,
+   CONSTRUTOR_H4=14,
+   CONSTRUTOR_H6=15,
+   CONSTRUTOR_H8=16,
+   CONSTRUTOR_H12=17,
+   CONSTRUTOR_D1=18,
+   CONSTRUTOR_W1=19,
+   CONSTRUTOR_MN1=20
+  };
+
 enum ENUM_CONSTRUTOR_SIM_NAO
   {
    CONSTRUTOR_NAO=0,
@@ -50,6 +75,9 @@ struct SConstrutorSettings
    int                          fim_minuto;
    ENUM_CONSTRUTOR_SIM_NAO      zerar_posicoes;
    string                       horario_zeragem;
+   ENUM_CONSTRUTOR_TEMPO_GRAFICO tempo_grafico;
+   double                       volume_inicial;
+   int                          spread_maximo;
   };
 
 extern SConstrutorSettings g_settings;
@@ -70,6 +98,7 @@ private:
    CButton           m_execute_button;
    CWndContainer     m_tab1_page;
    CWndContainer     m_tab2_page;
+   CWndContainer     m_tab3_page;
    CPanel            m_tab1_card_left;
    CPanel            m_tab1_card_right;
    CLabel            m_tab1_card_left_title;
@@ -104,6 +133,14 @@ private:
    CComboBox         m_tab2_zero_combo;
    CLabel            m_tab2_zero_time_label;
    CEdit             m_tab2_zero_time_edit;
+   CPanel            m_tab3_card;
+   CLabel            m_tab3_card_title;
+   CLabel            m_tab3_tempo_label;
+   CComboBox         m_tab3_tempo_combo;
+   CLabel            m_tab3_volume_label;
+   CEdit             m_tab3_volume_edit;
+   CLabel            m_tab3_spread_label;
+   CEdit             m_tab3_spread_edit;
    int               m_active_tab;
    string            m_tab_titles[TAB_COUNT];
    string            m_tab_notes[TAB_COUNT];
@@ -125,9 +162,11 @@ private:
    bool              CreateTabs(void);
    bool              CreateTab1(void);
    bool              CreateTab2(void);
+   bool              CreateTab3(void);
    bool              CreateExecuteButton(void);
    void              SetTab1Visible(const bool visible);
    void              SetTab2Visible(const bool visible);
+   void              SetTab3Visible(const bool visible);
    void              SelectTab(const int index);
    void              UpdateTabVisuals(void);
    void              LoadSettingsToControls(void);
@@ -168,7 +207,7 @@ void CConstrutorDialog::InitTabData(void)
 
    m_tab_notes[0]="Base inicial do projeto e configuracao principal.";
    m_tab_notes[1]="Horarios de operacao e zeragem automatica.";
-   m_tab_notes[2]="Ajustes iniciais de execucao e processamento.";
+   m_tab_notes[2]="Tempo grafico, volume inicial e spread maximo.";
    m_tab_notes[3]="Parametros de protecao por perda.";
    m_tab_notes[4]="Regras para mover o stop automaticamente.";
    m_tab_notes[5]="Regras de objetivo e saida por ganho.";
@@ -210,6 +249,8 @@ bool CConstrutorDialog::CreateLayout(void)
    if(!CreateTab1())
       return(false);
    if(!CreateTab2())
+      return(false);
+   if(!CreateTab3())
       return(false);
    if(!CreateExecuteButton())
       return(false);
@@ -583,6 +624,98 @@ bool CConstrutorDialog::CreateTab2(void)
    return(true);
   }
 
+bool CConstrutorDialog::CreateTab3(void)
+  {
+   if(!m_tab3_page.Create(m_chart_id,"ConstrutorTab3Page",m_subwin,256,145,992,544))
+      return(false);
+   if(!Add(m_tab3_page))
+      return(false);
+
+   if(!m_tab3_card.Create(m_chart_id,"ConstrutorTab3Card",m_subwin,0,0,724,399))
+      return(false);
+   m_tab3_card.ColorBackground(C'247,241,231');
+   m_tab3_card.ColorBorder(C'220,207,186');
+   m_tab3_card.BorderType(BORDER_FLAT);
+   if(!m_tab3_page.Add(m_tab3_card))
+      return(false);
+
+   if(!m_tab3_card_title.Create(m_chart_id,"ConstrutorTab3CardTitle",m_subwin,20,17,0,0))
+      return(false);
+   m_tab3_card_title.Text("Configuracao inicial");
+   m_tab3_card_title.FontSize(12);
+   m_tab3_card_title.Color(C'43,43,43');
+   if(!m_tab3_page.Add(m_tab3_card_title))
+      return(false);
+
+   if(!m_tab3_tempo_label.Create(m_chart_id,"ConstrutorTab3TempoLabel",m_subwin,20,57,0,0))
+      return(false);
+   m_tab3_tempo_label.Text("Tempo grafico");
+   m_tab3_tempo_label.FontSize(10);
+   m_tab3_tempo_label.Color(C'91,78,64');
+   if(!m_tab3_page.Add(m_tab3_tempo_label))
+      return(false);
+
+   if(!m_tab3_tempo_combo.Create(m_chart_id,"ConstrutorTab3TempoCombo",m_subwin,20,79,316,103))
+      return(false);
+   m_tab3_tempo_combo.AddItem("Corrente",CONSTRUTOR_CORRENTE);
+   m_tab3_tempo_combo.AddItem("M1",CONSTRUTOR_M1);
+   m_tab3_tempo_combo.AddItem("M2",CONSTRUTOR_M2);
+   m_tab3_tempo_combo.AddItem("M3",CONSTRUTOR_M3);
+   m_tab3_tempo_combo.AddItem("M4",CONSTRUTOR_M4);
+   m_tab3_tempo_combo.AddItem("M5",CONSTRUTOR_M5);
+   m_tab3_tempo_combo.AddItem("M6",CONSTRUTOR_M6);
+   m_tab3_tempo_combo.AddItem("M10",CONSTRUTOR_M10);
+   m_tab3_tempo_combo.AddItem("M12",CONSTRUTOR_M12);
+   m_tab3_tempo_combo.AddItem("M15",CONSTRUTOR_M15);
+   m_tab3_tempo_combo.AddItem("M30",CONSTRUTOR_M30);
+   m_tab3_tempo_combo.AddItem("H1",CONSTRUTOR_H1);
+   m_tab3_tempo_combo.AddItem("H2",CONSTRUTOR_H2);
+   m_tab3_tempo_combo.AddItem("H3",CONSTRUTOR_H3);
+   m_tab3_tempo_combo.AddItem("H4",CONSTRUTOR_H4);
+   m_tab3_tempo_combo.AddItem("H6",CONSTRUTOR_H6);
+   m_tab3_tempo_combo.AddItem("H8",CONSTRUTOR_H8);
+   m_tab3_tempo_combo.AddItem("H12",CONSTRUTOR_H12);
+   m_tab3_tempo_combo.AddItem("D1",CONSTRUTOR_D1);
+   m_tab3_tempo_combo.AddItem("W1",CONSTRUTOR_W1);
+   m_tab3_tempo_combo.AddItem("MN1",CONSTRUTOR_MN1);
+   m_tab3_tempo_combo.SelectByValue(CONSTRUTOR_CORRENTE);
+   if(!m_tab3_page.Add(m_tab3_tempo_combo))
+      return(false);
+
+   if(!m_tab3_volume_label.Create(m_chart_id,"ConstrutorTab3VolumeLabel",m_subwin,20,119,0,0))
+      return(false);
+   m_tab3_volume_label.Text("Volume inicial");
+   m_tab3_volume_label.FontSize(10);
+   m_tab3_volume_label.Color(C'91,78,64');
+   if(!m_tab3_page.Add(m_tab3_volume_label))
+      return(false);
+
+   if(!m_tab3_volume_edit.Create(m_chart_id,"ConstrutorTab3VolumeEdit",m_subwin,20,141,316,165))
+      return(false);
+   m_tab3_volume_edit.Text("1");
+   m_tab3_volume_edit.FontSize(10);
+   if(!m_tab3_page.Add(m_tab3_volume_edit))
+      return(false);
+
+   if(!m_tab3_spread_label.Create(m_chart_id,"ConstrutorTab3SpreadLabel",m_subwin,20,185,0,0))
+      return(false);
+   m_tab3_spread_label.Text("Spread maximo");
+   m_tab3_spread_label.FontSize(10);
+   m_tab3_spread_label.Color(C'91,78,64');
+   if(!m_tab3_page.Add(m_tab3_spread_label))
+      return(false);
+
+   if(!m_tab3_spread_edit.Create(m_chart_id,"ConstrutorTab3SpreadEdit",m_subwin,20,207,316,231))
+      return(false);
+   m_tab3_spread_edit.Text("10");
+   m_tab3_spread_edit.FontSize(10);
+   if(!m_tab3_page.Add(m_tab3_spread_edit))
+      return(false);
+
+   SetTab3Visible(false);
+   return(true);
+  }
+
 bool CConstrutorDialog::CreateExecuteButton(void)
   {
    if(!m_execute_button.Create(m_chart_id,"ConstrutorExecuteButton",m_subwin,816,610,964,636))
@@ -614,6 +747,14 @@ void CConstrutorDialog::SetTab2Visible(const bool visible)
       m_tab2_page.Hide();
   }
 
+void CConstrutorDialog::SetTab3Visible(const bool visible)
+  {
+   if(visible)
+      m_tab3_page.Show();
+   else
+      m_tab3_page.Hide();
+  }
+
 void CConstrutorDialog::SelectTab(const int index)
   {
    if(index<0 || index>=TAB_COUNT)
@@ -624,6 +765,7 @@ void CConstrutorDialog::SelectTab(const int index)
    m_page_note.Text(m_tab_notes[m_active_tab]);
    SetTab1Visible(index==0);
    SetTab2Visible(index==1);
+   SetTab3Visible(index==2);
    UpdateTabVisuals();
    ChartRedraw();
   }
@@ -646,6 +788,9 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab2_end_min_combo.SelectByValue((long)m_settings.fim_minuto);
    m_tab2_zero_combo.SelectByValue((long)m_settings.zerar_posicoes);
    m_tab2_zero_time_edit.Text(m_settings.horario_zeragem);
+   m_tab3_tempo_combo.SelectByValue((long)m_settings.tempo_grafico);
+   m_tab3_volume_edit.Text(DoubleToString(m_settings.volume_inicial,2));
+   m_tab3_spread_edit.Text((string)m_settings.spread_maximo);
   }
 
 void CConstrutorDialog::StoreControlsToSettings(void)
@@ -665,6 +810,9 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.fim_minuto         =(int)m_tab2_end_min_combo.Value();
    m_settings.zerar_posicoes     =(ENUM_CONSTRUTOR_SIM_NAO)m_tab2_zero_combo.Value();
    m_settings.horario_zeragem    =m_tab2_zero_time_edit.Text();
+   m_settings.tempo_grafico      =(ENUM_CONSTRUTOR_TEMPO_GRAFICO)m_tab3_tempo_combo.Value();
+   m_settings.volume_inicial     =StringToDouble(m_tab3_volume_edit.Text());
+   m_settings.spread_maximo      =(int)StringToInteger(m_tab3_spread_edit.Text());
   }
 
 void CConstrutorDialog::UpdateTabVisuals(void)

@@ -14,6 +14,9 @@ input int InpFimHora = 17;
 input int InpFimMinuto = 0;
 input ENUM_CONSTRUTOR_SIM_NAO InpZerarPosicoes = CONSTRUTOR_NAO;
 input string InpHorarioZeragem = "17:30";
+input ENUM_CONSTRUTOR_TEMPO_GRAFICO InpTempoGrafico = CONSTRUTOR_CORRENTE;
+input double InpVolumeInicial = 1.0;
+input int InpSpreadMaximo = 10;
 
 CConstrutorDialog ExtDialog;
 SConstrutorSettings g_settings;
@@ -32,6 +35,9 @@ void LoadInputsToSettings(void)
    g_settings.fim_minuto          =InpFimMinuto;
    g_settings.zerar_posicoes      =InpZerarPosicoes;
    g_settings.horario_zeragem     =InpHorarioZeragem;
+   g_settings.tempo_grafico       =InpTempoGrafico;
+   g_settings.volume_inicial      =InpVolumeInicial;
+   g_settings.spread_maximo       =InpSpreadMaximo;
   }
 
 int OnInit()
