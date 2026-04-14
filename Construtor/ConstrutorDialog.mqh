@@ -201,6 +201,8 @@ private:
    CPanel            m_tab4_card_calc_ref_card;
    CCheckBox         m_tab4_card_calc_ref_outer_check;
    CCheckBox         m_tab4_card_calc_ref_check;
+   CPanel            m_tab4_card_calc_ref_inner_left;
+   CPanel            m_tab4_card_calc_ref_inner;
    CLabel            m_tab4_card_calc_ref_base_label;
    CComboBox         m_tab4_card_calc_ref_base_combo;
    CLabel            m_tab4_card_calc_ref_candle_label;
@@ -1013,6 +1015,22 @@ bool CConstrutorDialog::CreateTab4(void)
       return(false);
 
    if(!m_tab4_page.Add(m_tab4_card_calc_inner))
+      return(false);
+
+   if(!m_tab4_card_calc_ref_inner_left.Create(m_chart_id,"ConstrutorTab4CardCalcRefInnerLeft",m_subwin,464,191,576,370))
+      return(false);
+   m_tab4_card_calc_ref_inner_left.ColorBackground(clrNONE);
+   m_tab4_card_calc_ref_inner_left.ColorBorder(C'197,168,136');
+   m_tab4_card_calc_ref_inner_left.BorderType(BORDER_FLAT);
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_inner_left))
+      return(false);
+
+   if(!m_tab4_card_calc_ref_inner.Create(m_chart_id,"ConstrutorTab4CardCalcRefInner",m_subwin,577,191,696,370))
+      return(false);
+   m_tab4_card_calc_ref_inner.ColorBackground(clrNONE);
+   m_tab4_card_calc_ref_inner.ColorBorder(C'197,168,136');
+   m_tab4_card_calc_ref_inner.BorderType(BORDER_FLAT);
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_inner))
       return(false);
 
    if(!m_tab4_card_calc_ref_check.Create(m_chart_id,"ConstrutorTab4CardCalcRefCheck",m_subwin,336,204,435,224))
