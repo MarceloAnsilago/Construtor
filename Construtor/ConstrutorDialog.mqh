@@ -817,7 +817,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_type_combo))
       return(false);
 
-   if(!m_tab4_card_fixed.Create(m_chart_id,"ConstrutorTab4CardFixed",m_subwin,0,108,348,399))
+   if(!m_tab4_card_fixed.Create(m_chart_id,"ConstrutorTab4CardFixed",m_subwin,8,108,348,391))
       return(false);
    m_tab4_card_fixed.ColorBackground(C'233,220,203');
    m_tab4_card_fixed.ColorBorder(C'197,168,136');
@@ -857,7 +857,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_fixed_dist_edit))
       return(false);
 
-   if(!m_tab4_card_calc.Create(m_chart_id,"ConstrutorTab4CardCalc",m_subwin,376,108,724,399))
+   if(!m_tab4_card_calc.Create(m_chart_id,"ConstrutorTab4CardCalc",m_subwin,360,108,708,391))
       return(false);
    m_tab4_card_calc.ColorBackground(C'233,220,203');
    m_tab4_card_calc.ColorBorder(C'197,168,136');
@@ -865,7 +865,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc))
       return(false);
 
-   if(!m_tab4_card_calc_title.Create(m_chart_id,"ConstrutorTab4CardCalcTitle",m_subwin,396,120,0,0))
+   if(!m_tab4_card_calc_title.Create(m_chart_id,"ConstrutorTab4CardCalcTitle",m_subwin,380,120,0,0))
       return(false);
    m_tab4_card_calc_title.Text("Calculo");
    m_tab4_card_calc_title.FontSize(12);
@@ -873,7 +873,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_title))
       return(false);
 
-   if(!m_tab4_card_calc_mode_card.Create(m_chart_id,"ConstrutorTab4CardCalcModeCard",m_subwin,386,152,532,380))
+   if(!m_tab4_card_calc_mode_card.Create(m_chart_id,"ConstrutorTab4CardCalcModeCard",m_subwin,370,152,516,380))
       return(false);
    m_tab4_card_calc_mode_card.ColorBackground(C'233,220,203');
    m_tab4_card_calc_mode_card.ColorBorder(C'197,168,136');
@@ -881,7 +881,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_mode_card))
       return(false);
 
-   if(!m_tab4_card_calc_mode_title.Create(m_chart_id,"ConstrutorTab4CardCalcModeTitle",m_subwin,400,170,0,0))
+   if(!m_tab4_card_calc_mode_title.Create(m_chart_id,"ConstrutorTab4CardCalcModeTitle",m_subwin,384,170,0,0))
       return(false);
    m_tab4_card_calc_mode_title.Text("Calculo automatico");
    m_tab4_card_calc_mode_title.FontSize(12);
@@ -889,7 +889,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_mode_title))
       return(false);
 
-   if(!m_tab4_card_calc_check.Create(m_chart_id,"ConstrutorTab4CardCalcCheck",m_subwin,400,204,530,232))
+   if(!m_tab4_card_calc_check.Create(m_chart_id,"ConstrutorTab4CardCalcCheck",m_subwin,384,204,514,232))
       return(false);
    m_tab4_card_calc_check.Text("Calculo");
    m_tab4_card_calc_check.Color(C'91,78,64');
@@ -898,7 +898,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_check))
       return(false);
 
-   if(!m_tab4_card_calc_ref_card.Create(m_chart_id,"ConstrutorTab4CardCalcRefCard",m_subwin,536,152,714,380))
+   if(!m_tab4_card_calc_ref_card.Create(m_chart_id,"ConstrutorTab4CardCalcRefCard",m_subwin,520,152,698,380))
       return(false);
    m_tab4_card_calc_ref_card.ColorBackground(C'233,220,203');
    m_tab4_card_calc_ref_card.ColorBorder(C'197,168,136');
@@ -906,7 +906,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_ref_card))
       return(false);
 
-   if(!m_tab4_card_calc_ref_title.Create(m_chart_id,"ConstrutorTab4CardCalcRefTitle",m_subwin,550,170,0,0))
+   if(!m_tab4_card_calc_ref_title.Create(m_chart_id,"ConstrutorTab4CardCalcRefTitle",m_subwin,534,170,0,0))
       return(false);
    m_tab4_card_calc_ref_title.Text("Referencia de preco");
    m_tab4_card_calc_ref_title.FontSize(12);
@@ -914,7 +914,7 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_ref_title))
       return(false);
 
-   if(!m_tab4_card_calc_ref_check.Create(m_chart_id,"ConstrutorTab4CardCalcRefCheck",m_subwin,550,204,702,232))
+   if(!m_tab4_card_calc_ref_check.Create(m_chart_id,"ConstrutorTab4CardCalcRefCheck",m_subwin,534,204,686,232))
       return(false);
    m_tab4_card_calc_ref_check.Text("Referencia de preco");
    m_tab4_card_calc_ref_check.Color(C'91,78,64');
