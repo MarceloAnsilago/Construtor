@@ -115,6 +115,8 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo_media;
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo_multiplicar;
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo_referencia;
+   ENUM_CONSTRUTOR_SIM_NAO      stop_movel;
+   ENUM_CONSTRUTOR_TIPO_STOP_LOSS tipo_stop_movel;
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
@@ -145,6 +147,7 @@ private:
    CWndContainer     m_tab2_page;
    CWndContainer     m_tab3_page;
    CWndContainer     m_tab4_page;
+   CWndContainer     m_tab5_page;
    CPanel            m_tab1_card_left;
    CPanel            m_tab1_card_right;
    CLabel            m_tab1_card_left_title;
@@ -222,6 +225,12 @@ private:
    CComboBox         m_tab4_card_calc_ref_ref_combo;
    CLabel            m_tab4_card_calc_ref_pos_label;
    CComboBox         m_tab4_card_calc_ref_pos_combo;
+   CPanel            m_tab5_card;
+   CLabel            m_tab5_card_title;
+   CLabel            m_tab5_use_label;
+   CComboBox         m_tab5_use_combo;
+   CLabel            m_tab5_type_label;
+   CComboBox         m_tab5_type_combo;
    int               m_active_tab;
    string            m_tab_titles[TAB_COUNT];
    string            m_tab_notes[TAB_COUNT];
@@ -246,11 +255,13 @@ private:
    bool              CreateTab2(void);
    bool              CreateTab3(void);
    bool              CreateTab4(void);
+   bool              CreateTab5(void);
    bool              CreateExecuteButton(void);
    void              SetTab1Visible(const bool visible);
    void              SetTab2Visible(const bool visible);
    void              SetTab3Visible(const bool visible);
    void              SetTab4Visible(const bool visible);
+   void              SetTab5Visible(const bool visible);
    void              SyncTab4Visibility(void);
    void              SelectTab(const int index);
    void              UpdateTabVisuals(void);
@@ -351,6 +362,8 @@ bool CConstrutorDialog::CreateLayout(void)
    if(!CreateTab3())
       return(false);
    if(!CreateTab4())
+      return(false);
+   if(!CreateTab5())
       return(false);
    if(!CreateExecuteButton())
       return(false);
@@ -1124,6 +1137,65 @@ bool CConstrutorDialog::CreateTab4(void)
    return(true);
   }
 
+bool CConstrutorDialog::CreateTab5(void)
+  {
+   if(!m_tab5_page.Create(m_chart_id,"ConstrutorTab5Page",m_subwin,256,145,992,544))
+      return(false);
+   if(!Add(m_tab5_page))
+      return(false);
+
+   if(!m_tab5_card.Create(m_chart_id,"ConstrutorTab5Card",m_subwin,0,0,716,399))
+      return(false);
+   m_tab5_card.ColorBackground(C'233,220,203');
+   m_tab5_card.ColorBorder(C'197,168,136');
+   m_tab5_card.BorderType(BORDER_FLAT);
+   if(!m_tab5_page.Add(m_tab5_card))
+      return(false);
+
+   if(!m_tab5_card_title.Create(m_chart_id,"ConstrutorTab5CardTitle",m_subwin,20,17,0,0))
+      return(false);
+   m_tab5_card_title.Text("Stop movel");
+   m_tab5_card_title.FontSize(12);
+   m_tab5_card_title.Color(C'43,43,43');
+   if(!m_tab5_page.Add(m_tab5_card_title))
+      return(false);
+
+   if(!m_tab5_use_label.Create(m_chart_id,"ConstrutorTab5UseLabel",m_subwin,20,57,0,0))
+      return(false);
+   m_tab5_use_label.Text("Usar stop movel");
+   m_tab5_use_label.FontSize(10);
+   m_tab5_use_label.Color(C'91,78,64');
+   if(!m_tab5_page.Add(m_tab5_use_label))
+      return(false);
+
+   if(!m_tab5_use_combo.Create(m_chart_id,"ConstrutorTab5UseCombo",m_subwin,20,79,316,103))
+      return(false);
+   m_tab5_use_combo.AddItem("Nao",CONSTRUTOR_NAO);
+   m_tab5_use_combo.AddItem("Sim",CONSTRUTOR_SIM);
+   m_tab5_use_combo.Select(0);
+   if(!m_tab5_page.Add(m_tab5_use_combo))
+      return(false);
+
+   if(!m_tab5_type_label.Create(m_chart_id,"ConstrutorTab5TypeLabel",m_subwin,396,57,0,0))
+      return(false);
+   m_tab5_type_label.Text("Tipo de stop");
+   m_tab5_type_label.FontSize(10);
+   m_tab5_type_label.Color(C'91,78,64');
+   if(!m_tab5_page.Add(m_tab5_type_label))
+      return(false);
+
+   if(!m_tab5_type_combo.Create(m_chart_id,"ConstrutorTab5TypeCombo",m_subwin,396,79,700,103))
+      return(false);
+   m_tab5_type_combo.AddItem("Pontos",CONSTRUTOR_STOP_PONTOS);
+   m_tab5_type_combo.AddItem("Percentual",CONSTRUTOR_STOP_PERCENTUAL);
+   m_tab5_type_combo.Select(0);
+   if(!m_tab5_page.Add(m_tab5_type_combo))
+      return(false);
+
+   SetTab5Visible(false);
+   return(true);
+  }
+
 bool CConstrutorDialog::CreateExecuteButton(void)
   {
    if(!m_execute_button.Create(m_chart_id,"ConstrutorExecuteButton",m_subwin,816,610,964,636))
@@ -1171,6 +1243,14 @@ void CConstrutorDialog::SetTab4Visible(const bool visible)
       m_tab4_page.Hide();
   }
 
+void CConstrutorDialog::SetTab5Visible(const bool visible)
+  {
+   if(visible)
+      m_tab5_page.Show();
+   else
+      m_tab5_page.Hide();
+  }
+
 void CConstrutorDialog::SyncTab4Visibility(void)
   {
    const bool tab4_visible=(m_active_tab==3);
@@ -1189,6 +1269,7 @@ void CConstrutorDialog::SelectTab(const int index)
    SetTab2Visible(index==1);
    SetTab3Visible(index==2);
    SetTab4Visible(index==3);
+   SetTab5Visible(index==4);
    UpdateTabVisuals();
    ChartRedraw();
   }
@@ -1223,6 +1304,8 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab4_card_calc_ref_qtd_spin.Value(m_settings.stop_calculo_multiplicar_qtd);
    m_tab4_card_calc_ref_ref_combo.SelectByValue((long)m_settings.stop_calculo_referencia_base);
    m_tab4_card_calc_ref_pos_combo.SelectByValue((long)m_settings.stop_calculo_referencia_posicao);
+   m_tab5_use_combo.SelectByValue((long)m_settings.stop_movel);
+   m_tab5_type_combo.SelectByValue((long)m_settings.tipo_stop_movel);
     m_tab4_updating_checks=true;
      if(m_settings.stop_fixo==CONSTRUTOR_SIM)
        {
@@ -1316,6 +1399,8 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.stop_calculo_multiplicar_qtd=m_tab4_card_calc_ref_qtd_spin.Value();
    m_settings.stop_calculo_referencia_base=(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab4_card_calc_ref_ref_combo.Value();
    m_settings.stop_calculo_referencia_posicao=(ENUM_CONSTRUTOR_POSICAO_REFERENCIA)m_tab4_card_calc_ref_pos_combo.Value();
+   m_settings.stop_movel=(ENUM_CONSTRUTOR_SIM_NAO)m_tab5_use_combo.Value();
+   m_settings.tipo_stop_movel=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab5_type_combo.Value();
    m_settings.stop_fixo_distancia=StringToDouble(m_tab4_card_fixed_dist_edit.Text());
   }
 
