@@ -12,6 +12,7 @@
 #include <Controls\Edit.mqh>
 #include <Controls\ComboBox.mqh>
 #include <Controls\CheckBox.mqh>
+#include <Controls\SpinEdit.mqh>
 
 enum ENUM_CONSTRUTOR_MERCADO
   {
@@ -68,6 +69,14 @@ enum ENUM_CONSTRUTOR_TIPO_STOP_LOSS
    CONSTRUTOR_STOP_PERCENTUAL=1
   };
 
+enum ENUM_CONSTRUTOR_BASE_MEDIA
+  {
+   CONSTRUTOR_MEDIA_MAXIMA=0,
+   CONSTRUTOR_MEDIA_MINIMA=1,
+   CONSTRUTOR_MEDIA_ABERTURA=2,
+   CONSTRUTOR_MEDIA_FECHAMENTO=3
+  };
+
 struct SConstrutorSettings
   {
    string                       estrategia_nome;
@@ -91,6 +100,8 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo;
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo_media;
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo_multiplicar;
+   int                          stop_calculo_media_qtd_candles;
+   ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    double                       stop_fixo_distancia;
   };
 
@@ -173,6 +184,10 @@ private:
    CPanel            m_tab4_card_calc_mode_card;
    CCheckBox         m_tab4_card_calc_mode_outer_check;
    CCheckBox         m_tab4_card_calc_mode_check;
+   CLabel            m_tab4_card_calc_mode_qty_label;
+   CSpinEdit         m_tab4_card_calc_mode_qty_spin;
+   CLabel            m_tab4_card_calc_mode_base_label;
+   CComboBox         m_tab4_card_calc_mode_base_combo;
    CCheckBox         m_tab4_card_calc_check;
    CPanel            m_tab4_card_calc_ref_card;
    CCheckBox         m_tab4_card_calc_ref_outer_check;
@@ -950,6 +965,38 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_mode_check))
       return(false);
 
+   if(!m_tab4_card_calc_mode_qty_label.Create(m_chart_id,"ConstrutorTab4CardCalcModeQtyLabel",m_subwin,223,232,318,248))
+      return(false);
+   m_tab4_card_calc_mode_qty_label.Text("Qtd candles");
+   m_tab4_card_calc_mode_qty_label.Color(C'91,78,64');
+   if(!m_tab4_page.Add(m_tab4_card_calc_mode_qty_label))
+      return(false);
+
+   if(!m_tab4_card_calc_mode_qty_spin.Create(m_chart_id,"ConstrutorTab4CardCalcModeQtySpin",m_subwin,223,250,311,270))
+      return(false);
+   m_tab4_card_calc_mode_qty_spin.MinValue(1);
+   m_tab4_card_calc_mode_qty_spin.MaxValue(999);
+   m_tab4_card_calc_mode_qty_spin.Value(3);
+   if(!m_tab4_page.Add(m_tab4_card_calc_mode_qty_spin))
+      return(false);
+
+   if(!m_tab4_card_calc_mode_base_label.Create(m_chart_id,"ConstrutorTab4CardCalcModeBaseLabel",m_subwin,223,278,311,294))
+      return(false);
+   m_tab4_card_calc_mode_base_label.Text("Base");
+   m_tab4_card_calc_mode_base_label.Color(C'91,78,64');
+   if(!m_tab4_page.Add(m_tab4_card_calc_mode_base_label))
+      return(false);
+
+   if(!m_tab4_card_calc_mode_base_combo.Create(m_chart_id,"ConstrutorTab4CardCalcModeBaseCombo",m_subwin,223,296,311,320))
+      return(false);
+   m_tab4_card_calc_mode_base_combo.AddItem("Maxima",CONSTRUTOR_MEDIA_MAXIMA);
+   m_tab4_card_calc_mode_base_combo.AddItem("Minima",CONSTRUTOR_MEDIA_MINIMA);
+   m_tab4_card_calc_mode_base_combo.AddItem("Abertura",CONSTRUTOR_MEDIA_ABERTURA);
+   m_tab4_card_calc_mode_base_combo.AddItem("Fechamento",CONSTRUTOR_MEDIA_FECHAMENTO);
+   m_tab4_card_calc_mode_base_combo.SelectByValue(CONSTRUTOR_MEDIA_MAXIMA);
+   if(!m_tab4_page.Add(m_tab4_card_calc_mode_base_combo))
+      return(false);
+
    if(!m_tab4_page.Add(m_tab4_card_calc_inner))
       return(false);
 
@@ -1058,6 +1105,8 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab3_spread_edit.Text((string)m_settings.spread_maximo);
    m_tab4_use_combo.SelectByValue((long)m_settings.usar_stop_loss);
    m_tab4_type_combo.SelectByValue((long)m_settings.tipo_stop_loss);
+   m_tab4_card_calc_mode_qty_spin.Value(m_settings.stop_calculo_media_qtd_candles);
+   m_tab4_card_calc_mode_base_combo.SelectByValue((long)m_settings.stop_calculo_media_base);
     m_tab4_updating_checks=true;
      if(m_settings.stop_fixo==CONSTRUTOR_SIM)
        {
@@ -1131,9 +1180,11 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.usar_stop_loss     =(ENUM_CONSTRUTOR_SIM_NAO)m_tab4_use_combo.Value();
    m_settings.tipo_stop_loss     =(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab4_type_combo.Value();
     m_settings.stop_fixo          =m_tab4_card_fixed_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
-    m_settings.stop_calculo       =((m_tab4_card_calc_check.Checked() || m_tab4_card_calc_mode_check.Checked() || m_tab4_card_calc_ref_check.Checked()) ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
-    m_settings.stop_calculo_media =m_tab4_card_calc_mode_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
-    m_settings.stop_calculo_multiplicar=m_tab4_card_calc_ref_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
+   m_settings.stop_calculo       =((m_tab4_card_calc_check.Checked() || m_tab4_card_calc_mode_check.Checked() || m_tab4_card_calc_ref_check.Checked()) ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
+   m_settings.stop_calculo_media =m_tab4_card_calc_mode_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
+   m_settings.stop_calculo_multiplicar=m_tab4_card_calc_ref_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
+   m_settings.stop_calculo_media_qtd_candles=m_tab4_card_calc_mode_qty_spin.Value();
+   m_settings.stop_calculo_media_base =(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab4_card_calc_mode_base_combo.Value();
    m_settings.stop_fixo_distancia=StringToDouble(m_tab4_card_fixed_dist_edit.Text());
   }
 
