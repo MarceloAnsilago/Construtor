@@ -125,6 +125,8 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO      stop_movel;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS tipo_stop_movel;
    ENUM_CONSTRUTOR_STOP_MOVEL_MODO stop_movel_modo;
+   int                          stop_movel_padrao_adicionar_favor;
+   int                          stop_movel_padrao_passo;
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
@@ -241,6 +243,10 @@ private:
    CComboBox         m_tab5_type_combo;
    CPanel            m_tab5_card_padrao;
    CCheckBox         m_tab5_card_padrao_check;
+   CLabel            m_tab5_card_padrao_add_label;
+   CSpinEdit         m_tab5_card_padrao_add_spin;
+   CLabel            m_tab5_card_padrao_pass_label;
+   CSpinEdit         m_tab5_card_padrao_pass_spin;
    CPanel            m_tab5_card_candles;
    CCheckBox         m_tab5_card_candles_check;
    CPanel            m_tab5_card_indicador;
@@ -309,7 +315,7 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_tab5_card_indicador_check,OnTab5IndicadorChange)
 EVENT_MAP_END(CAppDialog)
 
-CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false), m_tab4_updating_checks(false)
+CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false), m_tab4_updating_checks(false), m_tab5_updating_checks(false)
   {
    InitTabData();
   }
@@ -1231,6 +1237,38 @@ bool CConstrutorDialog::CreateTab5(void)
    if(!m_tab5_page.Add(m_tab5_card_padrao_check))
       return(false);
 
+   if(!m_tab5_card_padrao_add_label.Create(m_chart_id,"ConstrutorTab5CardPadraoAddLabel",m_subwin,34,176,214,192))
+      return(false);
+   m_tab5_card_padrao_add_label.Text("Adicionar a favor");
+   m_tab5_card_padrao_add_label.Color(C'91,78,64');
+   if(!m_tab5_page.Add(m_tab5_card_padrao_add_label))
+      return(false);
+
+   if(!m_tab5_card_padrao_add_spin.Create(m_chart_id,"ConstrutorTab5CardPadraoAddSpin",m_subwin,34,194,180,214))
+      return(false);
+   m_tab5_card_padrao_add_spin.MinValue(0);
+   m_tab5_card_padrao_add_spin.MaxValue(999);
+   m_tab5_card_padrao_add_spin.StepValue(1);
+   m_tab5_card_padrao_add_spin.Value(0);
+   if(!m_tab5_page.Add(m_tab5_card_padrao_add_spin))
+      return(false);
+
+   if(!m_tab5_card_padrao_pass_label.Create(m_chart_id,"ConstrutorTab5CardPadraoPassLabel",m_subwin,34,224,214,240))
+      return(false);
+   m_tab5_card_padrao_pass_label.Text("Passo");
+   m_tab5_card_padrao_pass_label.Color(C'91,78,64');
+   if(!m_tab5_page.Add(m_tab5_card_padrao_pass_label))
+      return(false);
+
+   if(!m_tab5_card_padrao_pass_spin.Create(m_chart_id,"ConstrutorTab5CardPadraoPassSpin",m_subwin,34,242,180,262))
+      return(false);
+   m_tab5_card_padrao_pass_spin.MinValue(0);
+   m_tab5_card_padrao_pass_spin.MaxValue(999);
+   m_tab5_card_padrao_pass_spin.StepValue(1);
+   m_tab5_card_padrao_pass_spin.Value(0);
+   if(!m_tab5_page.Add(m_tab5_card_padrao_pass_spin))
+      return(false);
+
    if(!m_tab5_card_candles.Create(m_chart_id,"ConstrutorTab5CardCandles",m_subwin,253,124,463,362))
       return(false);
    m_tab5_card_candles.ColorBackground(clrNONE);
@@ -1381,6 +1419,8 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab4_card_calc_ref_pos_combo.SelectByValue((long)m_settings.stop_calculo_referencia_posicao);
    m_tab5_use_combo.SelectByValue((long)m_settings.stop_movel);
    m_tab5_type_combo.SelectByValue((long)m_settings.tipo_stop_movel);
+   m_tab5_card_padrao_add_spin.Value(m_settings.stop_movel_padrao_adicionar_favor);
+   m_tab5_card_padrao_pass_spin.Value(m_settings.stop_movel_padrao_passo);
    m_tab5_updating_checks=true;
    m_tab5_card_padrao_check.Checked(false);
    m_tab5_card_candles_check.Checked(false);
@@ -1487,6 +1527,8 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.stop_calculo_referencia_posicao=(ENUM_CONSTRUTOR_POSICAO_REFERENCIA)m_tab4_card_calc_ref_pos_combo.Value();
    m_settings.stop_movel=(ENUM_CONSTRUTOR_SIM_NAO)m_tab5_use_combo.Value();
    m_settings.tipo_stop_movel=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab5_type_combo.Value();
+   m_settings.stop_movel_padrao_adicionar_favor=(int)m_tab5_card_padrao_add_spin.Value();
+   m_settings.stop_movel_padrao_passo=(int)m_tab5_card_padrao_pass_spin.Value();
    if(m_tab5_card_candles_check.Checked())
       m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_CANDLES;
    else if(m_tab5_card_indicador_check.Checked())

@@ -27,6 +27,8 @@ input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoReferencia = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpStopMovel = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_TIPO_STOP_LOSS InpTipoStopMovel = CONSTRUTOR_STOP_PONTOS;
 input ENUM_CONSTRUTOR_STOP_MOVEL_MODO InpStopMovelModo = CONSTRUTOR_STOP_MOVEL_PADRAO;
+input int InpStopMovelPadraoAdicionarFavor = 0;
+input int InpStopMovelPadraoPasso = 0;
 input int InpStopCalculoMediaQtdCandles = 3;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopCalculoMediaBase = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_BASE_MULTIPLICAR InpStopCalculoMultiplicarBase = CONSTRUTOR_MULTIPLICAR_CORPO;
@@ -66,6 +68,8 @@ void LoadInputsToSettings(void)
    g_settings.stop_movel          =InpStopMovel;
    g_settings.tipo_stop_movel     =InpTipoStopMovel;
    g_settings.stop_movel_modo     =InpStopMovelModo;
+   g_settings.stop_movel_padrao_adicionar_favor=InpStopMovelPadraoAdicionarFavor;
+   g_settings.stop_movel_padrao_passo=InpStopMovelPadraoPasso;
    g_settings.stop_calculo_media_qtd_candles=InpStopCalculoMediaQtdCandles;
    g_settings.stop_calculo_media_base=InpStopCalculoMediaBase;
    g_settings.stop_calculo_multiplicar_base=InpStopCalculoMultiplicarBase;
