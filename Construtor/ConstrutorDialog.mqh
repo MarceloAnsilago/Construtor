@@ -118,7 +118,7 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
    int                          stop_calculo_multiplicar_candle;
-   int                          stop_calculo_multiplicar_qtd;
+   double                       stop_calculo_multiplicar_qtd;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_referencia_base;
    ENUM_CONSTRUTOR_POSICAO_REFERENCIA stop_calculo_referencia_posicao;
    double                       stop_fixo_distancia;
@@ -211,8 +211,6 @@ private:
    CPanel            m_tab4_card_calc_ref_card;
    CCheckBox         m_tab4_card_calc_ref_outer_check;
    CCheckBox         m_tab4_card_calc_ref_check;
-   CPanel            m_tab4_card_calc_ref_inner_left;
-   CPanel            m_tab4_card_calc_ref_inner;
    CLabel            m_tab4_card_calc_ref_base_label;
    CComboBox         m_tab4_card_calc_ref_base_combo;
    CLabel            m_tab4_card_calc_ref_candle_label;
@@ -1113,9 +1111,11 @@ bool CConstrutorDialog::CreateTab4(void)
 
    if(!m_tab4_card_calc_ref_qtd_spin.Create(m_chart_id,"ConstrutorTab4CardCalcRefQtdSpin",m_subwin,336,343,405,363))
       return(false);
-   m_tab4_card_calc_ref_qtd_spin.MinValue(1);
-   m_tab4_card_calc_ref_qtd_spin.MaxValue(999);
-   m_tab4_card_calc_ref_qtd_spin.Value(1);
+   m_tab4_card_calc_ref_qtd_spin.MinValue(0.5);
+   m_tab4_card_calc_ref_qtd_spin.MaxValue(999.0);
+   m_tab4_card_calc_ref_qtd_spin.StepValue(0.5);
+   m_tab4_card_calc_ref_qtd_spin.Precision(1);
+   m_tab4_card_calc_ref_qtd_spin.Value(1.0);
    if(!m_tab4_page.Add(m_tab4_card_calc_ref_qtd_spin))
       return(false);
 
@@ -1298,10 +1298,10 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.stop_calculo       =((m_tab4_card_calc_check.Checked() || m_tab4_card_calc_mode_check.Checked() || m_tab4_card_calc_ref_check.Checked()) ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
    m_settings.stop_calculo_media =m_tab4_card_calc_mode_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
    m_settings.stop_calculo_multiplicar=m_tab4_card_calc_ref_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
-   m_settings.stop_calculo_media_qtd_candles=m_tab4_card_calc_mode_qty_spin.Value();
+   m_settings.stop_calculo_media_qtd_candles=(int)m_tab4_card_calc_mode_qty_spin.Value();
    m_settings.stop_calculo_media_base =(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab4_card_calc_mode_base_combo.Value();
    m_settings.stop_calculo_multiplicar_base=(ENUM_CONSTRUTOR_BASE_MULTIPLICAR)m_tab4_card_calc_ref_base_combo.Value();
-   m_settings.stop_calculo_multiplicar_candle=m_tab4_card_calc_ref_candle_spin.Value();
+   m_settings.stop_calculo_multiplicar_candle=(int)m_tab4_card_calc_ref_candle_spin.Value();
    m_settings.stop_calculo_multiplicar_qtd=m_tab4_card_calc_ref_qtd_spin.Value();
    m_settings.stop_calculo_referencia_base=(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab4_card_calc_ref_ref_combo.Value();
    m_settings.stop_calculo_referencia_posicao=(ENUM_CONSTRUTOR_POSICAO_REFERENCIA)m_tab4_card_calc_ref_pos_combo.Value();
