@@ -21,7 +21,8 @@ input ENUM_CONSTRUTOR_SIM_NAO InpUsarStopLoss = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_TIPO_STOP_LOSS InpTipoStopLoss = CONSTRUTOR_STOP_PONTOS;
 input ENUM_CONSTRUTOR_SIM_NAO InpStopFixo = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculo = CONSTRUTOR_NAO;
-input ENUM_CONSTRUTOR_SIM_NAO InpStopReferenciaPreco = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoMedia = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoMultiplicar = CONSTRUTOR_NAO;
 input double InpStopFixoDistancia = 100.0;
 
 CConstrutorDialog ExtDialog;
@@ -48,7 +49,8 @@ void LoadInputsToSettings(void)
    g_settings.tipo_stop_loss      =InpTipoStopLoss;
    g_settings.stop_fixo           =InpStopFixo;
    g_settings.stop_calculo        =InpStopCalculo;
-   g_settings.stop_referencia_preco=InpStopReferenciaPreco;
+   g_settings.stop_calculo_media  =InpStopCalculoMedia;
+   g_settings.stop_calculo_multiplicar=InpStopCalculoMultiplicar;
    g_settings.stop_fixo_distancia  =InpStopFixoDistancia;
   }
 
