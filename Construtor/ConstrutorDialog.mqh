@@ -77,6 +77,12 @@ enum ENUM_CONSTRUTOR_BASE_MEDIA
    CONSTRUTOR_MEDIA_FECHAMENTO=3
   };
 
+enum ENUM_CONSTRUTOR_BASE_MULTIPLICAR
+  {
+   CONSTRUTOR_MULTIPLICAR_CORPO=0,
+   CONSTRUTOR_MULTIPLICAR_PAVIOS=1
+  };
+
 struct SConstrutorSettings
   {
    string                       estrategia_nome;
@@ -102,6 +108,9 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO      stop_calculo_multiplicar;
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
+   ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
+   int                          stop_calculo_multiplicar_candle;
+   int                          stop_calculo_multiplicar_qtd;
    double                       stop_fixo_distancia;
   };
 
@@ -192,6 +201,12 @@ private:
    CPanel            m_tab4_card_calc_ref_card;
    CCheckBox         m_tab4_card_calc_ref_outer_check;
    CCheckBox         m_tab4_card_calc_ref_check;
+   CLabel            m_tab4_card_calc_ref_base_label;
+   CComboBox         m_tab4_card_calc_ref_base_combo;
+   CLabel            m_tab4_card_calc_ref_candle_label;
+   CSpinEdit         m_tab4_card_calc_ref_candle_spin;
+   CLabel            m_tab4_card_calc_ref_qtd_label;
+   CSpinEdit         m_tab4_card_calc_ref_qtd_spin;
    int               m_active_tab;
    string            m_tab_titles[TAB_COUNT];
    string            m_tab_notes[TAB_COUNT];
@@ -1009,6 +1024,51 @@ bool CConstrutorDialog::CreateTab4(void)
    if(!m_tab4_page.Add(m_tab4_card_calc_ref_check))
       return(false);
 
+   if(!m_tab4_card_calc_ref_base_label.Create(m_chart_id,"ConstrutorTab4CardCalcRefBaseLabel",m_subwin,336,232,435,248))
+      return(false);
+   m_tab4_card_calc_ref_base_label.Text("Base");
+   m_tab4_card_calc_ref_base_label.Color(C'91,78,64');
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_base_label))
+      return(false);
+
+   if(!m_tab4_card_calc_ref_base_combo.Create(m_chart_id,"ConstrutorTab4CardCalcRefBaseCombo",m_subwin,336,250,435,274))
+      return(false);
+   m_tab4_card_calc_ref_base_combo.AddItem("Corpo",CONSTRUTOR_MULTIPLICAR_CORPO);
+   m_tab4_card_calc_ref_base_combo.AddItem("Pavios",CONSTRUTOR_MULTIPLICAR_PAVIOS);
+   m_tab4_card_calc_ref_base_combo.SelectByValue(CONSTRUTOR_MULTIPLICAR_CORPO);
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_base_combo))
+      return(false);
+
+   if(!m_tab4_card_calc_ref_candle_label.Create(m_chart_id,"ConstrutorTab4CardCalcRefCandleLabel",m_subwin,336,280,435,296))
+      return(false);
+   m_tab4_card_calc_ref_candle_label.Text("Candle");
+   m_tab4_card_calc_ref_candle_label.Color(C'91,78,64');
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_candle_label))
+      return(false);
+
+   if(!m_tab4_card_calc_ref_candle_spin.Create(m_chart_id,"ConstrutorTab4CardCalcRefCandleSpin",m_subwin,336,298,405,318))
+      return(false);
+   m_tab4_card_calc_ref_candle_spin.MinValue(1);
+   m_tab4_card_calc_ref_candle_spin.MaxValue(999);
+   m_tab4_card_calc_ref_candle_spin.Value(3);
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_candle_spin))
+      return(false);
+
+   if(!m_tab4_card_calc_ref_qtd_label.Create(m_chart_id,"ConstrutorTab4CardCalcRefQtdLabel",m_subwin,336,325,435,341))
+      return(false);
+   m_tab4_card_calc_ref_qtd_label.Text("Multiplicar");
+   m_tab4_card_calc_ref_qtd_label.Color(C'91,78,64');
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_qtd_label))
+      return(false);
+
+   if(!m_tab4_card_calc_ref_qtd_spin.Create(m_chart_id,"ConstrutorTab4CardCalcRefQtdSpin",m_subwin,336,343,405,363))
+      return(false);
+   m_tab4_card_calc_ref_qtd_spin.MinValue(1);
+   m_tab4_card_calc_ref_qtd_spin.MaxValue(999);
+   m_tab4_card_calc_ref_qtd_spin.Value(1);
+   if(!m_tab4_page.Add(m_tab4_card_calc_ref_qtd_spin))
+      return(false);
+
    SetTab4Visible(false);
    return(true);
   }
@@ -1107,6 +1167,9 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab4_type_combo.SelectByValue((long)m_settings.tipo_stop_loss);
    m_tab4_card_calc_mode_qty_spin.Value(m_settings.stop_calculo_media_qtd_candles);
    m_tab4_card_calc_mode_base_combo.SelectByValue((long)m_settings.stop_calculo_media_base);
+   m_tab4_card_calc_ref_base_combo.SelectByValue((long)m_settings.stop_calculo_multiplicar_base);
+   m_tab4_card_calc_ref_candle_spin.Value(m_settings.stop_calculo_multiplicar_candle);
+   m_tab4_card_calc_ref_qtd_spin.Value(m_settings.stop_calculo_multiplicar_qtd);
     m_tab4_updating_checks=true;
      if(m_settings.stop_fixo==CONSTRUTOR_SIM)
        {
@@ -1185,6 +1248,9 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.stop_calculo_multiplicar=m_tab4_card_calc_ref_check.Checked() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO;
    m_settings.stop_calculo_media_qtd_candles=m_tab4_card_calc_mode_qty_spin.Value();
    m_settings.stop_calculo_media_base =(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab4_card_calc_mode_base_combo.Value();
+   m_settings.stop_calculo_multiplicar_base=(ENUM_CONSTRUTOR_BASE_MULTIPLICAR)m_tab4_card_calc_ref_base_combo.Value();
+   m_settings.stop_calculo_multiplicar_candle=m_tab4_card_calc_ref_candle_spin.Value();
+   m_settings.stop_calculo_multiplicar_qtd=m_tab4_card_calc_ref_qtd_spin.Value();
    m_settings.stop_fixo_distancia=StringToDouble(m_tab4_card_fixed_dist_edit.Text());
   }
 

@@ -25,6 +25,9 @@ input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoMedia = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoMultiplicar = CONSTRUTOR_NAO;
 input int InpStopCalculoMediaQtdCandles = 3;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopCalculoMediaBase = CONSTRUTOR_MEDIA_MAXIMA;
+input ENUM_CONSTRUTOR_BASE_MULTIPLICAR InpStopCalculoMultiplicarBase = CONSTRUTOR_MULTIPLICAR_CORPO;
+input int InpStopCalculoMultiplicarCandle = 3;
+input int InpStopCalculoMultiplicarQtd = 1;
 input double InpStopFixoDistancia = 100.0;
 
 CConstrutorDialog ExtDialog;
@@ -55,6 +58,9 @@ void LoadInputsToSettings(void)
    g_settings.stop_calculo_multiplicar=InpStopCalculoMultiplicar;
    g_settings.stop_calculo_media_qtd_candles=InpStopCalculoMediaQtdCandles;
    g_settings.stop_calculo_media_base=InpStopCalculoMediaBase;
+   g_settings.stop_calculo_multiplicar_base=InpStopCalculoMultiplicarBase;
+   g_settings.stop_calculo_multiplicar_candle=InpStopCalculoMultiplicarCandle;
+   g_settings.stop_calculo_multiplicar_qtd=InpStopCalculoMultiplicarQtd;
    g_settings.stop_fixo_distancia  =InpStopFixoDistancia;
   }
 
