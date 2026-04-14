@@ -134,6 +134,8 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_STOP_MOVEL_CANDLES_MODO stop_movel_candles_modo;
    int                          stop_movel_padrao_adicionar_favor;
    int                          stop_movel_padrao_passo;
+   double                       stop_movel_candles_distancia;
+   ENUM_CONSTRUTOR_BASE_MEDIA   stop_movel_candles_posicao;
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
@@ -258,6 +260,10 @@ private:
    CCheckBox         m_tab5_card_candles_check;
    CPanel            m_tab5_card_candles_inner_left;
    CCheckBox         m_tab5_card_candles_distance_check;
+   CLabel            m_tab5_card_candles_distance_label;
+   CSpinEdit         m_tab5_card_candles_distance_spin;
+   CLabel            m_tab5_card_candles_pos_label;
+   CComboBox         m_tab5_card_candles_pos_combo;
    CPanel            m_tab5_card_candles_inner_right;
    CCheckBox         m_tab5_card_candles_count_check;
    CPanel            m_tab5_card_indicador;
@@ -1320,6 +1326,40 @@ bool CConstrutorDialog::CreateTab5(void)
    if(!m_tab5_page.Add(m_tab5_card_candles_distance_check))
       return(false);
 
+   if(!m_tab5_card_candles_distance_label.Create(m_chart_id,"ConstrutorTab5CardCandlesDistanceLabel",m_subwin,266,208,350,224))
+      return(false);
+   m_tab5_card_candles_distance_label.Text("Distancia");
+   m_tab5_card_candles_distance_label.Color(C'91,78,64');
+   if(!m_tab5_page.Add(m_tab5_card_candles_distance_label))
+      return(false);
+
+   if(!m_tab5_card_candles_distance_spin.Create(m_chart_id,"ConstrutorTab5CardCandlesDistanceSpin",m_subwin,266,226,350,248))
+      return(false);
+   m_tab5_card_candles_distance_spin.MinValue(0.0);
+   m_tab5_card_candles_distance_spin.MaxValue(9999.0);
+   m_tab5_card_candles_distance_spin.StepValue(0.5);
+   m_tab5_card_candles_distance_spin.Precision(1);
+   m_tab5_card_candles_distance_spin.Value(0.0);
+   if(!m_tab5_page.Add(m_tab5_card_candles_distance_spin))
+      return(false);
+
+   if(!m_tab5_card_candles_pos_label.Create(m_chart_id,"ConstrutorTab5CardCandlesPosLabel",m_subwin,266,256,350,272))
+      return(false);
+   m_tab5_card_candles_pos_label.Text("Posicao");
+   m_tab5_card_candles_pos_label.Color(C'91,78,64');
+   if(!m_tab5_page.Add(m_tab5_card_candles_pos_label))
+      return(false);
+
+   if(!m_tab5_card_candles_pos_combo.Create(m_chart_id,"ConstrutorTab5CardCandlesPosCombo",m_subwin,266,276,350,300))
+      return(false);
+   m_tab5_card_candles_pos_combo.AddItem("Maxima",CONSTRUTOR_MEDIA_MAXIMA);
+   m_tab5_card_candles_pos_combo.AddItem("Minima",CONSTRUTOR_MEDIA_MINIMA);
+   m_tab5_card_candles_pos_combo.AddItem("Abertura",CONSTRUTOR_MEDIA_ABERTURA);
+   m_tab5_card_candles_pos_combo.AddItem("Fechamento",CONSTRUTOR_MEDIA_FECHAMENTO);
+   m_tab5_card_candles_pos_combo.SelectByValue(CONSTRUTOR_MEDIA_MAXIMA);
+   if(!m_tab5_page.Add(m_tab5_card_candles_pos_combo))
+      return(false);
+
    if(!m_tab5_card_candles_inner_right.Create(m_chart_id,"ConstrutorTab5CardCandlesInnerRight",m_subwin,362,170,454,354))
       return(false);
    m_tab5_card_candles_inner_right.ColorBackground(clrNONE);
@@ -1472,6 +1512,8 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab5_type_combo.SelectByValue((long)m_settings.tipo_stop_movel);
    m_tab5_card_padrao_add_spin.Value(m_settings.stop_movel_padrao_adicionar_favor);
    m_tab5_card_padrao_pass_spin.Value(m_settings.stop_movel_padrao_passo);
+   m_tab5_card_candles_distance_spin.Value(m_settings.stop_movel_candles_distancia);
+   m_tab5_card_candles_pos_combo.SelectByValue((long)m_settings.stop_movel_candles_posicao);
    m_tab5_updating_checks=true;
    m_tab5_card_padrao_check.Checked(false);
    m_tab5_card_candles_check.Checked(false);
@@ -1589,6 +1631,8 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    m_settings.tipo_stop_movel=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab5_type_combo.Value();
    m_settings.stop_movel_padrao_adicionar_favor=(int)m_tab5_card_padrao_add_spin.Value();
    m_settings.stop_movel_padrao_passo=(int)m_tab5_card_padrao_pass_spin.Value();
+   m_settings.stop_movel_candles_distancia=m_tab5_card_candles_distance_spin.Value();
+   m_settings.stop_movel_candles_posicao=(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab5_card_candles_pos_combo.Value();
    if(m_tab5_card_candles_check.Checked())
       m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_CANDLES;
    else if(m_tab5_card_indicador_check.Checked())
