@@ -17,6 +17,12 @@ input string InpHorarioZeragem = "17:30";
 input ENUM_CONSTRUTOR_TEMPO_GRAFICO InpTempoGrafico = CONSTRUTOR_CORRENTE;
 input double InpVolumeInicial = 1.0;
 input int InpSpreadMaximo = 10;
+input ENUM_CONSTRUTOR_SIM_NAO InpUsarStopLoss = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_TIPO_STOP_LOSS InpTipoStopLoss = CONSTRUTOR_STOP_PONTOS;
+input ENUM_CONSTRUTOR_SIM_NAO InpStopFixo = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculo = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_SIM_NAO InpStopReferenciaPreco = CONSTRUTOR_NAO;
+input double InpStopFixoDistancia = 100.0;
 
 CConstrutorDialog ExtDialog;
 SConstrutorSettings g_settings;
@@ -38,6 +44,12 @@ void LoadInputsToSettings(void)
    g_settings.tempo_grafico       =InpTempoGrafico;
    g_settings.volume_inicial      =InpVolumeInicial;
    g_settings.spread_maximo       =InpSpreadMaximo;
+   g_settings.usar_stop_loss      =InpUsarStopLoss;
+   g_settings.tipo_stop_loss      =InpTipoStopLoss;
+   g_settings.stop_fixo           =InpStopFixo;
+   g_settings.stop_calculo        =InpStopCalculo;
+   g_settings.stop_referencia_preco=InpStopReferenciaPreco;
+   g_settings.stop_fixo_distancia  =InpStopFixoDistancia;
   }
 
 int OnInit()
