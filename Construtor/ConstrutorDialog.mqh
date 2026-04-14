@@ -341,16 +341,16 @@ bool CConstrutorDialog::CreateTab1(void)
 
    if(!m_tab1_card_left.Create(m_chart_id,"ConstrutorTab1CardLeft",m_subwin,0,0,348,399))
       return(false);
-   m_tab1_card_left.ColorBackground(C'247,241,231');
-   m_tab1_card_left.ColorBorder(C'220,207,186');
+   m_tab1_card_left.ColorBackground(C'233,220,203');
+   m_tab1_card_left.ColorBorder(C'197,168,136');
    m_tab1_card_left.BorderType(BORDER_FLAT);
    if(!m_tab1_page.Add(m_tab1_card_left))
       return(false);
 
    if(!m_tab1_card_right.Create(m_chart_id,"ConstrutorTab1CardRight",m_subwin,376,0,724,399))
       return(false);
-   m_tab1_card_right.ColorBackground(C'247,241,231');
-   m_tab1_card_right.ColorBorder(C'220,207,186');
+   m_tab1_card_right.ColorBackground(C'233,220,203');
+   m_tab1_card_right.ColorBorder(C'197,168,136');
    m_tab1_card_right.BorderType(BORDER_FLAT);
    if(!m_tab1_page.Add(m_tab1_card_right))
       return(false);
@@ -479,16 +479,16 @@ bool CConstrutorDialog::CreateTab2(void)
 
    if(!m_tab2_card_left.Create(m_chart_id,"ConstrutorTab2CardLeft",m_subwin,0,0,348,399))
       return(false);
-   m_tab2_card_left.ColorBackground(C'247,241,231');
-   m_tab2_card_left.ColorBorder(C'220,207,186');
+   m_tab2_card_left.ColorBackground(C'233,220,203');
+   m_tab2_card_left.ColorBorder(C'197,168,136');
    m_tab2_card_left.BorderType(BORDER_FLAT);
    if(!m_tab2_page.Add(m_tab2_card_left))
       return(false);
 
    if(!m_tab2_card_right.Create(m_chart_id,"ConstrutorTab2CardRight",m_subwin,376,0,724,399))
       return(false);
-   m_tab2_card_right.ColorBackground(C'247,241,231');
-   m_tab2_card_right.ColorBorder(C'220,207,186');
+   m_tab2_card_right.ColorBackground(C'233,220,203');
+   m_tab2_card_right.ColorBorder(C'197,168,136');
    m_tab2_card_right.BorderType(BORDER_FLAT);
    if(!m_tab2_page.Add(m_tab2_card_right))
       return(false);
@@ -631,10 +631,10 @@ bool CConstrutorDialog::CreateTab3(void)
    if(!Add(m_tab3_page))
       return(false);
 
-   if(!m_tab3_card.Create(m_chart_id,"ConstrutorTab3Card",m_subwin,0,0,724,399))
+   if(!m_tab3_card.Create(m_chart_id,"ConstrutorTab3Card",m_subwin,0,0,716,399))
       return(false);
-   m_tab3_card.ColorBackground(C'247,241,231');
-   m_tab3_card.ColorBorder(C'220,207,186');
+   m_tab3_card.ColorBackground(C'233,220,203');
+   m_tab3_card.ColorBorder(C'197,168,136');
    m_tab3_card.BorderType(BORDER_FLAT);
    if(!m_tab3_page.Add(m_tab3_card))
       return(false);

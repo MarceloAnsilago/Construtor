@@ -44,7 +44,7 @@ int OnInit()
   {
    LoadInputsToSettings();
    ExtDialog.BindSettings(g_settings);
-   if(!ExtDialog.Create(ChartID(),"ConstrutorUI",0,30,30,1030,700))
+   if(!ExtDialog.Create(ChartID(),"ConstrutorUI",0,30,30,1042,700))
      {
       Print("Construtor: dialog create failed");
       return(INIT_SUCCEEDED);
