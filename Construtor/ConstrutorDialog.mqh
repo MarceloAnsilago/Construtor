@@ -98,6 +98,12 @@ enum ENUM_CONSTRUTOR_STOP_MOVEL_MODO
    CONSTRUTOR_STOP_MOVEL_INDICADOR=2
   };
 
+enum ENUM_CONSTRUTOR_STOP_MOVEL_CANDLES_MODO
+  {
+   CONSTRUTOR_STOP_MOVEL_CANDLES_DISTANCIA=0,
+   CONSTRUTOR_STOP_MOVEL_CANDLES_NUM_CANDLES=1
+  };
+
 struct SConstrutorSettings
   {
    string                       estrategia_nome;
@@ -125,6 +131,7 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO      stop_movel;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS tipo_stop_movel;
    ENUM_CONSTRUTOR_STOP_MOVEL_MODO stop_movel_modo;
+   ENUM_CONSTRUTOR_STOP_MOVEL_CANDLES_MODO stop_movel_candles_modo;
    int                          stop_movel_padrao_adicionar_favor;
    int                          stop_movel_padrao_passo;
    int                          stop_calculo_media_qtd_candles;
@@ -249,6 +256,10 @@ private:
    CSpinEdit         m_tab5_card_padrao_pass_spin;
    CPanel            m_tab5_card_candles;
    CCheckBox         m_tab5_card_candles_check;
+   CPanel            m_tab5_card_candles_inner_left;
+   CCheckBox         m_tab5_card_candles_distance_check;
+   CPanel            m_tab5_card_candles_inner_right;
+   CCheckBox         m_tab5_card_candles_count_check;
    CPanel            m_tab5_card_indicador;
    CCheckBox         m_tab5_card_indicador_check;
    int               m_active_tab;
@@ -298,6 +309,8 @@ private:
    bool              OnTab4CalcRefChange(void);
    bool              OnTab5PadraoChange(void);
    bool              OnTab5CandlesChange(void);
+   bool              OnTab5CandlesDistanceChange(void);
+   bool              OnTab5CandlesCountChange(void);
    bool              OnTab5IndicadorChange(void);
   };
 
@@ -312,6 +325,8 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_tab4_card_calc_ref_check,OnTab4CalcRefChange)
    ON_EVENT(ON_CHANGE,m_tab5_card_padrao_check,OnTab5PadraoChange)
    ON_EVENT(ON_CHANGE,m_tab5_card_candles_check,OnTab5CandlesChange)
+   ON_EVENT(ON_CHANGE,m_tab5_card_candles_distance_check,OnTab5CandlesDistanceChange)
+   ON_EVENT(ON_CHANGE,m_tab5_card_candles_count_check,OnTab5CandlesCountChange)
    ON_EVENT(ON_CHANGE,m_tab5_card_indicador_check,OnTab5IndicadorChange)
 EVENT_MAP_END(CAppDialog)
 
@@ -1287,6 +1302,42 @@ bool CConstrutorDialog::CreateTab5(void)
    if(!m_tab5_page.Add(m_tab5_card_candles_check))
       return(false);
 
+   if(!m_tab5_card_candles_inner_left.Create(m_chart_id,"ConstrutorTab5CardCandlesInnerLeft",m_subwin,258,170,360,354))
+      return(false);
+   m_tab5_card_candles_inner_left.ColorBackground(clrNONE);
+   m_tab5_card_candles_inner_left.ColorBorder(C'197,168,136');
+   m_tab5_card_candles_inner_left.BorderType(BORDER_FLAT);
+   m_tab5_card_candles_inner_left.ZOrder(15);
+   if(!m_tab5_page.Add(m_tab5_card_candles_inner_left))
+      return(false);
+
+   if(!m_tab5_card_candles_distance_check.Create(m_chart_id,"ConstrutorTab5CardCandlesDistanceCheck",m_subwin,264,182,356,202))
+      return(false);
+   m_tab5_card_candles_distance_check.Text("Distancia");
+   m_tab5_card_candles_distance_check.Color(C'91,78,64');
+   m_tab5_card_candles_distance_check.ColorBackground(C'233,220,203');
+   m_tab5_card_candles_distance_check.Checked(false);
+   if(!m_tab5_page.Add(m_tab5_card_candles_distance_check))
+      return(false);
+
+   if(!m_tab5_card_candles_inner_right.Create(m_chart_id,"ConstrutorTab5CardCandlesInnerRight",m_subwin,362,170,454,354))
+      return(false);
+   m_tab5_card_candles_inner_right.ColorBackground(clrNONE);
+   m_tab5_card_candles_inner_right.ColorBorder(C'197,168,136');
+   m_tab5_card_candles_inner_right.BorderType(BORDER_FLAT);
+   m_tab5_card_candles_inner_right.ZOrder(16);
+   if(!m_tab5_page.Add(m_tab5_card_candles_inner_right))
+      return(false);
+
+   if(!m_tab5_card_candles_count_check.Create(m_chart_id,"ConstrutorTab5CardCandlesCountCheck",m_subwin,366,182,452,202))
+      return(false);
+   m_tab5_card_candles_count_check.Text("N° Candles");
+   m_tab5_card_candles_count_check.Color(C'91,78,64');
+   m_tab5_card_candles_count_check.ColorBackground(C'233,220,203');
+   m_tab5_card_candles_count_check.Checked(false);
+   if(!m_tab5_page.Add(m_tab5_card_candles_count_check))
+      return(false);
+
    if(!m_tab5_card_indicador.Create(m_chart_id,"ConstrutorTab5CardIndicador",m_subwin,486,124,696,362))
       return(false);
    m_tab5_card_indicador.ColorBackground(clrNONE);
@@ -1425,12 +1476,21 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab5_card_padrao_check.Checked(false);
    m_tab5_card_candles_check.Checked(false);
    m_tab5_card_indicador_check.Checked(false);
+   m_tab5_card_candles_distance_check.Checked(false);
+   m_tab5_card_candles_count_check.Checked(false);
    if(m_settings.stop_movel_modo==CONSTRUTOR_STOP_MOVEL_CANDLES)
       m_tab5_card_candles_check.Checked(true);
    else if(m_settings.stop_movel_modo==CONSTRUTOR_STOP_MOVEL_INDICADOR)
       m_tab5_card_indicador_check.Checked(true);
    else
       m_tab5_card_padrao_check.Checked(true);
+   if(m_settings.stop_movel_modo==CONSTRUTOR_STOP_MOVEL_CANDLES)
+     {
+      if(m_settings.stop_movel_candles_modo==CONSTRUTOR_STOP_MOVEL_CANDLES_NUM_CANDLES)
+         m_tab5_card_candles_count_check.Checked(true);
+      else
+         m_tab5_card_candles_distance_check.Checked(true);
+     }
    m_tab5_updating_checks=false;
     m_tab4_updating_checks=true;
      if(m_settings.stop_fixo==CONSTRUTOR_SIM)
@@ -1535,6 +1595,10 @@ void CConstrutorDialog::StoreControlsToSettings(void)
       m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_INDICADOR;
    else
       m_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_PADRAO;
+   if(m_tab5_card_candles_count_check.Checked())
+      m_settings.stop_movel_candles_modo=CONSTRUTOR_STOP_MOVEL_CANDLES_NUM_CANDLES;
+   else
+      m_settings.stop_movel_candles_modo=CONSTRUTOR_STOP_MOVEL_CANDLES_DISTANCIA;
    m_settings.stop_fixo_distancia=StringToDouble(m_tab4_card_fixed_dist_edit.Text());
   }
 
@@ -1684,6 +1748,8 @@ bool CConstrutorDialog::OnTab5PadraoChange(void)
      {
       m_tab5_updating_checks=true;
       m_tab5_card_candles_check.Checked(false);
+      m_tab5_card_candles_distance_check.Checked(false);
+      m_tab5_card_candles_count_check.Checked(false);
       m_tab5_card_indicador_check.Checked(false);
       m_tab5_updating_checks=false;
      }
@@ -1695,11 +1761,52 @@ bool CConstrutorDialog::OnTab5CandlesChange(void)
    if(m_tab5_updating_checks)
       return(true);
 
+   m_tab5_updating_checks=true;
    if(m_tab5_card_candles_check.Checked())
      {
-      m_tab5_updating_checks=true;
       m_tab5_card_padrao_check.Checked(false);
       m_tab5_card_indicador_check.Checked(false);
+      if(!m_tab5_card_candles_distance_check.Checked() && !m_tab5_card_candles_count_check.Checked())
+         m_tab5_card_candles_distance_check.Checked(true);
+     }
+   else
+     {
+      m_tab5_card_candles_distance_check.Checked(false);
+      m_tab5_card_candles_count_check.Checked(false);
+     }
+   m_tab5_updating_checks=false;
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab5CandlesDistanceChange(void)
+  {
+   if(m_tab5_updating_checks)
+      return(true);
+
+   if(m_tab5_card_candles_distance_check.Checked())
+     {
+      m_tab5_updating_checks=true;
+      m_tab5_card_candles_check.Checked(true);
+      m_tab5_card_padrao_check.Checked(false);
+      m_tab5_card_indicador_check.Checked(false);
+      m_tab5_card_candles_count_check.Checked(false);
+      m_tab5_updating_checks=false;
+     }
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab5CandlesCountChange(void)
+  {
+   if(m_tab5_updating_checks)
+      return(true);
+
+   if(m_tab5_card_candles_count_check.Checked())
+     {
+      m_tab5_updating_checks=true;
+      m_tab5_card_candles_check.Checked(true);
+      m_tab5_card_padrao_check.Checked(false);
+      m_tab5_card_indicador_check.Checked(false);
+      m_tab5_card_candles_distance_check.Checked(false);
       m_tab5_updating_checks=false;
      }
    return(true);
@@ -1715,6 +1822,8 @@ bool CConstrutorDialog::OnTab5IndicadorChange(void)
       m_tab5_updating_checks=true;
       m_tab5_card_padrao_check.Checked(false);
       m_tab5_card_candles_check.Checked(false);
+      m_tab5_card_candles_distance_check.Checked(false);
+      m_tab5_card_candles_count_check.Checked(false);
       m_tab5_updating_checks=false;
      }
    return(true);
