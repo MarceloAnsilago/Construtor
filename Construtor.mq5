@@ -23,6 +23,7 @@ input ENUM_CONSTRUTOR_SIM_NAO InpStopFixo = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculo = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoMedia = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoMultiplicar = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_SIM_NAO InpStopCalculoReferencia = CONSTRUTOR_NAO;
 input int InpStopCalculoMediaQtdCandles = 3;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopCalculoMediaBase = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_BASE_MULTIPLICAR InpStopCalculoMultiplicarBase = CONSTRUTOR_MULTIPLICAR_CORPO;
@@ -58,6 +59,7 @@ void LoadInputsToSettings(void)
    g_settings.stop_calculo        =InpStopCalculo;
    g_settings.stop_calculo_media  =InpStopCalculoMedia;
    g_settings.stop_calculo_multiplicar=InpStopCalculoMultiplicar;
+   g_settings.stop_calculo_referencia=InpStopCalculoReferencia;
    g_settings.stop_calculo_media_qtd_candles=InpStopCalculoMediaQtdCandles;
    g_settings.stop_calculo_media_base=InpStopCalculoMediaBase;
    g_settings.stop_calculo_multiplicar_base=InpStopCalculoMultiplicarBase;
