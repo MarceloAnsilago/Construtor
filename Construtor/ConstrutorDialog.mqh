@@ -395,6 +395,13 @@ private:
    CPanel            m_tab9_card_top;
    CPanel            m_tab9_card_bottom;
    CPanel            m_tab9_signal_card[5];
+   CCheckBox         m_tab9_signal_filter_check;
+   CLabel            m_tab9_signal_measure_label;
+   CComboBox         m_tab9_signal_measure_combo;
+   CLabel            m_tab9_signal_time_label;
+   CComboBox         m_tab9_signal_time_combo;
+   CLabel            m_tab9_signal_range_label[4];
+   CSpinEdit         m_tab9_signal_range_spin[4];
    CLabel            m_tab9_signal_title[5];
    CLabel            m_tab9_signal_note[5];
    CLabel            m_tab9_bottom_note;
@@ -2299,7 +2306,7 @@ bool CConstrutorDialog::CreateTab9(void)
    if(!m_tab9_page.Add(m_tab9_card))
       return(false);
 
-   if(!m_tab9_card_top.Create(m_chart_id,"ConstrutorTab9CardTop",m_subwin,10,10,746,236))
+   if(!m_tab9_card_top.Create(m_chart_id,"ConstrutorTab9CardTop",m_subwin,10,10,746,332))
       return(false);
    m_tab9_card_top.ColorBackground(C'239,231,218');
    m_tab9_card_top.ColorBorder(C'197,168,136');
@@ -2308,7 +2315,7 @@ bool CConstrutorDialog::CreateTab9(void)
    if(!m_tab9_page.Add(m_tab9_card_top))
       return(false);
 
-   if(!m_tab9_card_bottom.Create(m_chart_id,"ConstrutorTab9CardBottom",m_subwin,10,248,746,496))
+   if(!m_tab9_card_bottom.Create(m_chart_id,"ConstrutorTab9CardBottom",m_subwin,10,342,746,496))
       return(false);
    m_tab9_card_bottom.ColorBackground(C'237,226,210');
    m_tab9_card_bottom.ColorBorder(C'197,168,136');
@@ -2317,7 +2324,7 @@ bool CConstrutorDialog::CreateTab9(void)
    if(!m_tab9_page.Add(m_tab9_card_bottom))
       return(false);
 
-   if(!m_tab9_bottom_note.Create(m_chart_id,"ConstrutorTab9BottomNote",m_subwin,26,262,0,0))
+   if(!m_tab9_bottom_note.Create(m_chart_id,"ConstrutorTab9BottomNote",m_subwin,26,356,0,0))
       return(false);
    m_tab9_bottom_note.Text("Parte inferior reservada para futura implementacao.");
    m_tab9_bottom_note.FontSize(11);
@@ -2329,7 +2336,7 @@ bool CConstrutorDialog::CreateTab9(void)
    const int signal_card_x1=16;
    const int signal_card_y1=18;
    const int signal_card_width=138;
-   const int signal_card_height=202;
+   const int signal_card_height=280;
    const int signal_card_step=146;
 
    for(int i=0; i<5; i++)
@@ -2352,23 +2359,147 @@ bool CConstrutorDialog::CreateTab9(void)
       if(!m_tab9_page.Add(m_tab9_signal_card[i]))
          return(false);
 
-      if(!m_tab9_signal_title[i].Create(m_chart_id,title_name,m_subwin,card_x1+10,card_y1+12,0,0))
-         return(false);
-      m_tab9_signal_title[i].Text(signal_title);
-      m_tab9_signal_title[i].FontSize(11);
-      m_tab9_signal_title[i].Color(C'43,43,43');
-      m_tab9_signal_title[i].ZOrder(20+i);
-      if(!m_tab9_page.Add(m_tab9_signal_title[i]))
-         return(false);
+      if(i==0)
+        {
+         if(!m_tab9_signal_filter_check.Create(m_chart_id,"ConstrutorTab9SignalFilterCheck",m_subwin,card_x1+10,card_y1+12,card_x1+126,card_y1+32))
+            return(false);
+         m_tab9_signal_filter_check.Text("Usar filtro");
+         m_tab9_signal_filter_check.Color(C'91,78,64');
+         m_tab9_signal_filter_check.ColorBackground(C'233,220,203');
+         m_tab9_signal_filter_check.Checked(false);
+         if(!m_tab9_page.Add(m_tab9_signal_filter_check))
+            return(false);
 
-      if(!m_tab9_signal_note[i].Create(m_chart_id,note_name,m_subwin,card_x1+10,card_y1+38,0,0))
-         return(false);
-      m_tab9_signal_note[i].Text("Reservado");
-      m_tab9_signal_note[i].FontSize(9);
-      m_tab9_signal_note[i].Color(C'91,78,64');
-      m_tab9_signal_note[i].ZOrder(20+i);
-      if(!m_tab9_page.Add(m_tab9_signal_note[i]))
-         return(false);
+         if(!m_tab9_signal_measure_label.Create(m_chart_id,"ConstrutorTab9SignalMeasureLabel",m_subwin,card_x1+10,card_y1+36,0,0))
+            return(false);
+         m_tab9_signal_measure_label.Text("Medir em");
+         m_tab9_signal_measure_label.FontSize(10);
+         m_tab9_signal_measure_label.Color(C'91,78,64');
+         if(!m_tab9_page.Add(m_tab9_signal_measure_label))
+            return(false);
+         if(!m_tab9_signal_measure_combo.Create(m_chart_id,"ConstrutorTab9SignalMeasureCombo",m_subwin,card_x1+10,card_y1+57,card_x1+126,card_y1+81))
+            return(false);
+         m_tab9_signal_measure_combo.AddItem("Pontos",0);
+         m_tab9_signal_measure_combo.AddItem("Percentual",1);
+         m_tab9_signal_measure_combo.Select(0);
+         if(!m_tab9_page.Add(m_tab9_signal_measure_combo))
+            return(false);
+
+         if(!m_tab9_signal_time_label.Create(m_chart_id,"ConstrutorTab9SignalTimeLabel",m_subwin,card_x1+10,card_y1+84,0,0))
+            return(false);
+         m_tab9_signal_time_label.Text("Tempo grafico");
+         m_tab9_signal_time_label.FontSize(10);
+         m_tab9_signal_time_label.Color(C'91,78,64');
+         if(!m_tab9_page.Add(m_tab9_signal_time_label))
+            return(false);
+
+         if(!m_tab9_signal_time_combo.Create(m_chart_id,"ConstrutorTab9SignalTimeCombo",m_subwin,card_x1+10,card_y1+103,card_x1+126,card_y1+127))
+            return(false);
+         m_tab9_signal_time_combo.AddItem("Corrente",CONSTRUTOR_CORRENTE);
+         m_tab9_signal_time_combo.AddItem("M1",CONSTRUTOR_M1);
+         m_tab9_signal_time_combo.AddItem("M2",CONSTRUTOR_M2);
+         m_tab9_signal_time_combo.AddItem("M3",CONSTRUTOR_M3);
+         m_tab9_signal_time_combo.AddItem("M4",CONSTRUTOR_M4);
+         m_tab9_signal_time_combo.AddItem("M5",CONSTRUTOR_M5);
+         m_tab9_signal_time_combo.AddItem("M6",CONSTRUTOR_M6);
+         m_tab9_signal_time_combo.AddItem("M10",CONSTRUTOR_M10);
+         m_tab9_signal_time_combo.AddItem("M12",CONSTRUTOR_M12);
+         m_tab9_signal_time_combo.AddItem("M15",CONSTRUTOR_M15);
+         m_tab9_signal_time_combo.AddItem("M30",CONSTRUTOR_M30);
+         m_tab9_signal_time_combo.AddItem("H1",CONSTRUTOR_H1);
+         m_tab9_signal_time_combo.AddItem("H2",CONSTRUTOR_H2);
+         m_tab9_signal_time_combo.AddItem("H3",CONSTRUTOR_H3);
+         m_tab9_signal_time_combo.AddItem("H4",CONSTRUTOR_H4);
+         m_tab9_signal_time_combo.AddItem("H6",CONSTRUTOR_H6);
+         m_tab9_signal_time_combo.AddItem("H8",CONSTRUTOR_H8);
+         m_tab9_signal_time_combo.AddItem("H12",CONSTRUTOR_H12);
+         m_tab9_signal_time_combo.AddItem("D1",CONSTRUTOR_D1);
+         m_tab9_signal_time_combo.AddItem("W1",CONSTRUTOR_W1);
+         m_tab9_signal_time_combo.AddItem("MN1",CONSTRUTOR_MN1);
+         m_tab9_signal_time_combo.SelectByValue(CONSTRUTOR_CORRENTE);
+         if(!m_tab9_page.Add(m_tab9_signal_time_combo))
+            return(false);
+
+         if(!m_tab9_signal_range_label[0].Create(m_chart_id,"ConstrutorTab9SignalRangeLabel1",m_subwin,card_x1+10,card_y1+129,0,0))
+            return(false);
+         m_tab9_signal_range_label[0].Text("Tam. min da vela");
+         m_tab9_signal_range_label[0].FontSize(8);
+         m_tab9_signal_range_label[0].Color(C'91,78,64');
+         if(!m_tab9_page.Add(m_tab9_signal_range_label[0]))
+            return(false);
+         if(!m_tab9_signal_range_spin[0].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin1",m_subwin,card_x1+10,card_y1+142,card_x1+126,card_y1+164))
+            return(false);
+         m_tab9_signal_range_spin[0].MinValue(0);
+         m_tab9_signal_range_spin[0].MaxValue(9999);
+         m_tab9_signal_range_spin[0].Value(0);
+         if(!m_tab9_page.Add(m_tab9_signal_range_spin[0]))
+            return(false);
+
+         if(!m_tab9_signal_range_label[1].Create(m_chart_id,"ConstrutorTab9SignalRangeLabel2",m_subwin,card_x1+10,card_y1+165,0,0))
+            return(false);
+         m_tab9_signal_range_label[1].Text("Tam. max");
+         m_tab9_signal_range_label[1].FontSize(8);
+         m_tab9_signal_range_label[1].Color(C'91,78,64');
+         if(!m_tab9_page.Add(m_tab9_signal_range_label[1]))
+            return(false);
+         if(!m_tab9_signal_range_spin[1].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin2",m_subwin,card_x1+10,card_y1+178,card_x1+126,card_y1+200))
+            return(false);
+         m_tab9_signal_range_spin[1].MinValue(0);
+         m_tab9_signal_range_spin[1].MaxValue(9999);
+         m_tab9_signal_range_spin[1].Value(0);
+         if(!m_tab9_page.Add(m_tab9_signal_range_spin[1]))
+            return(false);
+
+         if(!m_tab9_signal_range_label[2].Create(m_chart_id,"ConstrutorTab9SignalRangeLabel3",m_subwin,card_x1+10,card_y1+201,0,0))
+            return(false);
+         m_tab9_signal_range_label[2].Text("Min. pavios");
+         m_tab9_signal_range_label[2].FontSize(8);
+         m_tab9_signal_range_label[2].Color(C'91,78,64');
+         if(!m_tab9_page.Add(m_tab9_signal_range_label[2]))
+            return(false);
+         if(!m_tab9_signal_range_spin[2].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin3",m_subwin,card_x1+10,card_y1+214,card_x1+126,card_y1+236))
+            return(false);
+         m_tab9_signal_range_spin[2].MinValue(0);
+         m_tab9_signal_range_spin[2].MaxValue(9999);
+         m_tab9_signal_range_spin[2].Value(0);
+         if(!m_tab9_page.Add(m_tab9_signal_range_spin[2]))
+            return(false);
+
+         if(!m_tab9_signal_range_label[3].Create(m_chart_id,"ConstrutorTab9SignalRangeLabel4",m_subwin,card_x1+10,card_y1+237,0,0))
+            return(false);
+         m_tab9_signal_range_label[3].Text("Max. pavios");
+         m_tab9_signal_range_label[3].FontSize(8);
+         m_tab9_signal_range_label[3].Color(C'91,78,64');
+         if(!m_tab9_page.Add(m_tab9_signal_range_label[3]))
+            return(false);
+         if(!m_tab9_signal_range_spin[3].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin4",m_subwin,card_x1+10,card_y1+250,card_x1+126,card_y1+272))
+            return(false);
+         m_tab9_signal_range_spin[3].MinValue(0);
+         m_tab9_signal_range_spin[3].MaxValue(9999);
+         m_tab9_signal_range_spin[3].Value(0);
+         if(!m_tab9_page.Add(m_tab9_signal_range_spin[3]))
+            return(false);
+        }
+      else
+        {
+         if(!m_tab9_signal_title[i].Create(m_chart_id,title_name,m_subwin,card_x1+10,card_y1+12,0,0))
+            return(false);
+         m_tab9_signal_title[i].Text(signal_title);
+         m_tab9_signal_title[i].FontSize(11);
+         m_tab9_signal_title[i].Color(C'43,43,43');
+         m_tab9_signal_title[i].ZOrder(20+i);
+         if(!m_tab9_page.Add(m_tab9_signal_title[i]))
+            return(false);
+
+         if(!m_tab9_signal_note[i].Create(m_chart_id,note_name,m_subwin,card_x1+10,card_y1+38,0,0))
+            return(false);
+         m_tab9_signal_note[i].Text("Reservado");
+         m_tab9_signal_note[i].FontSize(9);
+         m_tab9_signal_note[i].Color(C'91,78,64');
+         m_tab9_signal_note[i].ZOrder(20+i);
+         if(!m_tab9_page.Add(m_tab9_signal_note[i]))
+            return(false);
+        }
      }
 
    SetTab9Visible(false);
