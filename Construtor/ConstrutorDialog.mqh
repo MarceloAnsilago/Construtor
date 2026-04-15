@@ -2280,12 +2280,12 @@ bool CConstrutorDialog::CreateTab8(void)
 
 bool CConstrutorDialog::CreateTab9(void)
   {
-   if(!m_tab9_page.Create(m_chart_id,"ConstrutorTab9Page",m_subwin,236,145,992,586))
+   if(!m_tab9_page.Create(m_chart_id,"ConstrutorTab9Page",m_subwin,236,78,992,586))
       return(false);
    if(!Add(m_tab9_page))
       return(false);
 
-   if(!m_tab9_card.Create(m_chart_id,"ConstrutorTab9Card",m_subwin,2,5,754,439))
+   if(!m_tab9_card.Create(m_chart_id,"ConstrutorTab9Card",m_subwin,2,5,754,506))
       return(false);
    m_tab9_card.ColorBackground(C'233,220,203');
    m_tab9_card.ColorBorder(C'197,168,136');
