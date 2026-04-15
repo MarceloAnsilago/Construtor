@@ -140,8 +140,13 @@ void LoadInputsToSettings(void)
    g_settings.trailing_stop_indicador=InpTrailingStopIndicador;
    g_settings.saida_parcial       =InpSaidaParcial;
    g_settings.tipo_saida_parcial  =InpTipoSaidaParcial;
-   g_settings.saida_parcial_1_valor=InpSaidaParcial1Valor;
-   g_settings.saida_parcial_1_distancia=InpSaidaParcial1Distancia;
+   g_settings.saida_parcial_valor[0]=InpSaidaParcial1Valor;
+   g_settings.saida_parcial_distancia[0]=InpSaidaParcial1Distancia;
+   for(int i=1; i<6; i++)
+     {
+      g_settings.saida_parcial_valor[i]=0.0;
+      g_settings.saida_parcial_distancia[i]=0.0;
+     }
    g_settings.stop_calculo_media_qtd_candles=InpStopCalculoMediaQtdCandles;
    g_settings.stop_calculo_media_base=InpStopCalculoMediaBase;
    g_settings.stop_calculo_multiplicar_base=InpStopCalculoMultiplicarBase;

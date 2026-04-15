@@ -161,8 +161,8 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR trailing_stop_indicador;
    ENUM_CONSTRUTOR_SIM_NAO      saida_parcial;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS tipo_saida_parcial;
-   double                       saida_parcial_1_valor;
-   double                       saida_parcial_1_distancia;
+   double                       saida_parcial_valor[6];
+   double                       saida_parcial_distancia[6];
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
@@ -384,12 +384,12 @@ private:
    CComboBox         m_tab8_use_combo;
    CLabel            m_tab8_type_label;
    CComboBox         m_tab8_type_combo;
-   CPanel            m_tab8_saida1_card;
-   CLabel            m_tab8_saida1_title;
-   CLabel            m_tab8_saida1_valor_label;
-   CEdit             m_tab8_saida1_valor_edit;
-   CLabel            m_tab8_saida1_dist_label;
-   CEdit             m_tab8_saida1_dist_edit;
+   CPanel            m_tab8_saida_card[6];
+   CLabel            m_tab8_saida_title[6];
+   CLabel            m_tab8_saida_valor_label[6];
+   CEdit             m_tab8_saida_valor_edit[6];
+   CLabel            m_tab8_saida_dist_label[6];
+   CEdit             m_tab8_saida_dist_edit[6];
    CLabel            m_tab6_card_calc_ref_ref_label;
    CComboBox         m_tab6_card_calc_ref_ref_combo;
    CLabel            m_tab6_card_calc_ref_pos_label;
@@ -2158,7 +2158,7 @@ bool CConstrutorDialog::CreateTab8(void)
    if(!Add(m_tab8_page))
       return(false);
 
-   if(!m_tab8_card.Create(m_chart_id,"ConstrutorTab8Card",m_subwin,0,0,716,170))
+   if(!m_tab8_card.Create(m_chart_id,"ConstrutorTab8Card",m_subwin,0,0,716,102))
       return(false);
    m_tab8_card.ColorBackground(C'233,220,203');
    m_tab8_card.ColorBorder(C'197,168,136');
@@ -2166,7 +2166,7 @@ bool CConstrutorDialog::CreateTab8(void)
    if(!m_tab8_page.Add(m_tab8_card))
       return(false);
 
-   if(!m_tab8_card_title.Create(m_chart_id,"ConstrutorTab8CardTitle",m_subwin,20,17,0,0))
+   if(!m_tab8_card_title.Create(m_chart_id,"ConstrutorTab8CardTitle",m_subwin,20,14,0,0))
       return(false);
    m_tab8_card_title.Text("Saidas parciais");
    m_tab8_card_title.FontSize(12);
@@ -2174,7 +2174,7 @@ bool CConstrutorDialog::CreateTab8(void)
    if(!m_tab8_page.Add(m_tab8_card_title))
       return(false);
 
-   if(!m_tab8_use_label.Create(m_chart_id,"ConstrutorTab8UseLabel",m_subwin,20,57,0,0))
+   if(!m_tab8_use_label.Create(m_chart_id,"ConstrutorTab8UseLabel",m_subwin,20,41,0,0))
       return(false);
    m_tab8_use_label.Text("Usar saida parcial");
    m_tab8_use_label.FontSize(10);
@@ -2182,7 +2182,7 @@ bool CConstrutorDialog::CreateTab8(void)
    if(!m_tab8_page.Add(m_tab8_use_label))
       return(false);
 
-   if(!m_tab8_use_combo.Create(m_chart_id,"ConstrutorTab8UseCombo",m_subwin,20,79,316,103))
+   if(!m_tab8_use_combo.Create(m_chart_id,"ConstrutorTab8UseCombo",m_subwin,20,59,316,83))
       return(false);
    m_tab8_use_combo.AddItem("Nao",CONSTRUTOR_NAO);
    m_tab8_use_combo.AddItem("Sim",CONSTRUTOR_SIM);
@@ -2190,7 +2190,7 @@ bool CConstrutorDialog::CreateTab8(void)
    if(!m_tab8_page.Add(m_tab8_use_combo))
       return(false);
 
-   if(!m_tab8_type_label.Create(m_chart_id,"ConstrutorTab8TypeLabel",m_subwin,396,57,0,0))
+   if(!m_tab8_type_label.Create(m_chart_id,"ConstrutorTab8TypeLabel",m_subwin,396,41,0,0))
       return(false);
    m_tab8_type_label.Text("Tipo de saida");
    m_tab8_type_label.FontSize(10);
@@ -2198,7 +2198,7 @@ bool CConstrutorDialog::CreateTab8(void)
    if(!m_tab8_page.Add(m_tab8_type_label))
       return(false);
 
-   if(!m_tab8_type_combo.Create(m_chart_id,"ConstrutorTab8TypeCombo",m_subwin,396,79,700,103))
+   if(!m_tab8_type_combo.Create(m_chart_id,"ConstrutorTab8TypeCombo",m_subwin,396,59,700,83))
       return(false);
    m_tab8_type_combo.AddItem("Pontos",CONSTRUTOR_STOP_PONTOS);
    m_tab8_type_combo.AddItem("Percentual",CONSTRUTOR_STOP_PERCENTUAL);
@@ -2206,51 +2206,67 @@ bool CConstrutorDialog::CreateTab8(void)
    if(!m_tab8_page.Add(m_tab8_type_combo))
       return(false);
 
-   if(!m_tab8_saida1_card.Create(m_chart_id,"ConstrutorTab8Saida1Card",m_subwin,0,184,716,360))
-      return(false);
-   m_tab8_saida1_card.ColorBackground(C'233,220,203');
-   m_tab8_saida1_card.ColorBorder(C'197,168,136');
-   m_tab8_saida1_card.BorderType(BORDER_FLAT);
-   if(!m_tab8_page.Add(m_tab8_saida1_card))
-      return(false);
+   for(int i=0; i<6; i++)
+     {
+      const int col=(i<3 ? i : i-3);
+      const int row=(i<3 ? 0 : 1);
+      const int x1=col*242;
+      const int y1=110+row*124;
+      const int x2=x1+230;
+      const int y2=y1+108;
+      string card_name="ConstrutorTab8Saida"+(string)(i+1)+"Card";
+      string title_name="ConstrutorTab8Saida"+(string)(i+1)+"Title";
+      string valor_label_name="ConstrutorTab8Saida"+(string)(i+1)+"ValorLabel";
+      string valor_edit_name="ConstrutorTab8Saida"+(string)(i+1)+"ValorEdit";
+      string dist_label_name="ConstrutorTab8Saida"+(string)(i+1)+"DistLabel";
+      string dist_edit_name="ConstrutorTab8Saida"+(string)(i+1)+"DistEdit";
 
-   if(!m_tab8_saida1_title.Create(m_chart_id,"ConstrutorTab8Saida1Title",m_subwin,20,201,0,0))
-      return(false);
-   m_tab8_saida1_title.Text("Saida 1");
-   m_tab8_saida1_title.FontSize(12);
-   m_tab8_saida1_title.Color(C'43,43,43');
-   if(!m_tab8_page.Add(m_tab8_saida1_title))
-      return(false);
+      if(!m_tab8_saida_card[i].Create(m_chart_id,card_name,m_subwin,x1,y1,x2,y2))
+         return(false);
+      m_tab8_saida_card[i].ColorBackground(C'233,220,203');
+      m_tab8_saida_card[i].ColorBorder(C'197,168,136');
+      m_tab8_saida_card[i].BorderType(BORDER_FLAT);
+      if(!m_tab8_page.Add(m_tab8_saida_card[i]))
+         return(false);
 
-   if(!m_tab8_saida1_valor_label.Create(m_chart_id,"ConstrutorTab8Saida1ValorLabel",m_subwin,20,241,0,0))
-      return(false);
-   m_tab8_saida1_valor_label.Text("Valor");
-   m_tab8_saida1_valor_label.FontSize(10);
-   m_tab8_saida1_valor_label.Color(C'91,78,64');
-   if(!m_tab8_page.Add(m_tab8_saida1_valor_label))
-      return(false);
+      if(!m_tab8_saida_title[i].Create(m_chart_id,title_name,m_subwin,x1+10,y1+9,0,0))
+         return(false);
+      m_tab8_saida_title[i].Text("Saida "+(string)(i+1));
+      m_tab8_saida_title[i].FontSize(11);
+      m_tab8_saida_title[i].Color(C'43,43,43');
+      if(!m_tab8_page.Add(m_tab8_saida_title[i]))
+         return(false);
 
-   if(!m_tab8_saida1_valor_edit.Create(m_chart_id,"ConstrutorTab8Saida1ValorEdit",m_subwin,20,263,316,287))
-      return(false);
-   m_tab8_saida1_valor_edit.Text("0.0");
-   m_tab8_saida1_valor_edit.FontSize(10);
-   if(!m_tab8_page.Add(m_tab8_saida1_valor_edit))
-      return(false);
+      if(!m_tab8_saida_valor_label[i].Create(m_chart_id,valor_label_name,m_subwin,x1+10,y1+34,0,0))
+         return(false);
+      m_tab8_saida_valor_label[i].Text("Valor");
+      m_tab8_saida_valor_label[i].FontSize(9);
+      m_tab8_saida_valor_label[i].Color(C'91,78,64');
+      if(!m_tab8_page.Add(m_tab8_saida_valor_label[i]))
+         return(false);
 
-   if(!m_tab8_saida1_dist_label.Create(m_chart_id,"ConstrutorTab8Saida1DistLabel",m_subwin,396,241,0,0))
-      return(false);
-   m_tab8_saida1_dist_label.Text("Dist.");
-   m_tab8_saida1_dist_label.FontSize(10);
-   m_tab8_saida1_dist_label.Color(C'91,78,64');
-   if(!m_tab8_page.Add(m_tab8_saida1_dist_label))
-      return(false);
+      if(!m_tab8_saida_valor_edit[i].Create(m_chart_id,valor_edit_name,m_subwin,x1+10,y1+52,x1+104,y1+74))
+         return(false);
+      m_tab8_saida_valor_edit[i].Text("0.0");
+      m_tab8_saida_valor_edit[i].FontSize(9);
+      if(!m_tab8_page.Add(m_tab8_saida_valor_edit[i]))
+         return(false);
 
-   if(!m_tab8_saida1_dist_edit.Create(m_chart_id,"ConstrutorTab8Saida1DistEdit",m_subwin,396,263,700,287))
-      return(false);
-   m_tab8_saida1_dist_edit.Text("0.0");
-   m_tab8_saida1_dist_edit.FontSize(10);
-   if(!m_tab8_page.Add(m_tab8_saida1_dist_edit))
-      return(false);
+      if(!m_tab8_saida_dist_label[i].Create(m_chart_id,dist_label_name,m_subwin,x1+120,y1+34,0,0))
+         return(false);
+      m_tab8_saida_dist_label[i].Text("Dist.");
+      m_tab8_saida_dist_label[i].FontSize(9);
+      m_tab8_saida_dist_label[i].Color(C'91,78,64');
+      if(!m_tab8_page.Add(m_tab8_saida_dist_label[i]))
+         return(false);
+
+      if(!m_tab8_saida_dist_edit[i].Create(m_chart_id,dist_edit_name,m_subwin,x1+120,y1+52,x1+214,y1+74))
+         return(false);
+      m_tab8_saida_dist_edit[i].Text("0.0");
+      m_tab8_saida_dist_edit[i].FontSize(9);
+      if(!m_tab8_page.Add(m_tab8_saida_dist_edit[i]))
+         return(false);
+     }
 
    SetTab8Visible(false);
    return(true);
@@ -2460,8 +2476,11 @@ void CConstrutorDialog::LoadSettingsToControls(void)
    m_tab7_updating_checks=false;
    m_tab8_use_combo.SelectByValue((long)m_settings.saida_parcial);
    m_tab8_type_combo.SelectByValue((long)m_settings.tipo_saida_parcial);
-   m_tab8_saida1_valor_edit.Text(DoubleToString(m_settings.saida_parcial_1_valor,1));
-   m_tab8_saida1_dist_edit.Text(DoubleToString(m_settings.saida_parcial_1_distancia,1));
+   for(int i=0; i<6; i++)
+     {
+      m_tab8_saida_valor_edit[i].Text(DoubleToString(m_settings.saida_parcial_valor[i],1));
+      m_tab8_saida_dist_edit[i].Text(DoubleToString(m_settings.saida_parcial_distancia[i],1));
+     }
     m_tab4_updating_checks=true;
      if(m_settings.stop_fixo==CONSTRUTOR_SIM)
        {
@@ -2667,8 +2686,11 @@ void CConstrutorDialog::StoreControlsToSettings(void)
       m_settings.trailing_stop_candles_modo=CONSTRUTOR_STOP_MOVEL_CANDLES_DISTANCIA;
    m_settings.saida_parcial=(ENUM_CONSTRUTOR_SIM_NAO)m_tab8_use_combo.Value();
    m_settings.tipo_saida_parcial=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab8_type_combo.Value();
-   m_settings.saida_parcial_1_valor=StringToDouble(m_tab8_saida1_valor_edit.Text());
-   m_settings.saida_parcial_1_distancia=StringToDouble(m_tab8_saida1_dist_edit.Text());
+   for(int i=0; i<6; i++)
+     {
+      m_settings.saida_parcial_valor[i]=StringToDouble(m_tab8_saida_valor_edit[i].Text());
+      m_settings.saida_parcial_distancia[i]=StringToDouble(m_tab8_saida_dist_edit[i].Text());
+     }
    m_settings.take_fixo_distancia=StringToDouble(m_tab6_card_fixed_dist_edit.Text());
   }
 
