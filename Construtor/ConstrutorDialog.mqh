@@ -148,6 +148,17 @@ struct SConstrutorSettings
    int                          stop_movel_candles_count;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_movel_candles_count_posicao;
    ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR stop_movel_indicador;
+   ENUM_CONSTRUTOR_SIM_NAO      trailing_stop;
+   ENUM_CONSTRUTOR_TIPO_STOP_LOSS tipo_trailing_stop;
+   ENUM_CONSTRUTOR_STOP_MOVEL_MODO trailing_stop_modo;
+   ENUM_CONSTRUTOR_STOP_MOVEL_CANDLES_MODO trailing_stop_candles_modo;
+   int                          trailing_stop_padrao_adicionar_favor;
+   int                          trailing_stop_padrao_passo;
+   double                       trailing_stop_candles_distancia;
+   ENUM_CONSTRUTOR_BASE_MEDIA   trailing_stop_candles_posicao;
+   int                          trailing_stop_candles_count;
+   ENUM_CONSTRUTOR_BASE_MEDIA   trailing_stop_candles_count_posicao;
+   ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR trailing_stop_indicador;
    int                          stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA   stop_calculo_media_base;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
@@ -195,6 +206,7 @@ private:
    CWndContainer     m_tab4_page;
    CWndContainer     m_tab5_page;
    CWndContainer     m_tab6_page;
+   CWndContainer     m_tab7_page;
    CPanel            m_tab1_card_left;
    CPanel            m_tab1_card_right;
    CLabel            m_tab1_card_left_title;
@@ -332,6 +344,35 @@ private:
    CSpinEdit         m_tab6_card_calc_ref_candle_spin;
    CLabel            m_tab6_card_calc_ref_qtd_label;
    CEdit             m_tab6_card_calc_ref_qtd_spin;
+   CPanel            m_tab7_card;
+   CLabel            m_tab7_card_title;
+   CLabel            m_tab7_use_label;
+   CComboBox         m_tab7_use_combo;
+   CLabel            m_tab7_type_label;
+   CComboBox         m_tab7_type_combo;
+   CPanel            m_tab7_card_padrao;
+   CCheckBox         m_tab7_card_padrao_check;
+   CLabel            m_tab7_card_padrao_add_label;
+   CSpinEdit         m_tab7_card_padrao_add_spin;
+   CLabel            m_tab7_card_padrao_pass_label;
+   CSpinEdit         m_tab7_card_padrao_pass_spin;
+   CPanel            m_tab7_card_candles;
+   CCheckBox         m_tab7_card_candles_check;
+   CPanel            m_tab7_card_candles_inner_left;
+   CCheckBox         m_tab7_card_candles_distance_check;
+   CLabel            m_tab7_card_candles_distance_label;
+   CEdit             m_tab7_card_candles_distance_spin;
+   CLabel            m_tab7_card_candles_pos_label;
+   CComboBox         m_tab7_card_candles_pos_combo;
+   CPanel            m_tab7_card_candles_inner_right;
+   CCheckBox         m_tab7_card_candles_count_check;
+   CLabel            m_tab7_card_candles_count_label;
+   CSpinEdit         m_tab7_card_candles_count_spin;
+   CLabel            m_tab7_card_candles_count_pos_label;
+   CComboBox         m_tab7_card_candles_count_pos_combo;
+   CPanel            m_tab7_card_indicador;
+   CCheckBox         m_tab7_card_indicador_check;
+   CComboBox         m_tab7_card_indicador_combo;
    CLabel            m_tab6_card_calc_ref_ref_label;
    CComboBox         m_tab6_card_calc_ref_ref_combo;
    CLabel            m_tab6_card_calc_ref_pos_label;
@@ -344,6 +385,7 @@ private:
    bool              m_tab4_updating_checks;
    bool              m_tab5_updating_checks;
    bool              m_tab6_updating_checks;
+   bool              m_tab7_updating_checks;
 
 public:
                      CConstrutorDialog(void);
@@ -364,6 +406,7 @@ private:
    bool              CreateTab4(void);
    bool              CreateTab5(void);
    bool              CreateTab6(void);
+   bool              CreateTab7(void);
    bool              CreateExecuteButton(void);
    void              SetTab1Visible(const bool visible);
    void              SetTab2Visible(const bool visible);
@@ -371,6 +414,7 @@ private:
    void              SetTab4Visible(const bool visible);
    void              SetTab5Visible(const bool visible);
    void              SetTab6Visible(const bool visible);
+   void              SetTab7Visible(const bool visible);
    void              SyncTab4Visibility(void);
    void              SelectTab(const int index);
    void              UpdateTabVisuals(void);
@@ -395,6 +439,11 @@ private:
    bool              OnTab6CalcRefOuterChange(void);
    bool              OnTab6CalcModeChange(void);
    bool              OnTab6CalcRefChange(void);
+   bool              OnTab7PadraoChange(void);
+   bool              OnTab7CandlesChange(void);
+   bool              OnTab7CandlesDistanceChange(void);
+   bool              OnTab7CandlesCountChange(void);
+   bool              OnTab7IndicadorChange(void);
   };
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
@@ -417,9 +466,14 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_tab6_card_calc_ref_outer_check,OnTab6CalcRefOuterChange)
    ON_EVENT(ON_CHANGE,m_tab6_card_calc_mode_check,OnTab6CalcModeChange)
    ON_EVENT(ON_CHANGE,m_tab6_card_calc_ref_check,OnTab6CalcRefChange)
+   ON_EVENT(ON_CHANGE,m_tab7_card_padrao_check,OnTab7PadraoChange)
+   ON_EVENT(ON_CHANGE,m_tab7_card_candles_check,OnTab7CandlesChange)
+   ON_EVENT(ON_CHANGE,m_tab7_card_candles_distance_check,OnTab7CandlesDistanceChange)
+   ON_EVENT(ON_CHANGE,m_tab7_card_candles_count_check,OnTab7CandlesCountChange)
+   ON_EVENT(ON_CHANGE,m_tab7_card_indicador_check,OnTab7IndicadorChange)
 EVENT_MAP_END(CAppDialog)
 
-CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false), m_tab4_updating_checks(false), m_tab5_updating_checks(false), m_tab6_updating_checks(false)
+CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false), m_tab4_updating_checks(false), m_tab5_updating_checks(false), m_tab6_updating_checks(false), m_tab7_updating_checks(false)
   {
    InitTabData();
   }
@@ -497,6 +551,8 @@ bool CConstrutorDialog::CreateLayout(void)
    if(!CreateTab5())
       return(false);
    if(!CreateTab6())
+      return(false);
+   if(!CreateTab7())
       return(false);
    if(!CreateExecuteButton())
       return(false);
@@ -1822,6 +1878,258 @@ bool CConstrutorDialog::CreateTab6(void)
    return(true);
   }
 
+bool CConstrutorDialog::CreateTab7(void)
+  {
+   if(!m_tab7_page.Create(m_chart_id,"ConstrutorTab7Page",m_subwin,256,145,992,544))
+      return(false);
+   if(!Add(m_tab7_page))
+      return(false);
+
+   if(!m_tab7_card.Create(m_chart_id,"ConstrutorTab7Card",m_subwin,0,0,716,399))
+      return(false);
+   m_tab7_card.ColorBackground(C'233,220,203');
+   m_tab7_card.ColorBorder(C'197,168,136');
+   m_tab7_card.BorderType(BORDER_FLAT);
+   if(!m_tab7_page.Add(m_tab7_card))
+      return(false);
+
+   if(!m_tab7_card_title.Create(m_chart_id,"ConstrutorTab7CardTitle",m_subwin,20,17,0,0))
+      return(false);
+   m_tab7_card_title.Text("Trailing stop");
+   m_tab7_card_title.FontSize(12);
+   m_tab7_card_title.Color(C'43,43,43');
+   if(!m_tab7_page.Add(m_tab7_card_title))
+      return(false);
+
+   if(!m_tab7_use_label.Create(m_chart_id,"ConstrutorTab7UseLabel",m_subwin,20,57,0,0))
+      return(false);
+   m_tab7_use_label.Text("Usar trailing stop");
+   m_tab7_use_label.FontSize(10);
+   m_tab7_use_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_use_label))
+      return(false);
+
+   if(!m_tab7_use_combo.Create(m_chart_id,"ConstrutorTab7UseCombo",m_subwin,20,79,316,103))
+      return(false);
+   m_tab7_use_combo.AddItem("Nao",CONSTRUTOR_NAO);
+   m_tab7_use_combo.AddItem("Sim",CONSTRUTOR_SIM);
+   m_tab7_use_combo.SelectByValue(CONSTRUTOR_NAO);
+   if(!m_tab7_page.Add(m_tab7_use_combo))
+      return(false);
+
+   if(!m_tab7_type_label.Create(m_chart_id,"ConstrutorTab7TypeLabel",m_subwin,396,57,0,0))
+      return(false);
+   m_tab7_type_label.Text("Tipo de trailing");
+   m_tab7_type_label.FontSize(10);
+   m_tab7_type_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_type_label))
+      return(false);
+
+   if(!m_tab7_type_combo.Create(m_chart_id,"ConstrutorTab7TypeCombo",m_subwin,396,79,700,103))
+      return(false);
+   m_tab7_type_combo.AddItem("Pontos",CONSTRUTOR_STOP_PONTOS);
+   m_tab7_type_combo.AddItem("Percentual",CONSTRUTOR_STOP_PERCENTUAL);
+   m_tab7_type_combo.SelectByValue(CONSTRUTOR_STOP_PONTOS);
+   if(!m_tab7_page.Add(m_tab7_type_combo))
+      return(false);
+
+   if(!m_tab7_card_padrao.Create(m_chart_id,"ConstrutorTab7CardPadrao",m_subwin,20,124,230,362))
+      return(false);
+   m_tab7_card_padrao.ColorBackground(clrNONE);
+   m_tab7_card_padrao.ColorBorder(C'197,168,136');
+   m_tab7_card_padrao.BorderType(BORDER_FLAT);
+   m_tab7_card_padrao.ZOrder(12);
+   if(!m_tab7_page.Add(m_tab7_card_padrao))
+      return(false);
+
+   if(!m_tab7_card_padrao_check.Create(m_chart_id,"ConstrutorTab7CardPadraoCheck",m_subwin,34,136,214,156))
+      return(false);
+   m_tab7_card_padrao_check.Text("Padrao");
+   m_tab7_card_padrao_check.Color(C'91,78,64');
+   m_tab7_card_padrao_check.ColorBackground(C'233,220,203');
+   m_tab7_card_padrao_check.Checked(false);
+   if(!m_tab7_page.Add(m_tab7_card_padrao_check))
+      return(false);
+
+   if(!m_tab7_card_padrao_add_label.Create(m_chart_id,"ConstrutorTab7CardPadraoAddLabel",m_subwin,34,176,214,192))
+      return(false);
+   m_tab7_card_padrao_add_label.Text("Adicionar a favor");
+   m_tab7_card_padrao_add_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_card_padrao_add_label))
+      return(false);
+
+   if(!m_tab7_card_padrao_add_spin.Create(m_chart_id,"ConstrutorTab7CardPadraoAddSpin",m_subwin,34,194,180,214))
+      return(false);
+   m_tab7_card_padrao_add_spin.MinValue(0);
+   m_tab7_card_padrao_add_spin.MaxValue(999);
+   m_tab7_card_padrao_add_spin.Value(0);
+   if(!m_tab7_page.Add(m_tab7_card_padrao_add_spin))
+      return(false);
+
+   if(!m_tab7_card_padrao_pass_label.Create(m_chart_id,"ConstrutorTab7CardPadraoPassLabel",m_subwin,34,224,214,240))
+      return(false);
+   m_tab7_card_padrao_pass_label.Text("Passo");
+   m_tab7_card_padrao_pass_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_card_padrao_pass_label))
+      return(false);
+
+   if(!m_tab7_card_padrao_pass_spin.Create(m_chart_id,"ConstrutorTab7CardPadraoPassSpin",m_subwin,34,242,180,262))
+      return(false);
+   m_tab7_card_padrao_pass_spin.MinValue(0);
+   m_tab7_card_padrao_pass_spin.MaxValue(999);
+   m_tab7_card_padrao_pass_spin.Value(0);
+   if(!m_tab7_page.Add(m_tab7_card_padrao_pass_spin))
+      return(false);
+
+   if(!m_tab7_card_candles.Create(m_chart_id,"ConstrutorTab7CardCandles",m_subwin,253,124,463,362))
+      return(false);
+   m_tab7_card_candles.ColorBackground(clrNONE);
+   m_tab7_card_candles.ColorBorder(C'197,168,136');
+   m_tab7_card_candles.BorderType(BORDER_FLAT);
+   m_tab7_card_candles.ZOrder(13);
+   if(!m_tab7_page.Add(m_tab7_card_candles))
+      return(false);
+
+   if(!m_tab7_card_candles_check.Create(m_chart_id,"ConstrutorTab7CardCandlesCheck",m_subwin,267,136,433,156))
+      return(false);
+   m_tab7_card_candles_check.Text("Candles");
+   m_tab7_card_candles_check.Color(C'91,78,64');
+   m_tab7_card_candles_check.ColorBackground(C'233,220,203');
+   m_tab7_card_candles_check.Checked(false);
+   if(!m_tab7_page.Add(m_tab7_card_candles_check))
+      return(false);
+
+   if(!m_tab7_card_candles_inner_left.Create(m_chart_id,"ConstrutorTab7CardCandlesInnerLeft",m_subwin,258,170,360,354))
+      return(false);
+   m_tab7_card_candles_inner_left.ColorBackground(clrNONE);
+   m_tab7_card_candles_inner_left.ColorBorder(C'197,168,136');
+   m_tab7_card_candles_inner_left.BorderType(BORDER_FLAT);
+   m_tab7_card_candles_inner_left.ZOrder(15);
+   if(!m_tab7_page.Add(m_tab7_card_candles_inner_left))
+      return(false);
+
+   if(!m_tab7_card_candles_distance_check.Create(m_chart_id,"ConstrutorTab7CardCandlesDistanceCheck",m_subwin,264,182,356,202))
+      return(false);
+   m_tab7_card_candles_distance_check.Text("Distancia");
+   m_tab7_card_candles_distance_check.Color(C'91,78,64');
+   m_tab7_card_candles_distance_check.ColorBackground(C'233,220,203');
+   m_tab7_card_candles_distance_check.Checked(false);
+   if(!m_tab7_page.Add(m_tab7_card_candles_distance_check))
+      return(false);
+
+   if(!m_tab7_card_candles_distance_label.Create(m_chart_id,"ConstrutorTab7CardCandlesDistanceLabel",m_subwin,266,208,350,224))
+      return(false);
+   m_tab7_card_candles_distance_label.Text("Distancia de lucro");
+   m_tab7_card_candles_distance_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_card_candles_distance_label))
+      return(false);
+
+   if(!m_tab7_card_candles_distance_spin.Create(m_chart_id,"ConstrutorTab7CardCandlesDistanceSpin",m_subwin,266,226,350,248))
+      return(false);
+   m_tab7_card_candles_distance_spin.Text("0.0");
+   if(!m_tab7_page.Add(m_tab7_card_candles_distance_spin))
+      return(false);
+
+   if(!m_tab7_card_candles_pos_label.Create(m_chart_id,"ConstrutorTab7CardCandlesPosLabel",m_subwin,266,256,350,272))
+      return(false);
+   m_tab7_card_candles_pos_label.Text("Posicao");
+   m_tab7_card_candles_pos_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_card_candles_pos_label))
+      return(false);
+
+   if(!m_tab7_card_candles_pos_combo.Create(m_chart_id,"ConstrutorTab7CardCandlesPosCombo",m_subwin,266,276,350,300))
+      return(false);
+   m_tab7_card_candles_pos_combo.AddItem("Maxima",CONSTRUTOR_MEDIA_MAXIMA);
+   m_tab7_card_candles_pos_combo.AddItem("Minima",CONSTRUTOR_MEDIA_MINIMA);
+   m_tab7_card_candles_pos_combo.AddItem("Abertura",CONSTRUTOR_MEDIA_ABERTURA);
+   m_tab7_card_candles_pos_combo.AddItem("Fechamento",CONSTRUTOR_MEDIA_FECHAMENTO);
+   m_tab7_card_candles_pos_combo.SelectByValue(CONSTRUTOR_MEDIA_MAXIMA);
+   if(!m_tab7_page.Add(m_tab7_card_candles_pos_combo))
+      return(false);
+
+   if(!m_tab7_card_candles_inner_right.Create(m_chart_id,"ConstrutorTab7CardCandlesInnerRight",m_subwin,362,170,458,354))
+      return(false);
+   m_tab7_card_candles_inner_right.ColorBackground(clrNONE);
+   m_tab7_card_candles_inner_right.ColorBorder(C'197,168,136');
+   m_tab7_card_candles_inner_right.BorderType(BORDER_FLAT);
+   m_tab7_card_candles_inner_right.ZOrder(16);
+   if(!m_tab7_page.Add(m_tab7_card_candles_inner_right))
+      return(false);
+
+   if(!m_tab7_card_candles_count_check.Create(m_chart_id,"ConstrutorTab7CardCandlesCountCheck",m_subwin,368,182,454,202))
+      return(false);
+   m_tab7_card_candles_count_check.Text("N. Candles");
+   m_tab7_card_candles_count_check.Color(C'91,78,64');
+   m_tab7_card_candles_count_check.ColorBackground(C'233,220,203');
+   m_tab7_card_candles_count_check.Checked(false);
+   if(!m_tab7_page.Add(m_tab7_card_candles_count_check))
+      return(false);
+
+   if(!m_tab7_card_candles_count_label.Create(m_chart_id,"ConstrutorTab7CardCandlesCountLabel",m_subwin,368,208,452,224))
+      return(false);
+   m_tab7_card_candles_count_label.Text("Num de candles");
+   m_tab7_card_candles_count_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_card_candles_count_label))
+      return(false);
+
+   if(!m_tab7_card_candles_count_spin.Create(m_chart_id,"ConstrutorTab7CardCandlesCountSpin",m_subwin,368,226,452,248))
+      return(false);
+   m_tab7_card_candles_count_spin.MinValue(1);
+   m_tab7_card_candles_count_spin.MaxValue(9999);
+   m_tab7_card_candles_count_spin.Value(1);
+   if(!m_tab7_page.Add(m_tab7_card_candles_count_spin))
+      return(false);
+
+   if(!m_tab7_card_candles_count_pos_label.Create(m_chart_id,"ConstrutorTab7CardCandlesCountPosLabel",m_subwin,368,256,452,272))
+      return(false);
+   m_tab7_card_candles_count_pos_label.Text("Posicao");
+   m_tab7_card_candles_count_pos_label.Color(C'91,78,64');
+   if(!m_tab7_page.Add(m_tab7_card_candles_count_pos_label))
+      return(false);
+
+   if(!m_tab7_card_candles_count_pos_combo.Create(m_chart_id,"ConstrutorTab7CardCandlesCountPosCombo",m_subwin,368,276,452,300))
+      return(false);
+   m_tab7_card_candles_count_pos_combo.AddItem("Maxima",CONSTRUTOR_MEDIA_MAXIMA);
+   m_tab7_card_candles_count_pos_combo.AddItem("Minima",CONSTRUTOR_MEDIA_MINIMA);
+   m_tab7_card_candles_count_pos_combo.AddItem("Abertura",CONSTRUTOR_MEDIA_ABERTURA);
+   m_tab7_card_candles_count_pos_combo.AddItem("Fechamento",CONSTRUTOR_MEDIA_FECHAMENTO);
+   m_tab7_card_candles_count_pos_combo.SelectByValue(CONSTRUTOR_MEDIA_MAXIMA);
+   if(!m_tab7_page.Add(m_tab7_card_candles_count_pos_combo))
+      return(false);
+
+   if(!m_tab7_card_indicador.Create(m_chart_id,"ConstrutorTab7CardIndicador",m_subwin,486,124,696,362))
+      return(false);
+   m_tab7_card_indicador.ColorBackground(clrNONE);
+   m_tab7_card_indicador.ColorBorder(C'197,168,136');
+   m_tab7_card_indicador.BorderType(BORDER_FLAT);
+   m_tab7_card_indicador.ZOrder(14);
+   if(!m_tab7_page.Add(m_tab7_card_indicador))
+      return(false);
+
+   if(!m_tab7_card_indicador_check.Create(m_chart_id,"ConstrutorTab7CardIndicadorCheck",m_subwin,500,136,678,156))
+      return(false);
+   m_tab7_card_indicador_check.Text("Indicador");
+   m_tab7_card_indicador_check.Color(C'91,78,64');
+   m_tab7_card_indicador_check.ColorBackground(C'233,220,203');
+   m_tab7_card_indicador_check.Checked(false);
+   if(!m_tab7_page.Add(m_tab7_card_indicador_check))
+      return(false);
+
+   if(!m_tab7_card_indicador_combo.Create(m_chart_id,"ConstrutorTab7CardIndicadorCombo",m_subwin,500,182,684,206))
+      return(false);
+   m_tab7_card_indicador_combo.AddItem("ATR",CONSTRUTOR_STOP_IND_ATR);
+   m_tab7_card_indicador_combo.AddItem("Media movel",CONSTRUTOR_STOP_IND_MEDIA_MOVEL);
+   m_tab7_card_indicador_combo.AddItem("Parabolic SAR",CONSTRUTOR_STOP_IND_PARABOLIC_SAR);
+   m_tab7_card_indicador_combo.AddItem("Bandas de Bollinger",CONSTRUTOR_STOP_IND_BOLLINGER);
+   m_tab7_card_indicador_combo.AddItem("Envelopes",CONSTRUTOR_STOP_IND_ENVELOPES);
+   m_tab7_card_indicador_combo.SelectByValue(CONSTRUTOR_STOP_IND_ATR);
+   if(!m_tab7_page.Add(m_tab7_card_indicador_combo))
+      return(false);
+
+   SetTab7Visible(false);
+   return(true);
+  }
+
 bool CConstrutorDialog::CreateExecuteButton(void)
   {
    if(!m_execute_button.Create(m_chart_id,"ConstrutorExecuteButton",m_subwin,816,610,964,636))
@@ -1885,6 +2193,14 @@ void CConstrutorDialog::SetTab6Visible(const bool visible)
       m_tab6_page.Hide();
   }
 
+void CConstrutorDialog::SetTab7Visible(const bool visible)
+  {
+   if(visible)
+      m_tab7_page.Show();
+   else
+      m_tab7_page.Hide();
+  }
+
 void CConstrutorDialog::SyncTab4Visibility(void)
   {
    const bool tab4_visible=(m_active_tab==3);
@@ -1905,6 +2221,7 @@ void CConstrutorDialog::SelectTab(const int index)
    SetTab4Visible(index==3);
    SetTab5Visible(index==4);
    SetTab6Visible(index==5);
+   SetTab7Visible(index==6);
    UpdateTabVisuals();
    ChartRedraw();
   }
@@ -1977,6 +2294,35 @@ void CConstrutorDialog::LoadSettingsToControls(void)
          m_tab5_card_candles_distance_check.Checked(true);
      }
    m_tab5_updating_checks=false;
+   m_tab7_use_combo.SelectByValue((long)m_settings.trailing_stop);
+   m_tab7_type_combo.SelectByValue((long)m_settings.tipo_trailing_stop);
+   m_tab7_card_padrao_add_spin.Value(m_settings.trailing_stop_padrao_adicionar_favor);
+   m_tab7_card_padrao_pass_spin.Value(m_settings.trailing_stop_padrao_passo);
+   m_tab7_card_candles_distance_spin.Text(DoubleToString(m_settings.trailing_stop_candles_distancia,1));
+   m_tab7_card_candles_pos_combo.SelectByValue((long)m_settings.trailing_stop_candles_posicao);
+   m_tab7_card_candles_count_spin.Value(m_settings.trailing_stop_candles_count);
+   m_tab7_card_candles_count_pos_combo.SelectByValue((long)m_settings.trailing_stop_candles_count_posicao);
+   m_tab7_card_indicador_combo.SelectByValue((long)m_settings.trailing_stop_indicador);
+   m_tab7_updating_checks=true;
+   m_tab7_card_padrao_check.Checked(false);
+   m_tab7_card_candles_check.Checked(false);
+   m_tab7_card_indicador_check.Checked(false);
+   m_tab7_card_candles_distance_check.Checked(false);
+   m_tab7_card_candles_count_check.Checked(false);
+   if(m_settings.trailing_stop_modo==CONSTRUTOR_STOP_MOVEL_CANDLES)
+      m_tab7_card_candles_check.Checked(true);
+   else if(m_settings.trailing_stop_modo==CONSTRUTOR_STOP_MOVEL_INDICADOR)
+      m_tab7_card_indicador_check.Checked(true);
+   else
+      m_tab7_card_padrao_check.Checked(true);
+   if(m_settings.trailing_stop_modo==CONSTRUTOR_STOP_MOVEL_CANDLES)
+     {
+      if(m_settings.trailing_stop_candles_modo==CONSTRUTOR_STOP_MOVEL_CANDLES_NUM_CANDLES)
+         m_tab7_card_candles_count_check.Checked(true);
+      else
+         m_tab7_card_candles_distance_check.Checked(true);
+     }
+   m_tab7_updating_checks=false;
     m_tab4_updating_checks=true;
      if(m_settings.stop_fixo==CONSTRUTOR_SIM)
        {
@@ -2161,6 +2507,25 @@ void CConstrutorDialog::StoreControlsToSettings(void)
    else
       m_settings.stop_movel_candles_modo=CONSTRUTOR_STOP_MOVEL_CANDLES_DISTANCIA;
    m_settings.stop_fixo_distancia=StringToDouble(m_tab4_card_fixed_dist_edit.Text());
+   m_settings.trailing_stop=(ENUM_CONSTRUTOR_SIM_NAO)m_tab7_use_combo.Value();
+   m_settings.tipo_trailing_stop=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab7_type_combo.Value();
+   m_settings.trailing_stop_padrao_adicionar_favor=(int)m_tab7_card_padrao_add_spin.Value();
+   m_settings.trailing_stop_padrao_passo=(int)m_tab7_card_padrao_pass_spin.Value();
+   m_settings.trailing_stop_candles_distancia=StringToDouble(m_tab7_card_candles_distance_spin.Text());
+   m_settings.trailing_stop_candles_posicao=(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab7_card_candles_pos_combo.Value();
+   m_settings.trailing_stop_candles_count=(int)m_tab7_card_candles_count_spin.Value();
+   m_settings.trailing_stop_candles_count_posicao=(ENUM_CONSTRUTOR_BASE_MEDIA)m_tab7_card_candles_count_pos_combo.Value();
+   m_settings.trailing_stop_indicador=(ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR)m_tab7_card_indicador_combo.Value();
+   if(m_tab7_card_candles_check.Checked())
+      m_settings.trailing_stop_modo=CONSTRUTOR_STOP_MOVEL_CANDLES;
+   else if(m_tab7_card_indicador_check.Checked())
+      m_settings.trailing_stop_modo=CONSTRUTOR_STOP_MOVEL_INDICADOR;
+   else
+      m_settings.trailing_stop_modo=CONSTRUTOR_STOP_MOVEL_PADRAO;
+   if(m_tab7_card_candles_count_check.Checked())
+      m_settings.trailing_stop_candles_modo=CONSTRUTOR_STOP_MOVEL_CANDLES_NUM_CANDLES;
+   else
+      m_settings.trailing_stop_candles_modo=CONSTRUTOR_STOP_MOVEL_CANDLES_DISTANCIA;
    m_settings.take_fixo_distancia=StringToDouble(m_tab6_card_fixed_dist_edit.Text());
   }
 
@@ -2500,6 +2865,96 @@ bool CConstrutorDialog::OnTab6CalcRefChange(void)
       m_tab6_card_calc_check.Checked(true);
      }
    m_tab6_updating_checks=false;
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab7PadraoChange(void)
+  {
+   if(m_tab7_updating_checks)
+      return(true);
+
+   if(m_tab7_card_padrao_check.Checked())
+     {
+      m_tab7_updating_checks=true;
+      m_tab7_card_candles_check.Checked(false);
+      m_tab7_card_candles_distance_check.Checked(false);
+      m_tab7_card_candles_count_check.Checked(false);
+      m_tab7_card_indicador_check.Checked(false);
+      m_tab7_updating_checks=false;
+     }
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab7CandlesChange(void)
+  {
+   if(m_tab7_updating_checks)
+      return(true);
+
+   m_tab7_updating_checks=true;
+   if(m_tab7_card_candles_check.Checked())
+     {
+      m_tab7_card_padrao_check.Checked(false);
+      m_tab7_card_indicador_check.Checked(false);
+      if(!m_tab7_card_candles_distance_check.Checked() && !m_tab7_card_candles_count_check.Checked())
+         m_tab7_card_candles_distance_check.Checked(true);
+     }
+   else
+     {
+      m_tab7_card_candles_distance_check.Checked(false);
+      m_tab7_card_candles_count_check.Checked(false);
+     }
+   m_tab7_updating_checks=false;
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab7CandlesDistanceChange(void)
+  {
+   if(m_tab7_updating_checks)
+      return(true);
+
+   if(m_tab7_card_candles_distance_check.Checked())
+     {
+      m_tab7_updating_checks=true;
+      m_tab7_card_candles_check.Checked(true);
+      m_tab7_card_padrao_check.Checked(false);
+      m_tab7_card_indicador_check.Checked(false);
+      m_tab7_card_candles_count_check.Checked(false);
+      m_tab7_updating_checks=false;
+     }
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab7CandlesCountChange(void)
+  {
+   if(m_tab7_updating_checks)
+      return(true);
+
+   if(m_tab7_card_candles_count_check.Checked())
+     {
+      m_tab7_updating_checks=true;
+      m_tab7_card_candles_check.Checked(true);
+      m_tab7_card_padrao_check.Checked(false);
+      m_tab7_card_indicador_check.Checked(false);
+      m_tab7_card_candles_distance_check.Checked(false);
+      m_tab7_updating_checks=false;
+     }
+   return(true);
+  }
+
+bool CConstrutorDialog::OnTab7IndicadorChange(void)
+  {
+   if(m_tab7_updating_checks)
+      return(true);
+
+   if(m_tab7_card_indicador_check.Checked())
+     {
+      m_tab7_updating_checks=true;
+      m_tab7_card_padrao_check.Checked(false);
+      m_tab7_card_candles_check.Checked(false);
+      m_tab7_card_candles_distance_check.Checked(false);
+      m_tab7_card_candles_count_check.Checked(false);
+      m_tab7_updating_checks=false;
+     }
    return(true);
   }
 
