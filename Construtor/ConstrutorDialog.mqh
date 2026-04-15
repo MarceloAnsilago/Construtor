@@ -390,6 +390,8 @@ private:
    CEdit             m_tab8_saida_valor_edit[6];
    CLabel            m_tab8_saida_dist_label[6];
    CEdit             m_tab8_saida_dist_edit[6];
+   CWndContainer     m_tab9_page;
+   CPanel            m_tab9_card;
    CLabel            m_tab6_card_calc_ref_ref_label;
    CComboBox         m_tab6_card_calc_ref_ref_combo;
    CLabel            m_tab6_card_calc_ref_pos_label;
@@ -425,6 +427,7 @@ private:
    bool              CreateTab6(void);
    bool              CreateTab7(void);
    bool              CreateTab8(void);
+   bool              CreateTab9(void);
    bool              CreateExecuteButton(void);
    void              SetTab1Visible(const bool visible);
    void              SetTab2Visible(const bool visible);
@@ -434,6 +437,7 @@ private:
    void              SetTab6Visible(const bool visible);
    void              SetTab7Visible(const bool visible);
    void              SetTab8Visible(const bool visible);
+   void              SetTab9Visible(const bool visible);
    void              SyncTab4Visibility(void);
    void              SelectTab(const int index);
    void              UpdateTabVisuals(void);
@@ -574,6 +578,8 @@ bool CConstrutorDialog::CreateLayout(void)
    if(!CreateTab7())
       return(false);
    if(!CreateTab8())
+      return(false);
+   if(!CreateTab9())
       return(false);
    if(!CreateExecuteButton())
       return(false);
@@ -2272,6 +2278,25 @@ bool CConstrutorDialog::CreateTab8(void)
    return(true);
   }
 
+bool CConstrutorDialog::CreateTab9(void)
+  {
+   if(!m_tab9_page.Create(m_chart_id,"ConstrutorTab9Page",m_subwin,236,145,992,586))
+      return(false);
+   if(!Add(m_tab9_page))
+      return(false);
+
+   if(!m_tab9_card.Create(m_chart_id,"ConstrutorTab9Card",m_subwin,2,5,754,439))
+      return(false);
+   m_tab9_card.ColorBackground(C'233,220,203');
+   m_tab9_card.ColorBorder(C'197,168,136');
+   m_tab9_card.BorderType(BORDER_FLAT);
+   if(!m_tab9_page.Add(m_tab9_card))
+      return(false);
+
+   SetTab9Visible(false);
+   return(true);
+  }
+
 bool CConstrutorDialog::CreateExecuteButton(void)
   {
    if(!m_execute_button.Create(m_chart_id,"ConstrutorExecuteButton",m_subwin,816,610,964,636))
@@ -2351,6 +2376,14 @@ void CConstrutorDialog::SetTab8Visible(const bool visible)
       m_tab8_page.Hide();
   }
 
+void CConstrutorDialog::SetTab9Visible(const bool visible)
+  {
+   if(visible)
+      m_tab9_page.Show();
+   else
+      m_tab9_page.Hide();
+  }
+
 void CConstrutorDialog::SyncTab4Visibility(void)
   {
    const bool tab4_visible=(m_active_tab==3);
@@ -2373,6 +2406,7 @@ void CConstrutorDialog::SelectTab(const int index)
    SetTab6Visible(index==5);
    SetTab7Visible(index==6);
    SetTab8Visible(index==7);
+   SetTab9Visible(index==8);
    UpdateTabVisuals();
    ChartRedraw();
   }
