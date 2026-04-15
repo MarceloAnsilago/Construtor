@@ -12,6 +12,7 @@
 #include <Controls\Edit.mqh>
 #include <Controls\ComboBox.mqh>
 #include <Controls\CheckBox.mqh>
+#include <Controls\RadioGroup.mqh>
 #include <Controls\SpinEdit.mqh>
 
 enum ENUM_CONSTRUTOR_MERCADO
@@ -396,6 +397,7 @@ private:
    CPanel            m_tab9_card_bottom;
    CPanel            m_tab9_signal_card[5];
    CCheckBox         m_tab9_signal_filter_check;
+   CRadioGroup       m_tab9_signal_order_group;
    CLabel            m_tab9_signal_measure_label;
    CComboBox         m_tab9_signal_measure_combo;
    CLabel            m_tab9_signal_time_label;
@@ -2427,7 +2429,7 @@ bool CConstrutorDialog::CreateTab9(void)
          m_tab9_signal_range_label[0].Color(C'91,78,64');
          if(!m_tab9_page.Add(m_tab9_signal_range_label[0]))
             return(false);
-         if(!m_tab9_signal_range_spin[0].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin1",m_subwin,card_x1+10,card_y1+142,card_x1+126,card_y1+164))
+         if(!m_tab9_signal_range_spin[0].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin1",m_subwin,card_x1+10,card_y1+143,card_x1+126,card_y1+165))
             return(false);
          m_tab9_signal_range_spin[0].MinValue(0);
          m_tab9_signal_range_spin[0].MaxValue(9999);
@@ -2442,7 +2444,7 @@ bool CConstrutorDialog::CreateTab9(void)
          m_tab9_signal_range_label[1].Color(C'91,78,64');
          if(!m_tab9_page.Add(m_tab9_signal_range_label[1]))
             return(false);
-         if(!m_tab9_signal_range_spin[1].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin2",m_subwin,card_x1+10,card_y1+178,card_x1+126,card_y1+200))
+         if(!m_tab9_signal_range_spin[1].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin2",m_subwin,card_x1+10,card_y1+179,card_x1+126,card_y1+201))
             return(false);
          m_tab9_signal_range_spin[1].MinValue(0);
          m_tab9_signal_range_spin[1].MaxValue(9999);
@@ -2457,7 +2459,7 @@ bool CConstrutorDialog::CreateTab9(void)
          m_tab9_signal_range_label[2].Color(C'91,78,64');
          if(!m_tab9_page.Add(m_tab9_signal_range_label[2]))
             return(false);
-         if(!m_tab9_signal_range_spin[2].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin3",m_subwin,card_x1+10,card_y1+214,card_x1+126,card_y1+236))
+         if(!m_tab9_signal_range_spin[2].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin3",m_subwin,card_x1+10,card_y1+215,card_x1+126,card_y1+237))
             return(false);
          m_tab9_signal_range_spin[2].MinValue(0);
          m_tab9_signal_range_spin[2].MaxValue(9999);
@@ -2472,12 +2474,24 @@ bool CConstrutorDialog::CreateTab9(void)
          m_tab9_signal_range_label[3].Color(C'91,78,64');
          if(!m_tab9_page.Add(m_tab9_signal_range_label[3]))
             return(false);
-         if(!m_tab9_signal_range_spin[3].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin4",m_subwin,card_x1+10,card_y1+250,card_x1+126,card_y1+272))
+         if(!m_tab9_signal_range_spin[3].Create(m_chart_id,"ConstrutorTab9SignalRangeSpin4",m_subwin,card_x1+10,card_y1+251,card_x1+126,card_y1+273))
             return(false);
          m_tab9_signal_range_spin[3].MinValue(0);
          m_tab9_signal_range_spin[3].MaxValue(9999);
          m_tab9_signal_range_spin[3].Value(0);
          if(!m_tab9_page.Add(m_tab9_signal_range_spin[3]))
+            return(false);
+        }
+      else if(i==1)
+        {
+         if(!m_tab9_signal_order_group.Create(m_chart_id,"ConstrutorTab9SignalOrderGroup",m_subwin,card_x1+10,card_y1+10,card_x1+126,card_y1+54))
+            return(false);
+         if(!m_tab9_signal_order_group.AddItem("Ord. Mercado",0))
+            return(false);
+         if(!m_tab9_signal_order_group.AddItem("Ord. Pendente",1))
+            return(false);
+         m_tab9_signal_order_group.Value(0);
+         if(!m_tab9_page.Add(m_tab9_signal_order_group))
             return(false);
         }
       else
