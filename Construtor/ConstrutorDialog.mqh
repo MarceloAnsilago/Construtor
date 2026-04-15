@@ -1454,7 +1454,7 @@ bool CConstrutorDialog::CreateTab5(void)
 
    if(!m_tab5_card_candles_distance_check.Create(m_chart_id,"ConstrutorTab5CardCandlesDistanceCheck",m_subwin,264,182,356,202))
       return(false);
-   m_tab5_card_candles_distance_check.Text("Distancia");
+   m_tab5_card_candles_distance_check.Text("Dist.");
    m_tab5_card_candles_distance_check.Color(C'91,78,64');
    m_tab5_card_candles_distance_check.ColorBackground(C'233,220,203');
    m_tab5_card_candles_distance_check.Checked(false);
@@ -1463,7 +1463,7 @@ bool CConstrutorDialog::CreateTab5(void)
 
    if(!m_tab5_card_candles_distance_label.Create(m_chart_id,"ConstrutorTab5CardCandlesDistanceLabel",m_subwin,266,208,350,224))
       return(false);
-   m_tab5_card_candles_distance_label.Text("Distancia");
+   m_tab5_card_candles_distance_label.Text("Dist.");
    m_tab5_card_candles_distance_label.Color(C'91,78,64');
    if(!m_tab5_page.Add(m_tab5_card_candles_distance_label))
       return(false);
@@ -1502,7 +1502,7 @@ bool CConstrutorDialog::CreateTab5(void)
 
    if(!m_tab5_card_candles_count_check.Create(m_chart_id,"ConstrutorTab5CardCandlesCountCheck",m_subwin,368,182,454,202))
       return(false);
-   m_tab5_card_candles_count_check.Text("N° Candles");
+   m_tab5_card_candles_count_check.Text("N°");
    m_tab5_card_candles_count_check.Color(C'91,78,64');
    m_tab5_card_candles_count_check.ColorBackground(C'233,220,203');
    m_tab5_card_candles_count_check.Checked(false);
@@ -1511,7 +1511,7 @@ bool CConstrutorDialog::CreateTab5(void)
 
    if(!m_tab5_card_candles_count_label.Create(m_chart_id,"ConstrutorTab5CardCandlesCountLabel",m_subwin,368,208,452,224))
       return(false);
-   m_tab5_card_candles_count_label.Text("N° de candles");
+   m_tab5_card_candles_count_label.Text("N°");
    m_tab5_card_candles_count_label.Color(C'91,78,64');
    if(!m_tab5_page.Add(m_tab5_card_candles_count_label))
       return(false);
