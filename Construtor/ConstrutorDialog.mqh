@@ -256,6 +256,8 @@ private:
    bool              OnTab7CandlesDistanceChange(void);
    bool              OnTab7CandlesCountChange(void);
    bool              OnTab7IndicadorChange(void);
+   bool              OnTab9PriceReferenceChange(void);
+   bool              OnTab9MediaChange(void);
   };
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
@@ -283,6 +285,8 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_candles_distance_check,OnTab7CandlesDistanceChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_candles_count_check,OnTab7CandlesCountChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_indicador_check,OnTab7IndicadorChange)
+   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_option_check[0],OnTab9PriceReferenceChange)
+   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_option_check[1],OnTab9MediaChange)
 EVENT_MAP_END(CAppDialog)
 
 CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false)
@@ -528,5 +532,7 @@ bool CConstrutorDialog::OnTab7CandlesChange(void) { return(m_painel.m_tab7.OnTab
 bool CConstrutorDialog::OnTab7CandlesDistanceChange(void) { return(m_painel.m_tab7.OnTab7CandlesDistanceChange()); }
 bool CConstrutorDialog::OnTab7CandlesCountChange(void) { return(m_painel.m_tab7.OnTab7CandlesCountChange()); }
 bool CConstrutorDialog::OnTab7IndicadorChange(void) { return(m_painel.m_tab7.OnTab7IndicadorChange()); }
+bool CConstrutorDialog::OnTab9PriceReferenceChange(void) { return(m_painel.m_tab9.OnPriceReferenceChange()); }
+bool CConstrutorDialog::OnTab9MediaChange(void) { return(m_painel.m_tab9.OnMediaChange()); }
 
 #endif // __CONSTRUTOR_DIALOG_MQH__
