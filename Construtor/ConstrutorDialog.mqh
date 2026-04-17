@@ -378,9 +378,9 @@ bool CConstrutorDialog::CreateSidebar(void)
 
 bool CConstrutorDialog::CreateContent(void)
   {
-   const int x1=236;
+   const int x1=221;
    const int y1=10;
-   const int x2=992;
+   const int x2=1312;
    const int y2=586;
 
    if(!m_content.Create(m_chart_id,"ConstrutorContent",m_subwin,x1,y1,x2,y2))
@@ -435,7 +435,7 @@ bool CConstrutorDialog::CreateTabs(void)
 
 bool CConstrutorDialog::CreateExecuteButton(void)
   {
-   if(!m_execute_button.Create(m_chart_id,"ConstrutorExecuteButton",m_subwin,816,610,964,636))
+   if(!m_execute_button.Create(m_chart_id,"ConstrutorExecuteButton",m_subwin,1136,610,1284,636))
       return(false);
    m_execute_button.Text("Executar");
    m_execute_button.FontSize(11);
