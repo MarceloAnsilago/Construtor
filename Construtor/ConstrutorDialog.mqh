@@ -260,6 +260,9 @@ private:
    bool              OnTab9MediaChange(void);
    bool              OnTab9ChannelYesChange(void);
    bool              OnTab9ChannelNoChange(void);
+   bool              OnTab9CrossYesChange(void);
+   bool              OnTab9CrossNoChange(void);
+   bool              OnTab9CrossTabClick(const int index);
   };
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
@@ -291,6 +294,9 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_option_check[1],OnTab9MediaChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_channel_check_yes,OnTab9ChannelYesChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_channel_check_no,OnTab9ChannelNoChange)
+   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_check_yes,OnTab9CrossYesChange)
+   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_check_no,OnTab9CrossNoChange)
+   ON_INDEXED_EVENT(ON_CLICK,m_painel.m_tab9.m_tab9_signal_cross_tabs,OnTab9CrossTabClick)
 EVENT_MAP_END(CAppDialog)
 
 CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false)
@@ -540,5 +546,8 @@ bool CConstrutorDialog::OnTab9PriceReferenceChange(void) { return(m_painel.m_tab
 bool CConstrutorDialog::OnTab9MediaChange(void) { return(m_painel.m_tab9.OnMediaChange()); }
 bool CConstrutorDialog::OnTab9ChannelYesChange(void) { return(m_painel.m_tab9.OnChannelYesChange()); }
 bool CConstrutorDialog::OnTab9ChannelNoChange(void) { return(m_painel.m_tab9.OnChannelNoChange()); }
+bool CConstrutorDialog::OnTab9CrossYesChange(void) { return(m_painel.m_tab9.OnCrossYesChange()); }
+bool CConstrutorDialog::OnTab9CrossNoChange(void) { return(m_painel.m_tab9.OnCrossNoChange()); }
+bool CConstrutorDialog::OnTab9CrossTabClick(const int index) { return(m_painel.m_tab9.OnCrossTabClick(index)); }
 
 #endif // __CONSTRUTOR_DIALOG_MQH__
