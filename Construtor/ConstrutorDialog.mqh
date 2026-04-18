@@ -263,7 +263,8 @@ private:
    bool              OnTab9CrossYesChange(void);
    bool              OnTab9CrossNoChange(void);
    bool              OnTab9CrossTabClick(const int index);
-  };
+   bool              OnTab9CrossSlowTabClick(const int index);
+   };
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CLICK,m_execute_button,OnExecuteClick)
@@ -297,6 +298,7 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_check_yes,OnTab9CrossYesChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_check_no,OnTab9CrossNoChange)
    ON_INDEXED_EVENT(ON_CLICK,m_painel.m_tab9.m_tab9_signal_cross_tabs,OnTab9CrossTabClick)
+   ON_INDEXED_EVENT(ON_CLICK,m_painel.m_tab9.m_tab9_signal_cross_tab2_tabs,OnTab9CrossSlowTabClick)
 EVENT_MAP_END(CAppDialog)
 
 CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false)
@@ -549,5 +551,6 @@ bool CConstrutorDialog::OnTab9ChannelNoChange(void) { return(m_painel.m_tab9.OnC
 bool CConstrutorDialog::OnTab9CrossYesChange(void) { return(m_painel.m_tab9.OnCrossYesChange()); }
 bool CConstrutorDialog::OnTab9CrossNoChange(void) { return(m_painel.m_tab9.OnCrossNoChange()); }
 bool CConstrutorDialog::OnTab9CrossTabClick(const int index) { return(m_painel.m_tab9.OnCrossTabClick(index)); }
+bool CConstrutorDialog::OnTab9CrossSlowTabClick(const int index) { return(m_painel.m_tab9.OnCrossSlowTabClick(index)); }
 
 #endif // __CONSTRUTOR_DIALOG_MQH__
