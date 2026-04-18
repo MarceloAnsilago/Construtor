@@ -405,14 +405,14 @@ bool CConstrutorDialog::CreateContent(void)
    if(!Add(m_content))
       return(false);
 
-   if(!m_page_title.Create(m_chart_id,"ConstrutorPageTitle",m_subwin,260,32,0,0))
+   if(!m_page_title.Create(m_chart_id,"ConstrutorPageTitle",m_subwin,260,16,0,0))
       return(false);
    m_page_title.FontSize(18);
    m_page_title.Color(C'43,43,43');
    if(!Add(m_page_title))
       return(false);
 
-   if(!m_page_note.Create(m_chart_id,"ConstrutorPageNote",m_subwin,260,64,0,0))
+   if(!m_page_note.Create(m_chart_id,"ConstrutorPageNote",m_subwin,260,40,0,0))
       return(false);
    m_page_note.FontSize(10);
    m_page_note.Color(C'91,78,64');
