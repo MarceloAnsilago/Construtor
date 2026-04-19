@@ -192,6 +192,10 @@ struct SConstrutorSettings
 extern SConstrutorSettings g_settings;
 
 #include "UI\\Painel.mqh"
+#include "UI\\EasyPanel.mqh"
+
+extern CConstrutorEasyPanel *g_easy_panel;
+void Construtor_ToggleEasyPanel(void);
 
 class CConstrutorDialog : public CAppDialog
   {
@@ -204,6 +208,7 @@ private:
    CPanel            m_sidebar;
    CPanel            m_content;
    CButton           m_tabs[TAB_COUNT];
+   CButton           m_easy_panel_button;
    CLabel            m_page_title;
    CLabel            m_page_note;
    CButton           m_execute_button;
@@ -227,6 +232,7 @@ private:
    bool              CreateSidebar(void);
    bool              CreateContent(void);
    bool              CreateTabs(void);
+   bool              CreateEasyPanelButton(void);
    bool              CreateExecuteButton(void);
    void              SelectTab(const int index);
    void              UpdateTabVisuals(void);
@@ -234,6 +240,7 @@ private:
    void              StoreControlsToSettings(void);
    bool              OnTabClick(const int index);
    bool              OnExecuteClick(void);
+   bool              OnEasyPanelClick(void);
    bool              OnTab4FixedChange(void);
    bool              OnTab4CalcChange(void);
    bool              OnTab4CalcModeOuterChange(void);
@@ -272,6 +279,7 @@ private:
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CLICK,m_execute_button,OnExecuteClick)
+   ON_EVENT(ON_CLICK,m_easy_panel_button,OnEasyPanelClick)
    ON_INDEXED_EVENT(ON_CLICK,m_tabs,OnTabClick)
    ON_EVENT(ON_CHANGE,m_painel.m_tab4.m_tab4_card_fixed_check,OnTab4FixedChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab4.m_tab4_card_calc_check,OnTab4CalcChange)
@@ -375,6 +383,11 @@ bool CConstrutorDialog::CreateLayout(void)
       return(false);
    if(!CreateTabs())
       return(false);
+   if(!CreateEasyPanelButton())
+      return(false);
+   // IMPORTANT: tabs must be added through CDialog::Add (client area).
+   // If they are added to the root container, Minimize() hides only the client area
+   // and the tabs can remain visible.
    if(!m_painel.Create(*this,m_chart_id,m_subwin))
       return(false);
    if(!CreateExecuteButton())
@@ -451,9 +464,32 @@ bool CConstrutorDialog::CreateTabs(void)
 
       m_tabs[i].Text(m_tab_titles[i]);
       m_tabs[i].FontSize(10);
-      if(!Add(m_tabs[i]))
+     if(!Add(m_tabs[i]))
          return(false);
      }
+   return(true);
+  }
+
+bool CConstrutorDialog::CreateEasyPanelButton(void)
+  {
+   const int x1=24;
+   const int x2=198;
+   const int button_height=26;
+   const int first_y=90;
+   const int gap_y=6;
+   const int tabs_bottom=first_y + (TAB_COUNT * button_height) + ((TAB_COUNT - 1) * gap_y);
+   const int y1=tabs_bottom + 18;
+   const int y2=y1 + button_height;
+
+   if(!m_easy_panel_button.Create(m_chart_id,"ConstrutorEasyPanelButton",m_subwin,x1,y1,x2,y2))
+      return(false);
+   m_easy_panel_button.Text("Abrir Easy GUI");
+   m_easy_panel_button.FontSize(10);
+   m_easy_panel_button.Color(clrWhite);
+   m_easy_panel_button.ColorBackground(C'39,54,78');
+   m_easy_panel_button.ColorBorder(C'62,79,101');
+   if(!Add(m_easy_panel_button))
+      return(false);
    return(true);
   }
 
@@ -527,6 +563,12 @@ bool CConstrutorDialog::OnExecuteClick(void)
       g_settings=m_settings;
       Print("Construtor: configuracao aplicada pelo painel");
      }
+   return(true);
+  }
+
+bool CConstrutorDialog::OnEasyPanelClick(void)
+  {
+   Construtor_ToggleEasyPanel();
    return(true);
   }
 

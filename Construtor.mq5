@@ -76,6 +76,15 @@ input double InpStopFixoDistancia = 100.0;
 
 CConstrutorDialog ExtDialog;
 SConstrutorSettings g_settings;
+CConstrutorEasyPanel *g_easy_panel=NULL;
+
+void Construtor_ToggleEasyPanel(void)
+  {
+   if(g_easy_panel==NULL)
+      g_easy_panel=new CConstrutorEasyPanel();
+   if(g_easy_panel!=NULL)
+      g_easy_panel.Toggle();
+  }
 
 void LoadInputsToSettings(void)
   {
@@ -177,13 +186,27 @@ int OnInit()
 void OnDeinit(const int reason)
   {
    ExtDialog.Destroy(reason);
+   if(g_easy_panel!=NULL)
+     {
+      g_easy_panel.Shutdown();
+      delete g_easy_panel;
+      g_easy_panel=NULL;
+     }
   }
 
 void OnTick()
   {
   }
 
+void OnTimer()
+  {
+   if(g_easy_panel!=NULL && g_easy_panel.IsVisible())
+      g_easy_panel.OnTimerEvent();
+  }
+
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
+   if(g_easy_panel!=NULL)
+      g_easy_panel.ChartEvent(id,lparam,dparam,sparam);
    ExtDialog.ChartEvent(id,lparam,dparam,sparam);
   }
