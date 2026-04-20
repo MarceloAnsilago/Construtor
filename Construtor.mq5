@@ -52,6 +52,7 @@ input ENUM_CONSTRUTOR_POSICAO_REFERENCIA InpStopMovelCandlesCandlePosicao = CONS
 input int InpStopMovelCandlesCount = 1;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopMovelCandlesCountPosicao = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR InpStopMovelIndicador = CONSTRUTOR_STOP_IND_ATR;
+input double InpStopMovelIndicadorDisparoDistancia = 1.0;
 input ENUM_CONSTRUTOR_SIM_NAO InpTrailingStop = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_TIPO_STOP_LOSS InpTipoTrailingStop = CONSTRUTOR_STOP_PONTOS;
 input ENUM_CONSTRUTOR_STOP_MOVEL_MODO InpTrailingStopModo = CONSTRUTOR_STOP_MOVEL_PADRAO;
@@ -144,6 +145,7 @@ void LoadInputsToSettings(void)
    g_settings.stop_movel_candles_count=InpStopMovelCandlesCount;
    g_settings.stop_movel_candles_count_posicao=InpStopMovelCandlesCountPosicao;
    g_settings.stop_movel_indicador=InpStopMovelIndicador;
+   g_settings.stop_movel_indicador_disparo_distancia=InpStopMovelIndicadorDisparoDistancia;
    g_settings.trailing_stop       =InpTrailingStop;
    g_settings.tipo_trailing_stop  =InpTipoTrailingStop;
    g_settings.trailing_stop_modo  =InpTrailingStopModo;

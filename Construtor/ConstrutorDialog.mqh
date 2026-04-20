@@ -151,6 +151,7 @@ struct SConstrutorSettings
    int                             stop_movel_candles_count;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_movel_candles_count_posicao;
    ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR stop_movel_indicador;
+   double                          stop_movel_indicador_disparo_distancia;
    ENUM_CONSTRUTOR_SIM_NAO         trailing_stop;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS  tipo_trailing_stop;
    ENUM_CONSTRUTOR_STOP_MOVEL_MODO trailing_stop_modo;
