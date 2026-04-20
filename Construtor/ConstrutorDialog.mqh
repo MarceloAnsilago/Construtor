@@ -137,6 +137,7 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO         stop_calculo;
    ENUM_CONSTRUTOR_SIM_NAO         stop_calculo_media;
    ENUM_CONSTRUTOR_SIM_NAO         stop_calculo_multiplicar;
+   ENUM_CONSTRUTOR_SIM_NAO         stop_calculo_maxmin;
    ENUM_CONSTRUTOR_SIM_NAO         stop_calculo_referencia;
    ENUM_CONSTRUTOR_SIM_NAO         trailing_stop;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS  tipo_trailing_stop;
@@ -172,6 +173,7 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
    int                             stop_calculo_multiplicar_candle;
    double                          stop_calculo_multiplicar_qtd;
+   ENUM_CONSTRUTOR_BASE_MEDIA      stop_calculo_maxmin_base;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_calculo_referencia_base;
    ENUM_CONSTRUTOR_POSICAO_REFERENCIA stop_calculo_referencia_posicao;
    double                          stop_calculo_referencia_distancia;
