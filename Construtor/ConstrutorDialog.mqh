@@ -144,8 +144,10 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_STOP_MOVEL_CANDLES_MODO stop_movel_candles_modo;
    int                             stop_movel_padrao_adicionar_favor;
    int                             stop_movel_padrao_passo;
+   double                          stop_movel_candles_disparo_distancia;
    double                          stop_movel_candles_distancia;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_movel_candles_posicao;
+   ENUM_CONSTRUTOR_POSICAO_REFERENCIA stop_movel_candles_candle_posicao;
    int                             stop_movel_candles_count;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_movel_candles_count_posicao;
    ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR stop_movel_indicador;
