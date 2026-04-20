@@ -138,20 +138,6 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO         stop_calculo_media;
    ENUM_CONSTRUTOR_SIM_NAO         stop_calculo_multiplicar;
    ENUM_CONSTRUTOR_SIM_NAO         stop_calculo_referencia;
-   ENUM_CONSTRUTOR_SIM_NAO         stop_movel;
-   ENUM_CONSTRUTOR_TIPO_STOP_LOSS  tipo_stop_movel;
-   ENUM_CONSTRUTOR_STOP_MOVEL_MODO stop_movel_modo;
-   ENUM_CONSTRUTOR_STOP_MOVEL_CANDLES_MODO stop_movel_candles_modo;
-   int                             stop_movel_padrao_adicionar_favor;
-   int                             stop_movel_padrao_passo;
-   double                          stop_movel_candles_disparo_distancia;
-   double                          stop_movel_candles_distancia;
-   ENUM_CONSTRUTOR_BASE_MEDIA      stop_movel_candles_posicao;
-   ENUM_CONSTRUTOR_POSICAO_REFERENCIA stop_movel_candles_candle_posicao;
-   int                             stop_movel_candles_count;
-   ENUM_CONSTRUTOR_BASE_MEDIA      stop_movel_candles_count_posicao;
-   ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR stop_movel_indicador;
-   double                          stop_movel_indicador_disparo_distancia;
    ENUM_CONSTRUTOR_SIM_NAO         trailing_stop;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS  tipo_trailing_stop;
    ENUM_CONSTRUTOR_STOP_MOVEL_MODO trailing_stop_modo;
@@ -163,6 +149,18 @@ struct SConstrutorSettings
    int                             trailing_stop_candles_count;
    ENUM_CONSTRUTOR_BASE_MEDIA      trailing_stop_candles_count_posicao;
    ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR trailing_stop_indicador;
+   ENUM_CONSTRUTOR_SIM_NAO         stop_movel;
+   ENUM_CONSTRUTOR_TIPO_STOP_LOSS  tipo_stop_movel;
+   ENUM_CONSTRUTOR_STOP_MOVEL_MODO stop_movel_modo;
+   ENUM_CONSTRUTOR_STOP_MOVEL_CANDLES_MODO stop_movel_candles_modo;
+   int                             stop_movel_padrao_adicionar_favor;
+   int                             stop_movel_padrao_passo;
+   double                          stop_movel_candles_disparo_distancia;
+   ENUM_CONSTRUTOR_BASE_MEDIA      stop_movel_candles_posicao;
+   ENUM_CONSTRUTOR_BASE_MEDIA      stop_movel_candles_candle_posicao;
+   double                          stop_movel_candles_distancia;
+   double                          stop_movel_indicador_disparo_distancia;
+   ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR stop_movel_indicador;
    ENUM_CONSTRUTOR_SIM_NAO         saida_parcial;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS  tipo_saida_parcial;
    double                          saida_parcial_valor[6];
@@ -209,7 +207,7 @@ class CConstrutorDialog : public CAppDialog
 private:
    enum
      {
-      TAB_COUNT=7
+      TAB_COUNT=6
      };
 
    CPanel            m_sidebar;
@@ -248,11 +246,6 @@ private:
    bool              OnTabClick(const int index);
    bool              OnExecuteClick(void);
    bool              OnEasyPanelClick(void);
-   bool              OnTab5PadraoChange(void);
-   bool              OnTab5CandlesChange(void);
-   bool              OnTab5CandlesDistanceChange(void);
-   bool              OnTab5CandlesCountChange(void);
-   bool              OnTab5IndicadorChange(void);
    bool              OnTab6FixedChange(void);
    bool              OnTab6CalcChange(void);
    bool              OnTab6CalcModeOuterChange(void);
@@ -282,11 +275,6 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CLICK,m_execute_button,OnExecuteClick)
    ON_EVENT(ON_CLICK,m_easy_panel_button,OnEasyPanelClick)
    ON_INDEXED_EVENT(ON_CLICK,m_tabs,OnTabClick)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab5.m_tab5_card_padrao_check,OnTab5PadraoChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab5.m_tab5_card_candles_check,OnTab5CandlesChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab5.m_tab5_card_candles_distance_check,OnTab5CandlesDistanceChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab5.m_tab5_card_candles_count_check,OnTab5CandlesCountChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab5.m_tab5_card_indicador_check,OnTab5IndicadorChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_fixed_check,OnTab6FixedChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_calc_check,OnTab6CalcChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_calc_mode_outer_check,OnTab6CalcModeOuterChange)
@@ -326,21 +314,19 @@ void CConstrutorDialog::BindSettings(const SConstrutorSettings &settings)
 void CConstrutorDialog::InitTabData(void)
   {
    // Tabs 1-4 migrated to EasyPanel; keep only remaining tabs here.
-   m_tab_titles[0]="5. Stop movel";
-   m_tab_titles[1]="6. Take profit";
-   m_tab_titles[2]="7. Trailing stop";
-   m_tab_titles[3]="8. Saidas parciais";
-   m_tab_titles[4]="9. Sinais";
-   m_tab_titles[5]="10. Ajustes finais";
-   m_tab_titles[6]="11. Painel";
+   m_tab_titles[0]="6. Take profit";
+   m_tab_titles[1]="7. Trailing stop";
+   m_tab_titles[2]="8. Saidas parciais";
+   m_tab_titles[3]="9. Sinais";
+   m_tab_titles[4]="10. Ajustes finais";
+   m_tab_titles[5]="11. Painel";
 
-   m_tab_notes[0]="Regras para mover o stop automaticamente.";
-   m_tab_notes[1]="Take profit fixo, calculo e projecao de lucro.";
-   m_tab_notes[2]="Trailing stop e acompanhamento dinamico.";
-   m_tab_notes[3]="Saidas fracionadas e gerenciamento parcial.";
-   m_tab_notes[4]="Gatilhos e filtros de sinal.";
-   m_tab_notes[5]="Acabamento final da estrategia.";
-   m_tab_notes[6]="Painel geral da interface.";
+   m_tab_notes[0]="Take profit fixo, calculo e projecao de lucro.";
+   m_tab_notes[1]="Trailing stop e acompanhamento dinamico.";
+   m_tab_notes[2]="Saidas fracionadas e gerenciamento parcial.";
+   m_tab_notes[3]="Gatilhos e filtros de sinal.";
+   m_tab_notes[4]="Acabamento final da estrategia.";
+   m_tab_notes[5]="Painel geral da interface.";
   }
 
 bool CConstrutorDialog::Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2)
@@ -560,11 +546,6 @@ bool CConstrutorDialog::OnEasyPanelClick(void)
    return(true);
   }
 
-bool CConstrutorDialog::OnTab5PadraoChange(void) { return(m_painel.m_tab5.OnTab5PadraoChange()); }
-bool CConstrutorDialog::OnTab5CandlesChange(void) { return(m_painel.m_tab5.OnTab5CandlesChange()); }
-bool CConstrutorDialog::OnTab5CandlesDistanceChange(void) { return(m_painel.m_tab5.OnTab5CandlesDistanceChange()); }
-bool CConstrutorDialog::OnTab5CandlesCountChange(void) { return(m_painel.m_tab5.OnTab5CandlesCountChange()); }
-bool CConstrutorDialog::OnTab5IndicadorChange(void) { return(m_painel.m_tab5.OnTab5IndicadorChange()); }
 bool CConstrutorDialog::OnTab6FixedChange(void) { return(m_painel.m_tab6.OnTab6FixedChange()); }
 bool CConstrutorDialog::OnTab6CalcChange(void) { return(m_painel.m_tab6.OnTab6CalcChange()); }
 bool CConstrutorDialog::OnTab6CalcModeOuterChange(void) { return(m_painel.m_tab6.OnTab6CalcModeOuterChange()); }
