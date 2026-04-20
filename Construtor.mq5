@@ -72,6 +72,10 @@ input int InpStopCalculoMultiplicarCandle = 3;
 input double InpStopCalculoMultiplicarQtd = 1.0;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopCalculoReferenciaBase = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_POSICAO_REFERENCIA InpStopCalculoReferenciaPosicao = CONSTRUTOR_POSICAO_ATUAL;
+input double InpStopCalculoReferenciaDistancia = 0.0;
+input int InpStopCalculoReferenciaExpirar = 0; // 0=Não expirar, 1..4=candles
+input double InpStopCalculoMediaDistancia = 0.0;
+input int InpStopCalculoMediaExpirar = 0; // 0=Não expirar, 1..4=candles
 input double InpStopFixoDistancia = 100.0;
 
 CConstrutorDialog ExtDialog;
@@ -158,15 +162,15 @@ void LoadInputsToSettings(void)
      }
    g_settings.stop_calculo_media_qtd_candles=InpStopCalculoMediaQtdCandles;
    g_settings.stop_calculo_media_base=InpStopCalculoMediaBase;
-   g_settings.stop_calculo_media_distancia=0.0;
-   g_settings.stop_calculo_media_expirar=0;
+   g_settings.stop_calculo_media_distancia=InpStopCalculoMediaDistancia;
+   g_settings.stop_calculo_media_expirar=InpStopCalculoMediaExpirar;
    g_settings.stop_calculo_multiplicar_base=InpStopCalculoMultiplicarBase;
    g_settings.stop_calculo_multiplicar_candle=InpStopCalculoMultiplicarCandle;
    g_settings.stop_calculo_multiplicar_qtd=InpStopCalculoMultiplicarQtd;
    g_settings.stop_calculo_referencia_base=InpStopCalculoReferenciaBase;
    g_settings.stop_calculo_referencia_posicao=InpStopCalculoReferenciaPosicao;
-   g_settings.stop_calculo_referencia_distancia=0.0;
-   g_settings.stop_calculo_referencia_expirar=0;
+   g_settings.stop_calculo_referencia_distancia=InpStopCalculoReferenciaDistancia;
+   g_settings.stop_calculo_referencia_expirar=InpStopCalculoReferenciaExpirar;
    g_settings.stop_fixo_distancia  =InpStopFixoDistancia;
   }
 
