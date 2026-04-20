@@ -202,7 +202,7 @@ class CConstrutorDialog : public CAppDialog
 private:
    enum
      {
-      TAB_COUNT=11
+      TAB_COUNT=8
      };
 
    CPanel            m_sidebar;
@@ -330,29 +330,24 @@ void CConstrutorDialog::BindSettings(const SConstrutorSettings &settings)
 
 void CConstrutorDialog::InitTabData(void)
   {
-   m_tab_titles[0]="1. Inf. Iniciais";
-   m_tab_titles[1]="2. Horario";
-   m_tab_titles[2]="3. Conf. inicial";
-   m_tab_titles[3]="4. Stop loss";
-   m_tab_titles[4]="5. Stop movel";
-   m_tab_titles[5]="6. Take profit";
-   m_tab_titles[6]="7. Trailing stop";
-   m_tab_titles[7]="8. Saidas parciais";
-   m_tab_titles[8]="9. Sinais";
-   m_tab_titles[9]="10. Ajustes finais";
-   m_tab_titles[10]="11. Painel";
+   // Tabs 1-3 migrated to EasyPanel; keep only remaining tabs here.
+   m_tab_titles[0]="4. Stop loss";
+   m_tab_titles[1]="5. Stop movel";
+   m_tab_titles[2]="6. Take profit";
+   m_tab_titles[3]="7. Trailing stop";
+   m_tab_titles[4]="8. Saidas parciais";
+   m_tab_titles[5]="9. Sinais";
+   m_tab_titles[6]="10. Ajustes finais";
+   m_tab_titles[7]="11. Painel";
 
-   m_tab_notes[0]="Base inicial do projeto e configuracao principal.";
-   m_tab_notes[1]="Horarios de operacao e zeragem automatica.";
-   m_tab_notes[2]="Tempo grafico, volume inicial e spread maximo.";
-   m_tab_notes[3]="Stop loss fixo, calculo e protecao por perda.";
-   m_tab_notes[4]="Regras para mover o stop automaticamente.";
-   m_tab_notes[5]="Take profit fixo, calculo e projecao de lucro.";
-   m_tab_notes[6]="Trailing stop e acompanhamento dinamico.";
-   m_tab_notes[7]="Saidas fracionadas e gerenciamento parcial.";
-   m_tab_notes[8]="Gatilhos e filtros de sinal.";
-   m_tab_notes[9]="Acabamento final da estrategia.";
-   m_tab_notes[10]="Painel geral da interface.";
+   m_tab_notes[0]="Stop loss fixo, calculo e protecao por perda.";
+   m_tab_notes[1]="Regras para mover o stop automaticamente.";
+   m_tab_notes[2]="Take profit fixo, calculo e projecao de lucro.";
+   m_tab_notes[3]="Trailing stop e acompanhamento dinamico.";
+   m_tab_notes[4]="Saidas fracionadas e gerenciamento parcial.";
+   m_tab_notes[5]="Gatilhos e filtros de sinal.";
+   m_tab_notes[6]="Acabamento final da estrategia.";
+   m_tab_notes[7]="Painel geral da interface.";
   }
 
 bool CConstrutorDialog::Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2)
