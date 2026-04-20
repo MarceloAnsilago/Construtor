@@ -174,6 +174,7 @@ struct SConstrutorSettings
    int                             stop_calculo_multiplicar_candle;
    double                          stop_calculo_multiplicar_qtd;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_calculo_maxmin_base;
+   int                             stop_calculo_maxmin_ultimos;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_calculo_referencia_base;
    ENUM_CONSTRUTOR_POSICAO_REFERENCIA stop_calculo_referencia_posicao;
    double                          stop_calculo_referencia_distancia;
