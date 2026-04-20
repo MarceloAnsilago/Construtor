@@ -158,11 +158,15 @@ void LoadInputsToSettings(void)
      }
    g_settings.stop_calculo_media_qtd_candles=InpStopCalculoMediaQtdCandles;
    g_settings.stop_calculo_media_base=InpStopCalculoMediaBase;
+   g_settings.stop_calculo_media_distancia=0.0;
+   g_settings.stop_calculo_media_expirar=0;
    g_settings.stop_calculo_multiplicar_base=InpStopCalculoMultiplicarBase;
    g_settings.stop_calculo_multiplicar_candle=InpStopCalculoMultiplicarCandle;
    g_settings.stop_calculo_multiplicar_qtd=InpStopCalculoMultiplicarQtd;
    g_settings.stop_calculo_referencia_base=InpStopCalculoReferenciaBase;
    g_settings.stop_calculo_referencia_posicao=InpStopCalculoReferenciaPosicao;
+   g_settings.stop_calculo_referencia_distancia=0.0;
+   g_settings.stop_calculo_referencia_expirar=0;
    g_settings.stop_fixo_distancia  =InpStopFixoDistancia;
   }
 

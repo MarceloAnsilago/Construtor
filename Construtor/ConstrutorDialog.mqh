@@ -166,11 +166,15 @@ struct SConstrutorSettings
    double                          saida_parcial_distancia[6];
    int                             stop_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_calculo_media_base;
+   double                          stop_calculo_media_distancia;
+   int                             stop_calculo_media_expirar;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR stop_calculo_multiplicar_base;
    int                             stop_calculo_multiplicar_candle;
    double                          stop_calculo_multiplicar_qtd;
    ENUM_CONSTRUTOR_BASE_MEDIA      stop_calculo_referencia_base;
    ENUM_CONSTRUTOR_POSICAO_REFERENCIA stop_calculo_referencia_posicao;
+   double                          stop_calculo_referencia_distancia;
+   int                             stop_calculo_referencia_expirar;
    double                          stop_fixo_distancia;
    ENUM_CONSTRUTOR_SIM_NAO         take_profit;
    ENUM_CONSTRUTOR_TIPO_STOP_LOSS  tipo_take_profit;
