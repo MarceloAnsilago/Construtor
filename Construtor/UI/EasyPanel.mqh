@@ -193,6 +193,11 @@ private:
    CEF_CTextLabel    m_tab4_dist_label;
    CEF_CTextEdit     m_tab4_dist_spin;
 
+   // Tab 4 (Take profit calc)
+   CEF_CFrame        m_tab4_card_calc;
+   CEF_CTextLabel    m_tab4_card_calc_title;
+   CEF_CCheckBox     m_tab4_use_calc;
+
 	   // Tab 1 (Inf. Iniciais) - styled preview
 	   CEF_CFrame        m_tab1_card_left;
 	   CEF_CFrame        m_tab1_card_right;
@@ -362,7 +367,10 @@ private:
 
       // Tab 4 (Take profit)
       m_tab4_calc_type.SelectItem(ClampInt((int)settings.tipo_take_profit,0,1));
-      m_tab4_use_fixed.IsPressed(settings.take_fixo==CONSTRUTOR_SIM);
+      const bool use_calc_tp=(settings.take_calculo==CONSTRUTOR_SIM);
+      const bool use_fixed_tp=(!use_calc_tp && settings.take_fixo==CONSTRUTOR_SIM);
+      m_tab4_use_calc.IsPressed(use_calc_tp);
+      m_tab4_use_fixed.IsPressed(use_fixed_tp);
       m_tab4_dist_spin.SetValue(DoubleToString(settings.take_fixo_distancia,1));
 
       }
@@ -444,8 +452,10 @@ private:
 
       // Tab 4 (Take profit)
       settings.tipo_take_profit=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab4_calc_type.GetListViewPointer().SelectedItemIndex();
-      settings.take_fixo=(m_tab4_use_fixed.IsPressed() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
-      settings.take_calculo=CONSTRUTOR_NAO;
+      const bool use_calc_tp=m_tab4_use_calc.IsPressed();
+      const bool use_fixed_tp=(!use_calc_tp && m_tab4_use_fixed.IsPressed());
+      settings.take_calculo=(use_calc_tp ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
+      settings.take_fixo=(use_fixed_tp ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       settings.take_fixo_distancia=StringToDouble(m_tab4_dist_spin.GetValue());
 
       }
@@ -2923,6 +2933,24 @@ public:
       m_tab4_dist_spin.GetDecButtonPointer().BorderColor(tab2_border);
       m_tab4_dist_spin.GetDecButtonPointer().BorderColorHover(tab2_border);
       m_tab4_dist_spin.GetDecButtonPointer().BorderColorPressed(tab2_border);
+
+      // Tab 4: Take profit (calculo) card
+      const int tab4_calc_card_x=content_pad + card_w + card_gap;
+      if(!CreateFrame(m_tab4_card_calc,"",m_tabs,m_window_index,m_tabs,3,tab4_calc_card_x,tab4_y,tab4_w,tab4_h,1))
+         return(false);
+      m_tab4_card_calc.BackColor(C'233,220,203');
+      m_tab4_card_calc.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab4_card_calc_title,"Take profit (calculo)",m_tab4_card_calc,m_window_index,m_tabs,3,16,12,tab4_w-32,22))
+         return(false);
+      m_tab4_card_calc_title.FontSize(12);
+      m_tab4_card_calc_title.LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab4_use_calc,"Usar calculo",m_tab4_card_calc,m_window_index,m_tabs,3,16,44,tab4_w-32,true,false,false))
+         return(false);
+      m_tab4_use_calc.FontSize(10);
+      m_tab4_use_calc.LabelColor(C'43,43,43');
+
       m_top_tabs.SelectTab(0);
       m_top_tabs.ShowTabElements();
       m_tabs.SelectTab(0);
