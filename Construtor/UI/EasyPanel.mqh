@@ -6764,11 +6764,14 @@ public:
 
       m_tab8_cruz_fast_tabs.SelectTab(0);
       m_tab8_cruz_fast_tabs.ShowTabElements();
+      m_tab8_cruz_fast_tabs.Update();
       m_tab8_cruz_slow_tabs.SelectTab(0);
       m_tab8_cruz_slow_tabs.ShowTabElements();
+      m_tab8_cruz_slow_tabs.Update();
 
       m_tab8_cruz_tabs.SelectTab(0);
       m_tab8_cruz_tabs.ShowTabElements();
+      m_tab8_cruz_tabs.Update();
 
       m_tab8_tabs.SelectTab(0);
       m_tab8_tabs.ShowTabElements();
@@ -7269,6 +7272,8 @@ public:
                m_tab8_cruz_fast_tabs.SelectTab(v-5); // 5->0, ..., 9->4
                m_tab8_cruz_tabs.ShowTabElements();
                m_tab8_cruz_fast_tabs.ShowTabElements();
+               m_tab8_cruz_tabs.Update();
+               m_tab8_cruz_fast_tabs.Update();
               }
             return;
            }
@@ -7282,6 +7287,8 @@ public:
                m_tab8_cruz_slow_tabs.SelectTab(v-5); // 5->0, ..., 9->4
                m_tab8_cruz_tabs.ShowTabElements();
                m_tab8_cruz_slow_tabs.ShowTabElements();
+               m_tab8_cruz_tabs.Update();
+               m_tab8_cruz_slow_tabs.Update();
               }
             return;
            }
