@@ -4651,10 +4651,10 @@ public:
       const int tab7_x=content_pad;
       const int tab7_y=content_y+120;
       const int tab7_w=content_w;
-      const int tab7_gap=card_gap;
+      const int tab7_gap=10;
       const int tab7_cols=3;
       const int tab7_card_w=(tab7_w - (tab7_gap*(tab7_cols-1))) / tab7_cols;
-      const int tab7_card_h=260;
+      const int tab7_card_h=200;
 
       for(int i=0; i<6; i++)
         {
@@ -4669,20 +4669,20 @@ public:
          m_tab7_card_saida[i].BorderColor(C'197,168,136');
 
          string card_title=StringFormat("Saida %d",(i+1));
-         if(!CreateTextLabel(m_tab7_card_saida_title[i],card_title,m_tab7_card_saida[i],m_window_index,m_tabs,6,16,12,tab7_card_w-32,22))
+         if(!CreateTextLabel(m_tab7_card_saida_title[i],card_title,m_tab7_card_saida[i],m_window_index,m_tabs,6,16,10,tab7_card_w-32,20))
             return(false);
-         m_tab7_card_saida_title[i].FontSize(12);
+         m_tab7_card_saida_title[i].FontSize(11);
          m_tab7_card_saida_title[i].LabelColor(C'43,43,43');
 
          string check_text=StringFormat("Ativar saida %d",(i+1));
-         if(!CreateCheckbox(m_tab7_use_saida[i],check_text,m_tab7_card_saida[i],m_window_index,m_tabs,6,16,44,tab7_card_w-32,false,false,false))
+         if(!CreateCheckbox(m_tab7_use_saida[i],check_text,m_tab7_card_saida[i],m_window_index,m_tabs,6,16,34,tab7_card_w-32,false,false,false))
             return(false);
-         m_tab7_use_saida[i].FontSize(10);
+         m_tab7_use_saida[i].FontSize(9);
          m_tab7_use_saida[i].LabelColor(C'43,43,43');
 
-         if(!CreateTextLabel(m_tab7_dist_label[i],"Distancia",m_tab7_card_saida[i],m_window_index,m_tabs,6,16,76,tab7_card_w-32,18))
+         if(!CreateTextLabel(m_tab7_dist_label[i],"Distancia",m_tab7_card_saida[i],m_window_index,m_tabs,6,16,58,tab7_card_w-32,16))
             return(false);
-         m_tab7_dist_label[i].FontSize(10);
+         m_tab7_dist_label[i].FontSize(9);
          m_tab7_dist_label[i].LabelColor(C'91,78,64');
 
          const int tab7_edit_w=tab7_card_w-32;
@@ -4702,7 +4702,7 @@ public:
          m_tab7_dist_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
          m_tab7_dist_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
          m_tab7_dist_spin[i].GetTextBoxPointer().XGap(1);
-         if(!m_tab7_dist_spin[i].CreateTextEdit("",16,98))
+         if(!m_tab7_dist_spin[i].CreateTextEdit("",16,76))
             return(false);
          AddToElementsArray(m_window_index,m_tab7_dist_spin[i]);
          m_tab7_dist_spin[i].BackColor(C'233,220,203');
@@ -4730,9 +4730,9 @@ public:
          m_tab7_dist_spin[i].GetDecButtonPointer().BorderColorHover(tab2_border);
          m_tab7_dist_spin[i].GetDecButtonPointer().BorderColorPressed(tab2_border);
 
-         if(!CreateTextLabel(m_tab7_qty_label[i],"Quantidade",m_tab7_card_saida[i],m_window_index,m_tabs,6,16,132,tab7_card_w-32,18))
+         if(!CreateTextLabel(m_tab7_qty_label[i],"Quantidade",m_tab7_card_saida[i],m_window_index,m_tabs,6,16,108,tab7_card_w-32,16))
             return(false);
-         m_tab7_qty_label[i].FontSize(10);
+         m_tab7_qty_label[i].FontSize(9);
          m_tab7_qty_label[i].LabelColor(C'91,78,64');
 
          m_tab7_qty_spin[i].MainPointer(m_tab7_card_saida[i]);
@@ -4750,7 +4750,7 @@ public:
          m_tab7_qty_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
          m_tab7_qty_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
          m_tab7_qty_spin[i].GetTextBoxPointer().XGap(1);
-         if(!m_tab7_qty_spin[i].CreateTextEdit("",16,154))
+         if(!m_tab7_qty_spin[i].CreateTextEdit("",16,126))
             return(false);
          AddToElementsArray(m_window_index,m_tab7_qty_spin[i]);
          m_tab7_qty_spin[i].BackColor(C'233,220,203');
