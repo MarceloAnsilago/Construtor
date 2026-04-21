@@ -356,6 +356,7 @@ private:
    CEF_CTextLabel    m_tab8_cruz_slow_note;
 
    // Fast params (inner tabs 1..5)
+   CEF_CTextLabel    m_tab8_cruz_fast_inner_title[5];
    CEF_CTextLabel    m_tab8_cruz_fast_ma_period_label;
    CEF_CTextEdit     m_tab8_cruz_fast_ma_period_spin;
    CEF_CTextLabel    m_tab8_cruz_fast_ma_shift_label;
@@ -384,6 +385,7 @@ private:
    CEF_CTextLabel    m_tab8_cruz_fast_placeholder[5];
 
    // Slow params (inner tabs 1..5)
+   CEF_CTextLabel    m_tab8_cruz_slow_inner_title[5];
    CEF_CTextLabel    m_tab8_cruz_slow_ma_period_label;
    CEF_CTextEdit     m_tab8_cruz_slow_ma_period_spin;
    CEF_CTextLabel    m_tab8_cruz_slow_ma_shift_label;
@@ -6429,6 +6431,29 @@ public:
       const int cruz_param_w=cruz_inner_w-32;
       const int cruz_param_h=20;
       const int cruz_col_w=(cruz_param_w-12)/2;
+      const int cruz_param_title_y=10;
+      const int cruz_param_title_h=16;
+
+      string cruz_inner_titles[];
+      ArrayResize(cruz_inner_titles,5);
+      cruz_inner_titles[0]="Media movel";
+      cruz_inner_titles[1]="Vidya";
+      cruz_inner_titles[2]="Dema";
+      cruz_inner_titles[3]="Tema";
+      cruz_inner_titles[4]="Frama";
+
+      for(int i=0;i<5;i++)
+        {
+         if(!CreateTextLabel(m_tab8_cruz_fast_inner_title[i],cruz_inner_titles[i],m_tab8_cruz_fast_tabs,m_window_index,m_tab8_cruz_fast_tabs,i,cruz_param_x,cruz_param_title_y,cruz_param_w,cruz_param_title_h))
+            return(false);
+         m_tab8_cruz_fast_inner_title[i].FontSize(9);
+         m_tab8_cruz_fast_inner_title[i].LabelColor(C'43,43,43');
+
+         if(!CreateTextLabel(m_tab8_cruz_slow_inner_title[i],cruz_inner_titles[i],m_tab8_cruz_slow_tabs,m_window_index,m_tab8_cruz_slow_tabs,i,cruz_param_x,cruz_param_title_y,cruz_param_w,cruz_param_title_h))
+            return(false);
+         m_tab8_cruz_slow_inner_title[i].FontSize(9);
+         m_tab8_cruz_slow_inner_title[i].LabelColor(C'43,43,43');
+        }
 
       // Helper styling constants
       const color cruz_param_border=tab2_border;
