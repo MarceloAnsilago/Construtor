@@ -564,7 +564,8 @@ private:
          m_tab8_cruz_fast_btn.LabelText((string)(v-4)); // 5->1, 6->2, ..., 9->5
       else
          m_tab8_cruz_fast_btn.LabelText("");
-      m_tab8_cruz_fast_btn.Update(true);
+      if(m_visible)
+         m_tab8_cruz_fast_btn.Update(true);
      }
 
    void UpdateCrossSlowButton(void)
@@ -574,7 +575,8 @@ private:
          m_tab8_cruz_slow_btn.LabelText((string)(v-4)); // 5->1, 6->2, ..., 9->5
       else
          m_tab8_cruz_slow_btn.LabelText("");
-      m_tab8_cruz_slow_btn.Update(true);
+      if(m_visible)
+         m_tab8_cruz_slow_btn.Update(true);
      }
 
    void UpdateCrossUI(void)
@@ -953,22 +955,36 @@ public:
 
    bool              IsVisible(void) const { return(m_visible); }
    bool              IsCreated(void) const { return(m_created); }
-   void              OnTimerEvent(void) { PollCrossComboChanges(); }
+   void              OnTimerEvent(void)
+     {
+      if(!m_created || !m_visible)
+         return;
+      PollCrossComboChanges();
+     }
 
    bool CreateIfNeeded(void)
      {
       if(m_created)
          return(true);
 
-	      const int window_x=260;
-	      const int window_y=40;
-	      const int window_w=1400;
-	      const int window_h=860;
+      // Start maximized to the chart size (best approximation of "maximize" in chart-based GUI).
+      // Use chart pixel dimensions; clamp to sane minimums in case the terminal returns 0 early.
+      int chart_w=(int)ChartGetInteger(0,CHART_WIDTH_IN_PIXELS,0);
+      int chart_h=(int)ChartGetInteger(0,CHART_HEIGHT_IN_PIXELS,0);
+      if(chart_w<400) chart_w=1400;
+      if(chart_h<300) chart_h=860;
+
+      const int window_x=0;
+      const int window_y=0;
+      const int window_w=chart_w;
+      const int window_h=chart_h;
 
       if(!CreateWindow(m_window,"Construtor | EasyAndFastGUI",window_x,window_y,window_w,window_h,true,true,true,true))
          return(false);
 
       m_window_index=WindowsTotal()-1;
+      // Avoid UI flicker while building controls (some elements may render immediately after creation).
+      Hide();
       m_window.BackColor(C'247,241,231');
 
       if(!CreateTextLabel(m_title,"Construtor (Easy GUI) | EasyPanel.mqh",m_window,m_window_index,16,40,520,22))
