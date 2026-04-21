@@ -314,6 +314,23 @@ private:
    CEF_CComboBox     m_tab8_filtro_time_combo;
    CEF_CTextLabel    m_tab8_filtro_range_label[4];
    CEF_CTextEdit     m_tab8_filtro_range_spin[4];
+   CEF_CFrame        m_tab8_card_canais;
+   CEF_CTextLabel    m_tab8_card_canais_title;
+   CEF_CTextLabel    m_tab8_canais_label;
+   CEF_CCheckBox     m_tab8_canais_yes;
+   CEF_CCheckBox     m_tab8_canais_no;
+   CEF_CTextLabel    m_tab8_canais_indic_label;
+   CEF_CComboBox     m_tab8_canais_indic_combo;
+   CEF_CTextLabel    m_tab8_canais_type_label;
+   CEF_CComboBox     m_tab8_canais_type_combo;
+   CEF_CTextLabel    m_tab8_canais_period_label;
+   CEF_CTextEdit     m_tab8_canais_period_spin;
+   CEF_CTextLabel    m_tab8_canais_deviation_label;
+   CEF_CTextEdit     m_tab8_canais_deviation_spin;
+   CEF_CTextLabel    m_tab8_canais_shift_label;
+   CEF_CTextEdit     m_tab8_canais_shift_spin;
+   CEF_CTextLabel    m_tab8_canais_price_label;
+   CEF_CComboBox     m_tab8_canais_price_combo;
    CEF_CTabs         m_tab8_ord_tabs;
    CEF_CCheckBox     m_tab8_ord_ref_check;
    CEF_CCheckBox     m_tab8_ord_media_check;
@@ -5591,6 +5608,299 @@ public:
          tab8_fy+=24;
         }
 
+      // Third card: "Usar canais de bandas?" (ported from CPanel Tab 9 "Sinais" third card)
+      const int tab8_canais_x=tab8_filter_x + tab8_filter_w + card_gap;
+      const int tab8_canais_y=tab8_y;
+      const int tab8_canais_w=tab8_w;
+      const int tab8_canais_h=tab8_h;
+
+      if(!CreateFrame(m_tab8_card_canais,"",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_canais_x,tab8_canais_y,tab8_canais_w,tab8_canais_h,1))
+         return(false);
+      m_tab8_card_canais.BackColor(C'233,220,203');
+      m_tab8_card_canais.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_card_canais_title,"Canais de bandas",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,12,tab8_canais_w-32,22))
+         return(false);
+      m_tab8_card_canais_title.FontSize(12);
+      m_tab8_card_canais_title.LabelColor(C'43,43,43');
+
+      if(!CreateTextLabel(m_tab8_canais_label,"Usar canais de bandas?",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,40,tab8_canais_w-32,18))
+         return(false);
+      m_tab8_canais_label.FontSize(10);
+      m_tab8_canais_label.LabelColor(C'91,78,64');
+
+      if(!CreateCheckbox(m_tab8_canais_yes,"Sim",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,58,60,false,false,false))
+         return(false);
+      m_tab8_canais_yes.FontSize(10);
+      m_tab8_canais_yes.LabelColor(C'91,78,64');
+
+      if(!CreateCheckbox(m_tab8_canais_no,"Nao",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,86,58,60,true,false,false))
+         return(false);
+      m_tab8_canais_no.FontSize(10);
+      m_tab8_canais_no.LabelColor(C'91,78,64');
+
+      // Indicador
+      if(!CreateTextLabel(m_tab8_canais_indic_label,"Indicador",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,84,tab8_canais_w-32,16))
+         return(false);
+      m_tab8_canais_indic_label.FontSize(9);
+      m_tab8_canais_indic_label.LabelColor(C'91,78,64');
+
+      string tab8_indic_items[];
+      ArrayResize(tab8_indic_items,5);
+      tab8_indic_items[0]="Bandas de Bollinger";
+      tab8_indic_items[1]="Envelope";
+      tab8_indic_items[2]="Keltner";
+      tab8_indic_items[3]="Donchian";
+      tab8_indic_items[4]="Canal ATR";
+
+      const int tab8_combo_w=tab8_canais_w-32;
+      m_tab8_canais_indic_combo.MainPointer(m_tab8_card_canais);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_canais_indic_combo);
+      m_tab8_canais_indic_combo.XSize(tab8_combo_w);
+      m_tab8_canais_indic_combo.YSize(20);
+      m_tab8_canais_indic_combo.BackColor(clrWhite);
+      m_tab8_canais_indic_combo.BackColorHover(clrWhite);
+      m_tab8_canais_indic_combo.BackColorPressed(clrWhite);
+      m_tab8_canais_indic_combo.BorderColor(tab2_border);
+      m_tab8_canais_indic_combo.BorderColorHover(tab2_border);
+      m_tab8_canais_indic_combo.BorderColorPressed(tab2_border);
+      m_tab8_canais_indic_combo.FontSize(10);
+      m_tab8_canais_indic_combo.ItemsTotal(ArraySize(tab8_indic_items));
+      m_tab8_canais_indic_combo.CheckBoxMode(false);
+      m_tab8_canais_indic_combo.GetButtonPointer().XGap(1);
+      m_tab8_canais_indic_combo.GetButtonPointer().XSize(tab8_combo_w-2);
+      m_tab8_canais_indic_combo.GetButtonPointer().YSize(20);
+      m_tab8_canais_indic_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_canais_indic_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_canais_indic_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_canais_indic_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_canais_indic_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab8_canais_indic_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab8_canais_indic_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab8_canais_indic_combo.GetButtonPointer().IconXGap((tab8_combo_w-2)-18);
+      m_tab8_canais_indic_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_canais_indic_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_indic_items);i++) m_tab8_canais_indic_combo.SetValue(i,tab8_indic_items[i]);
+      m_tab8_canais_indic_combo.GetListViewPointer().YSize(120);
+      m_tab8_canais_indic_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_canais_indic_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_canais_indic_combo.CreateComboBox("",16,100))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_canais_indic_combo);
+      m_tab8_canais_indic_combo.SelectItem(0);
+
+      // Sinais
+      if(!CreateTextLabel(m_tab8_canais_type_label,"Sinais",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,124,tab8_canais_w-32,16))
+         return(false);
+      m_tab8_canais_type_label.FontSize(9);
+      m_tab8_canais_type_label.LabelColor(C'91,78,64');
+
+      string tab8_type_items[];
+      ArrayResize(tab8_type_items,6);
+      tab8_type_items[0]="Fechou fora";
+      tab8_type_items[1]="Fechou dentro e saiu";
+      tab8_type_items[2]="Fechou dentro e fechou fora";
+      tab8_type_items[3]="Fechou fora e voltou";
+      tab8_type_items[4]="Fechou fora e fechou dentro";
+      tab8_type_items[5]="Estando fora";
+
+      m_tab8_canais_type_combo.MainPointer(m_tab8_card_canais);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_canais_type_combo);
+      m_tab8_canais_type_combo.XSize(tab8_combo_w);
+      m_tab8_canais_type_combo.YSize(20);
+      m_tab8_canais_type_combo.BackColor(clrWhite);
+      m_tab8_canais_type_combo.BackColorHover(clrWhite);
+      m_tab8_canais_type_combo.BackColorPressed(clrWhite);
+      m_tab8_canais_type_combo.BorderColor(tab2_border);
+      m_tab8_canais_type_combo.BorderColorHover(tab2_border);
+      m_tab8_canais_type_combo.BorderColorPressed(tab2_border);
+      m_tab8_canais_type_combo.FontSize(10);
+      m_tab8_canais_type_combo.ItemsTotal(ArraySize(tab8_type_items));
+      m_tab8_canais_type_combo.CheckBoxMode(false);
+      m_tab8_canais_type_combo.GetButtonPointer().XGap(1);
+      m_tab8_canais_type_combo.GetButtonPointer().XSize(tab8_combo_w-2);
+      m_tab8_canais_type_combo.GetButtonPointer().YSize(20);
+      m_tab8_canais_type_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_canais_type_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_canais_type_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_canais_type_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_canais_type_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab8_canais_type_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab8_canais_type_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab8_canais_type_combo.GetButtonPointer().IconXGap((tab8_combo_w-2)-18);
+      m_tab8_canais_type_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_canais_type_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_type_items);i++) m_tab8_canais_type_combo.SetValue(i,tab8_type_items[i]);
+      m_tab8_canais_type_combo.GetListViewPointer().YSize(160);
+      m_tab8_canais_type_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_canais_type_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_canais_type_combo.CreateComboBox("",16,140))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_canais_type_combo);
+      m_tab8_canais_type_combo.SelectItem(0);
+
+      // Spinners
+      const int tab8_spin_w=(tab8_combo_w-12)/2;
+      const int tab8_spin_text_w=tab8_spin_w-34;
+
+      if(!CreateTextLabel(m_tab8_canais_period_label,"Periodo",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,174,tab8_spin_w,16))
+         return(false);
+      m_tab8_canais_period_label.FontSize(9);
+      m_tab8_canais_period_label.LabelColor(C'91,78,64');
+
+      m_tab8_canais_period_spin.MainPointer(m_tab8_card_canais);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_canais_period_spin);
+      m_tab8_canais_period_spin.XSize(tab8_spin_w);
+      m_tab8_canais_period_spin.MaxValue(9999.0);
+      m_tab8_canais_period_spin.MinValue(0.0);
+      m_tab8_canais_period_spin.StepValue(1.0);
+      m_tab8_canais_period_spin.SetDigits(0);
+      m_tab8_canais_period_spin.SpinEditMode(true);
+      m_tab8_canais_period_spin.CheckBoxMode(false);
+      m_tab8_canais_period_spin.SetValue("20");
+      m_tab8_canais_period_spin.AnchorBottomWindowSide(false);
+      m_tab8_canais_period_spin.GetTextBoxPointer().XSize(tab8_spin_text_w);
+      m_tab8_canais_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_canais_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_canais_period_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_canais_period_spin.CreateTextEdit("",16,192))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_canais_period_spin);
+      m_tab8_canais_period_spin.BackColor(C'233,220,203');
+      m_tab8_canais_period_spin.BackColorHover(C'233,220,203');
+      m_tab8_canais_period_spin.BackColorPressed(C'233,220,203');
+      m_tab8_canais_period_spin.BorderColor(tab2_border);
+      m_tab8_canais_period_spin.BorderColorHover(tab2_border);
+      m_tab8_canais_period_spin.BorderColorPressed(tab2_border);
+      m_tab8_canais_period_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_canais_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_canais_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_canais_period_spin.GetTextBoxPointer().BorderColor(tab2_border);
+      m_tab8_canais_period_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+      m_tab8_canais_period_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+
+      if(!CreateTextLabel(m_tab8_canais_deviation_label,"Desvio",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16+tab8_spin_w+12,174,tab8_spin_w,16))
+         return(false);
+      m_tab8_canais_deviation_label.FontSize(9);
+      m_tab8_canais_deviation_label.LabelColor(C'91,78,64');
+
+      m_tab8_canais_deviation_spin.MainPointer(m_tab8_card_canais);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_canais_deviation_spin);
+      m_tab8_canais_deviation_spin.XSize(tab8_spin_w);
+      m_tab8_canais_deviation_spin.MaxValue(9999.0);
+      m_tab8_canais_deviation_spin.MinValue(0.0);
+      m_tab8_canais_deviation_spin.StepValue(0.1);
+      m_tab8_canais_deviation_spin.SetDigits(1);
+      m_tab8_canais_deviation_spin.SpinEditMode(true);
+      m_tab8_canais_deviation_spin.CheckBoxMode(false);
+      m_tab8_canais_deviation_spin.SetValue("2.0");
+      m_tab8_canais_deviation_spin.AnchorBottomWindowSide(false);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().XSize(tab8_spin_text_w);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_canais_deviation_spin.CreateTextEdit("",16+tab8_spin_w+12,192))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_canais_deviation_spin);
+      m_tab8_canais_deviation_spin.BackColor(C'233,220,203');
+      m_tab8_canais_deviation_spin.BackColorHover(C'233,220,203');
+      m_tab8_canais_deviation_spin.BackColorPressed(C'233,220,203');
+      m_tab8_canais_deviation_spin.BorderColor(tab2_border);
+      m_tab8_canais_deviation_spin.BorderColorHover(tab2_border);
+      m_tab8_canais_deviation_spin.BorderColorPressed(tab2_border);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().BorderColor(tab2_border);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+      m_tab8_canais_deviation_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+
+      if(!CreateTextLabel(m_tab8_canais_shift_label,"Deslocamento",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,222,tab8_combo_w,16))
+         return(false);
+      m_tab8_canais_shift_label.FontSize(9);
+      m_tab8_canais_shift_label.LabelColor(C'91,78,64');
+
+      m_tab8_canais_shift_spin.MainPointer(m_tab8_card_canais);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_canais_shift_spin);
+      m_tab8_canais_shift_spin.XSize(tab8_combo_w);
+      m_tab8_canais_shift_spin.MaxValue(9999.0);
+      m_tab8_canais_shift_spin.MinValue(0.0);
+      m_tab8_canais_shift_spin.StepValue(1.0);
+      m_tab8_canais_shift_spin.SetDigits(0);
+      m_tab8_canais_shift_spin.SpinEditMode(true);
+      m_tab8_canais_shift_spin.CheckBoxMode(false);
+      m_tab8_canais_shift_spin.SetValue("0");
+      m_tab8_canais_shift_spin.AnchorBottomWindowSide(false);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().XSize(tab8_combo_w-34);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_canais_shift_spin.CreateTextEdit("",16,240))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_canais_shift_spin);
+      m_tab8_canais_shift_spin.BackColor(C'233,220,203');
+      m_tab8_canais_shift_spin.BackColorHover(C'233,220,203');
+      m_tab8_canais_shift_spin.BackColorPressed(C'233,220,203');
+      m_tab8_canais_shift_spin.BorderColor(tab2_border);
+      m_tab8_canais_shift_spin.BorderColorHover(tab2_border);
+      m_tab8_canais_shift_spin.BorderColorPressed(tab2_border);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().BorderColor(tab2_border);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+      m_tab8_canais_shift_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+
+      if(!CreateTextLabel(m_tab8_canais_price_label,"Modo de preco:",m_tab8_card_canais,m_window_index,m_tab8_tabs,0,16,268,tab8_combo_w,16))
+         return(false);
+      m_tab8_canais_price_label.FontSize(9);
+      m_tab8_canais_price_label.LabelColor(C'91,78,64');
+
+      string tab8_price_items[];
+      ArrayResize(tab8_price_items,7);
+      tab8_price_items[0]="Fechamento";
+      tab8_price_items[1]="Abertura";
+      tab8_price_items[2]="Maximo";
+      tab8_price_items[3]="Minimo";
+      tab8_price_items[4]="Mediano";
+      tab8_price_items[5]="Tipico";
+      tab8_price_items[6]="Medio";
+
+      m_tab8_canais_price_combo.MainPointer(m_tab8_card_canais);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_canais_price_combo);
+      m_tab8_canais_price_combo.XSize(tab8_combo_w);
+      m_tab8_canais_price_combo.YSize(20);
+      m_tab8_canais_price_combo.BackColor(clrWhite);
+      m_tab8_canais_price_combo.BackColorHover(clrWhite);
+      m_tab8_canais_price_combo.BackColorPressed(clrWhite);
+      m_tab8_canais_price_combo.BorderColor(tab2_border);
+      m_tab8_canais_price_combo.BorderColorHover(tab2_border);
+      m_tab8_canais_price_combo.BorderColorPressed(tab2_border);
+      m_tab8_canais_price_combo.FontSize(10);
+      m_tab8_canais_price_combo.ItemsTotal(ArraySize(tab8_price_items));
+      m_tab8_canais_price_combo.CheckBoxMode(false);
+      m_tab8_canais_price_combo.GetButtonPointer().XGap(1);
+      m_tab8_canais_price_combo.GetButtonPointer().XSize(tab8_combo_w-2);
+      m_tab8_canais_price_combo.GetButtonPointer().YSize(20);
+      m_tab8_canais_price_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_canais_price_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_canais_price_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_canais_price_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_canais_price_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab8_canais_price_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab8_canais_price_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab8_canais_price_combo.GetButtonPointer().IconXGap((tab8_combo_w-2)-18);
+      m_tab8_canais_price_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_canais_price_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_price_items);i++) m_tab8_canais_price_combo.SetValue(i,tab8_price_items[i]);
+      m_tab8_canais_price_combo.GetListViewPointer().YSize(160);
+      m_tab8_canais_price_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_canais_price_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_canais_price_combo.CreateComboBox("",16,286))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_canais_price_combo);
+      m_tab8_canais_price_combo.SelectItem(0);
+
       m_tab8_tabs.SelectTab(0);
       m_tab8_tabs.ShowTabElements();
 
@@ -5626,6 +5936,12 @@ public:
          m_tab8_ord_media_check.IsPressed(false);
       else if(m_tab8_ord_media_check.IsPressed())
          m_tab8_ord_ref_check.IsPressed(false);
+
+      // Ensure yes/no for Tab 8 canais are mutually exclusive on startup
+      if(m_tab8_canais_yes.IsPressed())
+         m_tab8_canais_no.IsPressed(false);
+      else if(m_tab8_canais_no.IsPressed())
+         m_tab8_canais_yes.IsPressed(false);
 
       CompletedGUI();
       m_created=true;
@@ -5845,6 +6161,26 @@ public:
             m_tab8_ord_media_check.Update(true);
             m_tab8_ord_ref_check.Update(true);
             m_tab8_ord_tabs.ShowTabElements();
+            return;
+           }
+
+         // Tab 8 (Sinais): canais de bandas yes/no (radio-like)
+         if(m_tab8_canais_yes.Id()==clicked_id)
+           {
+            if(!m_tab8_canais_yes.IsPressed())
+               m_tab8_canais_yes.IsPressed(true);
+            m_tab8_canais_no.IsPressed(false);
+            m_tab8_canais_yes.Update(true);
+            m_tab8_canais_no.Update(true);
+            return;
+           }
+         if(m_tab8_canais_no.Id()==clicked_id)
+           {
+            if(!m_tab8_canais_no.IsPressed())
+               m_tab8_canais_no.IsPressed(true);
+            m_tab8_canais_yes.IsPressed(false);
+            m_tab8_canais_no.Update(true);
+            m_tab8_canais_yes.Update(true);
             return;
            }
 
