@@ -331,6 +331,15 @@ private:
    CEF_CTextEdit     m_tab8_canais_shift_spin;
    CEF_CTextLabel    m_tab8_canais_price_label;
    CEF_CComboBox     m_tab8_canais_price_combo;
+   CEF_CFrame        m_tab8_card_cruz;
+   CEF_CTextLabel    m_tab8_card_cruz_title;
+   CEF_CTextLabel    m_tab8_cruz_label;
+   CEF_CCheckBox     m_tab8_cruz_yes;
+   CEF_CCheckBox     m_tab8_cruz_no;
+   CEF_CTabs         m_tab8_cruz_tabs;
+   CEF_CTextLabel    m_tab8_cruz_placeholder_sinais;
+   CEF_CTextLabel    m_tab8_cruz_placeholder_rapidos;
+   CEF_CTextLabel    m_tab8_cruz_placeholder_lentos;
    CEF_CTabs         m_tab8_ord_tabs;
    CEF_CCheckBox     m_tab8_ord_ref_check;
    CEF_CCheckBox     m_tab8_ord_media_check;
@@ -5901,6 +5910,113 @@ public:
       AddToElementsArray(m_window_index,m_tab8_canais_price_combo);
       m_tab8_canais_price_combo.SelectItem(0);
 
+      // Fourth card: "Usar cruzamentos" (skeleton with tabs)
+      const int tab8_cruz_x=tab8_canais_x + tab8_canais_w + card_gap;
+      const int tab8_cruz_y=tab8_y;
+      const int tab8_cruz_w=tab8_w;
+      const int tab8_cruz_h=tab8_h;
+
+      if(!CreateFrame(m_tab8_card_cruz,"",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_cruz_x,tab8_cruz_y,tab8_cruz_w,tab8_cruz_h,1))
+         return(false);
+      m_tab8_card_cruz.BackColor(C'233,220,203');
+      m_tab8_card_cruz.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_card_cruz_title,"Usar cruzamentos",m_tab8_card_cruz,m_window_index,m_tab8_tabs,0,16,12,tab8_cruz_w-32,22))
+         return(false);
+      m_tab8_card_cruz_title.FontSize(12);
+      m_tab8_card_cruz_title.LabelColor(C'43,43,43');
+
+      if(!CreateTextLabel(m_tab8_cruz_label,"Usar cruzamentos",m_tab8_card_cruz,m_window_index,m_tab8_tabs,0,16,40,tab8_cruz_w-32,18))
+         return(false);
+      m_tab8_cruz_label.FontSize(10);
+      m_tab8_cruz_label.LabelColor(C'91,78,64');
+
+      if(!CreateCheckbox(m_tab8_cruz_yes,"Sim",m_tab8_card_cruz,m_window_index,m_tab8_tabs,0,16,58,60,false,false,false))
+         return(false);
+      m_tab8_cruz_yes.FontSize(10);
+      m_tab8_cruz_yes.LabelColor(C'91,78,64');
+
+      if(!CreateCheckbox(m_tab8_cruz_no,"Nao",m_tab8_card_cruz,m_window_index,m_tab8_tabs,0,86,58,60,true,false,false))
+         return(false);
+      m_tab8_cruz_no.FontSize(10);
+      m_tab8_cruz_no.LabelColor(C'91,78,64');
+
+      // Tabs inside cruzamentos card
+      string cruz_text[];
+      int cruz_widths[];
+      ArrayResize(cruz_text,3);
+      ArrayResize(cruz_widths,3);
+      cruz_text[0]="Sinais";
+      cruz_text[1]="Par. rapidos";
+      cruz_text[2]="Par. lentos";
+
+      const int cruz_tabs_x=16;
+      const int cruz_tabs_y=108;
+      const int cruz_tabs_w=tab8_cruz_w-32;
+      const int cruz_tabs_h=tab8_cruz_h-124;
+      const int cruz_tab_h=22;
+
+      cruz_widths[0]=cruz_tabs_w/3;
+      cruz_widths[1]=cruz_tabs_w/3;
+      cruz_widths[2]=cruz_tabs_w - cruz_widths[0] - cruz_widths[1];
+
+      m_tab8_cruz_tabs.MainPointer(m_tab8_card_cruz);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_cruz_tabs);
+      m_tab8_cruz_tabs.XSize(cruz_tabs_w);
+      m_tab8_cruz_tabs.YSize(cruz_tabs_h);
+      m_tab8_cruz_tabs.IsCenterText(true);
+      m_tab8_cruz_tabs.PositionMode(TABS_TOP);
+      m_tab8_cruz_tabs.TabsYSize(cruz_tab_h);
+      m_tab8_cruz_tabs.AutoXResizeMode(false);
+      m_tab8_cruz_tabs.AutoYResizeMode(false);
+      m_tab8_cruz_tabs.BackColorPressed(C'239,231,218');
+      m_tab8_cruz_tabs.BorderColor(C'197,168,136');
+      m_tab8_cruz_tabs.BorderColorHover(C'197,168,136');
+      m_tab8_cruz_tabs.BorderColorPressed(C'197,168,136');
+      for(int i=0;i<3;i++) m_tab8_cruz_tabs.AddTab(cruz_text[i],cruz_widths[i]);
+      if(!m_tab8_cruz_tabs.CreateTabs(cruz_tabs_x,cruz_tabs_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_cruz_tabs);
+
+      CEF_CButtonsGroup *cruz_bg=m_tab8_cruz_tabs.GetButtonsGroupPointer();
+      if(cruz_bg!=NULL)
+        {
+         for(int i=0;i<3;i++)
+           {
+            cruz_bg.GetButtonPointer(i).FontSize(8);
+            cruz_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            cruz_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            cruz_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            cruz_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            cruz_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            cruz_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            cruz_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            cruz_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            cruz_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      const int cruz_ph_x=12;
+      const int cruz_ph_y=8;
+      const int cruz_ph_w=cruz_tabs_w-(cruz_ph_x*2);
+      if(!CreateTextLabel(m_tab8_cruz_placeholder_sinais,"Conteudo: Sinais (em migracao)",m_tab8_cruz_tabs,m_window_index,m_tab8_cruz_tabs,0,cruz_ph_x,cruz_ph_y,cruz_ph_w,22))
+         return(false);
+      m_tab8_cruz_placeholder_sinais.FontSize(11);
+      m_tab8_cruz_placeholder_sinais.LabelColor(C'91,78,64');
+
+      if(!CreateTextLabel(m_tab8_cruz_placeholder_rapidos,"Conteudo: Par. rapidos (em migracao)",m_tab8_cruz_tabs,m_window_index,m_tab8_cruz_tabs,1,cruz_ph_x,cruz_ph_y,cruz_ph_w,22))
+         return(false);
+      m_tab8_cruz_placeholder_rapidos.FontSize(11);
+      m_tab8_cruz_placeholder_rapidos.LabelColor(C'91,78,64');
+
+      if(!CreateTextLabel(m_tab8_cruz_placeholder_lentos,"Conteudo: Par. lentos (em migracao)",m_tab8_cruz_tabs,m_window_index,m_tab8_cruz_tabs,2,cruz_ph_x,cruz_ph_y,cruz_ph_w,22))
+         return(false);
+      m_tab8_cruz_placeholder_lentos.FontSize(11);
+      m_tab8_cruz_placeholder_lentos.LabelColor(C'91,78,64');
+
+      m_tab8_cruz_tabs.SelectTab(0);
+      m_tab8_cruz_tabs.ShowTabElements();
+
       m_tab8_tabs.SelectTab(0);
       m_tab8_tabs.ShowTabElements();
 
@@ -5942,6 +6058,12 @@ public:
          m_tab8_canais_no.IsPressed(false);
       else if(m_tab8_canais_no.IsPressed())
          m_tab8_canais_yes.IsPressed(false);
+
+      // Ensure yes/no for Tab 8 cruzamentos are mutually exclusive on startup
+      if(m_tab8_cruz_yes.IsPressed())
+         m_tab8_cruz_no.IsPressed(false);
+      else if(m_tab8_cruz_no.IsPressed())
+         m_tab8_cruz_yes.IsPressed(false);
 
       CompletedGUI();
       m_created=true;
@@ -6181,6 +6303,26 @@ public:
             m_tab8_canais_yes.IsPressed(false);
             m_tab8_canais_no.Update(true);
             m_tab8_canais_yes.Update(true);
+            return;
+           }
+
+         // Tab 8 (Sinais): cruzamentos yes/no (radio-like)
+         if(m_tab8_cruz_yes.Id()==clicked_id)
+           {
+            if(!m_tab8_cruz_yes.IsPressed())
+               m_tab8_cruz_yes.IsPressed(true);
+            m_tab8_cruz_no.IsPressed(false);
+            m_tab8_cruz_yes.Update(true);
+            m_tab8_cruz_no.Update(true);
+            return;
+           }
+         if(m_tab8_cruz_no.Id()==clicked_id)
+           {
+            if(!m_tab8_cruz_no.IsPressed())
+               m_tab8_cruz_no.IsPressed(true);
+            m_tab8_cruz_yes.IsPressed(false);
+            m_tab8_cruz_no.Update(true);
+            m_tab8_cruz_yes.Update(true);
             return;
            }
 
