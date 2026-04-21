@@ -221,7 +221,7 @@ class CConstrutorDialog : public CAppDialog
 private:
    enum
      {
-      TAB_COUNT=6
+      TAB_COUNT=4
      };
 
    CPanel            m_sidebar;
@@ -260,17 +260,6 @@ private:
    bool              OnTabClick(const int index);
    bool              OnExecuteClick(void);
    bool              OnEasyPanelClick(void);
-   bool              OnTab6FixedChange(void);
-   bool              OnTab6CalcChange(void);
-   bool              OnTab6CalcModeOuterChange(void);
-   bool              OnTab6CalcRefOuterChange(void);
-   bool              OnTab6CalcModeChange(void);
-   bool              OnTab6CalcRefChange(void);
-   bool              OnTab7PadraoChange(void);
-   bool              OnTab7CandlesChange(void);
-   bool              OnTab7CandlesDistanceChange(void);
-   bool              OnTab7CandlesCountChange(void);
-   bool              OnTab7IndicadorChange(void);
    bool              OnTab9PriceReferenceChange(void);
    bool              OnTab9MediaChange(void);
    bool              OnTab9ChannelYesChange(void);
@@ -289,17 +278,6 @@ EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CLICK,m_execute_button,OnExecuteClick)
    ON_EVENT(ON_CLICK,m_easy_panel_button,OnEasyPanelClick)
    ON_INDEXED_EVENT(ON_CLICK,m_tabs,OnTabClick)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_fixed_check,OnTab6FixedChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_calc_check,OnTab6CalcChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_calc_mode_outer_check,OnTab6CalcModeOuterChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_calc_ref_outer_check,OnTab6CalcRefOuterChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_calc_mode_check,OnTab6CalcModeChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab6.m_tab6_card_calc_ref_check,OnTab6CalcRefChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_padrao_check,OnTab7PadraoChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_candles_check,OnTab7CandlesChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_candles_distance_check,OnTab7CandlesDistanceChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_candles_count_check,OnTab7CandlesCountChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab7.m_tab7_card_indicador_check,OnTab7IndicadorChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_option_check[0],OnTab9PriceReferenceChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_option_check[1],OnTab9MediaChange)
    ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_channel_check_yes,OnTab9ChannelYesChange)
@@ -327,20 +305,16 @@ void CConstrutorDialog::BindSettings(const SConstrutorSettings &settings)
 
 void CConstrutorDialog::InitTabData(void)
   {
-   // Tabs 1-4 migrated to EasyPanel; keep only remaining tabs here.
-   m_tab_titles[0]="6. Take profit";
-   m_tab_titles[1]="7. Trailing stop";
-   m_tab_titles[2]="8. Saidas parciais";
-   m_tab_titles[3]="9. Sinais";
-   m_tab_titles[4]="10. Ajustes finais";
-   m_tab_titles[5]="11. Painel";
+   // Tabs 1-7 migrated to EasyPanel; keep only remaining tabs here.
+   m_tab_titles[0]="8. Saidas parciais";
+   m_tab_titles[1]="9. Sinais";
+   m_tab_titles[2]="10. Ajustes finais";
+   m_tab_titles[3]="11. Painel";
 
-   m_tab_notes[0]="Take profit fixo, calculo e projecao de lucro.";
-   m_tab_notes[1]="Trailing stop e acompanhamento dinamico.";
-   m_tab_notes[2]="Saidas fracionadas e gerenciamento parcial.";
-   m_tab_notes[3]="Gatilhos e filtros de sinal.";
-   m_tab_notes[4]="Acabamento final da estrategia.";
-   m_tab_notes[5]="Painel geral da interface.";
+   m_tab_notes[0]="Saidas fracionadas e gerenciamento parcial.";
+   m_tab_notes[1]="Gatilhos e filtros de sinal.";
+   m_tab_notes[2]="Acabamento final da estrategia.";
+   m_tab_notes[3]="Painel geral da interface.";
   }
 
 bool CConstrutorDialog::Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2)
@@ -559,18 +533,6 @@ bool CConstrutorDialog::OnEasyPanelClick(void)
    Construtor_ToggleEasyPanel();
    return(true);
   }
-
-bool CConstrutorDialog::OnTab6FixedChange(void) { return(m_painel.m_tab6.OnTab6FixedChange()); }
-bool CConstrutorDialog::OnTab6CalcChange(void) { return(m_painel.m_tab6.OnTab6CalcChange()); }
-bool CConstrutorDialog::OnTab6CalcModeOuterChange(void) { return(m_painel.m_tab6.OnTab6CalcModeOuterChange()); }
-bool CConstrutorDialog::OnTab6CalcRefOuterChange(void) { return(m_painel.m_tab6.OnTab6CalcRefOuterChange()); }
-bool CConstrutorDialog::OnTab6CalcModeChange(void) { return(m_painel.m_tab6.OnTab6CalcModeChange()); }
-bool CConstrutorDialog::OnTab6CalcRefChange(void) { return(m_painel.m_tab6.OnTab6CalcRefChange()); }
-bool CConstrutorDialog::OnTab7PadraoChange(void) { return(m_painel.m_tab7.OnTab7PadraoChange()); }
-bool CConstrutorDialog::OnTab7CandlesChange(void) { return(m_painel.m_tab7.OnTab7CandlesChange()); }
-bool CConstrutorDialog::OnTab7CandlesDistanceChange(void) { return(m_painel.m_tab7.OnTab7CandlesDistanceChange()); }
-bool CConstrutorDialog::OnTab7CandlesCountChange(void) { return(m_painel.m_tab7.OnTab7CandlesCountChange()); }
-bool CConstrutorDialog::OnTab7IndicadorChange(void) { return(m_painel.m_tab7.OnTab7IndicadorChange()); }
 bool CConstrutorDialog::OnTab9PriceReferenceChange(void) { return(m_painel.m_tab9.OnPriceReferenceChange()); }
 bool CConstrutorDialog::OnTab9MediaChange(void) { return(m_painel.m_tab9.OnMediaChange()); }
 bool CConstrutorDialog::OnTab9ChannelYesChange(void) { return(m_painel.m_tab9.OnChannelYesChange()); }

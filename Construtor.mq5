@@ -171,18 +171,20 @@ void LoadInputsToSettings(void)
    g_settings.trailing_stop_candles_count=InpTrailingStopCandlesCount;
    g_settings.trailing_stop_candles_count_posicao=InpTrailingStopCandlesCountPosicao;
    g_settings.trailing_stop_indicador=InpTrailingStopIndicador;
-   g_settings.stop_movel=InpTrailingStop;
-   g_settings.tipo_stop_movel=InpTipoTrailingStop;
-   g_settings.stop_movel_modo=InpTrailingStopModo;
-   g_settings.stop_movel_candles_modo=InpTrailingStopCandlesModo;
-   g_settings.stop_movel_padrao_adicionar_favor=InpTrailingStopPadraoAdicionarFavor;
-   g_settings.stop_movel_padrao_passo=InpTrailingStopPadraoPasso;
-   g_settings.stop_movel_candles_disparo_distancia=InpTrailingStopCandlesDistancia;
-   g_settings.stop_movel_candles_posicao=InpTrailingStopCandlesPosicao;
-   g_settings.stop_movel_candles_candle_posicao=InpTrailingStopCandlesCountPosicao;
-   g_settings.stop_movel_candles_distancia=InpTrailingStopCandlesCount;
-   g_settings.stop_movel_indicador_disparo_distancia=InpTrailingStopCandlesDistancia;
-   g_settings.stop_movel_indicador=InpTrailingStopIndicador;
+
+   // Stop movel tem parametrizacao propria via EasyPanel (nao herda do Trailing stop).
+   g_settings.stop_movel=CONSTRUTOR_NAO;
+   g_settings.tipo_stop_movel=CONSTRUTOR_STOP_PONTOS;
+   g_settings.stop_movel_modo=CONSTRUTOR_STOP_MOVEL_PADRAO;
+   g_settings.stop_movel_candles_modo=CONSTRUTOR_STOP_MOVEL_CANDLES_DISTANCIA;
+   g_settings.stop_movel_padrao_adicionar_favor=0;
+   g_settings.stop_movel_padrao_passo=0;
+   g_settings.stop_movel_candles_disparo_distancia=0.0;
+   g_settings.stop_movel_candles_posicao=CONSTRUTOR_MEDIA_MAXIMA;
+   g_settings.stop_movel_candles_candle_posicao=CONSTRUTOR_MEDIA_MAXIMA;
+   g_settings.stop_movel_candles_distancia=0.0;
+   g_settings.stop_movel_indicador_disparo_distancia=0.0;
+   g_settings.stop_movel_indicador=CONSTRUTOR_STOP_IND_ATR;
 
    // Partial exits
    g_settings.saida_parcial       =InpSaidaParcial;
