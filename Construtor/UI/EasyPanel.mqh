@@ -285,6 +285,10 @@ private:
    CEF_CTextLabel    m_tab6_indic_combo_label;
    CEF_CComboBox     m_tab6_indic_combo;
 
+   // Tab 7 (Saidas parciais)
+   CEF_CTextLabel    m_tab7_padrao_label;
+   CEF_CComboBox     m_tab7_padrao_combo;
+
 	   // Tab 1 (Inf. Iniciais) - styled preview
 	   CEF_CFrame        m_tab1_card_left;
 	   CEF_CFrame        m_tab1_card_right;
@@ -1602,6 +1606,8 @@ public:
 	         if(i==4) // Tab 5 (Break even): content migrated below
 	            continue;
 	         if(i==5) // Tab 6 (Trailing stop): content migrated below
+	            continue;
+	         if(i==6) // Tab 7 (Saidas parciais): content migrated below
 	            continue;
 	         string placeholder="Conteudo: "+tab_text[i]+" (em migracao)";
 	         const int ph_y=(i==1 || i==2 ? content_y+520 : content_y+66);
@@ -4587,6 +4593,52 @@ public:
          return(false);
       AddToElementsArray(m_window_index,m_tab6_indic_combo);
       m_tab6_indic_combo.SelectItem(0);
+
+      // Tab 7 (Saidas parciais): combobox padrao
+      if(!CreateTextLabel(m_tab7_padrao_label,"Padrao",m_tabs,m_window_index,m_tabs,6,content_pad,content_y+66,card_w,18))
+         return(false);
+      m_tab7_padrao_label.FontSize(10);
+      m_tab7_padrao_label.LabelColor(C'91,78,64');
+
+      string items_tab7_padrao[];
+      ArrayResize(items_tab7_padrao,2);
+      items_tab7_padrao[0]="Pontos";
+      items_tab7_padrao[1]="Percentual";
+
+      m_tab7_padrao_combo.MainPointer(m_tabs);
+      m_tabs.AddToElementsArray(6,m_tab7_padrao_combo);
+      m_tab7_padrao_combo.XSize(260);
+      m_tab7_padrao_combo.YSize(20);
+      m_tab7_padrao_combo.BackColor(clrWhite);
+      m_tab7_padrao_combo.BackColorHover(clrWhite);
+      m_tab7_padrao_combo.BackColorPressed(clrWhite);
+      m_tab7_padrao_combo.BorderColor(tab2_border);
+      m_tab7_padrao_combo.BorderColorHover(tab2_border);
+      m_tab7_padrao_combo.BorderColorPressed(tab2_border);
+      m_tab7_padrao_combo.FontSize(10);
+      m_tab7_padrao_combo.ItemsTotal(ArraySize(items_tab7_padrao));
+      m_tab7_padrao_combo.CheckBoxMode(false);
+      m_tab7_padrao_combo.GetButtonPointer().XGap(1);
+      m_tab7_padrao_combo.GetButtonPointer().XSize(258);
+      m_tab7_padrao_combo.GetButtonPointer().YSize(20);
+      m_tab7_padrao_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab7_padrao_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab7_padrao_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab7_padrao_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab7_padrao_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab7_padrao_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab7_padrao_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab7_padrao_combo.GetButtonPointer().IconXGap(258-18);
+      m_tab7_padrao_combo.GetButtonPointer().LabelXGap(10);
+      m_tab7_padrao_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(items_tab7_padrao);i++) m_tab7_padrao_combo.SetValue(i,items_tab7_padrao[i]);
+      m_tab7_padrao_combo.GetListViewPointer().YSize(80);
+      m_tab7_padrao_combo.GetListViewPointer().LightsHover(true);
+      m_tab7_padrao_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab7_padrao_combo.CreateComboBox("",content_pad,content_y+88))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab7_padrao_combo);
+      m_tab7_padrao_combo.SelectItem(0);
 
       m_top_tabs.SelectTab(0);
       m_top_tabs.ShowTabElements();
