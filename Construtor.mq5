@@ -46,6 +46,13 @@ input ENUM_CONSTRUTOR_SIM_NAO InpTakeFixo = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpTakeCalculo = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpTakeCalculoMedia = CONSTRUTOR_NAO;
 input ENUM_CONSTRUTOR_SIM_NAO InpTakeCalculoMultiplicar = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_SIM_NAO InpTakeCalculoMaxmin = CONSTRUTOR_NAO;
+input ENUM_CONSTRUTOR_BASE_MEDIA InpTakeCalculoMaxminBase = CONSTRUTOR_MEDIA_MAXIMA;
+input int InpTakeCalculoMaxminUltimos = 3;
+input double InpTakeCalculoReferenciaDistancia = 0.0;
+input int InpTakeCalculoReferenciaExpirar = 0;
+input double InpTakeCalculoMediaDistancia = 0.0;
+input int InpTakeCalculoMediaExpirar = 0;
 input ENUM_CONSTRUTOR_SIM_NAO InpTakeCalculoReferencia = CONSTRUTOR_NAO;
 input int InpTakeCalculoMediaQtdCandles = 3;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpTakeCalculoMediaBase = CONSTRUTOR_MEDIA_MAXIMA;
@@ -134,6 +141,7 @@ void LoadInputsToSettings(void)
    g_settings.take_calculo        =InpTakeCalculo;
    g_settings.take_calculo_media  =InpTakeCalculoMedia;
    g_settings.take_calculo_multiplicar=InpTakeCalculoMultiplicar;
+   g_settings.take_calculo_maxmin=InpTakeCalculoMaxmin;
    g_settings.take_calculo_referencia=InpTakeCalculoReferencia;
    g_settings.take_calculo_media_qtd_candles=InpTakeCalculoMediaQtdCandles;
    g_settings.take_calculo_media_base=InpTakeCalculoMediaBase;
@@ -143,6 +151,12 @@ void LoadInputsToSettings(void)
    g_settings.take_calculo_referencia_base=InpTakeCalculoReferenciaBase;
    g_settings.take_calculo_referencia_posicao=InpTakeCalculoReferenciaPosicao;
    g_settings.take_fixo_distancia  =InpTakeFixoDistancia;
+   g_settings.take_calculo_maxmin_base=CONSTRUTOR_MEDIA_MAXIMA;
+   g_settings.take_calculo_maxmin_ultimos=3;
+   g_settings.take_calculo_referencia_distancia=0.0;
+   g_settings.take_calculo_referencia_expirar=0;
+   g_settings.take_calculo_media_distancia=0.0;
+   g_settings.take_calculo_media_expirar=0;
 
    // Trailing stop
    g_settings.trailing_stop       =InpTrailingStop;

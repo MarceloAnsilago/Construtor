@@ -186,9 +186,16 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_SIM_NAO         take_calculo;
    ENUM_CONSTRUTOR_SIM_NAO         take_calculo_media;
    ENUM_CONSTRUTOR_SIM_NAO         take_calculo_multiplicar;
+   ENUM_CONSTRUTOR_SIM_NAO         take_calculo_maxmin;
+   ENUM_CONSTRUTOR_BASE_MEDIA      take_calculo_maxmin_base;
+   int                             take_calculo_maxmin_ultimos;
    ENUM_CONSTRUTOR_SIM_NAO         take_calculo_referencia;
+   double                          take_calculo_referencia_distancia;
+   int                             take_calculo_referencia_expirar;
    int                             take_calculo_media_qtd_candles;
    ENUM_CONSTRUTOR_BASE_MEDIA      take_calculo_media_base;
+   double                          take_calculo_media_distancia;
+   int                             take_calculo_media_expirar;
    ENUM_CONSTRUTOR_BASE_MULTIPLICAR take_calculo_multiplicar_base;
    int                             take_calculo_multiplicar_candle;
    double                          take_calculo_multiplicar_qtd;
