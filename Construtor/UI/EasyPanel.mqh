@@ -236,6 +236,15 @@ private:
    CEF_CTextLabel    m_tab4_mult_qty_label;
    CEF_CTextEdit     m_tab4_mult_qty_spin;
 
+   // Tab 4 (Take profit indicador) - espelho do Stop movel indicador
+   CEF_CFrame        m_tab4_card_indicador;
+   CEF_CTextLabel    m_tab4_card_indicador_title;
+   CEF_CCheckBox     m_tab4_use_indicador;
+   CEF_CTextLabel    m_tab4_indic_trigger_label;
+   CEF_CTextEdit     m_tab4_indic_trigger_spin;
+   CEF_CTextLabel    m_tab4_indic_combo_label;
+   CEF_CComboBox     m_tab4_indic_combo;
+
 	   // Tab 1 (Inf. Iniciais) - styled preview
 	   CEF_CFrame        m_tab1_card_left;
 	   CEF_CFrame        m_tab1_card_right;
@@ -405,12 +414,14 @@ private:
 
       // Tab 4 (Take profit)
       m_tab4_calc_type.SelectItem(ClampInt((int)settings.tipo_take_profit,0,1));
-      const bool use_mult_tp=(settings.take_calculo_multiplicar==CONSTRUTOR_SIM);
-      const bool use_calc_tp=(!use_mult_tp && settings.take_calculo==CONSTRUTOR_SIM);
-      const bool use_fixed_tp=(!use_mult_tp && !use_calc_tp && settings.take_fixo==CONSTRUTOR_SIM);
+      const bool use_indic_tp=(settings.take_indicador==CONSTRUTOR_SIM);
+      const bool use_mult_tp=(!use_indic_tp && settings.take_calculo_multiplicar==CONSTRUTOR_SIM);
+      const bool use_calc_tp=(!use_indic_tp && !use_mult_tp && settings.take_calculo==CONSTRUTOR_SIM);
+      const bool use_fixed_tp=(!use_indic_tp && !use_mult_tp && !use_calc_tp && settings.take_fixo==CONSTRUTOR_SIM);
       m_tab4_use_calc.IsPressed(use_calc_tp);
       m_tab4_use_fixed.IsPressed(use_fixed_tp);
       m_tab4_use_mult.IsPressed(use_mult_tp);
+      m_tab4_use_indicador.IsPressed(use_indic_tp);
       m_tab4_dist_spin.SetValue(DoubleToString(settings.take_fixo_distancia,1));
       m_tab4_calc_ref_check.IsPressed(settings.take_calculo_referencia==CONSTRUTOR_SIM);
       m_tab4_calc_media_check.IsPressed(settings.take_calculo_media==CONSTRUTOR_SIM);
@@ -428,6 +439,8 @@ private:
       m_tab4_mult_base_combo.SelectItem(ClampInt((int)settings.take_calculo_multiplicar_base,0,1));
       m_tab4_mult_candle_combo.SelectItem(ClampInt(settings.take_calculo_multiplicar_candle,0,3));
       m_tab4_mult_qty_spin.SetValue(DoubleToString(settings.take_calculo_multiplicar_qtd,2));
+      m_tab4_indic_trigger_spin.SetValue(DoubleToString(settings.take_indicador_distancia_disparo,1));
+      m_tab4_indic_combo.SelectItem(settings.take_indicador_tipo==CONSTRUTOR_STOP_IND_PARABOLIC_SAR ? 1 : 0);
 
       }
 
@@ -508,12 +521,14 @@ private:
 
       // Tab 4 (Take profit)
       settings.tipo_take_profit=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)m_tab4_calc_type.GetListViewPointer().SelectedItemIndex();
+      const bool use_indic_tp=m_tab4_use_indicador.IsPressed();
       const bool use_mult_tp=m_tab4_use_mult.IsPressed();
-      const bool use_calc_tp=(!use_mult_tp && m_tab4_use_calc.IsPressed());
-      const bool use_fixed_tp=(!use_mult_tp && !use_calc_tp && m_tab4_use_fixed.IsPressed());
+      const bool use_calc_tp=(!use_indic_tp && !use_mult_tp && m_tab4_use_calc.IsPressed());
+      const bool use_fixed_tp=(!use_indic_tp && !use_mult_tp && !use_calc_tp && m_tab4_use_fixed.IsPressed());
       settings.take_fixo=(use_fixed_tp ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       settings.take_calculo=((use_calc_tp || use_mult_tp) ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       settings.take_calculo_multiplicar=(use_mult_tp ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
+      settings.take_indicador=(use_indic_tp ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       settings.take_fixo_distancia=StringToDouble(m_tab4_dist_spin.GetValue());
       settings.take_calculo_referencia=(m_tab4_calc_ref_check.IsPressed() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       settings.take_calculo_media=(m_tab4_calc_media_check.IsPressed() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
@@ -531,6 +546,8 @@ private:
       settings.take_calculo_multiplicar_base=(ENUM_CONSTRUTOR_BASE_MULTIPLICAR)m_tab4_mult_base_combo.GetListViewPointer().SelectedItemIndex();
       settings.take_calculo_multiplicar_candle=m_tab4_mult_candle_combo.GetListViewPointer().SelectedItemIndex();
       settings.take_calculo_multiplicar_qtd=StringToDouble(m_tab4_mult_qty_spin.GetValue());
+      settings.take_indicador_distancia_disparo=StringToDouble(m_tab4_indic_trigger_spin.GetValue());
+      settings.take_indicador_tipo=(m_tab4_indic_combo.GetListViewPointer().SelectedItemIndex()==1 ? CONSTRUTOR_STOP_IND_PARABOLIC_SAR : CONSTRUTOR_STOP_IND_MEDIA_MOVEL);
 
       }
 
@@ -2941,7 +2958,8 @@ public:
 
       const int tab4_x=content_pad;
       const int tab4_y=content_y+120;
-      const int tab4_w=card_w;
+      // Fit 4 cards side-by-side in the available content width
+      const int tab4_w=(tabs_w-(content_pad*2)-(card_gap*3))/4;
       const int tab4_h=356;
       if(!CreateFrame(m_tab4_card_takefix,"",m_tabs,m_window_index,m_tabs,3,tab4_x,tab4_y,tab4_w,tab4_h,1))
          return(false);
@@ -3009,7 +3027,7 @@ public:
       m_tab4_dist_spin.GetDecButtonPointer().BorderColorPressed(tab2_border);
 
       // Tab 4: Take profit (calculo) card
-      const int tab4_calc_card_x=content_pad + card_w + card_gap;
+      const int tab4_calc_card_x=content_pad + (tab4_w + card_gap);
       if(!CreateFrame(m_tab4_card_calc,"",m_tabs,m_window_index,m_tabs,3,tab4_calc_card_x,tab4_y,tab4_w,tab4_h,1))
          return(false);
       m_tab4_card_calc.BackColor(C'233,220,203');
@@ -3026,7 +3044,7 @@ public:
       m_tab4_use_calc.LabelColor(C'43,43,43');
 
       // Tab 4: Take profit (multiplicador) card (espelho do Stop loss mult)
-      const int tab4_mult_card_x=content_pad + (card_w + card_gap) * 2;
+      const int tab4_mult_card_x=content_pad + (tab4_w + card_gap) * 2;
       if(!CreateFrame(m_tab4_card_mult,"",m_tabs,m_window_index,m_tabs,3,tab4_mult_card_x,tab4_y,tab4_w,tab4_h,1))
          return(false);
       m_tab4_card_mult.BackColor(C'233,220,203');
@@ -3191,6 +3209,124 @@ public:
       m_tab4_mult_qty_spin.GetDecButtonPointer().BorderColor(tab2_border);
       m_tab4_mult_qty_spin.GetDecButtonPointer().BorderColorHover(tab2_border);
       m_tab4_mult_qty_spin.GetDecButtonPointer().BorderColorPressed(tab2_border);
+
+      // Tab 4: Take profit (indicador) card (espelho do Stop movel indicador)
+      const int tab4_indic_x=content_pad + (tab4_w + card_gap) * 3;
+      const int tab4_indic_y=tab4_y;
+      const int tab4_indic_w=tab4_w;
+      const int tab4_indic_h=tab4_h;
+      if(!CreateFrame(m_tab4_card_indicador,"",m_tabs,m_window_index,m_tabs,3,tab4_indic_x,tab4_indic_y,tab4_indic_w,tab4_indic_h,1))
+         return(false);
+      m_tab4_card_indicador.BackColor(C'233,220,203');
+      m_tab4_card_indicador.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab4_card_indicador_title,"Take profit (indicador)",m_tab4_card_indicador,m_window_index,m_tabs,3,16,12,tab4_indic_w-32,22))
+         return(false);
+      m_tab4_card_indicador_title.FontSize(12);
+      m_tab4_card_indicador_title.LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab4_use_indicador,"Indicador",m_tab4_card_indicador,m_window_index,m_tabs,3,16,44,tab4_indic_w-32,false,false,false))
+         return(false);
+      m_tab4_use_indicador.FontSize(10);
+      m_tab4_use_indicador.LabelColor(C'43,43,43');
+
+      int tab4_iy=76;
+      if(!CreateTextLabel(m_tab4_indic_trigger_label,"Distancia para disparo",m_tab4_card_indicador,m_window_index,m_tabs,3,16,tab4_iy,tab4_indic_w-32,18))
+         return(false);
+      m_tab4_indic_trigger_label.FontSize(10);
+      m_tab4_indic_trigger_label.LabelColor(C'91,78,64');
+      tab4_iy+=22;
+
+      const int tab4_trigger_w=tab4_indic_w-32;
+      const int tab4_trigger_edit_w=tab4_trigger_w-34;
+      m_tab4_indic_trigger_spin.MainPointer(m_tab4_card_indicador);
+      m_tabs.AddToElementsArray(3,m_tab4_indic_trigger_spin);
+      m_tab4_indic_trigger_spin.XSize(tab4_trigger_w);
+      m_tab4_indic_trigger_spin.MaxValue(100000.0);
+      m_tab4_indic_trigger_spin.MinValue(0.0);
+      m_tab4_indic_trigger_spin.StepValue(1.0);
+      m_tab4_indic_trigger_spin.SetDigits(1);
+      m_tab4_indic_trigger_spin.SpinEditMode(true);
+      m_tab4_indic_trigger_spin.CheckBoxMode(false);
+      m_tab4_indic_trigger_spin.SetValue("0.0");
+      m_tab4_indic_trigger_spin.AnchorBottomWindowSide(false);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().XSize(tab4_trigger_edit_w);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab4_indic_trigger_spin.CreateTextEdit("",16,tab4_iy))
+         return(false);
+      m_tab4_indic_trigger_spin.BackColor(C'233,220,203');
+      m_tab4_indic_trigger_spin.BackColorHover(C'233,220,203');
+      m_tab4_indic_trigger_spin.BackColorPressed(C'233,220,203');
+      m_tab4_indic_trigger_spin.BorderColor(tab2_border);
+      m_tab4_indic_trigger_spin.BorderColorHover(tab2_border);
+      m_tab4_indic_trigger_spin.BorderColorPressed(tab2_border);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().BorderColor(tab2_border);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+      m_tab4_indic_trigger_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+      m_tab4_indic_trigger_spin.GetIncButtonPointer().BackColor(clrWhite);
+      m_tab4_indic_trigger_spin.GetIncButtonPointer().BackColorHover(clrWhite);
+      m_tab4_indic_trigger_spin.GetIncButtonPointer().BackColorPressed(clrWhite);
+      m_tab4_indic_trigger_spin.GetIncButtonPointer().BorderColor(tab2_border);
+      m_tab4_indic_trigger_spin.GetIncButtonPointer().BorderColorHover(tab2_border);
+      m_tab4_indic_trigger_spin.GetIncButtonPointer().BorderColorPressed(tab2_border);
+      m_tab4_indic_trigger_spin.GetDecButtonPointer().BackColor(clrWhite);
+      m_tab4_indic_trigger_spin.GetDecButtonPointer().BackColorHover(clrWhite);
+      m_tab4_indic_trigger_spin.GetDecButtonPointer().BackColorPressed(clrWhite);
+      m_tab4_indic_trigger_spin.GetDecButtonPointer().BorderColor(tab2_border);
+      m_tab4_indic_trigger_spin.GetDecButtonPointer().BorderColorHover(tab2_border);
+      m_tab4_indic_trigger_spin.GetDecButtonPointer().BorderColorPressed(tab2_border);
+      AddToElementsArray(m_window_index,m_tab4_indic_trigger_spin);
+      tab4_iy+=34;
+
+      if(!CreateTextLabel(m_tab4_indic_combo_label,"Indicador",m_tab4_card_indicador,m_window_index,m_tabs,3,16,tab4_iy,tab4_indic_w-32,18))
+         return(false);
+      m_tab4_indic_combo_label.FontSize(10);
+      m_tab4_indic_combo_label.LabelColor(C'91,78,64');
+      tab4_iy+=22;
+
+      string tab4_indic_items[];
+      ArrayResize(tab4_indic_items,2);
+      tab4_indic_items[0]="Media movel";
+      tab4_indic_items[1]="Parabolic SAR";
+
+      m_tab4_indic_combo.MainPointer(m_tab4_card_indicador);
+      m_tabs.AddToElementsArray(3,m_tab4_indic_combo);
+      m_tab4_indic_combo.XSize(tab4_trigger_w);
+      m_tab4_indic_combo.YSize(20);
+      m_tab4_indic_combo.BackColor(clrWhite);
+      m_tab4_indic_combo.BackColorHover(clrWhite);
+      m_tab4_indic_combo.BackColorPressed(clrWhite);
+      m_tab4_indic_combo.BorderColor(tab2_border);
+      m_tab4_indic_combo.BorderColorHover(tab2_border);
+      m_tab4_indic_combo.BorderColorPressed(tab2_border);
+      m_tab4_indic_combo.FontSize(10);
+      m_tab4_indic_combo.ItemsTotal(ArraySize(tab4_indic_items));
+      m_tab4_indic_combo.CheckBoxMode(false);
+      m_tab4_indic_combo.GetButtonPointer().XGap(1);
+      m_tab4_indic_combo.GetButtonPointer().XSize(tab4_trigger_w-2);
+      m_tab4_indic_combo.GetButtonPointer().YSize(20);
+      m_tab4_indic_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab4_indic_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab4_indic_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab4_indic_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab4_indic_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab4_indic_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab4_indic_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab4_indic_combo.GetButtonPointer().IconXGap((tab4_trigger_w-2)-18);
+      m_tab4_indic_combo.GetButtonPointer().LabelXGap(10);
+      m_tab4_indic_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      m_tab4_indic_combo.GetListViewPointer().LightsHover(true);
+      m_tab4_indic_combo.GetListViewPointer().BackColor(clrWhite);
+      for(int i=0;i<ArraySize(tab4_indic_items);i++) m_tab4_indic_combo.SetValue(i,tab4_indic_items[i]);
+      if(!m_tab4_indic_combo.CreateComboBox("",16,tab4_iy))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab4_indic_combo);
+      m_tab4_indic_combo.SelectItem(0);
 
       // Tabs inside "Take profit (calculo)"
       const int tab4_calc_tabs_x=16;
@@ -3899,10 +4035,12 @@ public:
               {
                m_tab4_use_calc.IsPressed(false);
                m_tab4_use_mult.IsPressed(false);
+               m_tab4_use_indicador.IsPressed(false);
               }
             m_tab4_use_fixed.Update(true);
             m_tab4_use_calc.Update(true);
             m_tab4_use_mult.Update(true);
+            m_tab4_use_indicador.Update(true);
             return;
            }
          if(m_tab4_use_calc.Id()==clicked_id)
@@ -3911,10 +4049,12 @@ public:
               {
                m_tab4_use_fixed.IsPressed(false);
                m_tab4_use_mult.IsPressed(false);
+               m_tab4_use_indicador.IsPressed(false);
               }
             m_tab4_use_calc.Update(true);
             m_tab4_use_fixed.Update(true);
             m_tab4_use_mult.Update(true);
+            m_tab4_use_indicador.Update(true);
             return;
            }
          if(m_tab4_use_mult.Id()==clicked_id)
@@ -3923,10 +4063,26 @@ public:
               {
                m_tab4_use_fixed.IsPressed(false);
                m_tab4_use_calc.IsPressed(false);
+               m_tab4_use_indicador.IsPressed(false);
               }
             m_tab4_use_mult.Update(true);
             m_tab4_use_fixed.Update(true);
             m_tab4_use_calc.Update(true);
+            m_tab4_use_indicador.Update(true);
+            return;
+           }
+         if(m_tab4_use_indicador.Id()==clicked_id)
+           {
+            if(m_tab4_use_indicador.IsPressed())
+              {
+               m_tab4_use_fixed.IsPressed(false);
+               m_tab4_use_calc.IsPressed(false);
+               m_tab4_use_mult.IsPressed(false);
+              }
+            m_tab4_use_indicador.Update(true);
+            m_tab4_use_fixed.Update(true);
+            m_tab4_use_calc.Update(true);
+            m_tab4_use_mult.Update(true);
             return;
            }
 
