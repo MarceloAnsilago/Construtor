@@ -296,10 +296,20 @@ private:
    CEF_CTextLabel    m_tab7_qty_label[6];
    CEF_CTextEdit     m_tab7_qty_spin[6];
 
-	   // Tab 1 (Inf. Iniciais) - styled preview
-	   CEF_CFrame        m_tab1_card_left;
-	   CEF_CFrame        m_tab1_card_right;
-	   CEF_CFrame        m_tab1_card_schedule;
+   // Tab 8 (Sinais)
+   CEF_CTabs         m_tab8_tabs;
+   CEF_CTextLabel    m_tab8_placeholder_montar;
+   CEF_CTextLabel    m_tab8_padrao_label;
+   CEF_CComboBox     m_tab8_padrao_combo;
+   CEF_CFrame        m_tab8_card_ordens;
+   CEF_CTextLabel    m_tab8_card_ordens_title;
+   CEF_CCheckBox     m_tab8_ordem_market;
+   CEF_CCheckBox     m_tab8_ordem_limit;
+
+   // Tab 1 (Inf. Iniciais) - styled preview
+   CEF_CFrame        m_tab1_card_left;
+   CEF_CFrame        m_tab1_card_right;
+   CEF_CFrame        m_tab1_card_schedule;
 	   CEF_CFrame        m_tab1_card_config;
 	   CEF_CSeparateLine m_tab1_card_schedule_sep;
 	   CEF_CTextLabel    m_tab1_card_left_title;
@@ -819,7 +829,7 @@ public:
 	      tab_titles[4]="5. Break even";
 	      tab_titles[5]="6. Trailing stop";
 	      tab_titles[6]="7. Saídas parciais";
-	      tab_titles[7]="8. Sinais";
+	      tab_titles[7]="Sinais";
 	      tab_titles[8]="9. Ajustes finais";
 	      tab_titles[9]="10. Painel";
 
@@ -1584,6 +1594,8 @@ public:
 	      // Signal direction checkboxes (tabs 2..9)
 	      for(int i=1; i<EASY_TAB_COUNT; i++)
 	        {
+	         if(i==7) // Tab 8 now owns its content via internal tabs
+	            continue;
 	         const int sig_x=content_pad;
 	         const int sig_y=content_y;
 	         const int sig_gap=18;
@@ -1615,6 +1627,8 @@ public:
 	         if(i==5) // Tab 6 (Trailing stop): content migrated below
 	            continue;
 	         if(i==6) // Tab 7 (Saidas parciais): content migrated below
+	            continue;
+	         if(i==7) // Tab 8 (Sinais): content migrated below
 	            continue;
 	         string placeholder="Conteudo: "+tab_text[i]+" (em migracao)";
 	         const int ph_y=(i==1 || i==2 ? content_y+520 : content_y+66);
@@ -4779,6 +4793,176 @@ public:
          m_tab7_qty_spin[i].GetDecButtonPointer().BorderColorPressed(tab2_border);
         }
 
+      // Tab 8 (Sinais): selectbox padrao + primeiro card (Tipo de ordens)
+      // Split into 2 sub-tabs: "Sinais" and "Montar Sinais"
+      string tab8_text[];
+      int tab8_widths[];
+      ArrayResize(tab8_text,2);
+      ArrayResize(tab8_widths,2);
+      tab8_text[0]="Sinais";
+      tab8_text[1]="Montar sinais";
+      tab8_widths[0]=180;
+      tab8_widths[1]=180;
+
+      const int tab8_pad=8;
+      const int tab8_tabs_x=tab8_pad;
+      const int tab8_tabs_y=content_y+28; // push internal tabs down to avoid overlapping the main header
+      const int tab8_tabs_w=tabs_w - (tab8_pad*2);
+      const int tab8_tabs_h=tabs_h - tab8_tabs_y - inner_pad;
+      const int tab8_tab_h=26;
+
+      tab8_widths[0]=tab8_tabs_w/2;
+      tab8_widths[1]=tab8_tabs_w - tab8_widths[0];
+
+      m_tab8_tabs.MainPointer(m_tabs);
+      m_tabs.AddToElementsArray(7,m_tab8_tabs);
+      m_tab8_tabs.XSize(tab8_tabs_w);
+      m_tab8_tabs.YSize(tab8_tabs_h);
+      m_tab8_tabs.IsCenterText(true);
+      m_tab8_tabs.PositionMode(TABS_TOP);
+      m_tab8_tabs.TabsYSize(tab8_tab_h);
+      m_tab8_tabs.AutoXResizeMode(true);
+      m_tab8_tabs.AutoYResizeMode(true);
+      m_tab8_tabs.AutoXResizeRightOffset(tab8_pad);
+      m_tab8_tabs.AutoYResizeBottomOffset(inner_pad);
+      m_tab8_tabs.BackColorPressed(C'233,220,203');
+      m_tab8_tabs.BorderColor(C'197,168,136');
+      m_tab8_tabs.BorderColorHover(C'197,168,136');
+      m_tab8_tabs.BorderColorPressed(C'197,168,136');
+
+      for(int i=0;i<2;i++)
+         m_tab8_tabs.AddTab(tab8_text[i],tab8_widths[i]);
+
+      if(!m_tab8_tabs.CreateTabs(tab8_tabs_x,tab8_tabs_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_tabs);
+
+      CEF_CButtonsGroup *tab8_bg=m_tab8_tabs.GetButtonsGroupPointer();
+      if(tab8_bg!=NULL)
+        {
+         for(int i=0;i<2;i++)
+           {
+            tab8_bg.GetButtonPointer(i).FontSize(9);
+            tab8_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            tab8_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            tab8_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            tab8_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            tab8_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            tab8_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            tab8_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            tab8_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            tab8_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      // Tab 8 content belongs to internal tabs (subtab 0 = Sinais / subtab 1 = Montar sinais)
+      const int tab8_sig_x=tab8_pad;
+      const int tab8_sig_y=10;
+      const int tab8_sig_gap=18;
+      const int tab8_sig_w=240;
+      const int tab8_sig2_x=tab8_sig_x + tab8_sig_w + tab8_sig_gap;
+
+      if(!CreateCheckbox(m_tab_signal_buy[7],"Criar sinal de compra",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_sig_x,tab8_sig_y,tab8_sig_w,m_signal_is_buy,false,false))
+         return(false);
+      m_tab_signal_buy[7].FontSize(10);
+      m_tab_signal_buy[7].LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab_signal_sell[7],"Criar sinal de venda",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_sig2_x,tab8_sig_y,tab8_sig_w,!m_signal_is_buy,false,false))
+         return(false);
+      m_tab_signal_sell[7].FontSize(10);
+      m_tab_signal_sell[7].LabelColor(C'43,43,43');
+
+      const int tab8_info_y=tab8_sig_y+22;
+      if(!CreateTextLabel(m_tab_signal_info[7],"",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_pad,tab8_info_y,tab8_tabs_w-(tab8_pad*2),34))
+         return(false);
+      m_tab_signal_info[7].FontSize(10);
+      m_tab_signal_info[7].LabelColor(C'91,78,64');
+
+      const int tab8_inner_y=tab8_info_y + 50;
+
+      // Subtab 1 placeholder (Montar sinais)
+      if(!CreateTextLabel(m_tab8_placeholder_montar,"Conteudo: Montar sinais (em migracao)",m_tab8_tabs,m_window_index,m_tab8_tabs,1,tab8_pad,10,tab8_tabs_w-(tab8_pad*2),22))
+         return(false);
+      m_tab8_placeholder_montar.FontSize(11);
+      m_tab8_placeholder_montar.LabelColor(C'91,78,64');
+
+      // Subtab 0 content (Sinais)
+      if(!CreateTextLabel(m_tab8_padrao_label,"Padrao",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_pad,tab8_inner_y,card_w,18))
+         return(false);
+      m_tab8_padrao_label.FontSize(10);
+      m_tab8_padrao_label.LabelColor(C'91,78,64');
+
+      string items_tab8_padrao[];
+      ArrayResize(items_tab8_padrao,2);
+      items_tab8_padrao[0]="Pontos";
+      items_tab8_padrao[1]="Percentual";
+
+      m_tab8_padrao_combo.MainPointer(m_tab8_tabs);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_padrao_combo);
+      m_tab8_padrao_combo.XSize(260);
+      m_tab8_padrao_combo.YSize(20);
+      m_tab8_padrao_combo.BackColor(clrWhite);
+      m_tab8_padrao_combo.BackColorHover(clrWhite);
+      m_tab8_padrao_combo.BackColorPressed(clrWhite);
+      m_tab8_padrao_combo.BorderColor(tab2_border);
+      m_tab8_padrao_combo.BorderColorHover(tab2_border);
+      m_tab8_padrao_combo.BorderColorPressed(tab2_border);
+      m_tab8_padrao_combo.FontSize(10);
+      m_tab8_padrao_combo.ItemsTotal(ArraySize(items_tab8_padrao));
+      m_tab8_padrao_combo.CheckBoxMode(false);
+      m_tab8_padrao_combo.GetButtonPointer().XGap(1);
+      m_tab8_padrao_combo.GetButtonPointer().XSize(258);
+      m_tab8_padrao_combo.GetButtonPointer().YSize(20);
+      m_tab8_padrao_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_padrao_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_padrao_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_padrao_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_padrao_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab8_padrao_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab8_padrao_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab8_padrao_combo.GetButtonPointer().IconXGap(258-18);
+      m_tab8_padrao_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_padrao_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(items_tab8_padrao);i++) m_tab8_padrao_combo.SetValue(i,items_tab8_padrao[i]);
+      m_tab8_padrao_combo.GetListViewPointer().YSize(80);
+      m_tab8_padrao_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_padrao_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_padrao_combo.CreateComboBox("",tab8_pad,tab8_inner_y+22))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_padrao_combo);
+      m_tab8_padrao_combo.SelectItem(0);
+
+      const int tab8_x=tab8_pad;
+      const int tab8_y=tab8_inner_y+56;
+      const int tab8_w=card_w;
+      const int tab8_h=340;
+
+      if(!CreateFrame(m_tab8_card_ordens,"",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_x,tab8_y,tab8_w,tab8_h,1))
+         return(false);
+      m_tab8_card_ordens.BackColor(C'233,220,203');
+      m_tab8_card_ordens.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_card_ordens_title,"Tipo de ordens",m_tab8_card_ordens,m_window_index,m_tab8_tabs,0,16,12,tab8_w-32,22))
+         return(false);
+      m_tab8_card_ordens_title.FontSize(12);
+      m_tab8_card_ordens_title.LabelColor(C'43,43,43');
+
+      const int tab8_order_y=44;
+      const int tab8_order_gap=12;
+      const int tab8_order_w=(tab8_w-32-tab8_order_gap)/2;
+      if(!CreateCheckbox(m_tab8_ordem_market,"Mercado",m_tab8_card_ordens,m_window_index,m_tab8_tabs,0,16,tab8_order_y,tab8_order_w,true,false,false))
+         return(false);
+      m_tab8_ordem_market.FontSize(10);
+      m_tab8_ordem_market.LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab8_ordem_limit,"Limite",m_tab8_card_ordens,m_window_index,m_tab8_tabs,0,16+tab8_order_w+tab8_order_gap,tab8_order_y,tab8_order_w,false,false,false))
+         return(false);
+      m_tab8_ordem_limit.FontSize(10);
+      m_tab8_ordem_limit.LabelColor(C'43,43,43');
+
+      m_tab8_tabs.SelectTab(0);
+      m_tab8_tabs.ShowTabElements();
+
       m_top_tabs.SelectTab(0);
       m_top_tabs.ShowTabElements();
       m_tabs.SelectTab(0);
@@ -4980,6 +5164,26 @@ public:
             m_tab4_use_fixed.Update(true);
             m_tab4_use_calc.Update(true);
             m_tab4_use_mult.Update(true);
+            return;
+           }
+
+         // Tab 8 (Sinais): tipo de ordens (radio-like)
+         if(m_tab8_ordem_market.Id()==clicked_id)
+           {
+            if(!m_tab8_ordem_market.IsPressed())
+               m_tab8_ordem_market.IsPressed(true);
+            m_tab8_ordem_limit.IsPressed(false);
+            m_tab8_ordem_market.Update(true);
+            m_tab8_ordem_limit.Update(true);
+            return;
+           }
+         if(m_tab8_ordem_limit.Id()==clicked_id)
+           {
+            if(!m_tab8_ordem_limit.IsPressed())
+               m_tab8_ordem_limit.IsPressed(true);
+            m_tab8_ordem_market.IsPressed(false);
+            m_tab8_ordem_limit.Update(true);
+            m_tab8_ordem_market.Update(true);
             return;
            }
 
