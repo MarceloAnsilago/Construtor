@@ -3142,7 +3142,7 @@ public:
       m_tab4_mult_candle_combo.SelectItem(0);
       tab4_mult_y+=22+10;
 
-      if(!CreateTextLabel(m_tab4_mult_qty_label,"Qtd:",m_tab4_card_mult,m_window_index,m_tabs,3,tab4_mult_pad,tab4_mult_y,tab4_mult_w,18))
+      if(!CreateTextLabel(m_tab4_mult_qty_label,"Multiplicador:",m_tab4_card_mult,m_window_index,m_tabs,3,tab4_mult_pad,tab4_mult_y,tab4_mult_w,18))
          return(false);
       m_tab4_mult_qty_label.FontSize(10);
       m_tab4_mult_qty_label.LabelColor(C'91,78,64');
@@ -3173,9 +3173,9 @@ public:
       m_tab4_mult_qty_spin.BorderColor(tab2_border);
       m_tab4_mult_qty_spin.BorderColorHover(tab2_border);
       m_tab4_mult_qty_spin.BorderColorPressed(tab2_border);
-      m_tab4_mult_qty_spin.GetTextBoxPointer().BackColor(C'239,231,218');
-      m_tab4_mult_qty_spin.GetTextBoxPointer().BackColorHover(C'239,231,218');
-      m_tab4_mult_qty_spin.GetTextBoxPointer().BackColorPressed(C'239,231,218');
+      m_tab4_mult_qty_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab4_mult_qty_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab4_mult_qty_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
       m_tab4_mult_qty_spin.GetTextBoxPointer().BorderColor(tab2_border);
       m_tab4_mult_qty_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
       m_tab4_mult_qty_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
