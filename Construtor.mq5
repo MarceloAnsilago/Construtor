@@ -1,6 +1,7 @@
 #property strict
 
 #include "Construtor\\ConstrutorDialog.mqh"
+#include "Construtor\\UI\\EasyPanel.mqh"
 
 input string InpEstrategiaNome = "Minha estrategia";
 input ENUM_CONSTRUTOR_MERCADO InpMercadoDesejado = CONSTRUTOR_MERCADO_B3;
@@ -151,12 +152,12 @@ void LoadInputsToSettings(void)
    g_settings.take_calculo_referencia_base=InpTakeCalculoReferenciaBase;
    g_settings.take_calculo_referencia_posicao=InpTakeCalculoReferenciaPosicao;
    g_settings.take_fixo_distancia  =InpTakeFixoDistancia;
-   g_settings.take_calculo_maxmin_base=CONSTRUTOR_MEDIA_MAXIMA;
-   g_settings.take_calculo_maxmin_ultimos=3;
-   g_settings.take_calculo_referencia_distancia=0.0;
-   g_settings.take_calculo_referencia_expirar=0;
-   g_settings.take_calculo_media_distancia=0.0;
-   g_settings.take_calculo_media_expirar=0;
+   g_settings.take_calculo_maxmin_base=InpTakeCalculoMaxminBase;
+   g_settings.take_calculo_maxmin_ultimos=InpTakeCalculoMaxminUltimos;
+   g_settings.take_calculo_referencia_distancia=InpTakeCalculoReferenciaDistancia;
+   g_settings.take_calculo_referencia_expirar=InpTakeCalculoReferenciaExpirar;
+   g_settings.take_calculo_media_distancia=InpTakeCalculoMediaDistancia;
+   g_settings.take_calculo_media_expirar=InpTakeCalculoMediaExpirar;
 
    // Trailing stop
    g_settings.trailing_stop       =InpTrailingStop;

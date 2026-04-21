@@ -202,6 +202,10 @@ struct SConstrutorSettings
    ENUM_CONSTRUTOR_BASE_MEDIA      take_calculo_referencia_base;
    ENUM_CONSTRUTOR_POSICAO_REFERENCIA take_calculo_referencia_posicao;
    double                          take_fixo_distancia;
+
+   ENUM_CONSTRUTOR_SIM_NAO         take_indicador;
+   double                          take_indicador_distancia_disparo;
+   ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR take_indicador_tipo;
   };
 
 extern SConstrutorSettings g_settings;
