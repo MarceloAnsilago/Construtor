@@ -4927,6 +4927,44 @@ public:
             return;
            }
 
+         // Trailing stop (tab 6) mutually exclusive options
+         if(m_tab6_use_padrao.Id()==clicked_id)
+           {
+            if(m_tab6_use_padrao.IsPressed())
+              {
+               m_tab6_use_candles.IsPressed(false);
+               m_tab6_use_indicador.IsPressed(false);
+              }
+            m_tab6_use_padrao.Update(true);
+            m_tab6_use_candles.Update(true);
+            m_tab6_use_indicador.Update(true);
+            return;
+           }
+         if(m_tab6_use_candles.Id()==clicked_id)
+           {
+            if(m_tab6_use_candles.IsPressed())
+              {
+               m_tab6_use_padrao.IsPressed(false);
+               m_tab6_use_indicador.IsPressed(false);
+              }
+            m_tab6_use_candles.Update(true);
+            m_tab6_use_padrao.Update(true);
+            m_tab6_use_indicador.Update(true);
+            return;
+           }
+         if(m_tab6_use_indicador.Id()==clicked_id)
+           {
+            if(m_tab6_use_indicador.IsPressed())
+              {
+               m_tab6_use_padrao.IsPressed(false);
+               m_tab6_use_candles.IsPressed(false);
+              }
+            m_tab6_use_indicador.Update(true);
+            m_tab6_use_padrao.Update(true);
+            m_tab6_use_candles.Update(true);
+            return;
+           }
+
         }
 
       if(id==CHARTEVENT_CUSTOM+ON_CLICK_BUTTON)
