@@ -77,12 +77,6 @@ input int InpTrailingStopCandlesCount = 1;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpTrailingStopCandlesCountPosicao = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR InpTrailingStopIndicador = CONSTRUTOR_STOP_IND_ATR;
 
-// Partial exits
-input ENUM_CONSTRUTOR_SIM_NAO InpSaidaParcial = CONSTRUTOR_NAO;
-input ENUM_CONSTRUTOR_TIPO_STOP_LOSS InpTipoSaidaParcial = CONSTRUTOR_STOP_PONTOS;
-input double InpSaidaParcial1Valor = 0.0;
-input double InpSaidaParcial1Distancia = 0.0;
-
 CConstrutorDialog ExtDialog;
 SConstrutorSettings g_settings;
 CConstrutorEasyPanel *g_easy_panel=NULL;
@@ -186,11 +180,11 @@ void LoadInputsToSettings(void)
    g_settings.stop_movel_indicador_disparo_distancia=0.0;
    g_settings.stop_movel_indicador=CONSTRUTOR_STOP_IND_ATR;
 
-   // Partial exits
-   g_settings.saida_parcial       =InpSaidaParcial;
-   g_settings.tipo_saida_parcial  =InpTipoSaidaParcial;
-   g_settings.saida_parcial_valor[0]=InpSaidaParcial1Valor;
-   g_settings.saida_parcial_distancia[0]=InpSaidaParcial1Distancia;
+   // Partial exits (configured via EasyPanel)
+   g_settings.saida_parcial       =CONSTRUTOR_NAO;
+   g_settings.tipo_saida_parcial  =CONSTRUTOR_STOP_PONTOS;
+   g_settings.saida_parcial_valor[0]=0.0;
+   g_settings.saida_parcial_distancia[0]=0.0;
    for(int i=1; i<6; i++)
       {
       g_settings.saida_parcial_valor[i]=0.0;

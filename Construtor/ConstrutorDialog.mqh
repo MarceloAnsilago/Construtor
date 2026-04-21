@@ -221,7 +221,7 @@ class CConstrutorDialog : public CAppDialog
 private:
    enum
      {
-      TAB_COUNT=4
+      TAB_COUNT=3
      };
 
    CPanel            m_sidebar;
@@ -305,16 +305,14 @@ void CConstrutorDialog::BindSettings(const SConstrutorSettings &settings)
 
 void CConstrutorDialog::InitTabData(void)
   {
-   // Tabs 1-7 migrated to EasyPanel; keep only remaining tabs here.
-   m_tab_titles[0]="8. Saidas parciais";
-   m_tab_titles[1]="9. Sinais";
-   m_tab_titles[2]="10. Ajustes finais";
-   m_tab_titles[3]="11. Painel";
+   // Tabs 1-8 migrated to EasyPanel; keep only remaining tabs here.
+   m_tab_titles[0]="9. Sinais";
+   m_tab_titles[1]="10. Ajustes finais";
+   m_tab_titles[2]="11. Painel";
 
-   m_tab_notes[0]="Saidas fracionadas e gerenciamento parcial.";
-   m_tab_notes[1]="Gatilhos e filtros de sinal.";
-   m_tab_notes[2]="Acabamento final da estrategia.";
-   m_tab_notes[3]="Painel geral da interface.";
+   m_tab_notes[0]="Gatilhos e filtros de sinal.";
+   m_tab_notes[1]="Acabamento final da estrategia.";
+   m_tab_notes[2]="Painel geral da interface.";
   }
 
 bool CConstrutorDialog::Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2)
