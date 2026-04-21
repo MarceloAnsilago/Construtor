@@ -603,6 +603,139 @@ private:
         }
      }
 
+   bool CreateCruzPeriodShiftPrice(const int inner_tab_index,
+                                  CEF_CTabs &inner_tabs,
+                                  const int cruz_param_x,
+                                  const int cruz_param_y,
+                                  const int cruz_col_w,
+                                  const int cruz_param_w,
+                                  const int cruz_param_h,
+                                  const int cruz_spin_w,
+                                  const int cruz_spin_edit_w,
+                                  const color cruz_param_border,
+                                  const string &default_period,
+                                  CEF_CTextLabel &period_label,
+                                  CEF_CTextEdit &period_spin,
+                                  CEF_CTextLabel &shift_label,
+                                  CEF_CTextEdit &shift_spin,
+                                  CEF_CTextLabel &price_label,
+                                  CEF_CComboBox &price_combo,
+                                  const string &price_items[])
+     {
+      if(!CreateTextLabel(period_label,"Periodo",inner_tabs,m_window_index,inner_tabs,inner_tab_index,cruz_param_x,cruz_param_y,cruz_col_w,14))
+         return(false);
+      period_label.FontSize(8);
+      period_label.LabelColor(C'91,78,64');
+
+      period_spin.MainPointer(inner_tabs);
+      inner_tabs.AddToElementsArray(inner_tab_index,period_spin);
+      period_spin.XSize(cruz_spin_w);
+      period_spin.MaxValue(9999.0);
+      period_spin.MinValue(0.0);
+      period_spin.StepValue(1.0);
+      period_spin.SetDigits(0);
+      period_spin.SpinEditMode(true);
+      period_spin.CheckBoxMode(false);
+      period_spin.SetValue(default_period);
+      period_spin.AnchorBottomWindowSide(false);
+      period_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
+      period_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      period_spin.GetTextBoxPointer().XGap(1);
+      if(!period_spin.CreateTextEdit("",cruz_param_x,cruz_param_y+14))
+         return(false);
+      AddToElementsArray(m_window_index,period_spin);
+      period_spin.BackColor(C'233,220,203');
+      period_spin.BackColorHover(C'233,220,203');
+      period_spin.BackColorPressed(C'233,220,203');
+      period_spin.BorderColor(cruz_param_border);
+      period_spin.BorderColorHover(cruz_param_border);
+      period_spin.BorderColorPressed(cruz_param_border);
+      period_spin.GetTextBoxPointer().BackColor(clrWhite);
+      period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      period_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
+      period_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
+      period_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
+
+      if(!CreateTextLabel(shift_label,"Desloc.",inner_tabs,m_window_index,inner_tabs,inner_tab_index,cruz_param_x+cruz_col_w+12,cruz_param_y,cruz_col_w,14))
+         return(false);
+      shift_label.FontSize(8);
+      shift_label.LabelColor(C'91,78,64');
+
+      shift_spin.MainPointer(inner_tabs);
+      inner_tabs.AddToElementsArray(inner_tab_index,shift_spin);
+      shift_spin.XSize(cruz_spin_w);
+      shift_spin.MaxValue(9999.0);
+      shift_spin.MinValue(0.0);
+      shift_spin.StepValue(1.0);
+      shift_spin.SetDigits(0);
+      shift_spin.SpinEditMode(true);
+      shift_spin.CheckBoxMode(false);
+      shift_spin.SetValue("0");
+      shift_spin.AnchorBottomWindowSide(false);
+      shift_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
+      shift_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      shift_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      shift_spin.GetTextBoxPointer().XGap(1);
+      if(!shift_spin.CreateTextEdit("",cruz_param_x+cruz_col_w+12,cruz_param_y+14))
+         return(false);
+      AddToElementsArray(m_window_index,shift_spin);
+      shift_spin.BackColor(C'233,220,203');
+      shift_spin.BackColorHover(C'233,220,203');
+      shift_spin.BackColorPressed(C'233,220,203');
+      shift_spin.BorderColor(cruz_param_border);
+      shift_spin.BorderColorHover(cruz_param_border);
+      shift_spin.BorderColorPressed(cruz_param_border);
+      shift_spin.GetTextBoxPointer().BackColor(clrWhite);
+      shift_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      shift_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      shift_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
+      shift_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
+      shift_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
+
+      if(!CreateTextLabel(price_label,"Modo de preco",inner_tabs,m_window_index,inner_tabs,inner_tab_index,cruz_param_x,cruz_param_y+40,cruz_param_w,14))
+         return(false);
+      price_label.FontSize(8);
+      price_label.LabelColor(C'91,78,64');
+
+      price_combo.MainPointer(inner_tabs);
+      inner_tabs.AddToElementsArray(inner_tab_index,price_combo);
+      price_combo.XSize(cruz_param_w);
+      price_combo.YSize(cruz_param_h);
+      price_combo.BackColor(clrWhite);
+      price_combo.BackColorHover(clrWhite);
+      price_combo.BackColorPressed(clrWhite);
+      price_combo.BorderColor(cruz_param_border);
+      price_combo.BorderColorHover(cruz_param_border);
+      price_combo.BorderColorPressed(cruz_param_border);
+      price_combo.FontSize(10);
+      price_combo.ItemsTotal(ArraySize(price_items));
+      price_combo.CheckBoxMode(false);
+      price_combo.GetButtonPointer().XGap(1);
+      price_combo.GetButtonPointer().XSize(cruz_param_w-2);
+      price_combo.GetButtonPointer().YSize(cruz_param_h);
+      price_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      price_combo.GetButtonPointer().BackColor(clrWhite);
+      price_combo.GetButtonPointer().BackColorHover(clrWhite);
+      price_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      price_combo.GetButtonPointer().BorderColor(cruz_param_border);
+      price_combo.GetButtonPointer().BorderColorHover(cruz_param_border);
+      price_combo.GetButtonPointer().BorderColorPressed(cruz_param_border);
+      price_combo.GetButtonPointer().IconXGap((cruz_param_w-2)-18);
+      price_combo.GetButtonPointer().LabelXGap(10);
+      price_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(price_items);i++) price_combo.SetValue(i,price_items[i]);
+      price_combo.GetListViewPointer().YSize(160);
+      price_combo.GetListViewPointer().LightsHover(true);
+      price_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!price_combo.CreateComboBox("",cruz_param_x,cruz_param_y+54))
+         return(false);
+      AddToElementsArray(m_window_index,price_combo);
+      price_combo.SelectItem(0);
+      return(true);
+     }
+
    void LoadSettingsToControls(const SConstrutorSettings &settings)
      {
       // Tab 1 (Inf. Iniciais + Horario + Config inicial)
@@ -820,6 +953,7 @@ public:
 
    bool              IsVisible(void) const { return(m_visible); }
    bool              IsCreated(void) const { return(m_created); }
+   void              OnTimerEvent(void) { PollCrossComboChanges(); }
 
    bool CreateIfNeeded(void)
      {
@@ -6911,230 +7045,20 @@ public:
       m_tab8_cruz_fast_dema_price_combo.SelectItem(0);
 
       // TEMA (tab 4) - mesmos componentes do DEMA
-      if(!CreateTextLabel(m_tab8_cruz_fast_tema_period_label,"Periodo",m_tab8_cruz_fast_tabs,m_window_index,m_tab8_cruz_fast_tabs,3,cruz_param_x,cruz_param_y,cruz_col_w,14))
+      if(!CreateCruzPeriodShiftPrice(3,m_tab8_cruz_fast_tabs,cruz_param_x,cruz_param_y,cruz_col_w,cruz_param_w,cruz_param_h,cruz_spin_w,cruz_spin_edit_w,cruz_param_border,"14",
+                                     m_tab8_cruz_fast_tema_period_label,m_tab8_cruz_fast_tema_period_spin,
+                                     m_tab8_cruz_fast_tema_shift_label,m_tab8_cruz_fast_tema_shift_spin,
+                                     m_tab8_cruz_fast_tema_price_label,m_tab8_cruz_fast_tema_price_combo,
+                                     cruz_price_items))
          return(false);
-      m_tab8_cruz_fast_tema_period_label.FontSize(8);
-      m_tab8_cruz_fast_tema_period_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_fast_tema_period_spin.MainPointer(m_tab8_cruz_fast_tabs);
-      m_tab8_cruz_fast_tabs.AddToElementsArray(3,m_tab8_cruz_fast_tema_period_spin);
-      m_tab8_cruz_fast_tema_period_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_fast_tema_period_spin.MaxValue(9999.0);
-      m_tab8_cruz_fast_tema_period_spin.MinValue(0.0);
-      m_tab8_cruz_fast_tema_period_spin.StepValue(1.0);
-      m_tab8_cruz_fast_tema_period_spin.SetDigits(0);
-      m_tab8_cruz_fast_tema_period_spin.SpinEditMode(true);
-      m_tab8_cruz_fast_tema_period_spin.CheckBoxMode(false);
-      m_tab8_cruz_fast_tema_period_spin.SetValue("14");
-      m_tab8_cruz_fast_tema_period_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_fast_tema_period_spin.CreateTextEdit("",cruz_param_x,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_fast_tema_period_spin);
-      m_tab8_cruz_fast_tema_period_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_fast_tema_period_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_fast_tema_period_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_fast_tema_period_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_tema_period_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_tema_period_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_tema_period_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_fast_tema_shift_label,"Desloc.",m_tab8_cruz_fast_tabs,m_window_index,m_tab8_cruz_fast_tabs,3,cruz_param_x+cruz_col_w+12,cruz_param_y,cruz_col_w,14))
-         return(false);
-      m_tab8_cruz_fast_tema_shift_label.FontSize(8);
-      m_tab8_cruz_fast_tema_shift_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_fast_tema_shift_spin.MainPointer(m_tab8_cruz_fast_tabs);
-      m_tab8_cruz_fast_tabs.AddToElementsArray(3,m_tab8_cruz_fast_tema_shift_spin);
-      m_tab8_cruz_fast_tema_shift_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_fast_tema_shift_spin.MaxValue(9999.0);
-      m_tab8_cruz_fast_tema_shift_spin.MinValue(0.0);
-      m_tab8_cruz_fast_tema_shift_spin.StepValue(1.0);
-      m_tab8_cruz_fast_tema_shift_spin.SetDigits(0);
-      m_tab8_cruz_fast_tema_shift_spin.SpinEditMode(true);
-      m_tab8_cruz_fast_tema_shift_spin.CheckBoxMode(false);
-      m_tab8_cruz_fast_tema_shift_spin.SetValue("0");
-      m_tab8_cruz_fast_tema_shift_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_fast_tema_shift_spin.CreateTextEdit("",cruz_param_x+cruz_col_w+12,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_fast_tema_shift_spin);
-      m_tab8_cruz_fast_tema_shift_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_fast_tema_shift_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_fast_tema_shift_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_fast_tema_shift_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_tema_shift_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_tema_shift_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_tema_shift_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_fast_tema_price_label,"Modo de preco",m_tab8_cruz_fast_tabs,m_window_index,m_tab8_cruz_fast_tabs,3,cruz_param_x,cruz_param_y+40,cruz_param_w,14))
-         return(false);
-      m_tab8_cruz_fast_tema_price_label.FontSize(8);
-      m_tab8_cruz_fast_tema_price_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_fast_tema_price_combo.MainPointer(m_tab8_cruz_fast_tabs);
-      m_tab8_cruz_fast_tabs.AddToElementsArray(3,m_tab8_cruz_fast_tema_price_combo);
-      m_tab8_cruz_fast_tema_price_combo.XSize(cruz_param_w);
-      m_tab8_cruz_fast_tema_price_combo.YSize(cruz_param_h);
-      m_tab8_cruz_fast_tema_price_combo.BackColor(clrWhite);
-      m_tab8_cruz_fast_tema_price_combo.BackColorHover(clrWhite);
-      m_tab8_cruz_fast_tema_price_combo.BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_tema_price_combo.BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_tema_price_combo.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_tema_price_combo.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_tema_price_combo.FontSize(10);
-      m_tab8_cruz_fast_tema_price_combo.ItemsTotal(ArraySize(cruz_price_items));
-      m_tab8_cruz_fast_tema_price_combo.CheckBoxMode(false);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().XGap(1);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().XSize(cruz_param_w-2);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().YSize(cruz_param_h);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().BackColor(clrWhite);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().IconXGap((cruz_param_w-2)-18);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().LabelXGap(10);
-      m_tab8_cruz_fast_tema_price_combo.GetButtonPointer().LabelColor(C'43,43,43');
-      for(int i=0;i<ArraySize(cruz_price_items);i++) m_tab8_cruz_fast_tema_price_combo.SetValue(i,cruz_price_items[i]);
-      m_tab8_cruz_fast_tema_price_combo.GetListViewPointer().YSize(160);
-      m_tab8_cruz_fast_tema_price_combo.GetListViewPointer().LightsHover(true);
-      m_tab8_cruz_fast_tema_price_combo.GetListViewPointer().BackColor(clrWhite);
-      if(!m_tab8_cruz_fast_tema_price_combo.CreateComboBox("",cruz_param_x,cruz_param_y+54))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_fast_tema_price_combo);
-      m_tab8_cruz_fast_tema_price_combo.SelectItem(0);
 
       // FRAMA (tab 5) - mesmos componentes do DEMA
-      if(!CreateTextLabel(m_tab8_cruz_fast_frama_period_label,"Periodo",m_tab8_cruz_fast_tabs,m_window_index,m_tab8_cruz_fast_tabs,4,cruz_param_x,cruz_param_y,cruz_col_w,14))
+      if(!CreateCruzPeriodShiftPrice(4,m_tab8_cruz_fast_tabs,cruz_param_x,cruz_param_y,cruz_col_w,cruz_param_w,cruz_param_h,cruz_spin_w,cruz_spin_edit_w,cruz_param_border,"14",
+                                     m_tab8_cruz_fast_frama_period_label,m_tab8_cruz_fast_frama_period_spin,
+                                     m_tab8_cruz_fast_frama_shift_label,m_tab8_cruz_fast_frama_shift_spin,
+                                     m_tab8_cruz_fast_frama_price_label,m_tab8_cruz_fast_frama_price_combo,
+                                     cruz_price_items))
          return(false);
-      m_tab8_cruz_fast_frama_period_label.FontSize(8);
-      m_tab8_cruz_fast_frama_period_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_fast_frama_period_spin.MainPointer(m_tab8_cruz_fast_tabs);
-      m_tab8_cruz_fast_tabs.AddToElementsArray(4,m_tab8_cruz_fast_frama_period_spin);
-      m_tab8_cruz_fast_frama_period_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_fast_frama_period_spin.MaxValue(9999.0);
-      m_tab8_cruz_fast_frama_period_spin.MinValue(0.0);
-      m_tab8_cruz_fast_frama_period_spin.StepValue(1.0);
-      m_tab8_cruz_fast_frama_period_spin.SetDigits(0);
-      m_tab8_cruz_fast_frama_period_spin.SpinEditMode(true);
-      m_tab8_cruz_fast_frama_period_spin.CheckBoxMode(false);
-      m_tab8_cruz_fast_frama_period_spin.SetValue("14");
-      m_tab8_cruz_fast_frama_period_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_fast_frama_period_spin.CreateTextEdit("",cruz_param_x,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_fast_frama_period_spin);
-      m_tab8_cruz_fast_frama_period_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_fast_frama_period_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_fast_frama_period_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_fast_frama_period_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_frama_period_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_frama_period_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_frama_period_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_fast_frama_shift_label,"Desloc.",m_tab8_cruz_fast_tabs,m_window_index,m_tab8_cruz_fast_tabs,4,cruz_param_x+cruz_col_w+12,cruz_param_y,cruz_col_w,14))
-         return(false);
-      m_tab8_cruz_fast_frama_shift_label.FontSize(8);
-      m_tab8_cruz_fast_frama_shift_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_fast_frama_shift_spin.MainPointer(m_tab8_cruz_fast_tabs);
-      m_tab8_cruz_fast_tabs.AddToElementsArray(4,m_tab8_cruz_fast_frama_shift_spin);
-      m_tab8_cruz_fast_frama_shift_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_fast_frama_shift_spin.MaxValue(9999.0);
-      m_tab8_cruz_fast_frama_shift_spin.MinValue(0.0);
-      m_tab8_cruz_fast_frama_shift_spin.StepValue(1.0);
-      m_tab8_cruz_fast_frama_shift_spin.SetDigits(0);
-      m_tab8_cruz_fast_frama_shift_spin.SpinEditMode(true);
-      m_tab8_cruz_fast_frama_shift_spin.CheckBoxMode(false);
-      m_tab8_cruz_fast_frama_shift_spin.SetValue("0");
-      m_tab8_cruz_fast_frama_shift_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_fast_frama_shift_spin.CreateTextEdit("",cruz_param_x+cruz_col_w+12,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_fast_frama_shift_spin);
-      m_tab8_cruz_fast_frama_shift_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_fast_frama_shift_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_fast_frama_shift_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_fast_frama_shift_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_frama_shift_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_frama_shift_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_frama_shift_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_fast_frama_price_label,"Modo de preco",m_tab8_cruz_fast_tabs,m_window_index,m_tab8_cruz_fast_tabs,4,cruz_param_x,cruz_param_y+40,cruz_param_w,14))
-         return(false);
-      m_tab8_cruz_fast_frama_price_label.FontSize(8);
-      m_tab8_cruz_fast_frama_price_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_fast_frama_price_combo.MainPointer(m_tab8_cruz_fast_tabs);
-      m_tab8_cruz_fast_tabs.AddToElementsArray(4,m_tab8_cruz_fast_frama_price_combo);
-      m_tab8_cruz_fast_frama_price_combo.XSize(cruz_param_w);
-      m_tab8_cruz_fast_frama_price_combo.YSize(cruz_param_h);
-      m_tab8_cruz_fast_frama_price_combo.BackColor(clrWhite);
-      m_tab8_cruz_fast_frama_price_combo.BackColorHover(clrWhite);
-      m_tab8_cruz_fast_frama_price_combo.BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_frama_price_combo.BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_frama_price_combo.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_frama_price_combo.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_frama_price_combo.FontSize(10);
-      m_tab8_cruz_fast_frama_price_combo.ItemsTotal(ArraySize(cruz_price_items));
-      m_tab8_cruz_fast_frama_price_combo.CheckBoxMode(false);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().XGap(1);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().XSize(cruz_param_w-2);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().YSize(cruz_param_h);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().BackColor(clrWhite);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().IconXGap((cruz_param_w-2)-18);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().LabelXGap(10);
-      m_tab8_cruz_fast_frama_price_combo.GetButtonPointer().LabelColor(C'43,43,43');
-      for(int i=0;i<ArraySize(cruz_price_items);i++) m_tab8_cruz_fast_frama_price_combo.SetValue(i,cruz_price_items[i]);
-      m_tab8_cruz_fast_frama_price_combo.GetListViewPointer().YSize(160);
-      m_tab8_cruz_fast_frama_price_combo.GetListViewPointer().LightsHover(true);
-      m_tab8_cruz_fast_frama_price_combo.GetListViewPointer().BackColor(clrWhite);
-      if(!m_tab8_cruz_fast_frama_price_combo.CreateComboBox("",cruz_param_x,cruz_param_y+54))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_fast_frama_price_combo);
-      m_tab8_cruz_fast_frama_price_combo.SelectItem(0);
 
       // --- SLOW (Par. lentos) ---
       // MA (tab 1) - same fields as fast
@@ -7553,230 +7477,20 @@ public:
       m_tab8_cruz_slow_dema_price_combo.SelectItem(0);
 
       // TEMA (tab 4) - mesmos componentes do DEMA
-      if(!CreateTextLabel(m_tab8_cruz_slow_tema_period_label,"Periodo",m_tab8_cruz_slow_tabs,m_window_index,m_tab8_cruz_slow_tabs,3,cruz_param_x,cruz_param_y,cruz_col_w,14))
+      if(!CreateCruzPeriodShiftPrice(3,m_tab8_cruz_slow_tabs,cruz_param_x,cruz_param_y,cruz_col_w,cruz_param_w,cruz_param_h,cruz_spin_w,cruz_spin_edit_w,cruz_param_border,"14",
+                                     m_tab8_cruz_slow_tema_period_label,m_tab8_cruz_slow_tema_period_spin,
+                                     m_tab8_cruz_slow_tema_shift_label,m_tab8_cruz_slow_tema_shift_spin,
+                                     m_tab8_cruz_slow_tema_price_label,m_tab8_cruz_slow_tema_price_combo,
+                                     cruz_price_items))
          return(false);
-      m_tab8_cruz_slow_tema_period_label.FontSize(8);
-      m_tab8_cruz_slow_tema_period_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_slow_tema_period_spin.MainPointer(m_tab8_cruz_slow_tabs);
-      m_tab8_cruz_slow_tabs.AddToElementsArray(3,m_tab8_cruz_slow_tema_period_spin);
-      m_tab8_cruz_slow_tema_period_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_slow_tema_period_spin.MaxValue(9999.0);
-      m_tab8_cruz_slow_tema_period_spin.MinValue(0.0);
-      m_tab8_cruz_slow_tema_period_spin.StepValue(1.0);
-      m_tab8_cruz_slow_tema_period_spin.SetDigits(0);
-      m_tab8_cruz_slow_tema_period_spin.SpinEditMode(true);
-      m_tab8_cruz_slow_tema_period_spin.CheckBoxMode(false);
-      m_tab8_cruz_slow_tema_period_spin.SetValue("14");
-      m_tab8_cruz_slow_tema_period_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_slow_tema_period_spin.CreateTextEdit("",cruz_param_x,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_slow_tema_period_spin);
-      m_tab8_cruz_slow_tema_period_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_slow_tema_period_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_slow_tema_period_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_slow_tema_period_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_tema_period_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_tema_period_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_tema_period_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_slow_tema_shift_label,"Desloc.",m_tab8_cruz_slow_tabs,m_window_index,m_tab8_cruz_slow_tabs,3,cruz_param_x+cruz_col_w+12,cruz_param_y,cruz_col_w,14))
-         return(false);
-      m_tab8_cruz_slow_tema_shift_label.FontSize(8);
-      m_tab8_cruz_slow_tema_shift_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_slow_tema_shift_spin.MainPointer(m_tab8_cruz_slow_tabs);
-      m_tab8_cruz_slow_tabs.AddToElementsArray(3,m_tab8_cruz_slow_tema_shift_spin);
-      m_tab8_cruz_slow_tema_shift_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_slow_tema_shift_spin.MaxValue(9999.0);
-      m_tab8_cruz_slow_tema_shift_spin.MinValue(0.0);
-      m_tab8_cruz_slow_tema_shift_spin.StepValue(1.0);
-      m_tab8_cruz_slow_tema_shift_spin.SetDigits(0);
-      m_tab8_cruz_slow_tema_shift_spin.SpinEditMode(true);
-      m_tab8_cruz_slow_tema_shift_spin.CheckBoxMode(false);
-      m_tab8_cruz_slow_tema_shift_spin.SetValue("0");
-      m_tab8_cruz_slow_tema_shift_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_slow_tema_shift_spin.CreateTextEdit("",cruz_param_x+cruz_col_w+12,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_slow_tema_shift_spin);
-      m_tab8_cruz_slow_tema_shift_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_slow_tema_shift_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_slow_tema_shift_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_slow_tema_shift_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_tema_shift_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_tema_shift_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_tema_shift_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_slow_tema_price_label,"Modo de preco",m_tab8_cruz_slow_tabs,m_window_index,m_tab8_cruz_slow_tabs,3,cruz_param_x,cruz_param_y+40,cruz_param_w,14))
-         return(false);
-      m_tab8_cruz_slow_tema_price_label.FontSize(8);
-      m_tab8_cruz_slow_tema_price_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_slow_tema_price_combo.MainPointer(m_tab8_cruz_slow_tabs);
-      m_tab8_cruz_slow_tabs.AddToElementsArray(3,m_tab8_cruz_slow_tema_price_combo);
-      m_tab8_cruz_slow_tema_price_combo.XSize(cruz_param_w);
-      m_tab8_cruz_slow_tema_price_combo.YSize(cruz_param_h);
-      m_tab8_cruz_slow_tema_price_combo.BackColor(clrWhite);
-      m_tab8_cruz_slow_tema_price_combo.BackColorHover(clrWhite);
-      m_tab8_cruz_slow_tema_price_combo.BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_tema_price_combo.BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_tema_price_combo.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_tema_price_combo.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_tema_price_combo.FontSize(10);
-      m_tab8_cruz_slow_tema_price_combo.ItemsTotal(ArraySize(cruz_price_items));
-      m_tab8_cruz_slow_tema_price_combo.CheckBoxMode(false);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().XGap(1);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().XSize(cruz_param_w-2);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().YSize(cruz_param_h);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().BackColor(clrWhite);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().IconXGap((cruz_param_w-2)-18);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().LabelXGap(10);
-      m_tab8_cruz_slow_tema_price_combo.GetButtonPointer().LabelColor(C'43,43,43');
-      for(int i=0;i<ArraySize(cruz_price_items);i++) m_tab8_cruz_slow_tema_price_combo.SetValue(i,cruz_price_items[i]);
-      m_tab8_cruz_slow_tema_price_combo.GetListViewPointer().YSize(160);
-      m_tab8_cruz_slow_tema_price_combo.GetListViewPointer().LightsHover(true);
-      m_tab8_cruz_slow_tema_price_combo.GetListViewPointer().BackColor(clrWhite);
-      if(!m_tab8_cruz_slow_tema_price_combo.CreateComboBox("",cruz_param_x,cruz_param_y+54))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_slow_tema_price_combo);
-      m_tab8_cruz_slow_tema_price_combo.SelectItem(0);
 
       // FRAMA (tab 5) - mesmos componentes do DEMA
-      if(!CreateTextLabel(m_tab8_cruz_slow_frama_period_label,"Periodo",m_tab8_cruz_slow_tabs,m_window_index,m_tab8_cruz_slow_tabs,4,cruz_param_x,cruz_param_y,cruz_col_w,14))
+      if(!CreateCruzPeriodShiftPrice(4,m_tab8_cruz_slow_tabs,cruz_param_x,cruz_param_y,cruz_col_w,cruz_param_w,cruz_param_h,cruz_spin_w,cruz_spin_edit_w,cruz_param_border,"14",
+                                     m_tab8_cruz_slow_frama_period_label,m_tab8_cruz_slow_frama_period_spin,
+                                     m_tab8_cruz_slow_frama_shift_label,m_tab8_cruz_slow_frama_shift_spin,
+                                     m_tab8_cruz_slow_frama_price_label,m_tab8_cruz_slow_frama_price_combo,
+                                     cruz_price_items))
          return(false);
-      m_tab8_cruz_slow_frama_period_label.FontSize(8);
-      m_tab8_cruz_slow_frama_period_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_slow_frama_period_spin.MainPointer(m_tab8_cruz_slow_tabs);
-      m_tab8_cruz_slow_tabs.AddToElementsArray(4,m_tab8_cruz_slow_frama_period_spin);
-      m_tab8_cruz_slow_frama_period_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_slow_frama_period_spin.MaxValue(9999.0);
-      m_tab8_cruz_slow_frama_period_spin.MinValue(0.0);
-      m_tab8_cruz_slow_frama_period_spin.StepValue(1.0);
-      m_tab8_cruz_slow_frama_period_spin.SetDigits(0);
-      m_tab8_cruz_slow_frama_period_spin.SpinEditMode(true);
-      m_tab8_cruz_slow_frama_period_spin.CheckBoxMode(false);
-      m_tab8_cruz_slow_frama_period_spin.SetValue("14");
-      m_tab8_cruz_slow_frama_period_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_slow_frama_period_spin.CreateTextEdit("",cruz_param_x,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_slow_frama_period_spin);
-      m_tab8_cruz_slow_frama_period_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_slow_frama_period_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_slow_frama_period_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_slow_frama_period_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_frama_period_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_frama_period_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_frama_period_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_slow_frama_shift_label,"Desloc.",m_tab8_cruz_slow_tabs,m_window_index,m_tab8_cruz_slow_tabs,4,cruz_param_x+cruz_col_w+12,cruz_param_y,cruz_col_w,14))
-         return(false);
-      m_tab8_cruz_slow_frama_shift_label.FontSize(8);
-      m_tab8_cruz_slow_frama_shift_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_slow_frama_shift_spin.MainPointer(m_tab8_cruz_slow_tabs);
-      m_tab8_cruz_slow_tabs.AddToElementsArray(4,m_tab8_cruz_slow_frama_shift_spin);
-      m_tab8_cruz_slow_frama_shift_spin.XSize(cruz_spin_w);
-      m_tab8_cruz_slow_frama_shift_spin.MaxValue(9999.0);
-      m_tab8_cruz_slow_frama_shift_spin.MinValue(0.0);
-      m_tab8_cruz_slow_frama_shift_spin.StepValue(1.0);
-      m_tab8_cruz_slow_frama_shift_spin.SetDigits(0);
-      m_tab8_cruz_slow_frama_shift_spin.SpinEditMode(true);
-      m_tab8_cruz_slow_frama_shift_spin.CheckBoxMode(false);
-      m_tab8_cruz_slow_frama_shift_spin.SetValue("0");
-      m_tab8_cruz_slow_frama_shift_spin.AnchorBottomWindowSide(false);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().XSize(cruz_spin_edit_w);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().AutoSelectionMode(true);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().XGap(1);
-      if(!m_tab8_cruz_slow_frama_shift_spin.CreateTextEdit("",cruz_param_x+cruz_col_w+12,cruz_param_y+14))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_slow_frama_shift_spin);
-      m_tab8_cruz_slow_frama_shift_spin.BackColor(C'233,220,203');
-      m_tab8_cruz_slow_frama_shift_spin.BackColorHover(C'233,220,203');
-      m_tab8_cruz_slow_frama_shift_spin.BackColorPressed(C'233,220,203');
-      m_tab8_cruz_slow_frama_shift_spin.BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_frama_shift_spin.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_frama_shift_spin.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().BackColor(clrWhite);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_frama_shift_spin.GetTextBoxPointer().BorderColorPressed(cruz_param_border);
-
-      if(!CreateTextLabel(m_tab8_cruz_slow_frama_price_label,"Modo de preco",m_tab8_cruz_slow_tabs,m_window_index,m_tab8_cruz_slow_tabs,4,cruz_param_x,cruz_param_y+40,cruz_param_w,14))
-         return(false);
-      m_tab8_cruz_slow_frama_price_label.FontSize(8);
-      m_tab8_cruz_slow_frama_price_label.LabelColor(C'91,78,64');
-
-      m_tab8_cruz_slow_frama_price_combo.MainPointer(m_tab8_cruz_slow_tabs);
-      m_tab8_cruz_slow_tabs.AddToElementsArray(4,m_tab8_cruz_slow_frama_price_combo);
-      m_tab8_cruz_slow_frama_price_combo.XSize(cruz_param_w);
-      m_tab8_cruz_slow_frama_price_combo.YSize(cruz_param_h);
-      m_tab8_cruz_slow_frama_price_combo.BackColor(clrWhite);
-      m_tab8_cruz_slow_frama_price_combo.BackColorHover(clrWhite);
-      m_tab8_cruz_slow_frama_price_combo.BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_frama_price_combo.BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_frama_price_combo.BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_frama_price_combo.BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_frama_price_combo.FontSize(10);
-      m_tab8_cruz_slow_frama_price_combo.ItemsTotal(ArraySize(cruz_price_items));
-      m_tab8_cruz_slow_frama_price_combo.CheckBoxMode(false);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().XGap(1);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().XSize(cruz_param_w-2);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().YSize(cruz_param_h);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().AnchorRightWindowSide(false);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().BackColor(clrWhite);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().BackColorHover(clrWhite);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().BackColorPressed(clrWhite);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().BorderColor(cruz_param_border);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().BorderColorHover(cruz_param_border);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().BorderColorPressed(cruz_param_border);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().IconXGap((cruz_param_w-2)-18);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().LabelXGap(10);
-      m_tab8_cruz_slow_frama_price_combo.GetButtonPointer().LabelColor(C'43,43,43');
-      for(int i=0;i<ArraySize(cruz_price_items);i++) m_tab8_cruz_slow_frama_price_combo.SetValue(i,cruz_price_items[i]);
-      m_tab8_cruz_slow_frama_price_combo.GetListViewPointer().YSize(160);
-      m_tab8_cruz_slow_frama_price_combo.GetListViewPointer().LightsHover(true);
-      m_tab8_cruz_slow_frama_price_combo.GetListViewPointer().BackColor(clrWhite);
-      if(!m_tab8_cruz_slow_frama_price_combo.CreateComboBox("",cruz_param_x,cruz_param_y+54))
-         return(false);
-      AddToElementsArray(m_window_index,m_tab8_cruz_slow_frama_price_combo);
-      m_tab8_cruz_slow_frama_price_combo.SelectItem(0);
 
       m_tab8_cruz_fast_tabs.SelectTab(0);
       m_tab8_cruz_fast_tabs.ShowTabElements();
