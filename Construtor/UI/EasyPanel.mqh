@@ -6145,7 +6145,11 @@ public:
       m_tab8_cruz_fast_btn.LabelColor(clrWhite);
       m_tab8_cruz_fast_btn.LabelColorHover(clrWhite);
       m_tab8_cruz_fast_btn.LabelColorPressed(clrWhite);
-      if(!m_tab8_cruz_fast_btn.CreateButton("",cruz_content_x,cruz_content_y+18))
+      const int cruz_combo_x=cruz_content_x;
+      const int cruz_combo_inner_w=cruz_combo_w-cruz_btn_w-4;
+      const int cruz_btn_x=cruz_content_x+cruz_combo_inner_w+4;
+
+      if(!m_tab8_cruz_fast_btn.CreateButton("",cruz_btn_x,cruz_content_y+18))
          return(false);
       AddToElementsArray(m_window_index,m_tab8_cruz_fast_btn);
 
@@ -6164,7 +6168,7 @@ public:
 
       m_tab8_cruz_fast_combo.MainPointer(m_tab8_cruz_tabs);
       m_tab8_cruz_tabs.AddToElementsArray(0,m_tab8_cruz_fast_combo);
-      m_tab8_cruz_fast_combo.XSize(cruz_combo_w-cruz_btn_w-4);
+      m_tab8_cruz_fast_combo.XSize(cruz_combo_inner_w);
       m_tab8_cruz_fast_combo.YSize(cruz_combo_h);
       m_tab8_cruz_fast_combo.BackColor(clrWhite);
       m_tab8_cruz_fast_combo.BackColorHover(clrWhite);
@@ -6176,7 +6180,7 @@ public:
       m_tab8_cruz_fast_combo.ItemsTotal(ArraySize(cruz_sig_items));
       m_tab8_cruz_fast_combo.CheckBoxMode(false);
       m_tab8_cruz_fast_combo.GetButtonPointer().XGap(1);
-      m_tab8_cruz_fast_combo.GetButtonPointer().XSize((cruz_combo_w-cruz_btn_w-4)-2);
+      m_tab8_cruz_fast_combo.GetButtonPointer().XSize(cruz_combo_inner_w-2);
       m_tab8_cruz_fast_combo.GetButtonPointer().YSize(cruz_combo_h);
       m_tab8_cruz_fast_combo.GetButtonPointer().AnchorRightWindowSide(false);
       m_tab8_cruz_fast_combo.GetButtonPointer().BackColor(clrWhite);
@@ -6185,14 +6189,14 @@ public:
       m_tab8_cruz_fast_combo.GetButtonPointer().BorderColor(cruz_border);
       m_tab8_cruz_fast_combo.GetButtonPointer().BorderColorHover(cruz_border);
       m_tab8_cruz_fast_combo.GetButtonPointer().BorderColorPressed(cruz_border);
-      m_tab8_cruz_fast_combo.GetButtonPointer().IconXGap(((cruz_combo_w-cruz_btn_w-4)-2)-18);
+      m_tab8_cruz_fast_combo.GetButtonPointer().IconXGap((cruz_combo_inner_w-2)-18);
       m_tab8_cruz_fast_combo.GetButtonPointer().LabelXGap(10);
       m_tab8_cruz_fast_combo.GetButtonPointer().LabelColor(C'43,43,43');
       for(int i=0;i<ArraySize(cruz_sig_items);i++) m_tab8_cruz_fast_combo.SetValue(i,cruz_sig_items[i]);
       m_tab8_cruz_fast_combo.GetListViewPointer().YSize(180);
       m_tab8_cruz_fast_combo.GetListViewPointer().LightsHover(true);
       m_tab8_cruz_fast_combo.GetListViewPointer().BackColor(clrWhite);
-      if(!m_tab8_cruz_fast_combo.CreateComboBox("",cruz_content_x+cruz_btn_w+4,cruz_content_y+18))
+      if(!m_tab8_cruz_fast_combo.CreateComboBox("",cruz_combo_x,cruz_content_y+18))
          return(false);
       AddToElementsArray(m_window_index,m_tab8_cruz_fast_combo);
       m_tab8_cruz_fast_combo.SelectItem(0);
@@ -6266,13 +6270,13 @@ public:
       m_tab8_cruz_slow_btn.LabelColor(clrWhite);
       m_tab8_cruz_slow_btn.LabelColorHover(clrWhite);
       m_tab8_cruz_slow_btn.LabelColorPressed(clrWhite);
-      if(!m_tab8_cruz_slow_btn.CreateButton("",cruz_content_x,cruz_content_y+110))
+      if(!m_tab8_cruz_slow_btn.CreateButton("",cruz_btn_x,cruz_content_y+110))
          return(false);
       AddToElementsArray(m_window_index,m_tab8_cruz_slow_btn);
 
       m_tab8_cruz_slow_combo.MainPointer(m_tab8_cruz_tabs);
       m_tab8_cruz_tabs.AddToElementsArray(0,m_tab8_cruz_slow_combo);
-      m_tab8_cruz_slow_combo.XSize(cruz_combo_w-cruz_btn_w-4);
+      m_tab8_cruz_slow_combo.XSize(cruz_combo_inner_w);
       m_tab8_cruz_slow_combo.YSize(cruz_combo_h);
       m_tab8_cruz_slow_combo.BackColor(clrWhite);
       m_tab8_cruz_slow_combo.BackColorHover(clrWhite);
@@ -6284,7 +6288,7 @@ public:
       m_tab8_cruz_slow_combo.ItemsTotal(ArraySize(cruz_sig_items));
       m_tab8_cruz_slow_combo.CheckBoxMode(false);
       m_tab8_cruz_slow_combo.GetButtonPointer().XGap(1);
-      m_tab8_cruz_slow_combo.GetButtonPointer().XSize((cruz_combo_w-cruz_btn_w-4)-2);
+      m_tab8_cruz_slow_combo.GetButtonPointer().XSize(cruz_combo_inner_w-2);
       m_tab8_cruz_slow_combo.GetButtonPointer().YSize(cruz_combo_h);
       m_tab8_cruz_slow_combo.GetButtonPointer().AnchorRightWindowSide(false);
       m_tab8_cruz_slow_combo.GetButtonPointer().BackColor(clrWhite);
@@ -6293,14 +6297,14 @@ public:
       m_tab8_cruz_slow_combo.GetButtonPointer().BorderColor(cruz_border);
       m_tab8_cruz_slow_combo.GetButtonPointer().BorderColorHover(cruz_border);
       m_tab8_cruz_slow_combo.GetButtonPointer().BorderColorPressed(cruz_border);
-      m_tab8_cruz_slow_combo.GetButtonPointer().IconXGap(((cruz_combo_w-cruz_btn_w-4)-2)-18);
+      m_tab8_cruz_slow_combo.GetButtonPointer().IconXGap((cruz_combo_inner_w-2)-18);
       m_tab8_cruz_slow_combo.GetButtonPointer().LabelXGap(10);
       m_tab8_cruz_slow_combo.GetButtonPointer().LabelColor(C'43,43,43');
       for(int i=0;i<ArraySize(cruz_sig_items);i++) m_tab8_cruz_slow_combo.SetValue(i,cruz_sig_items[i]);
       m_tab8_cruz_slow_combo.GetListViewPointer().YSize(180);
       m_tab8_cruz_slow_combo.GetListViewPointer().LightsHover(true);
       m_tab8_cruz_slow_combo.GetListViewPointer().BackColor(clrWhite);
-      if(!m_tab8_cruz_slow_combo.CreateComboBox("",cruz_content_x+cruz_btn_w+4,cruz_content_y+110))
+      if(!m_tab8_cruz_slow_combo.CreateComboBox("",cruz_combo_x,cruz_content_y+110))
          return(false);
       AddToElementsArray(m_window_index,m_tab8_cruz_slow_combo);
       m_tab8_cruz_slow_combo.SelectItem(0);
