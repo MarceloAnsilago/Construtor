@@ -277,6 +277,13 @@ private:
    CEF_CComboBox     m_tab6_candles_candle_combo;
    CEF_CTextLabel    m_tab6_candles_refdist_label;
    CEF_CTextEdit     m_tab6_candles_refdist_spin;
+   CEF_CFrame        m_tab6_card_indicador;
+   CEF_CTextLabel    m_tab6_card_indicador_title;
+   CEF_CCheckBox     m_tab6_use_indicador;
+   CEF_CTextLabel    m_tab6_indic_trigger_label;
+   CEF_CTextEdit     m_tab6_indic_trigger_spin;
+   CEF_CTextLabel    m_tab6_indic_combo_label;
+   CEF_CComboBox     m_tab6_indic_combo;
 
 	   // Tab 1 (Inf. Iniciais) - styled preview
 	   CEF_CFrame        m_tab1_card_left;
@@ -4464,6 +4471,122 @@ public:
       m_tab6_candles_refdist_spin.GetDecButtonPointer().BorderColor(tab2_border);
       m_tab6_candles_refdist_spin.GetDecButtonPointer().BorderColorHover(tab2_border);
       m_tab6_candles_refdist_spin.GetDecButtonPointer().BorderColorPressed(tab2_border);
+
+      // Tab 6: Trailing stop (indicador) card
+      const int tab6_indic_card_x=content_pad + (card_w + card_gap) * 2;
+      if(!CreateFrame(m_tab6_card_indicador,"",m_tabs,m_window_index,m_tabs,5,tab6_indic_card_x,tab6_y,tab6_w,tab6_h,1))
+         return(false);
+      m_tab6_card_indicador.BackColor(C'233,220,203');
+      m_tab6_card_indicador.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab6_card_indicador_title,"Trailing stop (indicador)",m_tab6_card_indicador,m_window_index,m_tabs,5,16,12,tab6_w-32,22))
+         return(false);
+      m_tab6_card_indicador_title.FontSize(12);
+      m_tab6_card_indicador_title.LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab6_use_indicador,"Indicador",m_tab6_card_indicador,m_window_index,m_tabs,5,16,44,tab6_w-32,false,false,false))
+         return(false);
+      m_tab6_use_indicador.FontSize(10);
+      m_tab6_use_indicador.LabelColor(C'43,43,43');
+
+      const int tab6_icw=tab6_w-32;
+      const int tab6_iedit_w=tab6_icw-34;
+      int tab6_iy=76;
+
+      if(!CreateTextLabel(m_tab6_indic_trigger_label,"Distancia para disparo",m_tab6_card_indicador,m_window_index,m_tabs,5,16,tab6_iy,tab6_w-32,18))
+         return(false);
+      m_tab6_indic_trigger_label.FontSize(10);
+      m_tab6_indic_trigger_label.LabelColor(C'91,78,64');
+      tab6_iy+=22;
+
+      m_tab6_indic_trigger_spin.MainPointer(m_tab6_card_indicador);
+      m_tabs.AddToElementsArray(5,m_tab6_indic_trigger_spin);
+      m_tab6_indic_trigger_spin.XSize(tab6_icw);
+      m_tab6_indic_trigger_spin.MaxValue(100000.0);
+      m_tab6_indic_trigger_spin.MinValue(0.0);
+      m_tab6_indic_trigger_spin.StepValue(0.1);
+      m_tab6_indic_trigger_spin.SetDigits(1);
+      m_tab6_indic_trigger_spin.SpinEditMode(true);
+      m_tab6_indic_trigger_spin.CheckBoxMode(false);
+      m_tab6_indic_trigger_spin.SetValue("1.0");
+      m_tab6_indic_trigger_spin.AnchorBottomWindowSide(false);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().XSize(tab6_iedit_w);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab6_indic_trigger_spin.CreateTextEdit("",16,tab6_iy))
+         return(false);
+      m_tab6_indic_trigger_spin.BackColor(C'233,220,203');
+      m_tab6_indic_trigger_spin.BackColorHover(C'233,220,203');
+      m_tab6_indic_trigger_spin.BackColorPressed(C'233,220,203');
+      m_tab6_indic_trigger_spin.BorderColor(tab2_border);
+      m_tab6_indic_trigger_spin.BorderColorHover(tab2_border);
+      m_tab6_indic_trigger_spin.BorderColorPressed(tab2_border);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().BorderColor(tab2_border);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+      m_tab6_indic_trigger_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+      m_tab6_indic_trigger_spin.GetIncButtonPointer().BackColor(clrWhite);
+      m_tab6_indic_trigger_spin.GetIncButtonPointer().BackColorHover(clrWhite);
+      m_tab6_indic_trigger_spin.GetIncButtonPointer().BackColorPressed(clrWhite);
+      m_tab6_indic_trigger_spin.GetIncButtonPointer().BorderColor(tab2_border);
+      m_tab6_indic_trigger_spin.GetIncButtonPointer().BorderColorHover(tab2_border);
+      m_tab6_indic_trigger_spin.GetIncButtonPointer().BorderColorPressed(tab2_border);
+      m_tab6_indic_trigger_spin.GetDecButtonPointer().BackColor(clrWhite);
+      m_tab6_indic_trigger_spin.GetDecButtonPointer().BackColorHover(clrWhite);
+      m_tab6_indic_trigger_spin.GetDecButtonPointer().BackColorPressed(clrWhite);
+      m_tab6_indic_trigger_spin.GetDecButtonPointer().BorderColor(tab2_border);
+      m_tab6_indic_trigger_spin.GetDecButtonPointer().BorderColorHover(tab2_border);
+      m_tab6_indic_trigger_spin.GetDecButtonPointer().BorderColorPressed(tab2_border);
+      AddToElementsArray(m_window_index,m_tab6_indic_trigger_spin);
+      tab6_iy+=34;
+
+      if(!CreateTextLabel(m_tab6_indic_combo_label,"Indicador",m_tab6_card_indicador,m_window_index,m_tabs,5,16,tab6_iy,tab6_w-32,18))
+         return(false);
+      m_tab6_indic_combo_label.FontSize(10);
+      m_tab6_indic_combo_label.LabelColor(C'91,78,64');
+      tab6_iy+=22;
+
+      string tab6_indic_items[];
+      ArrayResize(tab6_indic_items,2);
+      tab6_indic_items[0]="Media movel";
+      tab6_indic_items[1]="Parabolic SAR";
+
+      m_tab6_indic_combo.MainPointer(m_tab6_card_indicador);
+      m_tabs.AddToElementsArray(5,m_tab6_indic_combo);
+      m_tab6_indic_combo.XSize(tab6_icw);
+      m_tab6_indic_combo.YSize(20);
+      m_tab6_indic_combo.BackColor(clrWhite);
+      m_tab6_indic_combo.BackColorHover(clrWhite);
+      m_tab6_indic_combo.BackColorPressed(clrWhite);
+      m_tab6_indic_combo.BorderColor(tab2_border);
+      m_tab6_indic_combo.BorderColorHover(tab2_border);
+      m_tab6_indic_combo.BorderColorPressed(tab2_border);
+      m_tab6_indic_combo.FontSize(10);
+      m_tab6_indic_combo.ItemsTotal(ArraySize(tab6_indic_items));
+      m_tab6_indic_combo.CheckBoxMode(false);
+      m_tab6_indic_combo.GetButtonPointer().XGap(1);
+      m_tab6_indic_combo.GetButtonPointer().XSize(tab6_icw-2);
+      m_tab6_indic_combo.GetButtonPointer().YSize(20);
+      m_tab6_indic_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab6_indic_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab6_indic_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab6_indic_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab6_indic_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab6_indic_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab6_indic_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab6_indic_combo.GetButtonPointer().IconXGap((tab6_icw-2)-18);
+      m_tab6_indic_combo.GetButtonPointer().LabelXGap(10);
+      m_tab6_indic_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      m_tab6_indic_combo.GetListViewPointer().LightsHover(true);
+      m_tab6_indic_combo.GetListViewPointer().BackColor(clrWhite);
+      for(int i=0;i<ArraySize(tab6_indic_items);i++) m_tab6_indic_combo.SetValue(i,tab6_indic_items[i]);
+      if(!m_tab6_indic_combo.CreateComboBox("",16,tab6_iy))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab6_indic_combo);
+      m_tab6_indic_combo.SelectItem(0);
 
       m_top_tabs.SelectTab(0);
       m_top_tabs.ShowTabElements();
