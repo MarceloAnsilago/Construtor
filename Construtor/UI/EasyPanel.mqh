@@ -305,6 +305,27 @@ private:
    CEF_CTextLabel    m_tab8_card_ordens_title;
    CEF_CCheckBox     m_tab8_ordem_market;
    CEF_CCheckBox     m_tab8_ordem_limit;
+   CEF_CTabs         m_tab8_ord_tabs;
+   CEF_CCheckBox     m_tab8_ord_ref_check;
+   CEF_CCheckBox     m_tab8_ord_media_check;
+   CEF_CFrame        m_tab8_ord_ref_card;
+   CEF_CTextLabel    m_tab8_ord_ref_base_label;
+   CEF_CComboBox     m_tab8_ord_ref_base_combo;
+   CEF_CTextLabel    m_tab8_ord_ref_candle_label;
+   CEF_CComboBox     m_tab8_ord_ref_candle_combo;
+   CEF_CTextLabel    m_tab8_ord_ref_distance_label;
+   CEF_CTextEdit     m_tab8_ord_ref_distance_spin;
+   CEF_CTextLabel    m_tab8_ord_ref_expire_label;
+   CEF_CComboBox     m_tab8_ord_ref_expire_combo;
+   CEF_CFrame        m_tab8_ord_media_card;
+   CEF_CTextLabel    m_tab8_ord_media_candles_label;
+   CEF_CTextEdit     m_tab8_ord_media_candles_spin;
+   CEF_CTextLabel    m_tab8_ord_media_base_label;
+   CEF_CComboBox     m_tab8_ord_media_base_combo;
+   CEF_CTextLabel    m_tab8_ord_media_distance_label;
+   CEF_CTextEdit     m_tab8_ord_media_distance_spin;
+   CEF_CTextLabel    m_tab8_ord_media_expire_label;
+   CEF_CComboBox     m_tab8_ord_media_expire_combo;
 
    // Tab 1 (Inf. Iniciais) - styled preview
    CEF_CFrame        m_tab1_card_left;
@@ -4960,6 +4981,447 @@ public:
       m_tab8_ordem_limit.FontSize(10);
       m_tab8_ordem_limit.LabelColor(C'43,43,43');
 
+      // Tabs inside "Tipo de ordens" (ported from CPanel Tab 9 "Sinais" first card: Referencia/Media)
+      const int tab8_ord_tabs_x=16;
+      const int tab8_ord_tabs_y=84;
+      const int tab8_ord_tabs_w=tab8_w-32;
+      const int tab8_ord_tabs_h=tab8_h-96;
+      const int tab8_ord_tab_h=22;
+
+      string ord_tab_text[];
+      int ord_tab_widths[];
+      ArrayResize(ord_tab_text,2);
+      ArrayResize(ord_tab_widths,2);
+      ord_tab_text[0]="Referencia";
+      ord_tab_text[1]="Media";
+      ord_tab_widths[0]=tab8_ord_tabs_w/2;
+      ord_tab_widths[1]=tab8_ord_tabs_w-ord_tab_widths[0];
+
+      m_tab8_ord_tabs.MainPointer(m_tab8_card_ordens);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_ord_tabs);
+      m_tab8_ord_tabs.XSize(tab8_ord_tabs_w);
+      m_tab8_ord_tabs.YSize(tab8_ord_tabs_h);
+      m_tab8_ord_tabs.IsCenterText(true);
+      m_tab8_ord_tabs.PositionMode(TABS_TOP);
+      m_tab8_ord_tabs.TabsYSize(tab8_ord_tab_h);
+      m_tab8_ord_tabs.AutoXResizeMode(false);
+      m_tab8_ord_tabs.AutoYResizeMode(false);
+      m_tab8_ord_tabs.BackColorPressed(C'239,231,218');
+      m_tab8_ord_tabs.BorderColor(C'197,168,136');
+      m_tab8_ord_tabs.BorderColorHover(C'197,168,136');
+      m_tab8_ord_tabs.BorderColorPressed(C'197,168,136');
+      for(int i=0;i<2;i++) m_tab8_ord_tabs.AddTab(ord_tab_text[i],ord_tab_widths[i]);
+      if(!m_tab8_ord_tabs.CreateTabs(tab8_ord_tabs_x,tab8_ord_tabs_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_tabs);
+
+      CEF_CButtonsGroup *ord_bg=m_tab8_ord_tabs.GetButtonsGroupPointer();
+      if(ord_bg!=NULL)
+        {
+         for(int i=0;i<2;i++)
+           {
+            ord_bg.GetButtonPointer(i).FontSize(8);
+            ord_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            ord_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            ord_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            ord_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            ord_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            ord_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            ord_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            ord_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            ord_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      const int ord_content_x=12;
+      const int ord_content_y=6;
+      const int ord_content_w=tab8_ord_tabs_w-(ord_content_x*2);
+
+      if(!CreateCheckbox(m_tab8_ord_ref_check,"Referencia",m_tab8_ord_tabs,m_window_index,m_tab8_ord_tabs,0,ord_content_x,ord_content_y,140,true,false,false))
+         return(false);
+      m_tab8_ord_ref_check.FontSize(10);
+      m_tab8_ord_ref_check.LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab8_ord_media_check,"Media",m_tab8_ord_tabs,m_window_index,m_tab8_ord_tabs,1,ord_content_x,ord_content_y,140,false,false,false))
+         return(false);
+      m_tab8_ord_media_check.FontSize(10);
+      m_tab8_ord_media_check.LabelColor(C'43,43,43');
+
+      const int ord_subcard_x=ord_content_x;
+      const int ord_subcard_y=ord_content_y+18;
+      const int ord_subcard_w=ord_content_w;
+      const int ord_subcard_h=tab8_ord_tabs_h - ord_subcard_y - 10;
+      const color ord_sub_back=C'239,231,218';
+      const color ord_sub_border=C'197,168,136';
+
+      if(!CreateFrame(m_tab8_ord_ref_card,"",m_tab8_ord_tabs,m_window_index,m_tab8_ord_tabs,0,ord_subcard_x,ord_subcard_y,ord_subcard_w,ord_subcard_h,1))
+         return(false);
+      m_tab8_ord_ref_card.BackColor(ord_sub_back);
+      m_tab8_ord_ref_card.BorderColor(ord_sub_border);
+
+      if(!CreateFrame(m_tab8_ord_media_card,"",m_tab8_ord_tabs,m_window_index,m_tab8_ord_tabs,1,ord_subcard_x,ord_subcard_y,ord_subcard_w,ord_subcard_h,1))
+         return(false);
+      m_tab8_ord_media_card.BackColor(ord_sub_back);
+      m_tab8_ord_media_card.BorderColor(ord_sub_border);
+
+      const int tab8_fpad=12;
+      const int tab8_f_w=ord_subcard_w-(tab8_fpad*2);
+      const int tab8_sub_label_h=16;
+      const int tab8_sub_control_h=20;
+      const int tab8_sub_vgap=8;
+      const int tab8_sub_btn_w=tab8_f_w-2;
+      const int tab8_sub_btn_x=1;
+
+      // Reference tab controls
+      int tab8_ry=10;
+      if(!CreateTextLabel(m_tab8_ord_ref_base_label,"Referencia:",m_tab8_ord_ref_card,m_window_index,m_tab8_ord_tabs,0,tab8_fpad,tab8_ry,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_ref_base_label.FontSize(9);
+      m_tab8_ord_ref_base_label.LabelColor(C'91,78,64');
+      tab8_ry+=tab8_sub_label_h+2;
+
+      string tab8_ref_items[];
+      ArrayResize(tab8_ref_items,6);
+      tab8_ref_items[0]="Maxima";
+      tab8_ref_items[1]="Minima";
+      tab8_ref_items[2]="Abertura";
+      tab8_ref_items[3]="Fechamento";
+      tab8_ref_items[4]="Corpo";
+      tab8_ref_items[5]="Pavios";
+
+      m_tab8_ord_ref_base_combo.MainPointer(m_tab8_ord_ref_card);
+      m_tab8_ord_tabs.AddToElementsArray(0,m_tab8_ord_ref_base_combo);
+      m_tab8_ord_ref_base_combo.XSize(tab8_f_w);
+      m_tab8_ord_ref_base_combo.YSize(tab8_sub_control_h);
+      m_tab8_ord_ref_base_combo.BackColor(clrWhite);
+      m_tab8_ord_ref_base_combo.BackColorHover(clrWhite);
+      m_tab8_ord_ref_base_combo.BackColorPressed(clrWhite);
+      m_tab8_ord_ref_base_combo.BorderColor(ord_sub_border);
+      m_tab8_ord_ref_base_combo.BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_base_combo.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_ref_base_combo.FontSize(10);
+      m_tab8_ord_ref_base_combo.ItemsTotal(ArraySize(tab8_ref_items));
+      m_tab8_ord_ref_base_combo.CheckBoxMode(false);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().XSize(tab8_sub_btn_w);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().XGap(tab8_sub_btn_x);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().YSize(tab8_sub_control_h);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().BorderColorPressed(ord_sub_border);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().IconXGap(tab8_sub_btn_w-18);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_ord_ref_base_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_ref_items);i++) m_tab8_ord_ref_base_combo.SetValue(i,tab8_ref_items[i]);
+      m_tab8_ord_ref_base_combo.GetListViewPointer().YSize(120);
+      m_tab8_ord_ref_base_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_ord_ref_base_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_ord_ref_base_combo.CreateComboBox("",tab8_fpad,tab8_ry))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_ref_base_combo);
+      m_tab8_ord_ref_base_combo.SelectItem(0);
+      tab8_ry+=tab8_sub_control_h+tab8_sub_vgap;
+
+      if(!CreateTextLabel(m_tab8_ord_ref_candle_label,"Candle:",m_tab8_ord_ref_card,m_window_index,m_tab8_ord_tabs,0,tab8_fpad,tab8_ry,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_ref_candle_label.FontSize(9);
+      m_tab8_ord_ref_candle_label.LabelColor(C'91,78,64');
+      tab8_ry+=tab8_sub_label_h+2;
+
+      string tab8_candle_items[];
+      ArrayResize(tab8_candle_items,4);
+      tab8_candle_items[0]="Atual";
+      tab8_candle_items[1]="Ultimo";
+      tab8_candle_items[2]="Penultimo";
+      tab8_candle_items[3]="Antipenultimo";
+
+      m_tab8_ord_ref_candle_combo.MainPointer(m_tab8_ord_ref_card);
+      m_tab8_ord_tabs.AddToElementsArray(0,m_tab8_ord_ref_candle_combo);
+      m_tab8_ord_ref_candle_combo.XSize(tab8_f_w);
+      m_tab8_ord_ref_candle_combo.YSize(tab8_sub_control_h);
+      m_tab8_ord_ref_candle_combo.BackColor(clrWhite);
+      m_tab8_ord_ref_candle_combo.BackColorHover(clrWhite);
+      m_tab8_ord_ref_candle_combo.BackColorPressed(clrWhite);
+      m_tab8_ord_ref_candle_combo.BorderColor(ord_sub_border);
+      m_tab8_ord_ref_candle_combo.BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_candle_combo.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_ref_candle_combo.FontSize(10);
+      m_tab8_ord_ref_candle_combo.ItemsTotal(ArraySize(tab8_candle_items));
+      m_tab8_ord_ref_candle_combo.CheckBoxMode(false);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().XSize(tab8_sub_btn_w);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().XGap(tab8_sub_btn_x);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().YSize(tab8_sub_control_h);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().BorderColorPressed(ord_sub_border);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().IconXGap(tab8_sub_btn_w-18);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_ord_ref_candle_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_candle_items);i++) m_tab8_ord_ref_candle_combo.SetValue(i,tab8_candle_items[i]);
+      m_tab8_ord_ref_candle_combo.GetListViewPointer().YSize(120);
+      m_tab8_ord_ref_candle_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_ord_ref_candle_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_ord_ref_candle_combo.CreateComboBox("",tab8_fpad,tab8_ry))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_ref_candle_combo);
+      m_tab8_ord_ref_candle_combo.SelectItem(0);
+      tab8_ry+=tab8_sub_control_h+tab8_sub_vgap;
+
+      if(!CreateTextLabel(m_tab8_ord_ref_distance_label,"Distancia",m_tab8_ord_ref_card,m_window_index,m_tab8_ord_tabs,0,tab8_fpad,tab8_ry,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_ref_distance_label.FontSize(9);
+      m_tab8_ord_ref_distance_label.LabelColor(C'91,78,64');
+      tab8_ry+=tab8_sub_label_h+2;
+
+      m_tab8_ord_ref_distance_spin.MainPointer(m_tab8_ord_ref_card);
+      m_tab8_ord_tabs.AddToElementsArray(0,m_tab8_ord_ref_distance_spin);
+      m_tab8_ord_ref_distance_spin.XSize(tab8_f_w);
+      m_tab8_ord_ref_distance_spin.MaxValue(9999.0);
+      m_tab8_ord_ref_distance_spin.MinValue(0.0);
+      m_tab8_ord_ref_distance_spin.StepValue(1.0);
+      m_tab8_ord_ref_distance_spin.SetDigits(0);
+      m_tab8_ord_ref_distance_spin.SpinEditMode(true);
+      m_tab8_ord_ref_distance_spin.CheckBoxMode(false);
+      m_tab8_ord_ref_distance_spin.SetValue("0");
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().XSize(tab8_f_w-34);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_ord_ref_distance_spin.CreateTextEdit("",tab8_fpad,tab8_ry))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_ref_distance_spin);
+      m_tab8_ord_ref_distance_spin.BackColor(ord_sub_back);
+      m_tab8_ord_ref_distance_spin.BackColorHover(ord_sub_back);
+      m_tab8_ord_ref_distance_spin.BackColorPressed(ord_sub_back);
+      m_tab8_ord_ref_distance_spin.BorderColor(ord_sub_border);
+      m_tab8_ord_ref_distance_spin.BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_distance_spin.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_distance_spin.GetTextBoxPointer().BorderColorPressed(ord_sub_border);
+      tab8_ry+=tab8_sub_control_h+tab8_sub_vgap;
+
+      if(!CreateTextLabel(m_tab8_ord_ref_expire_label,"Expirar:",m_tab8_ord_ref_card,m_window_index,m_tab8_ord_tabs,0,tab8_fpad,tab8_ry,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_ref_expire_label.FontSize(9);
+      m_tab8_ord_ref_expire_label.LabelColor(C'91,78,64');
+      tab8_ry+=tab8_sub_label_h+2;
+
+      string tab8_expire_items[];
+      ArrayResize(tab8_expire_items,5);
+      tab8_expire_items[0]="Nao expirar";
+      tab8_expire_items[1]="1 candle";
+      tab8_expire_items[2]="2 candles";
+      tab8_expire_items[3]="3 candles";
+      tab8_expire_items[4]="4 candles";
+
+      m_tab8_ord_ref_expire_combo.MainPointer(m_tab8_ord_ref_card);
+      m_tab8_ord_tabs.AddToElementsArray(0,m_tab8_ord_ref_expire_combo);
+      m_tab8_ord_ref_expire_combo.XSize(tab8_f_w);
+      m_tab8_ord_ref_expire_combo.YSize(tab8_sub_control_h);
+      m_tab8_ord_ref_expire_combo.BackColor(clrWhite);
+      m_tab8_ord_ref_expire_combo.BackColorHover(clrWhite);
+      m_tab8_ord_ref_expire_combo.BackColorPressed(clrWhite);
+      m_tab8_ord_ref_expire_combo.BorderColor(ord_sub_border);
+      m_tab8_ord_ref_expire_combo.BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_expire_combo.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_ref_expire_combo.FontSize(10);
+      m_tab8_ord_ref_expire_combo.ItemsTotal(ArraySize(tab8_expire_items));
+      m_tab8_ord_ref_expire_combo.CheckBoxMode(false);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().XSize(tab8_sub_btn_w);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().XGap(tab8_sub_btn_x);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().YSize(tab8_sub_control_h);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().BorderColorPressed(ord_sub_border);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().IconXGap(tab8_sub_btn_w-18);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_ord_ref_expire_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_expire_items);i++) m_tab8_ord_ref_expire_combo.SetValue(i,tab8_expire_items[i]);
+      m_tab8_ord_ref_expire_combo.GetListViewPointer().YSize(120);
+      m_tab8_ord_ref_expire_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_ord_ref_expire_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_ord_ref_expire_combo.CreateComboBox("",tab8_fpad,tab8_ry))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_ref_expire_combo);
+      m_tab8_ord_ref_expire_combo.SelectItem(0);
+
+      // Media tab controls
+      int tab8_my=10;
+      if(!CreateTextLabel(m_tab8_ord_media_candles_label,"Cand. media",m_tab8_ord_media_card,m_window_index,m_tab8_ord_tabs,1,tab8_fpad,tab8_my,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_media_candles_label.FontSize(9);
+      m_tab8_ord_media_candles_label.LabelColor(C'91,78,64');
+      tab8_my+=tab8_sub_label_h+2;
+
+      m_tab8_ord_media_candles_spin.MainPointer(m_tab8_ord_media_card);
+      m_tab8_ord_tabs.AddToElementsArray(1,m_tab8_ord_media_candles_spin);
+      m_tab8_ord_media_candles_spin.XSize(tab8_f_w);
+      m_tab8_ord_media_candles_spin.MaxValue(9999.0);
+      m_tab8_ord_media_candles_spin.MinValue(0.0);
+      m_tab8_ord_media_candles_spin.StepValue(1.0);
+      m_tab8_ord_media_candles_spin.SetDigits(0);
+      m_tab8_ord_media_candles_spin.SpinEditMode(true);
+      m_tab8_ord_media_candles_spin.CheckBoxMode(false);
+      m_tab8_ord_media_candles_spin.SetValue("0");
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().XSize(tab8_f_w-34);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_ord_media_candles_spin.CreateTextEdit("",tab8_fpad,tab8_my))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_media_candles_spin);
+      m_tab8_ord_media_candles_spin.BackColor(ord_sub_back);
+      m_tab8_ord_media_candles_spin.BackColorHover(ord_sub_back);
+      m_tab8_ord_media_candles_spin.BackColorPressed(ord_sub_back);
+      m_tab8_ord_media_candles_spin.BorderColor(ord_sub_border);
+      m_tab8_ord_media_candles_spin.BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_candles_spin.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_candles_spin.GetTextBoxPointer().BorderColorPressed(ord_sub_border);
+      tab8_my+=tab8_sub_control_h+tab8_sub_vgap;
+
+      if(!CreateTextLabel(m_tab8_ord_media_base_label,"Referencia:",m_tab8_ord_media_card,m_window_index,m_tab8_ord_tabs,1,tab8_fpad,tab8_my,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_media_base_label.FontSize(9);
+      m_tab8_ord_media_base_label.LabelColor(C'91,78,64');
+      tab8_my+=tab8_sub_label_h+2;
+
+      m_tab8_ord_media_base_combo.MainPointer(m_tab8_ord_media_card);
+      m_tab8_ord_tabs.AddToElementsArray(1,m_tab8_ord_media_base_combo);
+      m_tab8_ord_media_base_combo.XSize(tab8_f_w);
+      m_tab8_ord_media_base_combo.YSize(tab8_sub_control_h);
+      m_tab8_ord_media_base_combo.BackColor(clrWhite);
+      m_tab8_ord_media_base_combo.BackColorHover(clrWhite);
+      m_tab8_ord_media_base_combo.BackColorPressed(clrWhite);
+      m_tab8_ord_media_base_combo.BorderColor(ord_sub_border);
+      m_tab8_ord_media_base_combo.BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_base_combo.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_media_base_combo.FontSize(10);
+      m_tab8_ord_media_base_combo.ItemsTotal(ArraySize(tab8_ref_items));
+      m_tab8_ord_media_base_combo.CheckBoxMode(false);
+      m_tab8_ord_media_base_combo.GetButtonPointer().XSize(tab8_sub_btn_w);
+      m_tab8_ord_media_base_combo.GetButtonPointer().XGap(tab8_sub_btn_x);
+      m_tab8_ord_media_base_combo.GetButtonPointer().YSize(tab8_sub_control_h);
+      m_tab8_ord_media_base_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_media_base_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_ord_media_base_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_ord_media_base_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_media_base_combo.GetButtonPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_media_base_combo.GetButtonPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_base_combo.GetButtonPointer().BorderColorPressed(ord_sub_border);
+      m_tab8_ord_media_base_combo.GetButtonPointer().IconXGap(tab8_sub_btn_w-18);
+      m_tab8_ord_media_base_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_ord_media_base_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_ref_items);i++) m_tab8_ord_media_base_combo.SetValue(i,tab8_ref_items[i]);
+      m_tab8_ord_media_base_combo.GetListViewPointer().YSize(120);
+      m_tab8_ord_media_base_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_ord_media_base_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_ord_media_base_combo.CreateComboBox("",tab8_fpad,tab8_my))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_media_base_combo);
+      m_tab8_ord_media_base_combo.SelectItem(0);
+      tab8_my+=tab8_sub_control_h+tab8_sub_vgap;
+
+      if(!CreateTextLabel(m_tab8_ord_media_distance_label,"Distancia",m_tab8_ord_media_card,m_window_index,m_tab8_ord_tabs,1,tab8_fpad,tab8_my,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_media_distance_label.FontSize(9);
+      m_tab8_ord_media_distance_label.LabelColor(C'91,78,64');
+      tab8_my+=tab8_sub_label_h+2;
+
+      m_tab8_ord_media_distance_spin.MainPointer(m_tab8_ord_media_card);
+      m_tab8_ord_tabs.AddToElementsArray(1,m_tab8_ord_media_distance_spin);
+      m_tab8_ord_media_distance_spin.XSize(f_w);
+      m_tab8_ord_media_distance_spin.MaxValue(9999.0);
+      m_tab8_ord_media_distance_spin.MinValue(0.0);
+      m_tab8_ord_media_distance_spin.StepValue(1.0);
+      m_tab8_ord_media_distance_spin.SetDigits(0);
+      m_tab8_ord_media_distance_spin.SpinEditMode(true);
+      m_tab8_ord_media_distance_spin.CheckBoxMode(false);
+      m_tab8_ord_media_distance_spin.SetValue("0");
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().XSize(tab8_f_w-34);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_ord_media_distance_spin.CreateTextEdit("",tab8_fpad,tab8_my))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_media_distance_spin);
+      m_tab8_ord_media_distance_spin.BackColor(ord_sub_back);
+      m_tab8_ord_media_distance_spin.BackColorHover(ord_sub_back);
+      m_tab8_ord_media_distance_spin.BackColorPressed(ord_sub_back);
+      m_tab8_ord_media_distance_spin.BorderColor(ord_sub_border);
+      m_tab8_ord_media_distance_spin.BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_distance_spin.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_distance_spin.GetTextBoxPointer().BorderColorPressed(ord_sub_border);
+      tab8_my+=tab8_sub_control_h+tab8_sub_vgap;
+
+      if(!CreateTextLabel(m_tab8_ord_media_expire_label,"Expirar:",m_tab8_ord_media_card,m_window_index,m_tab8_ord_tabs,1,tab8_fpad,tab8_my,tab8_f_w,tab8_sub_label_h))
+         return(false);
+      m_tab8_ord_media_expire_label.FontSize(9);
+      m_tab8_ord_media_expire_label.LabelColor(C'91,78,64');
+      tab8_my+=tab8_sub_label_h+2;
+
+      m_tab8_ord_media_expire_combo.MainPointer(m_tab8_ord_media_card);
+      m_tab8_ord_tabs.AddToElementsArray(1,m_tab8_ord_media_expire_combo);
+      m_tab8_ord_media_expire_combo.XSize(tab8_f_w);
+      m_tab8_ord_media_expire_combo.YSize(tab8_sub_control_h);
+      m_tab8_ord_media_expire_combo.BackColor(clrWhite);
+      m_tab8_ord_media_expire_combo.BackColorHover(clrWhite);
+      m_tab8_ord_media_expire_combo.BackColorPressed(clrWhite);
+      m_tab8_ord_media_expire_combo.BorderColor(ord_sub_border);
+      m_tab8_ord_media_expire_combo.BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_expire_combo.BorderColorPressed(ord_sub_border);
+      m_tab8_ord_media_expire_combo.FontSize(10);
+      m_tab8_ord_media_expire_combo.ItemsTotal(ArraySize(tab8_expire_items));
+      m_tab8_ord_media_expire_combo.CheckBoxMode(false);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().XSize(tab8_sub_btn_w);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().XGap(tab8_sub_btn_x);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().YSize(tab8_sub_control_h);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().BorderColor(ord_sub_border);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().BorderColorHover(ord_sub_border);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().BorderColorPressed(ord_sub_border);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().IconXGap(tab8_sub_btn_w-18);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_ord_media_expire_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(tab8_expire_items);i++) m_tab8_ord_media_expire_combo.SetValue(i,tab8_expire_items[i]);
+      m_tab8_ord_media_expire_combo.GetListViewPointer().YSize(120);
+      m_tab8_ord_media_expire_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_ord_media_expire_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_ord_media_expire_combo.CreateComboBox("",tab8_fpad,tab8_my))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_ord_media_expire_combo);
+      m_tab8_ord_media_expire_combo.SelectItem(0);
+
+      m_tab8_ord_tabs.SelectTab(0);
+      m_tab8_ord_tabs.ShowTabElements();
+
       m_tab8_tabs.SelectTab(0);
       m_tab8_tabs.ShowTabElements();
 
@@ -4989,6 +5451,12 @@ public:
         }
       else if(m_tab4_calc_media_check.IsPressed())
          m_tab4_calc_maxmin_check.IsPressed(false);
+
+      // Ensure reference/media toggles for Tab 8 are mutually exclusive on startup
+      if(m_tab8_ord_ref_check.IsPressed())
+         m_tab8_ord_media_check.IsPressed(false);
+      else if(m_tab8_ord_media_check.IsPressed())
+         m_tab8_ord_ref_check.IsPressed(false);
 
       CompletedGUI();
       m_created=true;
@@ -5184,6 +5652,30 @@ public:
             m_tab8_ordem_market.IsPressed(false);
             m_tab8_ordem_limit.Update(true);
             m_tab8_ordem_market.Update(true);
+            return;
+           }
+
+         // Tab 8 (Sinais): referencia/media tabs (mutually exclusive)
+         if(m_tab8_ord_ref_check.Id()==clicked_id)
+           {
+            if(!m_tab8_ord_ref_check.IsPressed())
+               m_tab8_ord_ref_check.IsPressed(true);
+            m_tab8_ord_media_check.IsPressed(false);
+            m_tab8_ord_tabs.SelectTab(0);
+            m_tab8_ord_ref_check.Update(true);
+            m_tab8_ord_media_check.Update(true);
+            m_tab8_ord_tabs.ShowTabElements();
+            return;
+           }
+         if(m_tab8_ord_media_check.Id()==clicked_id)
+           {
+            if(!m_tab8_ord_media_check.IsPressed())
+               m_tab8_ord_media_check.IsPressed(true);
+            m_tab8_ord_ref_check.IsPressed(false);
+            m_tab8_ord_tabs.SelectTab(1);
+            m_tab8_ord_media_check.Update(true);
+            m_tab8_ord_ref_check.Update(true);
+            m_tab8_ord_tabs.ShowTabElements();
             return;
            }
 
