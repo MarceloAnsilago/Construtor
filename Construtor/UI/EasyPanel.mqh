@@ -305,6 +305,15 @@ private:
    CEF_CTextLabel    m_tab8_card_ordens_title;
    CEF_CCheckBox     m_tab8_ordem_market;
    CEF_CCheckBox     m_tab8_ordem_limit;
+   CEF_CFrame        m_tab8_card_filtro;
+   CEF_CTextLabel    m_tab8_card_filtro_title;
+   CEF_CCheckBox     m_tab8_use_filtro;
+   CEF_CTextLabel    m_tab8_filtro_padrao_label;
+   CEF_CComboBox     m_tab8_filtro_padrao_combo;
+   CEF_CTextLabel    m_tab8_filtro_time_label;
+   CEF_CComboBox     m_tab8_filtro_time_combo;
+   CEF_CTextLabel    m_tab8_filtro_range_label[4];
+   CEF_CTextEdit     m_tab8_filtro_range_spin[4];
    CEF_CTabs         m_tab8_ord_tabs;
    CEF_CCheckBox     m_tab8_ord_ref_check;
    CEF_CCheckBox     m_tab8_ord_media_check;
@@ -5421,6 +5430,166 @@ public:
 
       m_tab8_ord_tabs.SelectTab(0);
       m_tab8_ord_tabs.ShowTabElements();
+
+      // Second card: "Usar filtro" (ported from CPanel Tab 9 "Sinais" second card)
+      const int tab8_filter_x=tab8_x + tab8_w + card_gap;
+      const int tab8_filter_y=tab8_y;
+      const int tab8_filter_w=tab8_w;
+      const int tab8_filter_h=tab8_h;
+
+      if(!CreateFrame(m_tab8_card_filtro,"",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_filter_x,tab8_filter_y,tab8_filter_w,tab8_filter_h,1))
+         return(false);
+      m_tab8_card_filtro.BackColor(C'233,220,203');
+      m_tab8_card_filtro.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_card_filtro_title,"Usar filtro",m_tab8_card_filtro,m_window_index,m_tab8_tabs,0,16,12,tab8_filter_w-32,22))
+         return(false);
+      m_tab8_card_filtro_title.FontSize(12);
+      m_tab8_card_filtro_title.LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab8_use_filtro,"Ativar filtro",m_tab8_card_filtro,m_window_index,m_tab8_tabs,0,16,44,tab8_filter_w-32,false,false,false))
+         return(false);
+      m_tab8_use_filtro.FontSize(10);
+      m_tab8_use_filtro.LabelColor(C'43,43,43');
+
+      if(!CreateTextLabel(m_tab8_filtro_padrao_label,"Medir em",m_tab8_card_filtro,m_window_index,m_tab8_tabs,0,16,76,tab8_filter_w-32,18))
+         return(false);
+      m_tab8_filtro_padrao_label.FontSize(10);
+      m_tab8_filtro_padrao_label.LabelColor(C'91,78,64');
+
+      string items_tab8_filter[];
+      ArrayResize(items_tab8_filter,2);
+      items_tab8_filter[0]="Pontos";
+      items_tab8_filter[1]="Percentual";
+
+      const int tab8_filter_combo_w=tab8_filter_w-32;
+      m_tab8_filtro_padrao_combo.MainPointer(m_tab8_card_filtro);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_filtro_padrao_combo);
+      m_tab8_filtro_padrao_combo.XSize(tab8_filter_combo_w);
+      m_tab8_filtro_padrao_combo.YSize(20);
+      m_tab8_filtro_padrao_combo.BackColor(clrWhite);
+      m_tab8_filtro_padrao_combo.BackColorHover(clrWhite);
+      m_tab8_filtro_padrao_combo.BackColorPressed(clrWhite);
+      m_tab8_filtro_padrao_combo.BorderColor(tab2_border);
+      m_tab8_filtro_padrao_combo.BorderColorHover(tab2_border);
+      m_tab8_filtro_padrao_combo.BorderColorPressed(tab2_border);
+      m_tab8_filtro_padrao_combo.FontSize(10);
+      m_tab8_filtro_padrao_combo.ItemsTotal(ArraySize(items_tab8_filter));
+      m_tab8_filtro_padrao_combo.CheckBoxMode(false);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().XGap(1);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().XSize(tab8_filter_combo_w-2);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().YSize(20);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().IconXGap((tab8_filter_combo_w-2)-18);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_filtro_padrao_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(items_tab8_filter);i++) m_tab8_filtro_padrao_combo.SetValue(i,items_tab8_filter[i]);
+      m_tab8_filtro_padrao_combo.GetListViewPointer().YSize(80);
+      m_tab8_filtro_padrao_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_filtro_padrao_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_filtro_padrao_combo.CreateComboBox("",16,98))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_filtro_padrao_combo);
+      m_tab8_filtro_padrao_combo.SelectItem(0);
+
+      // Tempo grafico
+      if(!CreateTextLabel(m_tab8_filtro_time_label,"Tempo grafico",m_tab8_card_filtro,m_window_index,m_tab8_tabs,0,16,118,tab8_filter_w-32,18))
+         return(false);
+      m_tab8_filtro_time_label.FontSize(10);
+      m_tab8_filtro_time_label.LabelColor(C'91,78,64');
+
+      m_tab8_filtro_time_combo.MainPointer(m_tab8_card_filtro);
+      m_tab8_tabs.AddToElementsArray(0,m_tab8_filtro_time_combo);
+      m_tab8_filtro_time_combo.XSize(tab8_filter_combo_w);
+      m_tab8_filtro_time_combo.YSize(20);
+      m_tab8_filtro_time_combo.BackColor(clrWhite);
+      m_tab8_filtro_time_combo.BackColorHover(clrWhite);
+      m_tab8_filtro_time_combo.BackColorPressed(clrWhite);
+      m_tab8_filtro_time_combo.BorderColor(tab2_border);
+      m_tab8_filtro_time_combo.BorderColorHover(tab2_border);
+      m_tab8_filtro_time_combo.BorderColorPressed(tab2_border);
+      m_tab8_filtro_time_combo.FontSize(10);
+      m_tab8_filtro_time_combo.ItemsTotal(ArraySize(items_tf));
+      m_tab8_filtro_time_combo.CheckBoxMode(false);
+      m_tab8_filtro_time_combo.GetButtonPointer().XGap(1);
+      m_tab8_filtro_time_combo.GetButtonPointer().XSize(tab8_filter_combo_w-2);
+      m_tab8_filtro_time_combo.GetButtonPointer().YSize(20);
+      m_tab8_filtro_time_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_filtro_time_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_filtro_time_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_filtro_time_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_filtro_time_combo.GetButtonPointer().BorderColor(tab2_border);
+      m_tab8_filtro_time_combo.GetButtonPointer().BorderColorHover(tab2_border);
+      m_tab8_filtro_time_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+      m_tab8_filtro_time_combo.GetButtonPointer().IconXGap((tab8_filter_combo_w-2)-18);
+      m_tab8_filtro_time_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_filtro_time_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(items_tf);i++) m_tab8_filtro_time_combo.SetValue(i,items_tf[i]);
+      m_tab8_filtro_time_combo.GetListViewPointer().YSize(200);
+      m_tab8_filtro_time_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_filtro_time_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_filtro_time_combo.CreateComboBox("",16,140))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_filtro_time_combo);
+      m_tab8_filtro_time_combo.SelectItem(0);
+
+      // Range filters
+      string tab8_filter_labels[];
+      ArrayResize(tab8_filter_labels,4);
+      tab8_filter_labels[0]="Tam. min da vela";
+      tab8_filter_labels[1]="Tam. max";
+      tab8_filter_labels[2]="Min. pavios";
+      tab8_filter_labels[3]="Max. pavios";
+
+      int tab8_fy=164;
+      for(int i=0;i<4;i++)
+        {
+         if(!CreateTextLabel(m_tab8_filtro_range_label[i],tab8_filter_labels[i],m_tab8_card_filtro,m_window_index,m_tab8_tabs,0,16,tab8_fy,tab8_filter_w-32,16))
+            return(false);
+         m_tab8_filtro_range_label[i].FontSize(9);
+         m_tab8_filtro_range_label[i].LabelColor(C'91,78,64');
+         tab8_fy+=14;
+
+         const int tab8_edit_w=tab8_filter_combo_w;
+         const int tab8_edit_text_w=tab8_edit_w-34;
+         m_tab8_filtro_range_spin[i].MainPointer(m_tab8_card_filtro);
+         m_tab8_tabs.AddToElementsArray(0,m_tab8_filtro_range_spin[i]);
+         m_tab8_filtro_range_spin[i].XSize(tab8_edit_w);
+         m_tab8_filtro_range_spin[i].MaxValue(9999.0);
+         m_tab8_filtro_range_spin[i].MinValue(0.0);
+         m_tab8_filtro_range_spin[i].StepValue(1.0);
+         m_tab8_filtro_range_spin[i].SetDigits(0);
+         m_tab8_filtro_range_spin[i].SpinEditMode(true);
+         m_tab8_filtro_range_spin[i].CheckBoxMode(false);
+         m_tab8_filtro_range_spin[i].SetValue("0");
+         m_tab8_filtro_range_spin[i].AnchorBottomWindowSide(false);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().XSize(tab8_edit_text_w);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().XGap(1);
+         if(!m_tab8_filtro_range_spin[i].CreateTextEdit("",16,tab8_fy))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab8_filtro_range_spin[i]);
+         m_tab8_filtro_range_spin[i].BackColor(C'233,220,203');
+         m_tab8_filtro_range_spin[i].BackColorHover(C'233,220,203');
+         m_tab8_filtro_range_spin[i].BackColorPressed(C'233,220,203');
+         m_tab8_filtro_range_spin[i].BorderColor(tab2_border);
+         m_tab8_filtro_range_spin[i].BorderColorHover(tab2_border);
+         m_tab8_filtro_range_spin[i].BorderColorPressed(tab2_border);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().BackColor(clrWhite);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().BackColorHover(clrWhite);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().BackColorPressed(clrWhite);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().BorderColor(tab2_border);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().BorderColorHover(tab2_border);
+         m_tab8_filtro_range_spin[i].GetTextBoxPointer().BorderColorPressed(tab2_border);
+         tab8_fy+=24;
+        }
 
       m_tab8_tabs.SelectTab(0);
       m_tab8_tabs.ShowTabElements();
