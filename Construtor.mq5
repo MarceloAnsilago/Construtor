@@ -1,6 +1,6 @@
 #property strict
 
-#include "Construtor\\ConstrutorDialog.mqh"
+#include "Construtor\\Settings.mqh"
 #include "Construtor\\UI\\EasyPanel.mqh"
 
 input string InpEstrategiaNome = "Minha estrategia";
@@ -77,7 +77,6 @@ input int InpTrailingStopCandlesCount = 1;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpTrailingStopCandlesCountPosicao = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR InpTrailingStopIndicador = CONSTRUTOR_STOP_IND_ATR;
 
-CConstrutorDialog ExtDialog;
 SConstrutorSettings g_settings;
 CConstrutorEasyPanel *g_easy_panel=NULL;
 
@@ -195,23 +194,15 @@ void LoadInputsToSettings(void)
 int OnInit()
   {
    LoadInputsToSettings();
-   ExtDialog.BindSettings(g_settings);
-   if(!ExtDialog.Create(ChartID(),"ConstrutorUI",0,54,30,1370,700))
-     {
-      Print("Construtor: dialog create failed");
-      return(INIT_SUCCEEDED);
-     }
-   if(!ExtDialog.Run())
-     {
-      Print("Construtor: dialog run failed");
-      return(INIT_SUCCEEDED);
-     }
+   if(g_easy_panel==NULL)
+      g_easy_panel=new CConstrutorEasyPanel();
+   if(g_easy_panel!=NULL)
+      g_easy_panel.ShowPanel(); // abre automaticamente ao anexar no gráfico
    return(INIT_SUCCEEDED);
   }
 
 void OnDeinit(const int reason)
   {
-   ExtDialog.Destroy(reason);
    if(g_easy_panel!=NULL)
      {
       g_easy_panel.Shutdown();
@@ -234,5 +225,4 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
   {
    if(g_easy_panel!=NULL)
       g_easy_panel.ChartEvent(id,lparam,dparam,sparam);
-   ExtDialog.ChartEvent(id,lparam,dparam,sparam);
   }

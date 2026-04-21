@@ -40,6 +40,7 @@
 #define CWindow       CEF_CWindow
 #define CTextLabel    CEF_CTextLabel
 
+#include "..\\Settings.mqh"
 #include "..\\..\\EasyAndFastGUI\\WndCreate.mqh"
 
 #undef CTextLabel
