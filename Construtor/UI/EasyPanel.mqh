@@ -343,6 +343,11 @@ private:
    CEF_CTabs         m_tab8_cruz_fast_tabs;
    CEF_CTabs         m_tab8_cruz_slow_tabs;
 
+   // Tab 8 (Sinais) - Sobre comprado/vendido
+   CEF_CFrame        m_tab8_card_sobre;
+   CEF_CTextLabel    m_tab8_card_sobre_title;
+   CEF_CCheckBox     m_tab8_use_sobre;
+
    // Tab 8 (Sinais) - Cruzamentos (UI like CPanel Tab 9)
    CEF_CTextLabel    m_tab8_cruz_fast_label;
    CEF_CButton       m_tab8_cruz_fast_btn;
@@ -5157,10 +5162,16 @@ public:
       tab8_widths[0]=180;
       tab8_widths[1]=180;
 
-      const int tab8_pad=8;
-      const int tab8_tabs_x=tab8_pad;
+      // Tab 8 internal tabs should touch the page border; keep content aligned with other tabs using padding.
+      const int tab8_pad=content_pad;
+      // Fixed card width (matches the old non-maximized layout)
+      const int tab8_card_w=253;
+      // Start at the left edge of the page so the tab bar/border can reach the right edge.
+      const int tab8_tabs_x=0;
       const int tab8_tabs_y=content_y+28; // push internal tabs down to avoid overlapping the main header
-      const int tab8_tabs_w=tabs_w - (tab8_pad*2);
+      // Stretch to the full available width (to the right border of the "Sinais" tab).
+      // Use the full remaining width so the right border touches the parent tab border.
+      int tab8_tabs_w=tabs_w;
       const int tab8_tabs_h=tabs_h - tab8_tabs_y - inner_pad;
       const int tab8_tab_h=26;
 
@@ -5174,9 +5185,10 @@ public:
       m_tab8_tabs.IsCenterText(true);
       m_tab8_tabs.PositionMode(TABS_TOP);
       m_tab8_tabs.TabsYSize(tab8_tab_h);
+      // Allow internal tabs bar to expand with the available width.
       m_tab8_tabs.AutoXResizeMode(true);
+      m_tab8_tabs.AutoXResizeRightOffset(0);
       m_tab8_tabs.AutoYResizeMode(true);
-      m_tab8_tabs.AutoXResizeRightOffset(tab8_pad);
       m_tab8_tabs.AutoYResizeBottomOffset(inner_pad);
       m_tab8_tabs.BackColorPressed(C'233,220,203');
       m_tab8_tabs.BorderColor(C'197,168,136');
@@ -5240,7 +5252,7 @@ public:
       m_tab8_placeholder_montar.LabelColor(C'91,78,64');
 
       // Subtab 0 content (Sinais)
-      if(!CreateTextLabel(m_tab8_padrao_label,"Padrao",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_pad,tab8_inner_y,card_w,18))
+      if(!CreateTextLabel(m_tab8_padrao_label,"Padrao",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_pad,tab8_inner_y,tab8_card_w,18))
          return(false);
       m_tab8_padrao_label.FontSize(10);
       m_tab8_padrao_label.LabelColor(C'91,78,64');
@@ -5287,7 +5299,7 @@ public:
 
       const int tab8_x=tab8_pad;
       const int tab8_y=tab8_inner_y+56;
-      const int tab8_w=card_w;
+      const int tab8_w=tab8_card_w;
       const int tab8_h=340;
 
       if(!CreateFrame(m_tab8_card_ordens,"",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_x,tab8_y,tab8_w,tab8_h,1))
@@ -6237,6 +6249,28 @@ public:
          return(false);
       m_tab8_cruz_no.FontSize(10);
       m_tab8_cruz_no.LabelColor(C'91,78,64');
+
+      // Fifth card: "Sobre comprado/vendido"
+      const int tab8_sobre_x=tab8_cruz_x + tab8_cruz_w + card_gap;
+      const int tab8_sobre_y=tab8_y;
+      // Pull the right edge slightly to the left (visual spacing from the page border).
+      const int tab8_sobre_w=tab8_w-12;
+      const int tab8_sobre_h=tab8_h;
+
+      if(!CreateFrame(m_tab8_card_sobre,"",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_sobre_x,tab8_sobre_y,tab8_sobre_w,tab8_sobre_h,1))
+         return(false);
+      m_tab8_card_sobre.BackColor(C'233,220,203');
+      m_tab8_card_sobre.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_card_sobre_title,"Sobre comprado/vendido",m_tab8_card_sobre,m_window_index,m_tab8_tabs,0,16,12,tab8_sobre_w-32,22))
+         return(false);
+      m_tab8_card_sobre_title.FontSize(12);
+      m_tab8_card_sobre_title.LabelColor(C'43,43,43');
+
+      if(!CreateCheckbox(m_tab8_use_sobre,"Usar sobre comprado/vendido",m_tab8_card_sobre,m_window_index,m_tab8_tabs,0,16,44,tab8_sobre_w-32,false,false,false))
+         return(false);
+      m_tab8_use_sobre.FontSize(10);
+      m_tab8_use_sobre.LabelColor(C'43,43,43');
 
       // Tabs inside cruzamentos card
       string cruz_text[];
