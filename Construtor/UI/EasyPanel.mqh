@@ -337,9 +337,8 @@ private:
    CEF_CCheckBox     m_tab8_cruz_yes;
    CEF_CCheckBox     m_tab8_cruz_no;
    CEF_CTabs         m_tab8_cruz_tabs;
-   CEF_CTextLabel    m_tab8_cruz_placeholder_sinais;
-   CEF_CTextLabel    m_tab8_cruz_placeholder_rapidos;
-   CEF_CTextLabel    m_tab8_cruz_placeholder_lentos;
+   CEF_CTabs         m_tab8_cruz_fast_tabs;
+   CEF_CTabs         m_tab8_cruz_slow_tabs;
    CEF_CTabs         m_tab8_ord_tabs;
    CEF_CCheckBox     m_tab8_ord_ref_check;
    CEF_CCheckBox     m_tab8_ord_media_check;
@@ -5996,23 +5995,99 @@ public:
            }
         }
 
-      const int cruz_ph_x=12;
-      const int cruz_ph_y=8;
-      const int cruz_ph_w=cruz_tabs_w-(cruz_ph_x*2);
-      if(!CreateTextLabel(m_tab8_cruz_placeholder_sinais,"Conteudo: Sinais (em migracao)",m_tab8_cruz_tabs,m_window_index,m_tab8_cruz_tabs,0,cruz_ph_x,cruz_ph_y,cruz_ph_w,22))
-         return(false);
-      m_tab8_cruz_placeholder_sinais.FontSize(11);
-      m_tab8_cruz_placeholder_sinais.LabelColor(C'91,78,64');
+      // Inner tabs (1..5) for "Par. rapidos" and "Par. lentos"
+      string cruz_inner_text[];
+      int cruz_inner_widths[];
+      ArrayResize(cruz_inner_text,5);
+      ArrayResize(cruz_inner_widths,5);
+      for(int i=0;i<5;i++)
+        {
+         cruz_inner_text[i]=(string)(i+1);
+         cruz_inner_widths[i]=34;
+        }
 
-      if(!CreateTextLabel(m_tab8_cruz_placeholder_rapidos,"Conteudo: Par. rapidos (em migracao)",m_tab8_cruz_tabs,m_window_index,m_tab8_cruz_tabs,1,cruz_ph_x,cruz_ph_y,cruz_ph_w,22))
-         return(false);
-      m_tab8_cruz_placeholder_rapidos.FontSize(11);
-      m_tab8_cruz_placeholder_rapidos.LabelColor(C'91,78,64');
+      const int cruz_inner_x=10;
+      const int cruz_inner_y=26;
+      const int cruz_inner_w=cruz_tabs_w-(cruz_inner_x*2);
+      const int cruz_inner_h=cruz_tabs_h-(cruz_inner_y+10);
+      const int cruz_inner_tab_h=20;
 
-      if(!CreateTextLabel(m_tab8_cruz_placeholder_lentos,"Conteudo: Par. lentos (em migracao)",m_tab8_cruz_tabs,m_window_index,m_tab8_cruz_tabs,2,cruz_ph_x,cruz_ph_y,cruz_ph_w,22))
+      m_tab8_cruz_fast_tabs.MainPointer(m_tab8_cruz_tabs);
+      m_tab8_cruz_tabs.AddToElementsArray(1,m_tab8_cruz_fast_tabs);
+      m_tab8_cruz_fast_tabs.XSize(cruz_inner_w);
+      m_tab8_cruz_fast_tabs.YSize(cruz_inner_h);
+      m_tab8_cruz_fast_tabs.IsCenterText(true);
+      m_tab8_cruz_fast_tabs.PositionMode(TABS_TOP);
+      m_tab8_cruz_fast_tabs.TabsYSize(cruz_inner_tab_h);
+      m_tab8_cruz_fast_tabs.AutoXResizeMode(false);
+      m_tab8_cruz_fast_tabs.AutoYResizeMode(false);
+      m_tab8_cruz_fast_tabs.BackColorPressed(C'237,226,210');
+      m_tab8_cruz_fast_tabs.BorderColor(C'197,168,136');
+      m_tab8_cruz_fast_tabs.BorderColorHover(C'197,168,136');
+      m_tab8_cruz_fast_tabs.BorderColorPressed(C'197,168,136');
+      for(int i=0;i<5;i++) m_tab8_cruz_fast_tabs.AddTab(cruz_inner_text[i],cruz_inner_widths[i]);
+      if(!m_tab8_cruz_fast_tabs.CreateTabs(cruz_inner_x,cruz_inner_y))
          return(false);
-      m_tab8_cruz_placeholder_lentos.FontSize(11);
-      m_tab8_cruz_placeholder_lentos.LabelColor(C'91,78,64');
+      AddToElementsArray(m_window_index,m_tab8_cruz_fast_tabs);
+
+      CEF_CButtonsGroup *cruz_fast_bg=m_tab8_cruz_fast_tabs.GetButtonsGroupPointer();
+      if(cruz_fast_bg!=NULL)
+        {
+         for(int i=0;i<5;i++)
+           {
+            cruz_fast_bg.GetButtonPointer(i).FontSize(8);
+            cruz_fast_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            cruz_fast_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            cruz_fast_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            cruz_fast_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            cruz_fast_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            cruz_fast_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            cruz_fast_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            cruz_fast_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            cruz_fast_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      m_tab8_cruz_slow_tabs.MainPointer(m_tab8_cruz_tabs);
+      m_tab8_cruz_tabs.AddToElementsArray(2,m_tab8_cruz_slow_tabs);
+      m_tab8_cruz_slow_tabs.XSize(cruz_inner_w);
+      m_tab8_cruz_slow_tabs.YSize(cruz_inner_h);
+      m_tab8_cruz_slow_tabs.IsCenterText(true);
+      m_tab8_cruz_slow_tabs.PositionMode(TABS_TOP);
+      m_tab8_cruz_slow_tabs.TabsYSize(cruz_inner_tab_h);
+      m_tab8_cruz_slow_tabs.AutoXResizeMode(false);
+      m_tab8_cruz_slow_tabs.AutoYResizeMode(false);
+      m_tab8_cruz_slow_tabs.BackColorPressed(C'237,226,210');
+      m_tab8_cruz_slow_tabs.BorderColor(C'197,168,136');
+      m_tab8_cruz_slow_tabs.BorderColorHover(C'197,168,136');
+      m_tab8_cruz_slow_tabs.BorderColorPressed(C'197,168,136');
+      for(int i=0;i<5;i++) m_tab8_cruz_slow_tabs.AddTab(cruz_inner_text[i],cruz_inner_widths[i]);
+      if(!m_tab8_cruz_slow_tabs.CreateTabs(cruz_inner_x,cruz_inner_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_cruz_slow_tabs);
+
+      CEF_CButtonsGroup *cruz_slow_bg=m_tab8_cruz_slow_tabs.GetButtonsGroupPointer();
+      if(cruz_slow_bg!=NULL)
+        {
+         for(int i=0;i<5;i++)
+           {
+            cruz_slow_bg.GetButtonPointer(i).FontSize(8);
+            cruz_slow_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            cruz_slow_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            cruz_slow_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            cruz_slow_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            cruz_slow_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            cruz_slow_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            cruz_slow_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            cruz_slow_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            cruz_slow_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      m_tab8_cruz_fast_tabs.SelectTab(0);
+      m_tab8_cruz_fast_tabs.ShowTabElements();
+      m_tab8_cruz_slow_tabs.SelectTab(0);
+      m_tab8_cruz_slow_tabs.ShowTabElements();
 
       m_tab8_cruz_tabs.SelectTab(0);
       m_tab8_cruz_tabs.ShowTabElements();
