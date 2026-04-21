@@ -221,7 +221,7 @@ class CConstrutorDialog : public CAppDialog
 private:
    enum
      {
-      TAB_COUNT=3
+      TAB_COUNT=2
      };
 
    CPanel            m_sidebar;
@@ -260,36 +260,12 @@ private:
    bool              OnTabClick(const int index);
    bool              OnExecuteClick(void);
    bool              OnEasyPanelClick(void);
-   bool              OnTab9PriceReferenceChange(void);
-   bool              OnTab9MediaChange(void);
-   bool              OnTab9ChannelYesChange(void);
-   bool              OnTab9ChannelNoChange(void);
-   bool              OnTab9CrossYesChange(void);
-   bool              OnTab9CrossNoChange(void);
-   bool              OnTab9CrossFastComboChange(void);
-   bool              OnTab9CrossFastButtonClick(void);
-   bool              OnTab9CrossSlowComboChange(void);
-   bool              OnTab9CrossSlowButtonClick(void);
-   bool              OnTab9CrossTabClick(const int index);
-   bool              OnTab9CrossSlowTabClick(const int index);
    };
 
 EVENT_MAP_BEGIN(CConstrutorDialog)
    ON_EVENT(ON_CLICK,m_execute_button,OnExecuteClick)
    ON_EVENT(ON_CLICK,m_easy_panel_button,OnEasyPanelClick)
    ON_INDEXED_EVENT(ON_CLICK,m_tabs,OnTabClick)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_option_check[0],OnTab9PriceReferenceChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_option_check[1],OnTab9MediaChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_channel_check_yes,OnTab9ChannelYesChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_channel_check_no,OnTab9ChannelNoChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_check_yes,OnTab9CrossYesChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_check_no,OnTab9CrossNoChange)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_fast_combo,OnTab9CrossFastComboChange)
-   ON_EVENT(ON_CLICK,m_painel.m_tab9.m_tab9_signal_cross_fast_btn,OnTab9CrossFastButtonClick)
-   ON_EVENT(ON_CHANGE,m_painel.m_tab9.m_tab9_signal_cross_slow_combo,OnTab9CrossSlowComboChange)
-   ON_EVENT(ON_CLICK,m_painel.m_tab9.m_tab9_signal_cross_slow_btn,OnTab9CrossSlowButtonClick)
-   ON_INDEXED_EVENT(ON_CLICK,m_painel.m_tab9.m_tab9_signal_cross_tabs,OnTab9CrossTabClick)
-   ON_INDEXED_EVENT(ON_CLICK,m_painel.m_tab9.m_tab9_signal_cross_tab2_tabs,OnTab9CrossSlowTabClick)
 EVENT_MAP_END(CAppDialog)
 
 CConstrutorDialog::CConstrutorDialog(void) : m_active_tab(0), m_settings_bound(false)
@@ -305,14 +281,12 @@ void CConstrutorDialog::BindSettings(const SConstrutorSettings &settings)
 
 void CConstrutorDialog::InitTabData(void)
   {
-   // Tabs 1-8 migrated to EasyPanel; keep only remaining tabs here.
-   m_tab_titles[0]="9. Sinais";
-   m_tab_titles[1]="10. Ajustes finais";
-   m_tab_titles[2]="11. Painel";
+   // Tabs 1-9 migrated to EasyPanel; keep only remaining tabs here.
+   m_tab_titles[0]="10. Ajustes finais";
+   m_tab_titles[1]="11. Painel";
 
-   m_tab_notes[0]="Gatilhos e filtros de sinal.";
-   m_tab_notes[1]="Acabamento final da estrategia.";
-   m_tab_notes[2]="Painel geral da interface.";
+   m_tab_notes[0]="Acabamento final da estrategia.";
+   m_tab_notes[1]="Painel geral da interface.";
   }
 
 bool CConstrutorDialog::Create(const long chart,const string name,const int subwin,const int x1,const int y1,const int x2,const int y2)
@@ -531,17 +505,5 @@ bool CConstrutorDialog::OnEasyPanelClick(void)
    Construtor_ToggleEasyPanel();
    return(true);
   }
-bool CConstrutorDialog::OnTab9PriceReferenceChange(void) { return(m_painel.m_tab9.OnPriceReferenceChange()); }
-bool CConstrutorDialog::OnTab9MediaChange(void) { return(m_painel.m_tab9.OnMediaChange()); }
-bool CConstrutorDialog::OnTab9ChannelYesChange(void) { return(m_painel.m_tab9.OnChannelYesChange()); }
-bool CConstrutorDialog::OnTab9ChannelNoChange(void) { return(m_painel.m_tab9.OnChannelNoChange()); }
-bool CConstrutorDialog::OnTab9CrossYesChange(void) { return(m_painel.m_tab9.OnCrossYesChange()); }
-bool CConstrutorDialog::OnTab9CrossNoChange(void) { return(m_painel.m_tab9.OnCrossNoChange()); }
-bool CConstrutorDialog::OnTab9CrossFastComboChange(void) { return(m_painel.m_tab9.OnCrossFastComboChange()); }
-bool CConstrutorDialog::OnTab9CrossFastButtonClick(void) { return(m_painel.m_tab9.OnCrossFastButtonClick()); }
-bool CConstrutorDialog::OnTab9CrossSlowComboChange(void) { return(m_painel.m_tab9.OnCrossSlowComboChange()); }
-bool CConstrutorDialog::OnTab9CrossSlowButtonClick(void) { return(m_painel.m_tab9.OnCrossSlowButtonClick()); }
-bool CConstrutorDialog::OnTab9CrossTabClick(const int index) { return(m_painel.m_tab9.OnCrossTabClick(index)); }
-bool CConstrutorDialog::OnTab9CrossSlowTabClick(const int index) { return(m_painel.m_tab9.OnCrossSlowTabClick(index)); }
 
 #endif // __CONSTRUTOR_DIALOG_MQH__
