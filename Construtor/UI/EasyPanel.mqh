@@ -288,6 +288,13 @@ private:
    // Tab 7 (Saidas parciais)
    CEF_CTextLabel    m_tab7_padrao_label;
    CEF_CComboBox     m_tab7_padrao_combo;
+   CEF_CFrame        m_tab7_card_saida[6];
+   CEF_CTextLabel    m_tab7_card_saida_title[6];
+   CEF_CCheckBox     m_tab7_use_saida[6];
+   CEF_CTextLabel    m_tab7_dist_label[6];
+   CEF_CTextEdit     m_tab7_dist_spin[6];
+   CEF_CTextLabel    m_tab7_qty_label[6];
+   CEF_CTextEdit     m_tab7_qty_spin[6];
 
 	   // Tab 1 (Inf. Iniciais) - styled preview
 	   CEF_CFrame        m_tab1_card_left;
@@ -4639,6 +4646,138 @@ public:
          return(false);
       AddToElementsArray(m_window_index,m_tab7_padrao_combo);
       m_tab7_padrao_combo.SelectItem(0);
+
+      // Tab 7 (Saidas parciais): 6 cards (Saida 1..6)
+      const int tab7_x=content_pad;
+      const int tab7_y=content_y+120;
+      const int tab7_w=content_w;
+      const int tab7_gap=card_gap;
+      const int tab7_cols=3;
+      const int tab7_card_w=(tab7_w - (tab7_gap*(tab7_cols-1))) / tab7_cols;
+      const int tab7_card_h=260;
+
+      for(int i=0; i<6; i++)
+        {
+         const int col=i % tab7_cols;
+         const int row=i / tab7_cols;
+         const int cx=tab7_x + col*(tab7_card_w + tab7_gap);
+         const int cy=tab7_y + row*(tab7_card_h + tab7_gap);
+
+         if(!CreateFrame(m_tab7_card_saida[i],"",m_tabs,m_window_index,m_tabs,6,cx,cy,tab7_card_w,tab7_card_h,1))
+            return(false);
+         m_tab7_card_saida[i].BackColor(C'233,220,203');
+         m_tab7_card_saida[i].BorderColor(C'197,168,136');
+
+         string card_title=StringFormat("Saida %d",(i+1));
+         if(!CreateTextLabel(m_tab7_card_saida_title[i],card_title,m_tab7_card_saida[i],m_window_index,m_tabs,6,16,12,tab7_card_w-32,22))
+            return(false);
+         m_tab7_card_saida_title[i].FontSize(12);
+         m_tab7_card_saida_title[i].LabelColor(C'43,43,43');
+
+         string check_text=StringFormat("Ativar saida %d",(i+1));
+         if(!CreateCheckbox(m_tab7_use_saida[i],check_text,m_tab7_card_saida[i],m_window_index,m_tabs,6,16,44,tab7_card_w-32,false,false,false))
+            return(false);
+         m_tab7_use_saida[i].FontSize(10);
+         m_tab7_use_saida[i].LabelColor(C'43,43,43');
+
+         if(!CreateTextLabel(m_tab7_dist_label[i],"Distancia",m_tab7_card_saida[i],m_window_index,m_tabs,6,16,76,tab7_card_w-32,18))
+            return(false);
+         m_tab7_dist_label[i].FontSize(10);
+         m_tab7_dist_label[i].LabelColor(C'91,78,64');
+
+         const int tab7_edit_w=tab7_card_w-32;
+         const int tab7_edit_text_w=tab7_edit_w-34;
+         m_tab7_dist_spin[i].MainPointer(m_tab7_card_saida[i]);
+         m_tabs.AddToElementsArray(6,m_tab7_dist_spin[i]);
+         m_tab7_dist_spin[i].XSize(tab7_edit_w);
+         m_tab7_dist_spin[i].MaxValue(100000.0);
+         m_tab7_dist_spin[i].MinValue(0.0);
+         m_tab7_dist_spin[i].StepValue(1.0);
+         m_tab7_dist_spin[i].SetDigits(1);
+         m_tab7_dist_spin[i].SpinEditMode(true);
+         m_tab7_dist_spin[i].CheckBoxMode(false);
+         m_tab7_dist_spin[i].SetValue("0.0");
+         m_tab7_dist_spin[i].AnchorBottomWindowSide(false);
+         m_tab7_dist_spin[i].GetTextBoxPointer().XSize(tab7_edit_text_w);
+         m_tab7_dist_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
+         m_tab7_dist_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
+         m_tab7_dist_spin[i].GetTextBoxPointer().XGap(1);
+         if(!m_tab7_dist_spin[i].CreateTextEdit("",16,98))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab7_dist_spin[i]);
+         m_tab7_dist_spin[i].BackColor(C'233,220,203');
+         m_tab7_dist_spin[i].BackColorHover(C'233,220,203');
+         m_tab7_dist_spin[i].BackColorPressed(C'233,220,203');
+         m_tab7_dist_spin[i].BorderColor(tab2_border);
+         m_tab7_dist_spin[i].BorderColorHover(tab2_border);
+         m_tab7_dist_spin[i].BorderColorPressed(tab2_border);
+         m_tab7_dist_spin[i].GetTextBoxPointer().BackColor(clrWhite);
+         m_tab7_dist_spin[i].GetTextBoxPointer().BackColorHover(clrWhite);
+         m_tab7_dist_spin[i].GetTextBoxPointer().BackColorPressed(clrWhite);
+         m_tab7_dist_spin[i].GetTextBoxPointer().BorderColor(tab2_border);
+         m_tab7_dist_spin[i].GetTextBoxPointer().BorderColorHover(tab2_border);
+         m_tab7_dist_spin[i].GetTextBoxPointer().BorderColorPressed(tab2_border);
+         m_tab7_dist_spin[i].GetIncButtonPointer().BackColor(clrWhite);
+         m_tab7_dist_spin[i].GetIncButtonPointer().BackColorHover(clrWhite);
+         m_tab7_dist_spin[i].GetIncButtonPointer().BackColorPressed(clrWhite);
+         m_tab7_dist_spin[i].GetIncButtonPointer().BorderColor(tab2_border);
+         m_tab7_dist_spin[i].GetIncButtonPointer().BorderColorHover(tab2_border);
+         m_tab7_dist_spin[i].GetIncButtonPointer().BorderColorPressed(tab2_border);
+         m_tab7_dist_spin[i].GetDecButtonPointer().BackColor(clrWhite);
+         m_tab7_dist_spin[i].GetDecButtonPointer().BackColorHover(clrWhite);
+         m_tab7_dist_spin[i].GetDecButtonPointer().BackColorPressed(clrWhite);
+         m_tab7_dist_spin[i].GetDecButtonPointer().BorderColor(tab2_border);
+         m_tab7_dist_spin[i].GetDecButtonPointer().BorderColorHover(tab2_border);
+         m_tab7_dist_spin[i].GetDecButtonPointer().BorderColorPressed(tab2_border);
+
+         if(!CreateTextLabel(m_tab7_qty_label[i],"Quantidade",m_tab7_card_saida[i],m_window_index,m_tabs,6,16,132,tab7_card_w-32,18))
+            return(false);
+         m_tab7_qty_label[i].FontSize(10);
+         m_tab7_qty_label[i].LabelColor(C'91,78,64');
+
+         m_tab7_qty_spin[i].MainPointer(m_tab7_card_saida[i]);
+         m_tabs.AddToElementsArray(6,m_tab7_qty_spin[i]);
+         m_tab7_qty_spin[i].XSize(tab7_edit_w);
+         m_tab7_qty_spin[i].MaxValue(100000.0);
+         m_tab7_qty_spin[i].MinValue(0.0);
+         m_tab7_qty_spin[i].StepValue(1.0);
+         m_tab7_qty_spin[i].SetDigits(2);
+         m_tab7_qty_spin[i].SpinEditMode(true);
+         m_tab7_qty_spin[i].CheckBoxMode(false);
+         m_tab7_qty_spin[i].SetValue("0.0");
+         m_tab7_qty_spin[i].AnchorBottomWindowSide(false);
+         m_tab7_qty_spin[i].GetTextBoxPointer().XSize(tab7_edit_text_w);
+         m_tab7_qty_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
+         m_tab7_qty_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
+         m_tab7_qty_spin[i].GetTextBoxPointer().XGap(1);
+         if(!m_tab7_qty_spin[i].CreateTextEdit("",16,154))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab7_qty_spin[i]);
+         m_tab7_qty_spin[i].BackColor(C'233,220,203');
+         m_tab7_qty_spin[i].BackColorHover(C'233,220,203');
+         m_tab7_qty_spin[i].BackColorPressed(C'233,220,203');
+         m_tab7_qty_spin[i].BorderColor(tab2_border);
+         m_tab7_qty_spin[i].BorderColorHover(tab2_border);
+         m_tab7_qty_spin[i].BorderColorPressed(tab2_border);
+         m_tab7_qty_spin[i].GetTextBoxPointer().BackColor(clrWhite);
+         m_tab7_qty_spin[i].GetTextBoxPointer().BackColorHover(clrWhite);
+         m_tab7_qty_spin[i].GetTextBoxPointer().BackColorPressed(clrWhite);
+         m_tab7_qty_spin[i].GetTextBoxPointer().BorderColor(tab2_border);
+         m_tab7_qty_spin[i].GetTextBoxPointer().BorderColorHover(tab2_border);
+         m_tab7_qty_spin[i].GetTextBoxPointer().BorderColorPressed(tab2_border);
+         m_tab7_qty_spin[i].GetIncButtonPointer().BackColor(clrWhite);
+         m_tab7_qty_spin[i].GetIncButtonPointer().BackColorHover(clrWhite);
+         m_tab7_qty_spin[i].GetIncButtonPointer().BackColorPressed(clrWhite);
+         m_tab7_qty_spin[i].GetIncButtonPointer().BorderColor(tab2_border);
+         m_tab7_qty_spin[i].GetIncButtonPointer().BorderColorHover(tab2_border);
+         m_tab7_qty_spin[i].GetIncButtonPointer().BorderColorPressed(tab2_border);
+         m_tab7_qty_spin[i].GetDecButtonPointer().BackColor(clrWhite);
+         m_tab7_qty_spin[i].GetDecButtonPointer().BackColorHover(clrWhite);
+         m_tab7_qty_spin[i].GetDecButtonPointer().BackColorPressed(clrWhite);
+         m_tab7_qty_spin[i].GetDecButtonPointer().BorderColor(tab2_border);
+         m_tab7_qty_spin[i].GetDecButtonPointer().BorderColorHover(tab2_border);
+         m_tab7_qty_spin[i].GetDecButtonPointer().BorderColorPressed(tab2_border);
+        }
 
       m_top_tabs.SelectTab(0);
       m_top_tabs.ShowTabElements();
