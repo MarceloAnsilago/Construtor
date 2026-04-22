@@ -358,6 +358,10 @@ private:
    CEF_CComboBox     m_tab8_sobre_indic_combo;
    CEF_CTextLabel    m_tab8_sobre_entry_label;
    CEF_CComboBox     m_tab8_sobre_entry_combo;
+   CEF_CTextLabel    m_tab8_sobre_sobrecompra_label;
+   CEF_CTextEdit     m_tab8_sobre_sobrecompra_spin;
+   CEF_CTextLabel    m_tab8_sobre_sobrevenda_label;
+   CEF_CTextEdit     m_tab8_sobre_sobrevenda_spin;
 
    // Tab 8 (Sinais) - Cruzamentos (UI like CPanel Tab 9)
    CEF_CTextLabel    m_tab8_cruz_fast_label;
@@ -6515,6 +6519,109 @@ public:
          return(false);
       AddToElementsArray(m_window_index,m_tab8_sobre_entry_combo);
       m_tab8_sobre_entry_combo.SelectItem(0);
+
+      const int sobre_spin_gap=12;
+      const int sobre_spin_label_y=sobre_entry_combo_y+sobre_control_h+10;
+      const int sobre_spin_y=sobre_spin_label_y+sobre_label_h+4;
+      const int sobre_spin_w=(sobre_field_w-sobre_spin_gap)/2;
+      const int sobre_spin_edit_w=sobre_spin_w-34;
+      const int sobre_spin_right_x=sobre_field_x+sobre_spin_w+sobre_spin_gap;
+
+      if(!CreateTextLabel(m_tab8_sobre_sobrecompra_label,"Sobrecompra",m_tab8_sobre_tabs,m_window_index,m_tab8_sobre_tabs,0,sobre_field_x,sobre_spin_label_y,sobre_spin_w,sobre_label_h))
+         return(false);
+      m_tab8_sobre_sobrecompra_label.FontSize(9);
+      m_tab8_sobre_sobrecompra_label.LabelColor(C'91,78,64');
+
+      m_tab8_sobre_sobrecompra_spin.MainPointer(m_tab8_sobre_tabs);
+      m_tab8_sobre_tabs.AddToElementsArray(0,m_tab8_sobre_sobrecompra_spin);
+      m_tab8_sobre_sobrecompra_spin.XSize(sobre_spin_w);
+      m_tab8_sobre_sobrecompra_spin.MaxValue(100000.0);
+      m_tab8_sobre_sobrecompra_spin.MinValue(0.0);
+      m_tab8_sobre_sobrecompra_spin.StepValue(1.0);
+      m_tab8_sobre_sobrecompra_spin.SetDigits(0);
+      m_tab8_sobre_sobrecompra_spin.SpinEditMode(true);
+      m_tab8_sobre_sobrecompra_spin.CheckBoxMode(false);
+      m_tab8_sobre_sobrecompra_spin.SetValue("2");
+      m_tab8_sobre_sobrecompra_spin.AnchorBottomWindowSide(false);
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().XSize(sobre_spin_edit_w);
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_sobre_sobrecompra_spin.CreateTextEdit("",sobre_field_x,sobre_spin_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_sobre_sobrecompra_spin);
+      m_tab8_sobre_sobrecompra_spin.BackColor(C'239,231,218');
+      m_tab8_sobre_sobrecompra_spin.BackColorHover(C'239,231,218');
+      m_tab8_sobre_sobrecompra_spin.BackColorPressed(C'239,231,218');
+      m_tab8_sobre_sobrecompra_spin.BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetTextBoxPointer().BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetIncButtonPointer().BackColor(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetIncButtonPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetIncButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetIncButtonPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetIncButtonPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetIncButtonPointer().BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetDecButtonPointer().BackColor(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetDecButtonPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetDecButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_sobrecompra_spin.GetDecButtonPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetDecButtonPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrecompra_spin.GetDecButtonPointer().BorderColorPressed(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_sobre_sobrevenda_label,"Sobrevenda",m_tab8_sobre_tabs,m_window_index,m_tab8_sobre_tabs,0,sobre_spin_right_x,sobre_spin_label_y,sobre_spin_w,sobre_label_h))
+         return(false);
+      m_tab8_sobre_sobrevenda_label.FontSize(9);
+      m_tab8_sobre_sobrevenda_label.LabelColor(C'91,78,64');
+
+      m_tab8_sobre_sobrevenda_spin.MainPointer(m_tab8_sobre_tabs);
+      m_tab8_sobre_tabs.AddToElementsArray(0,m_tab8_sobre_sobrevenda_spin);
+      m_tab8_sobre_sobrevenda_spin.XSize(sobre_spin_w);
+      m_tab8_sobre_sobrevenda_spin.MaxValue(100000.0);
+      m_tab8_sobre_sobrevenda_spin.MinValue(0.0);
+      m_tab8_sobre_sobrevenda_spin.StepValue(1.0);
+      m_tab8_sobre_sobrevenda_spin.SetDigits(0);
+      m_tab8_sobre_sobrevenda_spin.SpinEditMode(true);
+      m_tab8_sobre_sobrevenda_spin.CheckBoxMode(false);
+      m_tab8_sobre_sobrevenda_spin.SetValue("2");
+      m_tab8_sobre_sobrevenda_spin.AnchorBottomWindowSide(false);
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().XSize(sobre_spin_edit_w);
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().AutoSelectionMode(true);
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().XGap(1);
+      if(!m_tab8_sobre_sobrevenda_spin.CreateTextEdit("",sobre_spin_right_x,sobre_spin_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_sobre_sobrevenda_spin);
+      m_tab8_sobre_sobrevenda_spin.BackColor(C'239,231,218');
+      m_tab8_sobre_sobrevenda_spin.BackColorHover(C'239,231,218');
+      m_tab8_sobre_sobrevenda_spin.BackColorPressed(C'239,231,218');
+      m_tab8_sobre_sobrevenda_spin.BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().BackColor(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetTextBoxPointer().BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetIncButtonPointer().BackColor(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetIncButtonPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetIncButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetIncButtonPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetIncButtonPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetIncButtonPointer().BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BackColor(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BorderColorPressed(C'197,168,136');
 
       // Parametros tab content: 14 abas correspondentes aos indicadores
       const int sobre_param_tabs_x=12;
