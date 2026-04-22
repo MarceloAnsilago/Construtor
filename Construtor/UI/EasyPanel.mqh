@@ -356,6 +356,8 @@ private:
    CEF_CTextLabel    m_tab8_sobre_indic_label;
    CEF_CButton       m_tab8_sobre_indic_btn;
    CEF_CComboBox     m_tab8_sobre_indic_combo;
+   CEF_CTextLabel    m_tab8_sobre_entry_label;
+   CEF_CComboBox     m_tab8_sobre_entry_combo;
 
    // Tab 8 (Sinais) - Cruzamentos (UI like CPanel Tab 9)
    CEF_CTextLabel    m_tab8_cruz_fast_label;
@@ -6460,6 +6462,59 @@ public:
       AddToElementsArray(m_window_index,m_tab8_sobre_indic_combo);
       m_tab8_sobre_indic_combo.SelectItem(0);
       UpdateSobreIndicButton();
+
+      const int sobre_entry_label_y=sobre_combo_y+sobre_control_h+10;
+      const int sobre_entry_combo_y=sobre_entry_label_y+sobre_label_h+4;
+
+      if(!CreateTextLabel(m_tab8_sobre_entry_label,"Entrada",m_tab8_sobre_tabs,m_window_index,m_tab8_sobre_tabs,0,sobre_field_x,sobre_entry_label_y,sobre_field_w,sobre_label_h))
+         return(false);
+      m_tab8_sobre_entry_label.FontSize(9);
+      m_tab8_sobre_entry_label.LabelColor(C'91,78,64');
+
+      string sobre_entry_items[];
+      ArrayResize(sobre_entry_items,7);
+      sobre_entry_items[0]="Nao usar";
+      sobre_entry_items[1]="Fechou fora";
+      sobre_entry_items[2]="Fechou dentro e saiu";
+      sobre_entry_items[3]="Fechou dentro e fechou fora";
+      sobre_entry_items[4]="Fechou fora e voltou";
+      sobre_entry_items[5]="Fechou fora e fechou dentro";
+      sobre_entry_items[6]="Estando fora";
+
+      m_tab8_sobre_entry_combo.MainPointer(m_tab8_sobre_tabs);
+      m_tab8_sobre_tabs.AddToElementsArray(0,m_tab8_sobre_entry_combo);
+      m_tab8_sobre_entry_combo.XSize(sobre_field_w);
+      m_tab8_sobre_entry_combo.YSize(sobre_control_h);
+      m_tab8_sobre_entry_combo.BackColor(clrWhite);
+      m_tab8_sobre_entry_combo.BackColorHover(clrWhite);
+      m_tab8_sobre_entry_combo.BackColorPressed(clrWhite);
+      m_tab8_sobre_entry_combo.BorderColor(C'197,168,136');
+      m_tab8_sobre_entry_combo.BorderColorHover(C'197,168,136');
+      m_tab8_sobre_entry_combo.BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_entry_combo.FontSize(10);
+      m_tab8_sobre_entry_combo.ItemsTotal(ArraySize(sobre_entry_items));
+      m_tab8_sobre_entry_combo.CheckBoxMode(false);
+      m_tab8_sobre_entry_combo.GetButtonPointer().XGap(sobre_btn_x);
+      m_tab8_sobre_entry_combo.GetButtonPointer().XSize(sobre_field_w-2);
+      m_tab8_sobre_entry_combo.GetButtonPointer().YSize(sobre_control_h);
+      m_tab8_sobre_entry_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_sobre_entry_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_sobre_entry_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_entry_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_entry_combo.GetButtonPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_entry_combo.GetButtonPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_entry_combo.GetButtonPointer().BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_entry_combo.GetButtonPointer().IconXGap((sobre_field_w-2)-18);
+      m_tab8_sobre_entry_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_sobre_entry_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(sobre_entry_items);i++) m_tab8_sobre_entry_combo.SetValue(i,sobre_entry_items[i]);
+      m_tab8_sobre_entry_combo.GetListViewPointer().YSize(sobre_list_h);
+      m_tab8_sobre_entry_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_sobre_entry_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_sobre_entry_combo.CreateComboBox("",sobre_field_x,sobre_entry_combo_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_sobre_entry_combo);
+      m_tab8_sobre_entry_combo.SelectItem(0);
 
       // Parametros tab content: 14 abas correspondentes aos indicadores
       const int sobre_param_tabs_x=12;
