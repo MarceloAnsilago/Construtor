@@ -362,6 +362,8 @@ private:
    CEF_CTextEdit     m_tab8_sobre_sobrecompra_spin;
    CEF_CTextLabel    m_tab8_sobre_sobrevenda_label;
    CEF_CTextEdit     m_tab8_sobre_sobrevenda_spin;
+   CEF_CTextLabel    m_tab8_sobre_sentido_label;
+   CEF_CComboBox     m_tab8_sobre_sentido_combo;
 
    // Tab 8 (Sinais) - Cruzamentos (UI like CPanel Tab 9)
    CEF_CTextLabel    m_tab8_cruz_fast_label;
@@ -6622,6 +6624,54 @@ public:
       m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BorderColor(C'197,168,136');
       m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BorderColorHover(C'197,168,136');
       m_tab8_sobre_sobrevenda_spin.GetDecButtonPointer().BorderColorPressed(C'197,168,136');
+
+      const int sobre_sentido_label_y=sobre_spin_y+20+10;
+      const int sobre_sentido_combo_y=sobre_sentido_label_y+sobre_label_h+4;
+
+      if(!CreateTextLabel(m_tab8_sobre_sentido_label,"Sentido",m_tab8_sobre_tabs,m_window_index,m_tab8_sobre_tabs,0,sobre_field_x,sobre_sentido_label_y,sobre_field_w,sobre_label_h))
+         return(false);
+      m_tab8_sobre_sentido_label.FontSize(9);
+      m_tab8_sobre_sentido_label.LabelColor(C'91,78,64');
+
+      string sobre_sentido_items[];
+      ArrayResize(sobre_sentido_items,2);
+      sobre_sentido_items[0]="Tendencia";
+      sobre_sentido_items[1]="Contra tendencia";
+
+      m_tab8_sobre_sentido_combo.MainPointer(m_tab8_sobre_tabs);
+      m_tab8_sobre_tabs.AddToElementsArray(0,m_tab8_sobre_sentido_combo);
+      m_tab8_sobre_sentido_combo.XSize(sobre_field_w);
+      m_tab8_sobre_sentido_combo.YSize(sobre_control_h);
+      m_tab8_sobre_sentido_combo.BackColor(clrWhite);
+      m_tab8_sobre_sentido_combo.BackColorHover(clrWhite);
+      m_tab8_sobre_sentido_combo.BackColorPressed(clrWhite);
+      m_tab8_sobre_sentido_combo.BorderColor(C'197,168,136');
+      m_tab8_sobre_sentido_combo.BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sentido_combo.BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sentido_combo.FontSize(10);
+      m_tab8_sobre_sentido_combo.ItemsTotal(ArraySize(sobre_sentido_items));
+      m_tab8_sobre_sentido_combo.CheckBoxMode(false);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().XGap(sobre_btn_x);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().XSize(sobre_field_w-2);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().YSize(sobre_control_h);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().AnchorRightWindowSide(false);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().BackColor(clrWhite);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().BackColorHover(clrWhite);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().BackColorPressed(clrWhite);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().BorderColor(C'197,168,136');
+      m_tab8_sobre_sentido_combo.GetButtonPointer().BorderColorHover(C'197,168,136');
+      m_tab8_sobre_sentido_combo.GetButtonPointer().BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_sentido_combo.GetButtonPointer().IconXGap((sobre_field_w-2)-18);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().LabelXGap(10);
+      m_tab8_sobre_sentido_combo.GetButtonPointer().LabelColor(C'43,43,43');
+      for(int i=0;i<ArraySize(sobre_sentido_items);i++) m_tab8_sobre_sentido_combo.SetValue(i,sobre_sentido_items[i]);
+      m_tab8_sobre_sentido_combo.GetListViewPointer().YSize(80);
+      m_tab8_sobre_sentido_combo.GetListViewPointer().LightsHover(true);
+      m_tab8_sobre_sentido_combo.GetListViewPointer().BackColor(clrWhite);
+      if(!m_tab8_sobre_sentido_combo.CreateComboBox("",sobre_field_x,sobre_sentido_combo_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_sobre_sentido_combo);
+      m_tab8_sobre_sentido_combo.SelectItem(0);
 
       // Parametros tab content: 14 abas correspondentes aos indicadores
       const int sobre_param_tabs_x=12;
