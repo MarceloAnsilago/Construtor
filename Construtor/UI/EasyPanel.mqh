@@ -351,6 +351,8 @@ private:
    CEF_CTabs         m_tab8_sobre_tabs;
    CEF_CTextLabel    m_tab8_sobre_placeholder_indic;
    CEF_CTextLabel    m_tab8_sobre_placeholder_params;
+   CEF_CTabs         m_tab8_sobre_param_tabs;
+   CEF_CTextLabel    m_tab8_sobre_param_placeholder[14];
    CEF_CTextLabel    m_tab8_sobre_indic_label;
    CEF_CButton       m_tab8_sobre_indic_btn;
    CEF_CComboBox     m_tab8_sobre_indic_combo;
@@ -6364,11 +6366,6 @@ public:
       m_tab8_sobre_placeholder_indic.FontSize(10);
       m_tab8_sobre_placeholder_indic.LabelColor(C'91,78,64');
 
-      if(!CreateTextLabel(m_tab8_sobre_placeholder_params,"Conteudo: Parametros (em migracao)",m_tab8_sobre_tabs,m_window_index,m_tab8_sobre_tabs,1,sobre_content_x,sobre_content_y,sobre_content_w,22))
-         return(false);
-      m_tab8_sobre_placeholder_params.FontSize(10);
-      m_tab8_sobre_placeholder_params.LabelColor(C'91,78,64');
-
       // Indicadores tab content: indicador combobox
       const int sobre_field_x=sobre_content_x;
       const int sobre_field_w=sobre_content_w;
@@ -6463,6 +6460,103 @@ public:
       AddToElementsArray(m_window_index,m_tab8_sobre_indic_combo);
       m_tab8_sobre_indic_combo.SelectItem(0);
       UpdateSobreIndicButton();
+
+      // Parametros tab content: 14 abas correspondentes aos indicadores
+      const int sobre_param_tabs_x=12;
+      const int sobre_param_tabs_y=10;
+      const int sobre_param_tabs_w=sobre_tabs_w-(sobre_param_tabs_x*2);
+      const int sobre_param_tabs_h=sobre_tabs_h-(sobre_param_tabs_y*2);
+      const int sobre_param_tab_w=30;
+
+      string sobre_param_text[];
+      int sobre_param_widths[];
+      ArrayResize(sobre_param_text,14);
+      ArrayResize(sobre_param_widths,14);
+      sobre_param_text[0]="1";
+      sobre_param_text[1]="2";
+      sobre_param_text[2]="3";
+      sobre_param_text[3]="4";
+      sobre_param_text[4]="5";
+      sobre_param_text[5]="6";
+      sobre_param_text[6]="7";
+      sobre_param_text[7]="8";
+      sobre_param_text[8]="9";
+      sobre_param_text[9]="10";
+      sobre_param_text[10]="11";
+      sobre_param_text[11]="12";
+      sobre_param_text[12]="13";
+      sobre_param_text[13]="14";
+
+      for(int i=0;i<14;i++)
+         sobre_param_widths[i]=sobre_param_tab_w;
+
+      m_tab8_sobre_param_tabs.MainPointer(m_tab8_sobre_tabs);
+      m_tab8_sobre_tabs.AddToElementsArray(1,m_tab8_sobre_param_tabs);
+      m_tab8_sobre_param_tabs.XSize(sobre_param_tabs_w);
+      m_tab8_sobre_param_tabs.YSize(sobre_param_tabs_h);
+      m_tab8_sobre_param_tabs.IsCenterText(true);
+      m_tab8_sobre_param_tabs.PositionMode(TABS_RIGHT);
+      m_tab8_sobre_param_tabs.TabsYSize(20);
+      m_tab8_sobre_param_tabs.AutoXResizeMode(false);
+      m_tab8_sobre_param_tabs.AutoYResizeMode(false);
+      m_tab8_sobre_param_tabs.BackColorPressed(C'239,231,218');
+      m_tab8_sobre_param_tabs.BorderColor(C'197,168,136');
+      m_tab8_sobre_param_tabs.BorderColorHover(C'197,168,136');
+      m_tab8_sobre_param_tabs.BorderColorPressed(C'197,168,136');
+      for(int i=0;i<14;i++) m_tab8_sobre_param_tabs.AddTab(sobre_param_text[i],sobre_param_widths[i]);
+      if(!m_tab8_sobre_param_tabs.CreateTabs(sobre_param_tabs_x,sobre_param_tabs_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_sobre_param_tabs);
+
+      CEF_CButtonsGroup *sobre_param_bg=m_tab8_sobre_param_tabs.GetButtonsGroupPointer();
+      if(sobre_param_bg!=NULL)
+        {
+         for(int i=0;i<14;i++)
+           {
+            sobre_param_bg.GetButtonPointer(i).FontSize(8);
+            sobre_param_bg.GetButtonPointer(i).LabelXGap(0);
+            sobre_param_bg.GetButtonPointer(i).LabelYGap(0);
+            sobre_param_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            sobre_param_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            sobre_param_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            sobre_param_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            sobre_param_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            sobre_param_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            sobre_param_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            sobre_param_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            sobre_param_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      string sobre_param_titles[];
+      ArrayResize(sobre_param_titles,14);
+      sobre_param_titles[0]="MACD";
+      sobre_param_titles[1]="Estocastico";
+      sobre_param_titles[2]="RSI";
+      sobre_param_titles[3]="Money Flow Index (MFI)";
+      sobre_param_titles[4]="Bears Power";
+      sobre_param_titles[5]="Bulls Power";
+      sobre_param_titles[6]="Chaikin Oscilador";
+      sobre_param_titles[7]="Accelerator Oscilador";
+      sobre_param_titles[8]="Awesome Oscilador";
+      sobre_param_titles[9]="Commodity Channel Index (CCI)";
+      sobre_param_titles[10]="DeMarker";
+      sobre_param_titles[11]="Regressao";
+      sobre_param_titles[12]="Afastamento da media";
+      sobre_param_titles[13]="Desvio Medio";
+
+      const int sobre_param_content_x=10;
+      const int sobre_param_content_y=14;
+      const int sobre_param_content_w=sobre_param_tabs_w-sobre_param_tab_w-22;
+
+      for(int i=0;i<14;i++)
+        {
+         string placeholder=StringFormat("Conteudo: Parametros %s (em migracao)",sobre_param_titles[i]);
+         if(!CreateTextLabel(m_tab8_sobre_param_placeholder[i],placeholder,m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y,sobre_param_content_w,36))
+            return(false);
+         m_tab8_sobre_param_placeholder[i].FontSize(10);
+         m_tab8_sobre_param_placeholder[i].LabelColor(C'91,78,64');
+        }
 
       // Tabs inside cruzamentos card
       string cruz_text[];
@@ -8261,6 +8355,21 @@ public:
                m_tab8_cruz_slow_tabs.ShowTabElements();
                m_tab8_cruz_tabs.Update();
                m_tab8_cruz_slow_tabs.Update();
+              }
+            return;
+           }
+
+         if(m_tab8_sobre_indic_btn.CheckElementName(sparam))
+           {
+            const int v=m_tab8_sobre_indic_combo.GetListViewPointer().SelectedItemIndex();
+            if(v>=0 && v<14)
+              {
+               m_tab8_sobre_tabs.SelectTab(1);
+               m_tab8_sobre_param_tabs.SelectTab(v);
+               m_tab8_sobre_tabs.ShowTabElements();
+               m_tab8_sobre_param_tabs.ShowTabElements();
+               m_tab8_sobre_tabs.Update();
+               m_tab8_sobre_param_tabs.Update();
               }
             return;
            }
