@@ -5419,7 +5419,7 @@ public:
       m_tab8_padrao_combo.SelectItem(0);
 
       const int tab8_x=tab8_pad;
-      const int tab8_y=tab8_inner_y+56;
+      const int tab8_y=tab8_inner_y+60;
       const int tab8_w=tab8_card_w;
       const int tab8_h=340;
 
@@ -6403,7 +6403,7 @@ public:
 
       const int sobre_tabs_x=16;
       // Keep the tab bar clearly below the checkbox (avoid overlap on some font/scaling combos).
-      const int sobre_tabs_y=108;
+      const int sobre_tabs_y=112;
       const int sobre_tabs_w=tab8_sobre_w-32;
       const int sobre_tabs_h=tab8_sobre_h - sobre_tabs_y - 16;
       const int sobre_tab_h=22;
@@ -7168,7 +7168,7 @@ public:
 
             m_tab8_sobre_stoch_ma_combo.MainPointer(m_tab8_sobre_param_tabs);
             m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_stoch_ma_combo);
-            m_tab8_sobre_stoch_ma_combo.XSize(stoch_obj_w+22);
+            m_tab8_sobre_stoch_ma_combo.XSize(stoch_obj_w);
             m_tab8_sobre_stoch_ma_combo.YSize(20);
             m_tab8_sobre_stoch_ma_combo.BackColor(clrWhite);
             m_tab8_sobre_stoch_ma_combo.BackColorHover(clrWhite);
@@ -7180,7 +7180,7 @@ public:
             m_tab8_sobre_stoch_ma_combo.ItemsTotal(ArraySize(sobre_ma_items));
             m_tab8_sobre_stoch_ma_combo.CheckBoxMode(false);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().XGap(1);
-            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().XSize(stoch_obj_w+20);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().XSize(stoch_obj_w-2);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().YSize(20);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BackColor(clrWhite);
@@ -7189,7 +7189,7 @@ public:
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BorderColor(tab2_border);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BorderColorPressed(tab2_border);
-            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().IconXGap((stoch_obj_w+20)-18);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().IconXGap((stoch_obj_w-2)-18);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().LabelXGap(10);
             m_tab8_sobre_stoch_ma_combo.GetButtonPointer().LabelColor(C'43,43,43');
             for(int m=0;m<ArraySize(sobre_ma_items);m++) m_tab8_sobre_stoch_ma_combo.SetValue(m,sobre_ma_items[m]);
@@ -7209,7 +7209,7 @@ public:
 
             m_tab8_sobre_stoch_type_combo.MainPointer(m_tab8_sobre_param_tabs);
             m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_stoch_type_combo);
-            m_tab8_sobre_stoch_type_combo.XSize(stoch_obj_w+22);
+            m_tab8_sobre_stoch_type_combo.XSize(stoch_obj_w);
             m_tab8_sobre_stoch_type_combo.YSize(20);
             m_tab8_sobre_stoch_type_combo.BackColor(clrWhite);
             m_tab8_sobre_stoch_type_combo.BackColorHover(clrWhite);
@@ -7221,7 +7221,7 @@ public:
             m_tab8_sobre_stoch_type_combo.ItemsTotal(ArraySize(sobre_stoch_type_items));
             m_tab8_sobre_stoch_type_combo.CheckBoxMode(false);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().XGap(1);
-            m_tab8_sobre_stoch_type_combo.GetButtonPointer().XSize(stoch_obj_w+20);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().XSize(stoch_obj_w-2);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().YSize(20);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().BackColor(clrWhite);
@@ -7230,7 +7230,7 @@ public:
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().BorderColor(tab2_border);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().BorderColorPressed(tab2_border);
-            m_tab8_sobre_stoch_type_combo.GetButtonPointer().IconXGap((stoch_obj_w+20)-18);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().IconXGap((stoch_obj_w-2)-18);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().LabelXGap(10);
             m_tab8_sobre_stoch_type_combo.GetButtonPointer().LabelColor(C'43,43,43');
             for(int t=0;t<ArraySize(sobre_stoch_type_items);t++) m_tab8_sobre_stoch_type_combo.SetValue(t,sobre_stoch_type_items[t]);
@@ -7291,14 +7291,14 @@ public:
             m_tab8_sobre_rsi_period_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_rsi_period_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-            if(!CreateTextLabel(m_tab8_sobre_rsi_price_label,"Preco",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+50,rsi_label_w,rsi_control_h))
+            if(!CreateTextLabel(m_tab8_sobre_rsi_price_label,"Preço",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+50,rsi_label_w,rsi_control_h))
                return(false);
             m_tab8_sobre_rsi_price_label.FontSize(9);
             m_tab8_sobre_rsi_price_label.LabelColor(C'91,78,64');
 
             m_tab8_sobre_rsi_price_combo.MainPointer(m_tab8_sobre_param_tabs);
             m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_rsi_price_combo);
-            m_tab8_sobre_rsi_price_combo.XSize(rsi_obj_w+22);
+            m_tab8_sobre_rsi_price_combo.XSize(rsi_obj_w);
             m_tab8_sobre_rsi_price_combo.YSize(20);
             m_tab8_sobre_rsi_price_combo.BackColor(clrWhite);
             m_tab8_sobre_rsi_price_combo.BackColorHover(clrWhite);
@@ -7310,7 +7310,7 @@ public:
             m_tab8_sobre_rsi_price_combo.ItemsTotal(ArraySize(sobre_price_items));
             m_tab8_sobre_rsi_price_combo.CheckBoxMode(false);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().XGap(1);
-            m_tab8_sobre_rsi_price_combo.GetButtonPointer().XSize(rsi_obj_w+20);
+            m_tab8_sobre_rsi_price_combo.GetButtonPointer().XSize(rsi_obj_w-2);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().YSize(20);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().BackColor(clrWhite);
@@ -7319,7 +7319,7 @@ public:
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().BorderColor(tab2_border);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().BorderColorPressed(tab2_border);
-            m_tab8_sobre_rsi_price_combo.GetButtonPointer().IconXGap((rsi_obj_w+20)-18);
+            m_tab8_sobre_rsi_price_combo.GetButtonPointer().IconXGap((rsi_obj_w-2)-18);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().LabelXGap(10);
             m_tab8_sobre_rsi_price_combo.GetButtonPointer().LabelColor(C'43,43,43');
             for(int p=0;p<ArraySize(sobre_price_items);p++) m_tab8_sobre_rsi_price_combo.SetValue(p,sobre_price_items[p]);
@@ -8315,7 +8315,7 @@ public:
       cruz_text[2]="Par. lentos";
 
       const int cruz_tabs_x=16;
-      const int cruz_tabs_y=108;
+      const int cruz_tabs_y=112;
       const int cruz_tabs_w=tab8_cruz_w-32;
       const int cruz_tabs_h=tab8_cruz_h-124;
       const int cruz_tab_h=22;
