@@ -7515,8 +7515,8 @@ public:
             const int ch_spin_x=sobre_param_content_x+98;
             const int ch_spin_w=78;
             const int ch_spin_text_w=44;
-            const int ch_combo_x=sobre_param_content_x+72;
-            const int ch_combo_w=sobre_param_content_w-72-8;
+            const int ch_combo_x=sobre_param_content_x+62;
+            const int ch_combo_w=sobre_param_content_w-62-8;
             const int ch_y1=sobre_param_content_y+18;
             const int ch_y2=sobre_param_content_y+50;
             const int ch_y3=sobre_param_content_y+82;
