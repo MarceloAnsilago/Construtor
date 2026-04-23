@@ -7675,6 +7675,18 @@ public:
             AddToElementsArray(m_window_index,m_tab8_sobre_chaikin_volume_combo);
             m_tab8_sobre_chaikin_volume_combo.SelectItem(0);
            }
+         else if(i==7)
+           {
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Accelerator Oscilador",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+               return(false);
+            m_tab8_sobre_param_title[i].FontSize(10);
+            m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
+
+            if(!CreateTextLabel(m_tab8_sobre_param_placeholder[i],"Accelerator nao requer\r\nparametros",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+28,sobre_param_content_w,46))
+               return(false);
+            m_tab8_sobre_param_placeholder[i].FontSize(10);
+            m_tab8_sobre_param_placeholder[i].LabelColor(C'91,78,64');
+           }
          else
            {
             string placeholder=CapitalizeFirst(sobre_param_titles[i]);
