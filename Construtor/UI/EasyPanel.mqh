@@ -7992,21 +7992,21 @@ public:
            {
             const int afast_label_h=16;
             const int afast_control_h=20;
-            const int afast_label_w=52;
-            const int afast_obj_x=sobre_param_content_x+afast_label_w+4;
-            const int afast_obj_w=sobre_param_content_w-afast_label_w-4;
+            const int afast_label_w=sobre_param_content_w;
+            const int afast_obj_x=sobre_param_content_x;
+            const int afast_obj_w=sobre_param_content_w;
             const int afast_obj_text_w=(afast_obj_w>48 ? afast_obj_w-32 : 48);
             const int afast_y1=sobre_param_content_y+18;
-            const int afast_y2=sobre_param_content_y+50;
-            const int afast_y3=sobre_param_content_y+82;
-            const int afast_y4=sobre_param_content_y+114;
+            const int afast_y2=sobre_param_content_y+56;
+            const int afast_y3=sobre_param_content_y+94;
+            const int afast_y4=sobre_param_content_y+132;
 
             if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Afastamento da média",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
 
-            if(!CreateTextLabel(m_tab8_sobre_afast_period_label,"Periodo",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y1,afast_label_w,afast_control_h))
+            if(!CreateTextLabel(m_tab8_sobre_afast_period_label,"Período",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y1,afast_label_w,afast_control_h))
                return(false);
             m_tab8_sobre_afast_period_label.FontSize(9);
             m_tab8_sobre_afast_period_label.LabelColor(C'91,78,64');
@@ -8026,7 +8026,7 @@ public:
             m_tab8_sobre_afast_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
             m_tab8_sobre_afast_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_afast_period_spin.GetTextBoxPointer().XGap(1);
-            if(!m_tab8_sobre_afast_period_spin.CreateTextEdit("",afast_obj_x,afast_y1))
+            if(!m_tab8_sobre_afast_period_spin.CreateTextEdit("",afast_obj_x,afast_y1+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_afast_period_spin);
             m_tab8_sobre_afast_period_spin.BackColor(C'233,220,203');
@@ -8042,7 +8042,7 @@ public:
             m_tab8_sobre_afast_period_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_afast_period_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-            if(!CreateTextLabel(m_tab8_sobre_afast_shift_label,"Desloc.",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y2,afast_label_w,afast_control_h))
+            if(!CreateTextLabel(m_tab8_sobre_afast_shift_label,"Deslocamento",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y2,afast_label_w,afast_control_h))
                return(false);
             m_tab8_sobre_afast_shift_label.FontSize(9);
             m_tab8_sobre_afast_shift_label.LabelColor(C'91,78,64');
@@ -8062,7 +8062,7 @@ public:
             m_tab8_sobre_afast_shift_spin.GetTextBoxPointer().AutoSelectionMode(true);
             m_tab8_sobre_afast_shift_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_afast_shift_spin.GetTextBoxPointer().XGap(1);
-            if(!m_tab8_sobre_afast_shift_spin.CreateTextEdit("",afast_obj_x,afast_y2))
+            if(!m_tab8_sobre_afast_shift_spin.CreateTextEdit("",afast_obj_x,afast_y2+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_afast_shift_spin);
             m_tab8_sobre_afast_shift_spin.BackColor(C'233,220,203');
@@ -8078,7 +8078,7 @@ public:
             m_tab8_sobre_afast_shift_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_afast_shift_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-            if(!CreateTextLabel(m_tab8_sobre_afast_ma_label,"Tipo de media",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y3,afast_label_w,afast_control_h))
+            if(!CreateTextLabel(m_tab8_sobre_afast_ma_label,"Tipo de afastamento",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y3,afast_label_w,afast_control_h))
                return(false);
             m_tab8_sobre_afast_ma_label.FontSize(9);
             m_tab8_sobre_afast_ma_label.LabelColor(C'91,78,64');
@@ -8113,12 +8113,12 @@ public:
             m_tab8_sobre_afast_ma_combo.GetListViewPointer().YSize(140);
             m_tab8_sobre_afast_ma_combo.GetListViewPointer().LightsHover(true);
             m_tab8_sobre_afast_ma_combo.GetListViewPointer().BackColor(clrWhite);
-            if(!m_tab8_sobre_afast_ma_combo.CreateComboBox("",afast_obj_x,afast_y3))
+            if(!m_tab8_sobre_afast_ma_combo.CreateComboBox("",afast_obj_x,afast_y3+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_afast_ma_combo);
             m_tab8_sobre_afast_ma_combo.SelectItem(0);
 
-            if(!CreateTextLabel(m_tab8_sobre_afast_price_label,"Modo de preço",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y4,afast_label_w,afast_control_h))
+            if(!CreateTextLabel(m_tab8_sobre_afast_price_label,"Modo de fechamento",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,afast_y4,afast_label_w,afast_control_h))
                return(false);
             m_tab8_sobre_afast_price_label.FontSize(9);
             m_tab8_sobre_afast_price_label.LabelColor(C'91,78,64');
@@ -8153,7 +8153,7 @@ public:
             m_tab8_sobre_afast_price_combo.GetListViewPointer().YSize(160);
             m_tab8_sobre_afast_price_combo.GetListViewPointer().LightsHover(true);
             m_tab8_sobre_afast_price_combo.GetListViewPointer().BackColor(clrWhite);
-            if(!m_tab8_sobre_afast_price_combo.CreateComboBox("",afast_obj_x,afast_y4))
+            if(!m_tab8_sobre_afast_price_combo.CreateComboBox("",afast_obj_x,afast_y4+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_afast_price_combo);
             m_tab8_sobre_afast_price_combo.SelectItem(0);
