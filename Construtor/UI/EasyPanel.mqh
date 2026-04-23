@@ -7536,17 +7536,17 @@ public:
             sobre_chaikin_volume_items[0]="Volume de Tick";
             sobre_chaikin_volume_items[1]="Volume Real";
 
-            const int ch_label_w=70;
+            const int ch_label_w=sobre_param_content_w;
             const int ch_control_h=20;
-            const int ch_spin_x=sobre_param_content_x+98;
-            const int ch_spin_w=78;
-            const int ch_spin_text_w=44;
-            const int ch_combo_x=sobre_param_content_x+62;
-            const int ch_combo_w=sobre_param_content_w-62-8;
+            const int ch_spin_x=sobre_param_content_x;
+            const int ch_spin_w=sobre_param_content_w;
+            const int ch_spin_text_w=ch_spin_w-34;
+            const int ch_combo_x=sobre_param_content_x;
+            const int ch_combo_w=sobre_param_content_w;
             const int ch_y1=sobre_param_content_y+18;
-            const int ch_y2=sobre_param_content_y+50;
-            const int ch_y3=sobre_param_content_y+82;
-            const int ch_y4=sobre_param_content_y+114;
+            const int ch_y2=sobre_param_content_y+56;
+            const int ch_y3=sobre_param_content_y+94;
+            const int ch_y4=sobre_param_content_y+132;
 
             if(!CreateTextLabel(m_tab8_sobre_chaikin_title,"Oscilador Chaikin",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
@@ -7572,7 +7572,7 @@ public:
             m_tab8_sobre_chaikin_fast_spin.GetTextBoxPointer().AutoSelectionMode(true);
             m_tab8_sobre_chaikin_fast_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_chaikin_fast_spin.GetTextBoxPointer().XGap(1);
-            if(!m_tab8_sobre_chaikin_fast_spin.CreateTextEdit("",ch_spin_x,ch_y1))
+            if(!m_tab8_sobre_chaikin_fast_spin.CreateTextEdit("",ch_spin_x,ch_y1+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_chaikin_fast_spin);
             m_tab8_sobre_chaikin_fast_spin.BackColor(C'233,220,203');
@@ -7607,7 +7607,7 @@ public:
             m_tab8_sobre_chaikin_slow_spin.GetTextBoxPointer().AutoSelectionMode(true);
             m_tab8_sobre_chaikin_slow_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_chaikin_slow_spin.GetTextBoxPointer().XGap(1);
-            if(!m_tab8_sobre_chaikin_slow_spin.CreateTextEdit("",ch_spin_x,ch_y2))
+            if(!m_tab8_sobre_chaikin_slow_spin.CreateTextEdit("",ch_spin_x,ch_y2+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_chaikin_slow_spin);
             m_tab8_sobre_chaikin_slow_spin.BackColor(C'233,220,203');
@@ -7623,7 +7623,7 @@ public:
             m_tab8_sobre_chaikin_slow_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_chaikin_slow_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-            if(!CreateTextLabel(m_tab8_sobre_chaikin_ma_label,"Media",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,ch_y3,ch_label_w,ch_control_h))
+            if(!CreateTextLabel(m_tab8_sobre_chaikin_ma_label,"Média",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,ch_y3,ch_label_w,ch_control_h))
                return(false);
             m_tab8_sobre_chaikin_ma_label.FontSize(9);
             m_tab8_sobre_chaikin_ma_label.LabelColor(C'91,78,64');
@@ -7657,7 +7657,7 @@ public:
             m_tab8_sobre_chaikin_ma_combo.GetListViewPointer().YSize(140);
             m_tab8_sobre_chaikin_ma_combo.GetListViewPointer().LightsHover(true);
             m_tab8_sobre_chaikin_ma_combo.GetListViewPointer().BackColor(clrWhite);
-            if(!m_tab8_sobre_chaikin_ma_combo.CreateComboBox("",ch_combo_x,ch_y3))
+            if(!m_tab8_sobre_chaikin_ma_combo.CreateComboBox("",ch_combo_x,ch_y3+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_chaikin_ma_combo);
             m_tab8_sobre_chaikin_ma_combo.SelectItem(0);
@@ -7696,7 +7696,7 @@ public:
             m_tab8_sobre_chaikin_volume_combo.GetListViewPointer().YSize(120);
             m_tab8_sobre_chaikin_volume_combo.GetListViewPointer().LightsHover(true);
             m_tab8_sobre_chaikin_volume_combo.GetListViewPointer().BackColor(clrWhite);
-            if(!m_tab8_sobre_chaikin_volume_combo.CreateComboBox("",ch_combo_x,ch_y4))
+            if(!m_tab8_sobre_chaikin_volume_combo.CreateComboBox("",ch_combo_x,ch_y4+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_chaikin_volume_combo);
             m_tab8_sobre_chaikin_volume_combo.SelectItem(0);
@@ -7708,7 +7708,7 @@ public:
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
 
-            if(!CreateTextLabel(m_tab8_sobre_param_placeholder[i],"Accelerator nao requer\r\nparametros",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+28,sobre_param_content_w,46))
+            if(!CreateTextLabel(m_tab8_sobre_param_placeholder[i],"Parâmetros",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+28,sobre_param_content_w,20))
                return(false);
             m_tab8_sobre_param_placeholder[i].FontSize(10);
             m_tab8_sobre_param_placeholder[i].LabelColor(C'91,78,64');
