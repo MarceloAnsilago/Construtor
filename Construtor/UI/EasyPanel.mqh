@@ -5312,9 +5312,9 @@ public:
       m_tab8_tabs.AutoYResizeMode(true);
       m_tab8_tabs.AutoYResizeBottomOffset(inner_pad);
       m_tab8_tabs.BackColorPressed(C'233,220,203');
-      m_tab8_tabs.BorderColor(C'197,168,136');
-      m_tab8_tabs.BorderColorHover(C'197,168,136');
-      m_tab8_tabs.BorderColorPressed(C'197,168,136');
+      m_tab8_tabs.BorderColor(clrNONE);
+      m_tab8_tabs.BorderColorHover(clrNONE);
+      m_tab8_tabs.BorderColorPressed(clrNONE);
 
       for(int i=0;i<2;i++)
          m_tab8_tabs.AddTab(tab8_text[i],tab8_widths[i]);
@@ -6421,9 +6421,9 @@ public:
       m_tab8_sobre_tabs.AutoXResizeMode(false);
       m_tab8_sobre_tabs.AutoYResizeMode(false);
       m_tab8_sobre_tabs.BackColorPressed(C'239,231,218');
-      m_tab8_sobre_tabs.BorderColor(C'197,168,136');
-      m_tab8_sobre_tabs.BorderColorHover(C'197,168,136');
-      m_tab8_sobre_tabs.BorderColorPressed(C'197,168,136');
+      m_tab8_sobre_tabs.BorderColor(clrNONE);
+      m_tab8_sobre_tabs.BorderColorHover(clrNONE);
+      m_tab8_sobre_tabs.BorderColorPressed(clrNONE);
       for(int i=0;i<2;i++) m_tab8_sobre_tabs.AddTab(sobre_text[i],sobre_widths[i]);
       if(!m_tab8_sobre_tabs.CreateTabs(sobre_tabs_x,sobre_tabs_y))
          return(false);
