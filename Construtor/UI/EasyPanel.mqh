@@ -6760,7 +6760,7 @@ public:
       const int sobre_param_tabs_y=10;
       const int sobre_param_tabs_w=sobre_tabs_w-(sobre_param_tabs_x*2);
       const int sobre_param_tabs_h=sobre_tabs_h-(sobre_param_tabs_y*2);
-      const int sobre_param_tab_w=30;
+      const int sobre_param_tab_w=0;
 
       string sobre_param_text[];
       int sobre_param_widths[];
@@ -6789,8 +6789,8 @@ public:
       m_tab8_sobre_param_tabs.XSize(sobre_param_tabs_w);
       m_tab8_sobre_param_tabs.YSize(sobre_param_tabs_h);
       m_tab8_sobre_param_tabs.IsCenterText(true);
-      m_tab8_sobre_param_tabs.PositionMode(TABS_RIGHT);
-      m_tab8_sobre_param_tabs.TabsYSize(20);
+      m_tab8_sobre_param_tabs.PositionMode(TABS_TOP);
+      m_tab8_sobre_param_tabs.TabsYSize(0);
       m_tab8_sobre_param_tabs.AutoXResizeMode(false);
       m_tab8_sobre_param_tabs.AutoYResizeMode(false);
       m_tab8_sobre_param_tabs.BackColor(C'233,220,203');
@@ -6812,15 +6812,15 @@ public:
             sobre_param_bg.GetButtonPointer(i).FontSize(8);
             sobre_param_bg.GetButtonPointer(i).LabelXGap(0);
             sobre_param_bg.GetButtonPointer(i).LabelYGap(0);
-            sobre_param_bg.GetButtonPointer(i).BackColor(C'39,54,78');
-            sobre_param_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
-            sobre_param_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
-            sobre_param_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
-            sobre_param_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
-            sobre_param_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
-            sobre_param_bg.GetButtonPointer(i).LabelColor(clrWhite);
-            sobre_param_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
-            sobre_param_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+            sobre_param_bg.GetButtonPointer(i).BackColor(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).BackColorHover(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).BackColorPressed(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).BorderColor(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).BorderColorHover(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).BorderColorPressed(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).LabelColor(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).LabelColorHover(C'233,220,203');
+            sobre_param_bg.GetButtonPointer(i).LabelColorPressed(C'233,220,203');
            }
         }
 
@@ -6843,7 +6843,7 @@ public:
 
       const int sobre_param_content_x=10;
       const int sobre_param_content_y=14;
-      const int sobre_param_content_w=sobre_param_tabs_w-sobre_param_tab_w-22;
+      const int sobre_param_content_w=sobre_param_tabs_w-22;
 
       string sobre_price_items[];
       ArrayResize(sobre_price_items,7);
@@ -9585,6 +9585,10 @@ public:
       m_tab8_cruz_tabs.SelectTab(0);
       m_tab8_cruz_tabs.ShowTabElements();
       m_tab8_cruz_tabs.Update();
+
+      m_tab8_sobre_tabs.SelectTab(1);
+      m_tab8_sobre_tabs.ShowTabElements();
+      m_tab8_sobre_tabs.Update();
 
       m_tab8_tabs.SelectTab(0);
       m_tab8_tabs.ShowTabElements();
