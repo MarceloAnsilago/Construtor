@@ -376,6 +376,10 @@ private:
    CEF_CTextEdit     m_tab8_sobre_rsi_period_spin;
    CEF_CTextLabel    m_tab8_sobre_rsi_price_label;
    CEF_CComboBox     m_tab8_sobre_rsi_price_combo;
+   CEF_CTextLabel    m_tab8_sobre_cci_period_label;
+   CEF_CTextEdit     m_tab8_sobre_cci_period_spin;
+   CEF_CTextLabel    m_tab8_sobre_cci_price_label;
+   CEF_CComboBox     m_tab8_sobre_cci_price_combo;
    CEF_CTextLabel    m_tab8_sobre_mfi_title;
    CEF_CTextLabel    m_tab8_sobre_mfi_period_label;
    CEF_CTextEdit     m_tab8_sobre_mfi_period_spin;
@@ -7686,6 +7690,97 @@ public:
                return(false);
             m_tab8_sobre_param_placeholder[i].FontSize(10);
             m_tab8_sobre_param_placeholder[i].LabelColor(C'91,78,64');
+           }
+         else if(i==9)
+           {
+            const int cci_label_h=16;
+            const int cci_control_h=20;
+            const int cci_label_w=52;
+            const int cci_obj_x=sobre_param_content_x+cci_label_w+4;
+            const int cci_obj_w=sobre_param_content_w-cci_label_w-4;
+            const int cci_obj_text_w=(cci_obj_w>48 ? cci_obj_w-32 : 48);
+            const int cci_y=sobre_param_content_y+18;
+
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Commodity Channel Index (CCI)",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+               return(false);
+            m_tab8_sobre_param_title[i].FontSize(10);
+            m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
+
+            if(!CreateTextLabel(m_tab8_sobre_cci_period_label,"Periodo",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,cci_y,cci_label_w,cci_control_h))
+               return(false);
+            m_tab8_sobre_cci_period_label.FontSize(9);
+            m_tab8_sobre_cci_period_label.LabelColor(C'91,78,64');
+
+            m_tab8_sobre_cci_period_spin.MainPointer(m_tab8_sobre_param_tabs);
+            m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_cci_period_spin);
+            m_tab8_sobre_cci_period_spin.XSize(cci_obj_w);
+            m_tab8_sobre_cci_period_spin.MaxValue(9999.0);
+            m_tab8_sobre_cci_period_spin.MinValue(0.0);
+            m_tab8_sobre_cci_period_spin.StepValue(1.0);
+            m_tab8_sobre_cci_period_spin.SetDigits(0);
+            m_tab8_sobre_cci_period_spin.SpinEditMode(true);
+            m_tab8_sobre_cci_period_spin.CheckBoxMode(false);
+            m_tab8_sobre_cci_period_spin.SetValue("14");
+            m_tab8_sobre_cci_period_spin.AnchorBottomWindowSide(false);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().XSize(cci_obj_text_w);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().XGap(1);
+            if(!m_tab8_sobre_cci_period_spin.CreateTextEdit("",cci_obj_x,cci_y))
+               return(false);
+            AddToElementsArray(m_window_index,m_tab8_sobre_cci_period_spin);
+            m_tab8_sobre_cci_period_spin.BackColor(C'233,220,203');
+            m_tab8_sobre_cci_period_spin.BackColorHover(C'233,220,203');
+            m_tab8_sobre_cci_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_cci_period_spin.BorderColor(tab2_border);
+            m_tab8_sobre_cci_period_spin.BorderColorHover(tab2_border);
+            m_tab8_sobre_cci_period_spin.BorderColorPressed(tab2_border);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().BackColor(clrWhite);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().BorderColor(tab2_border);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+            m_tab8_sobre_cci_period_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+
+            if(!CreateTextLabel(m_tab8_sobre_cci_price_label,"Modo de preco",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+50,cci_label_w,cci_control_h))
+               return(false);
+            m_tab8_sobre_cci_price_label.FontSize(9);
+            m_tab8_sobre_cci_price_label.LabelColor(C'91,78,64');
+
+            m_tab8_sobre_cci_price_combo.MainPointer(m_tab8_sobre_param_tabs);
+            m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_cci_price_combo);
+            m_tab8_sobre_cci_price_combo.XSize(cci_obj_w+22);
+            m_tab8_sobre_cci_price_combo.YSize(20);
+            m_tab8_sobre_cci_price_combo.BackColor(clrWhite);
+            m_tab8_sobre_cci_price_combo.BackColorHover(clrWhite);
+            m_tab8_sobre_cci_price_combo.BackColorPressed(clrWhite);
+            m_tab8_sobre_cci_price_combo.BorderColor(tab2_border);
+            m_tab8_sobre_cci_price_combo.BorderColorHover(tab2_border);
+            m_tab8_sobre_cci_price_combo.BorderColorPressed(tab2_border);
+            m_tab8_sobre_cci_price_combo.FontSize(10);
+            m_tab8_sobre_cci_price_combo.ItemsTotal(ArraySize(sobre_price_items));
+            m_tab8_sobre_cci_price_combo.CheckBoxMode(false);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().XGap(1);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().XSize(cci_obj_w+20);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().YSize(20);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().AnchorRightWindowSide(false);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().BackColor(clrWhite);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().BackColorHover(clrWhite);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().BackColorPressed(clrWhite);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().BorderColor(tab2_border);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().BorderColorHover(tab2_border);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().IconXGap((cci_obj_w+20)-18);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().LabelXGap(10);
+            m_tab8_sobre_cci_price_combo.GetButtonPointer().LabelColor(C'43,43,43');
+            for(int c=0;c<ArraySize(sobre_price_items);c++) m_tab8_sobre_cci_price_combo.SetValue(c,sobre_price_items[c]);
+            m_tab8_sobre_cci_price_combo.GetListViewPointer().YSize(160);
+            m_tab8_sobre_cci_price_combo.GetListViewPointer().LightsHover(true);
+            m_tab8_sobre_cci_price_combo.GetListViewPointer().BackColor(clrWhite);
+            if(!m_tab8_sobre_cci_price_combo.CreateComboBox("",cci_obj_x,sobre_param_content_y+50))
+               return(false);
+            AddToElementsArray(m_window_index,m_tab8_sobre_cci_price_combo);
+            m_tab8_sobre_cci_price_combo.SelectItem(0);
            }
          else
            {
