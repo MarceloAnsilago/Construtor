@@ -6880,10 +6880,16 @@ public:
             const int macd_signal_text_w=tab8_spin_text_w;
             const int macd_left_x=sobre_param_content_x;
             const int macd_signal_x=sobre_param_content_x;
-            const int macd_signal_label_y=sobre_param_content_y+84;
+            const int macd_first_label_y=sobre_param_content_y+18;
+            const int macd_signal_label_y=sobre_param_content_y+102;
             const int macd_signal_edit_y=macd_signal_label_y+macd_label_h+4;
 
-            if(!CreateTextLabel(m_tab8_sobre_macd_fast_label,"EMA rapida",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,macd_left_x,sobre_param_content_y,macd_spin_w,macd_label_h))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-4,sobre_param_content_w,18))
+               return(false);
+            m_tab8_sobre_param_title[i].FontSize(10);
+            m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
+
+            if(!CreateTextLabel(m_tab8_sobre_macd_fast_label,"EMA rapida",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,macd_left_x,macd_first_label_y,macd_spin_w,macd_label_h))
                return(false);
             m_tab8_sobre_macd_fast_label.FontSize(9);
             m_tab8_sobre_macd_fast_label.LabelColor(C'91,78,64');
@@ -6903,7 +6909,7 @@ public:
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().AutoSelectionMode(true);
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().XGap(1);
-            if(!m_tab8_sobre_macd_fast_spin.CreateTextEdit("",macd_left_x,sobre_param_content_y+macd_label_h+4))
+            if(!m_tab8_sobre_macd_fast_spin.CreateTextEdit("",macd_left_x,macd_first_label_y+macd_label_h+4))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_macd_fast_spin);
 
@@ -6920,7 +6926,7 @@ public:
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-            const int macd_slow_label_y=sobre_param_content_y+42;
+            const int macd_slow_label_y=sobre_param_content_y+60;
             const int macd_slow_edit_y=macd_slow_label_y+macd_label_h+4;
 
             if(!CreateTextLabel(m_tab8_sobre_macd_slow_label,"EMA lenta",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,macd_left_x,macd_slow_label_y,macd_spin_w,macd_label_h))
@@ -7047,7 +7053,7 @@ public:
             const int stoch_obj_text_w=(stoch_obj_w>40 ? stoch_obj_w-40 : 34);
 
             const int stoch_title_y=sobre_param_content_y-4;
-            if(!CreateTextLabel(m_tab8_sobre_stoch_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_title_y,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_stoch_title,sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_title_y,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_stoch_title.FontSize(10);
             m_tab8_sobre_stoch_title.LabelColor(C'43,43,43');
@@ -7251,7 +7257,7 @@ public:
             const int rsi_obj_w=sobre_param_content_w-rsi_label_w-4;
             const int rsi_obj_text_w=(rsi_obj_w>48 ? rsi_obj_w-32 : 48);
             const int rsi_y=sobre_param_content_y+18;
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7340,7 +7346,7 @@ public:
             const int mfi_obj_w=sobre_param_content_w-mfi_label_w-4;
             const int mfi_obj_text_w=(mfi_obj_w>48 ? mfi_obj_w-32 : 48);
             const int mfi_y=sobre_param_content_y+18;
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7437,7 +7443,7 @@ public:
             const int bear_obj_text_w=(bear_obj_w>48 ? bear_obj_w-32 : 48);
             const int bear_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_bears_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_bears_title,sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_bears_title.FontSize(10);
             m_tab8_sobre_bears_title.LabelColor(C'43,43,43');
@@ -7488,7 +7494,7 @@ public:
             const int bull_obj_text_w=(bull_obj_w>48 ? bull_obj_w-32 : 48);
             const int bull_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_bulls_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_bulls_title,sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_bulls_title.FontSize(10);
             m_tab8_sobre_bulls_title.LabelColor(C'43,43,43');
@@ -7548,7 +7554,7 @@ public:
             const int ch_y3=sobre_param_content_y+94;
             const int ch_y4=sobre_param_content_y+132;
 
-            if(!CreateTextLabel(m_tab8_sobre_chaikin_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_chaikin_title,sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_chaikin_title.FontSize(10);
             m_tab8_sobre_chaikin_title.LabelColor(C'43,43,43');
@@ -7703,7 +7709,7 @@ public:
            }
          else if(i==7)
            {
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7723,7 +7729,7 @@ public:
             const int cci_obj_text_w=(cci_obj_w>48 ? cci_obj_w-32 : 48);
             const int cci_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7814,7 +7820,7 @@ public:
             const int demarker_obj_text_w=(demarker_obj_w>48 ? demarker_obj_w-32 : 48);
             const int demarker_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7867,7 +7873,7 @@ public:
             const int reg_y2=sobre_param_content_y+64;
             const int reg_y3=sobre_param_content_y+110;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -8001,7 +8007,7 @@ public:
             const int afast_y3=sobre_param_content_y+94;
             const int afast_y4=sobre_param_content_y+132;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -8170,7 +8176,7 @@ public:
             const int desvio_y2=sobre_param_content_y+56;
             const int desvio_y3=sobre_param_content_y+94;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -8294,7 +8300,7 @@ public:
          else
            {
             string placeholder="";
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
