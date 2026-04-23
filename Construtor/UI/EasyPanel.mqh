@@ -361,6 +361,17 @@ private:
    CEF_CTextEdit     m_tab8_sobre_macd_signal_spin;
    CEF_CTextLabel    m_tab8_sobre_macd_price_label;
    CEF_CComboBox     m_tab8_sobre_macd_price_combo;
+   CEF_CTextLabel    m_tab8_sobre_stoch_title;
+   CEF_CTextLabel    m_tab8_sobre_stoch_k_label;
+   CEF_CTextEdit     m_tab8_sobre_stoch_k_spin;
+   CEF_CTextLabel    m_tab8_sobre_stoch_d_label;
+   CEF_CTextEdit     m_tab8_sobre_stoch_d_spin;
+   CEF_CTextLabel    m_tab8_sobre_stoch_slow_label;
+   CEF_CTextEdit     m_tab8_sobre_stoch_slow_spin;
+   CEF_CTextLabel    m_tab8_sobre_stoch_ma_label;
+   CEF_CComboBox     m_tab8_sobre_stoch_ma_combo;
+   CEF_CTextLabel    m_tab8_sobre_stoch_type_label;
+   CEF_CComboBox     m_tab8_sobre_stoch_type_combo;
    CEF_CTextLabel    m_tab8_sobre_indic_label;
    CEF_CButton       m_tab8_sobre_indic_btn;
    CEF_CComboBox     m_tab8_sobre_indic_combo;
@@ -6793,6 +6804,19 @@ public:
       sobre_price_items[5]="Tipico";
       sobre_price_items[6]="Medio";
 
+      string sobre_ma_items[];
+      ArrayResize(sobre_ma_items,5);
+      sobre_ma_items[0]="Simples";
+      sobre_ma_items[1]="Exponencial";
+      sobre_ma_items[2]="Suavizada";
+      sobre_ma_items[3]="Linear ponderada";
+      sobre_ma_items[4]="Smoothed";
+
+      string sobre_stoch_type_items[];
+      ArrayResize(sobre_stoch_type_items,2);
+      sobre_stoch_type_items[0]="Minimo/Maximo";
+      sobre_stoch_type_items[1]="Fechamento/Abertura";
+
       for(int i=0;i<14;i++)
         {
          if(i==0)
@@ -6961,6 +6985,211 @@ public:
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_macd_price_combo);
             m_tab8_sobre_macd_price_combo.SelectItem(0);
+           }
+         else if(i==1)
+           {
+            const int stoch_label_h=16;
+            const int stoch_control_h=20;
+            const int stoch_label_w=44;
+            const int stoch_obj_x=sobre_param_content_x+stoch_label_w+4;
+            const int stoch_obj_w=sobre_param_content_w-stoch_label_w-4;
+            const int stoch_obj_text_w=(stoch_obj_w>40 ? stoch_obj_w-40 : 34);
+
+            const int stoch_title_y=sobre_param_content_y-4;
+            if(!CreateTextLabel(m_tab8_sobre_stoch_title,"Estocastico",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_title_y,sobre_param_content_w,18))
+               return(false);
+            m_tab8_sobre_stoch_title.FontSize(10);
+            m_tab8_sobre_stoch_title.LabelColor(C'43,43,43');
+
+            const int stoch_k_y=sobre_param_content_y+18;
+            if(!CreateTextLabel(m_tab8_sobre_stoch_k_label,"K",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_k_y,stoch_label_w,stoch_control_h))
+               return(false);
+            m_tab8_sobre_stoch_k_label.FontSize(9);
+            m_tab8_sobre_stoch_k_label.LabelColor(C'91,78,64');
+
+            m_tab8_sobre_stoch_k_spin.MainPointer(m_tab8_sobre_param_tabs);
+            m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_stoch_k_spin);
+            m_tab8_sobre_stoch_k_spin.XSize(stoch_obj_w);
+            m_tab8_sobre_stoch_k_spin.MaxValue(9999.0);
+            m_tab8_sobre_stoch_k_spin.MinValue(0.0);
+            m_tab8_sobre_stoch_k_spin.StepValue(1.0);
+            m_tab8_sobre_stoch_k_spin.SetDigits(0);
+            m_tab8_sobre_stoch_k_spin.SpinEditMode(true);
+            m_tab8_sobre_stoch_k_spin.CheckBoxMode(false);
+            m_tab8_sobre_stoch_k_spin.SetValue("5");
+            m_tab8_sobre_stoch_k_spin.AnchorBottomWindowSide(false);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().XSize(stoch_obj_text_w);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().AutoSelectionMode(true);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().XGap(1);
+            if(!m_tab8_sobre_stoch_k_spin.CreateTextEdit("",stoch_obj_x,stoch_k_y))
+               return(false);
+            AddToElementsArray(m_window_index,m_tab8_sobre_stoch_k_spin);
+            m_tab8_sobre_stoch_k_spin.BackColor(C'233,220,203');
+            m_tab8_sobre_stoch_k_spin.BackColorHover(C'233,220,203');
+            m_tab8_sobre_stoch_k_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_stoch_k_spin.BorderColor(tab2_border);
+            m_tab8_sobre_stoch_k_spin.BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_k_spin.BorderColorPressed(tab2_border);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().BackColor(clrWhite);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().BorderColor(tab2_border);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_k_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+            const int stoch_d_y=sobre_param_content_y+50;
+            if(!CreateTextLabel(m_tab8_sobre_stoch_d_label,"D",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_d_y,stoch_label_w,stoch_control_h))
+               return(false);
+            m_tab8_sobre_stoch_d_label.FontSize(9);
+            m_tab8_sobre_stoch_d_label.LabelColor(C'91,78,64');
+
+            m_tab8_sobre_stoch_d_spin.MainPointer(m_tab8_sobre_param_tabs);
+            m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_stoch_d_spin);
+            m_tab8_sobre_stoch_d_spin.XSize(stoch_obj_w);
+            m_tab8_sobre_stoch_d_spin.MaxValue(9999.0);
+            m_tab8_sobre_stoch_d_spin.MinValue(0.0);
+            m_tab8_sobre_stoch_d_spin.StepValue(1.0);
+            m_tab8_sobre_stoch_d_spin.SetDigits(0);
+            m_tab8_sobre_stoch_d_spin.SpinEditMode(true);
+            m_tab8_sobre_stoch_d_spin.CheckBoxMode(false);
+            m_tab8_sobre_stoch_d_spin.SetValue("3");
+            m_tab8_sobre_stoch_d_spin.AnchorBottomWindowSide(false);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().XSize(stoch_obj_text_w);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().AutoSelectionMode(true);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().XGap(1);
+            if(!m_tab8_sobre_stoch_d_spin.CreateTextEdit("",stoch_obj_x,stoch_d_y))
+               return(false);
+            AddToElementsArray(m_window_index,m_tab8_sobre_stoch_d_spin);
+            m_tab8_sobre_stoch_d_spin.BackColor(C'233,220,203');
+            m_tab8_sobre_stoch_d_spin.BackColorHover(C'233,220,203');
+            m_tab8_sobre_stoch_d_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_stoch_d_spin.BorderColor(tab2_border);
+            m_tab8_sobre_stoch_d_spin.BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_d_spin.BorderColorPressed(tab2_border);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().BackColor(clrWhite);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().BorderColor(tab2_border);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_d_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+            const int stoch_l_y=sobre_param_content_y+82;
+            if(!CreateTextLabel(m_tab8_sobre_stoch_slow_label,"L",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_l_y,stoch_label_w,stoch_control_h))
+               return(false);
+            m_tab8_sobre_stoch_slow_label.FontSize(9);
+            m_tab8_sobre_stoch_slow_label.LabelColor(C'91,78,64');
+
+            m_tab8_sobre_stoch_slow_spin.MainPointer(m_tab8_sobre_param_tabs);
+            m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_stoch_slow_spin);
+            m_tab8_sobre_stoch_slow_spin.XSize(stoch_obj_w);
+            m_tab8_sobre_stoch_slow_spin.MaxValue(9999.0);
+            m_tab8_sobre_stoch_slow_spin.MinValue(0.0);
+            m_tab8_sobre_stoch_slow_spin.StepValue(1.0);
+            m_tab8_sobre_stoch_slow_spin.SetDigits(0);
+            m_tab8_sobre_stoch_slow_spin.SpinEditMode(true);
+            m_tab8_sobre_stoch_slow_spin.CheckBoxMode(false);
+            m_tab8_sobre_stoch_slow_spin.SetValue("3");
+            m_tab8_sobre_stoch_slow_spin.AnchorBottomWindowSide(false);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().XSize(stoch_obj_text_w);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().AutoSelectionMode(true);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().XGap(1);
+            if(!m_tab8_sobre_stoch_slow_spin.CreateTextEdit("",stoch_obj_x,stoch_l_y))
+               return(false);
+            AddToElementsArray(m_window_index,m_tab8_sobre_stoch_slow_spin);
+            m_tab8_sobre_stoch_slow_spin.BackColor(C'233,220,203');
+            m_tab8_sobre_stoch_slow_spin.BackColorHover(C'233,220,203');
+            m_tab8_sobre_stoch_slow_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_stoch_slow_spin.BorderColor(tab2_border);
+            m_tab8_sobre_stoch_slow_spin.BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_slow_spin.BorderColorPressed(tab2_border);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().BackColor(clrWhite);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().BorderColor(tab2_border);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_slow_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+            const int stoch_ma_y=sobre_param_content_y+114;
+            if(!CreateTextLabel(m_tab8_sobre_stoch_ma_label,"Media",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_ma_y,stoch_label_w,stoch_control_h))
+               return(false);
+            m_tab8_sobre_stoch_ma_label.FontSize(9);
+            m_tab8_sobre_stoch_ma_label.LabelColor(C'91,78,64');
+
+            m_tab8_sobre_stoch_ma_combo.MainPointer(m_tab8_sobre_param_tabs);
+            m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_stoch_ma_combo);
+            m_tab8_sobre_stoch_ma_combo.XSize(stoch_obj_w+8);
+            m_tab8_sobre_stoch_ma_combo.YSize(20);
+            m_tab8_sobre_stoch_ma_combo.BackColor(clrWhite);
+            m_tab8_sobre_stoch_ma_combo.BackColorHover(clrWhite);
+            m_tab8_sobre_stoch_ma_combo.BackColorPressed(clrWhite);
+            m_tab8_sobre_stoch_ma_combo.BorderColor(tab2_border);
+            m_tab8_sobre_stoch_ma_combo.BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_ma_combo.BorderColorPressed(tab2_border);
+            m_tab8_sobre_stoch_ma_combo.FontSize(10);
+            m_tab8_sobre_stoch_ma_combo.ItemsTotal(ArraySize(sobre_ma_items));
+            m_tab8_sobre_stoch_ma_combo.CheckBoxMode(false);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().XGap(1);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().XSize(stoch_obj_w+6);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().YSize(20);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().AnchorRightWindowSide(false);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BackColor(clrWhite);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BackColorHover(clrWhite);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BackColorPressed(clrWhite);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BorderColor(tab2_border);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().IconXGap((stoch_obj_w+6)-18);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().LabelXGap(10);
+            m_tab8_sobre_stoch_ma_combo.GetButtonPointer().LabelColor(C'43,43,43');
+            for(int m=0;m<ArraySize(sobre_ma_items);m++) m_tab8_sobre_stoch_ma_combo.SetValue(m,sobre_ma_items[m]);
+            m_tab8_sobre_stoch_ma_combo.GetListViewPointer().YSize(140);
+            m_tab8_sobre_stoch_ma_combo.GetListViewPointer().LightsHover(true);
+            m_tab8_sobre_stoch_ma_combo.GetListViewPointer().BackColor(clrWhite);
+            if(!m_tab8_sobre_stoch_ma_combo.CreateComboBox("",stoch_obj_x,stoch_ma_y))
+               return(false);
+            AddToElementsArray(m_window_index,m_tab8_sobre_stoch_ma_combo);
+            m_tab8_sobre_stoch_ma_combo.SelectItem(0);
+
+            const int stoch_type_y=sobre_param_content_y+146;
+            if(!CreateTextLabel(m_tab8_sobre_stoch_type_label,"Tipo",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_type_y,stoch_label_w,stoch_control_h))
+               return(false);
+            m_tab8_sobre_stoch_type_label.FontSize(9);
+            m_tab8_sobre_stoch_type_label.LabelColor(C'91,78,64');
+
+            m_tab8_sobre_stoch_type_combo.MainPointer(m_tab8_sobre_param_tabs);
+            m_tab8_sobre_param_tabs.AddToElementsArray(i,m_tab8_sobre_stoch_type_combo);
+            m_tab8_sobre_stoch_type_combo.XSize(stoch_obj_w+8);
+            m_tab8_sobre_stoch_type_combo.YSize(20);
+            m_tab8_sobre_stoch_type_combo.BackColor(clrWhite);
+            m_tab8_sobre_stoch_type_combo.BackColorHover(clrWhite);
+            m_tab8_sobre_stoch_type_combo.BackColorPressed(clrWhite);
+            m_tab8_sobre_stoch_type_combo.BorderColor(tab2_border);
+            m_tab8_sobre_stoch_type_combo.BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_type_combo.BorderColorPressed(tab2_border);
+            m_tab8_sobre_stoch_type_combo.FontSize(10);
+            m_tab8_sobre_stoch_type_combo.ItemsTotal(ArraySize(sobre_stoch_type_items));
+            m_tab8_sobre_stoch_type_combo.CheckBoxMode(false);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().XGap(1);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().XSize(stoch_obj_w+6);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().YSize(20);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().AnchorRightWindowSide(false);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().BackColor(clrWhite);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().BackColorHover(clrWhite);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().BackColorPressed(clrWhite);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().BorderColor(tab2_border);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().BorderColorHover(tab2_border);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().IconXGap((stoch_obj_w+6)-18);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().LabelXGap(10);
+            m_tab8_sobre_stoch_type_combo.GetButtonPointer().LabelColor(C'43,43,43');
+            for(int t=0;t<ArraySize(sobre_stoch_type_items);t++) m_tab8_sobre_stoch_type_combo.SetValue(t,sobre_stoch_type_items[t]);
+            m_tab8_sobre_stoch_type_combo.GetListViewPointer().YSize(120);
+            m_tab8_sobre_stoch_type_combo.GetListViewPointer().LightsHover(true);
+            m_tab8_sobre_stoch_type_combo.GetListViewPointer().BackColor(clrWhite);
+            if(!m_tab8_sobre_stoch_type_combo.CreateComboBox("",stoch_obj_x,stoch_type_y))
+               return(false);
+            AddToElementsArray(m_window_index,m_tab8_sobre_stoch_type_combo);
+            m_tab8_sobre_stoch_type_combo.SelectItem(0);
            }
          else
            {
