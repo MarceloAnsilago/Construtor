@@ -561,6 +561,18 @@ private:
       return(true);
      }
 
+   static string CapitalizeFirst(const string text)
+     {
+      if(StringLen(text)<=0)
+         return(text);
+
+      string lower=text;
+      StringToLower(lower);
+      string first=StringSubstr(lower,0,1);
+      StringToUpper(first);
+      return(first+StringSubstr(lower,1));
+     }
+
    void UpdateSignalUI(void)
      {
       const string msg_buy="Voce esta criando um sinal de compra, o de venda sera gerado automaticamente.";
@@ -6763,7 +6775,7 @@ public:
 
       for(int i=0;i<14;i++)
         {
-         string placeholder=StringFormat("Conteudo: Parametros %s (em migracao)",sobre_param_titles[i]);
+         string placeholder=CapitalizeFirst(sobre_param_titles[i]);
          if(!CreateTextLabel(m_tab8_sobre_param_placeholder[i],placeholder,m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y,sobre_param_content_w,36))
             return(false);
          m_tab8_sobre_param_placeholder[i].FontSize(10);
