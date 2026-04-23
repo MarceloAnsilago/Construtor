@@ -6826,20 +6826,20 @@ public:
 
       string sobre_param_titles[];
       ArrayResize(sobre_param_titles,14);
-      sobre_param_titles[0]="MACD";
-      sobre_param_titles[1]="Estocástico";
-      sobre_param_titles[2]="RSI";
-      sobre_param_titles[3]="Money Flow Index (MFI)";
-      sobre_param_titles[4]="Bears Power";
-      sobre_param_titles[5]="Bulls Power";
-      sobre_param_titles[6]="Oscilador Chaikin";
-      sobre_param_titles[7]="Oscilador Accelerator";
-      sobre_param_titles[8]="Awesome Oscilador";
-      sobre_param_titles[9]="Commodity Channel Index (CCI)";
-      sobre_param_titles[10]="DeMarker";
-      sobre_param_titles[11]="Regressão";
-      sobre_param_titles[12]="Afastamento da média";
-      sobre_param_titles[13]="Desvio médio";
+      sobre_param_titles[0]="1-MACD";
+      sobre_param_titles[1]="2-Estocástico";
+      sobre_param_titles[2]="3-RSI";
+      sobre_param_titles[3]="4-Money Flow Index (MFI)";
+      sobre_param_titles[4]="5-Bears Power";
+      sobre_param_titles[5]="6-Bulls Power";
+      sobre_param_titles[6]="7-Oscilador Chaikin";
+      sobre_param_titles[7]="8-Oscilador Accelerator";
+      sobre_param_titles[8]="9-Awesome Oscilador";
+      sobre_param_titles[9]="10-Commodity Channel Index (CCI)";
+      sobre_param_titles[10]="11-DeMarker";
+      sobre_param_titles[11]="12-Regressão";
+      sobre_param_titles[12]="13-Afastamento da média";
+      sobre_param_titles[13]="14-Desvio médio";
 
       const int sobre_param_content_x=10;
       const int sobre_param_content_y=14;
@@ -7047,7 +7047,7 @@ public:
             const int stoch_obj_text_w=(stoch_obj_w>40 ? stoch_obj_w-40 : 34);
 
             const int stoch_title_y=sobre_param_content_y-4;
-            if(!CreateTextLabel(m_tab8_sobre_stoch_title,"Estocastico",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_title_y,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_stoch_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,stoch_title_y,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_stoch_title.FontSize(10);
             m_tab8_sobre_stoch_title.LabelColor(C'43,43,43');
@@ -7251,7 +7251,7 @@ public:
             const int rsi_obj_w=sobre_param_content_w-rsi_label_w-4;
             const int rsi_obj_text_w=(rsi_obj_w>48 ? rsi_obj_w-32 : 48);
             const int rsi_y=sobre_param_content_y+18;
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"RSI",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7340,7 +7340,7 @@ public:
             const int mfi_obj_w=sobre_param_content_w-mfi_label_w-4;
             const int mfi_obj_text_w=(mfi_obj_w>48 ? mfi_obj_w-32 : 48);
             const int mfi_y=sobre_param_content_y+18;
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Money Flow Index (MFI)",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7437,7 +7437,7 @@ public:
             const int bear_obj_text_w=(bear_obj_w>48 ? bear_obj_w-32 : 48);
             const int bear_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_bears_title,"Bears Power",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_bears_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_bears_title.FontSize(10);
             m_tab8_sobre_bears_title.LabelColor(C'43,43,43');
@@ -7488,7 +7488,7 @@ public:
             const int bull_obj_text_w=(bull_obj_w>48 ? bull_obj_w-32 : 48);
             const int bull_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_bulls_title,"Bulls Power",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_bulls_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_bulls_title.FontSize(10);
             m_tab8_sobre_bulls_title.LabelColor(C'43,43,43');
@@ -7548,7 +7548,7 @@ public:
             const int ch_y3=sobre_param_content_y+94;
             const int ch_y4=sobre_param_content_y+132;
 
-            if(!CreateTextLabel(m_tab8_sobre_chaikin_title,"Oscilador Chaikin",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_chaikin_title,"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_chaikin_title.FontSize(10);
             m_tab8_sobre_chaikin_title.LabelColor(C'43,43,43');
@@ -7703,12 +7703,12 @@ public:
            }
          else if(i==7)
            {
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Oscilador Accelerator",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
 
-            if(!CreateTextLabel(m_tab8_sobre_param_placeholder[i],"Parâmetros",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+28,sobre_param_content_w,20))
+            if(!CreateTextLabel(m_tab8_sobre_param_placeholder[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y+28,sobre_param_content_w,20))
                return(false);
             m_tab8_sobre_param_placeholder[i].FontSize(10);
             m_tab8_sobre_param_placeholder[i].LabelColor(C'91,78,64');
@@ -7723,7 +7723,7 @@ public:
             const int cci_obj_text_w=(cci_obj_w>48 ? cci_obj_w-32 : 48);
             const int cci_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Commodity Channel Index (CCI)",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7814,7 +7814,7 @@ public:
             const int demarker_obj_text_w=(demarker_obj_w>48 ? demarker_obj_w-32 : 48);
             const int demarker_y=sobre_param_content_y+18;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"DeMarker",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -7867,7 +7867,7 @@ public:
             const int reg_y2=sobre_param_content_y+64;
             const int reg_y3=sobre_param_content_y+110;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Regressão",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -8001,7 +8001,7 @@ public:
             const int afast_y3=sobre_param_content_y+94;
             const int afast_y4=sobre_param_content_y+132;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Afastamento da média",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -8170,7 +8170,7 @@ public:
             const int desvio_y2=sobre_param_content_y+56;
             const int desvio_y3=sobre_param_content_y+94;
 
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"Desvio médio",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
@@ -8293,8 +8293,8 @@ public:
            }
          else
            {
-            string placeholder=CapitalizeFirst(sobre_param_titles[i]);
-            if(!CreateTextLabel(m_tab8_sobre_param_title[i],placeholder,m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
+            string placeholder="";
+            if(!CreateTextLabel(m_tab8_sobre_param_title[i],"",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-2,sobre_param_content_w,18))
                return(false);
             m_tab8_sobre_param_title[i].FontSize(10);
             m_tab8_sobre_param_title[i].LabelColor(C'43,43,43');
