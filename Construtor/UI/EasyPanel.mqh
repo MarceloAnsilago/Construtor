@@ -5612,9 +5612,12 @@ public:
       const int montar_param_content_x=12;
       const int montar_param_content_y=8;
       const int montar_param_gap_x=16;
-      const int montar_param_gap_y=16;
+      const int montar_param_gap_y=12;
       const int montar_param_card_w=(tab8_montar_tabs_w-(montar_param_content_x*2)-montar_param_gap_x)/2;
-      const int montar_param_card_h=180;
+      const int montar_param_card_h=210;
+      const int montar_param_card_tabs_x=12;
+      const int montar_param_card_tabs_y=30;
+      const int montar_param_card_tabs_bottom_pad=12;
 
       for(int i=0;i<4;i++)
         {
@@ -5646,7 +5649,7 @@ public:
          m_tab8_montar_param_card_tabs[i].MainPointer(m_tab8_montar_param_card[i]);
          m_tab8_montar_tabs.AddToElementsArray(0,m_tab8_montar_param_card_tabs[i]);
          m_tab8_montar_param_card_tabs[i].XSize(montar_param_card_w-24);
-         m_tab8_montar_param_card_tabs[i].YSize(montar_param_card_h-20);
+         m_tab8_montar_param_card_tabs[i].YSize(montar_param_card_h-montar_param_card_tabs_y-montar_param_card_tabs_bottom_pad);
          m_tab8_montar_param_card_tabs[i].IsCenterText(true);
          m_tab8_montar_param_card_tabs[i].PositionMode(TABS_TOP);
          m_tab8_montar_param_card_tabs[i].TabsYSize(22);
@@ -5657,7 +5660,7 @@ public:
          m_tab8_montar_param_card_tabs[i].BorderColorHover(C'197,168,136');
          m_tab8_montar_param_card_tabs[i].BorderColorPressed(C'197,168,136');
          for(int p=0;p<2;p++) m_tab8_montar_param_card_tabs[i].AddTab(montar_card_tabs_text[p],montar_card_tabs_widths[p]);
-         if(!m_tab8_montar_param_card_tabs[i].CreateTabs(12,30))
+         if(!m_tab8_montar_param_card_tabs[i].CreateTabs(montar_param_card_tabs_x,montar_param_card_tabs_y))
             return(false);
          AddToElementsArray(m_window_index,m_tab8_montar_param_card_tabs[i]);
 
