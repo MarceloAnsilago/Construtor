@@ -316,6 +316,9 @@ private:
    CEF_CTextLabel    m_tab8_montar_param_card_title[4];
    CEF_CTabs         m_tab8_montar_param_card_tabs[4];
    CEF_CTextLabel    m_tab8_montar_param_card_tab_placeholder[4][2];
+   CEF_CFrame        m_tab8_montar_sinais_card;
+   CEF_CTextLabel    m_tab8_montar_sinais_card_title;
+   CEF_CComboBox     m_tab8_montar_sinais_logic_combo[5];
    CEF_CTextLabel    m_tab8_padrao_label;
    CEF_CComboBox     m_tab8_padrao_combo;
    CEF_CFrame        m_tab8_card_ordens;
@@ -5734,6 +5737,76 @@ public:
          return(false);
       m_tab8_montar_sinais_placeholder.FontSize(10);
       m_tab8_montar_sinais_placeholder.LabelColor(C'91,78,64');
+
+      const int montar_sinais_card_x=12;
+      const int montar_sinais_card_y=8;
+      const int montar_sinais_card_w=320;
+      const int montar_sinais_card_h=tab8_montar_tabs_h-28;
+
+      if(!CreateFrame(m_tab8_montar_sinais_card,"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,1,montar_sinais_card_x,montar_sinais_card_y,montar_sinais_card_w,montar_sinais_card_h,1))
+         return(false);
+      m_tab8_montar_sinais_card.BackColor(C'233,220,203');
+      m_tab8_montar_sinais_card.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_montar_sinais_card_title,"Conectores lógicos",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,16,12,montar_sinais_card_w-32,22))
+         return(false);
+      m_tab8_montar_sinais_card_title.FontSize(12);
+      m_tab8_montar_sinais_card_title.LabelColor(C'43,43,43');
+
+      string montar_sinais_logic_items[];
+      ArrayResize(montar_sinais_logic_items,7);
+      montar_sinais_logic_items[0]="SE";
+      montar_sinais_logic_items[1]="E";
+      montar_sinais_logic_items[2]="OU";
+      montar_sinais_logic_items[3]="E SE";
+      montar_sinais_logic_items[4]="OU SE";
+      montar_sinais_logic_items[5]="E Também";
+      montar_sinais_logic_items[6]="OU Também";
+
+      const int montar_sinais_inner_x=16;
+      const int montar_sinais_combo_w=montar_sinais_card_w-32;
+      const int montar_sinais_combo_h=20;
+      int montar_sinais_row_y=46;
+
+      for(int i=0;i<5;i++)
+        {
+         m_tab8_montar_sinais_logic_combo[i].MainPointer(m_tab8_montar_sinais_card);
+         m_tab8_montar_tabs.AddToElementsArray(1,m_tab8_montar_sinais_logic_combo[i]);
+         m_tab8_montar_sinais_logic_combo[i].XSize(montar_sinais_combo_w);
+         m_tab8_montar_sinais_logic_combo[i].YSize(montar_sinais_combo_h);
+         m_tab8_montar_sinais_logic_combo[i].BackColor(clrWhite);
+         m_tab8_montar_sinais_logic_combo[i].BackColorHover(clrWhite);
+         m_tab8_montar_sinais_logic_combo[i].BackColorPressed(clrWhite);
+         m_tab8_montar_sinais_logic_combo[i].BorderColor(tab2_border);
+         m_tab8_montar_sinais_logic_combo[i].BorderColorHover(tab2_border);
+         m_tab8_montar_sinais_logic_combo[i].BorderColorPressed(tab2_border);
+         m_tab8_montar_sinais_logic_combo[i].FontSize(10);
+         m_tab8_montar_sinais_logic_combo[i].ItemsTotal(ArraySize(montar_sinais_logic_items));
+         m_tab8_montar_sinais_logic_combo[i].CheckBoxMode(false);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().XGap(1);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().XSize(montar_sinais_combo_w-2);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().YSize(montar_sinais_combo_h);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().AnchorRightWindowSide(false);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().BackColor(clrWhite);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().BackColorHover(clrWhite);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().BackColorPressed(clrWhite);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().BorderColor(tab2_border);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().BorderColorHover(tab2_border);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().BorderColorPressed(tab2_border);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().IconXGap((montar_sinais_combo_w-2)-18);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().LabelXGap(10);
+         m_tab8_montar_sinais_logic_combo[i].GetButtonPointer().LabelColor(C'43,43,43');
+         for(int p=0;p<ArraySize(montar_sinais_logic_items);p++) m_tab8_montar_sinais_logic_combo[i].SetValue(p,montar_sinais_logic_items[p]);
+         m_tab8_montar_sinais_logic_combo[i].GetListViewPointer().YSize(120);
+         m_tab8_montar_sinais_logic_combo[i].GetListViewPointer().LightsHover(true);
+         m_tab8_montar_sinais_logic_combo[i].GetListViewPointer().BackColor(clrWhite);
+         if(!m_tab8_montar_sinais_logic_combo[i].CreateComboBox("",montar_sinais_inner_x,montar_sinais_row_y))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab8_montar_sinais_logic_combo[i]);
+         m_tab8_montar_sinais_logic_combo[i].SelectItem(0);
+
+         montar_sinais_row_y+=34;
+        }
 
       m_tab8_montar_tabs.SelectTab(0);
       m_tab8_montar_tabs.ShowTabElements();
