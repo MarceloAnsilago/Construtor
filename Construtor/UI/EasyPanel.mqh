@@ -91,6 +91,7 @@ private:
    bool              m_visible;
    int               m_window_index;
    int               m_top_tab_last;
+   int               m_tab8_montar_tab_last;
    bool              m_signal_is_buy;
    int               m_tab8_cruz_fast_last_idx;
    int               m_tab8_cruz_slow_last_idx;
@@ -886,6 +887,17 @@ private:
         }
      }
 
+   void PollMontarTabChanges(void)
+     {
+      const int selected_tab=m_tab8_montar_tabs.SelectedTab();
+      if(selected_tab!=m_tab8_montar_tab_last)
+        {
+         m_tab8_montar_tab_last=selected_tab;
+         if(selected_tab==1)
+            RefreshMontarValueCombos();
+        }
+     }
+
    bool CreateCruzPeriodShiftPrice(const int inner_tab_index,
                                   CEF_CTabs &inner_tabs,
                                   const int cruz_param_x,
@@ -1232,7 +1244,7 @@ private:
       }
 
 public:
-                    CConstrutorEasyPanel(void) : m_created(false), m_visible(false), m_window_index(-1), m_top_tab_last(-1), m_signal_is_buy(true), m_tab8_cruz_fast_last_idx(-1), m_tab8_cruz_slow_last_idx(-1), m_tab8_sobre_indic_last_idx(-1)
+                    CConstrutorEasyPanel(void) : m_created(false), m_visible(false), m_window_index(-1), m_top_tab_last(-1), m_tab8_montar_tab_last(-1), m_signal_is_buy(true), m_tab8_cruz_fast_last_idx(-1), m_tab8_cruz_slow_last_idx(-1), m_tab8_sobre_indic_last_idx(-1)
      {
       for(int i=0;i<4;i++)
          m_tab8_montar_indic_last_idx[i]=-1;
@@ -10384,6 +10396,7 @@ public:
       UpdateMontarIndicButtons();
       m_tab8_cruz_fast_last_idx=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
       m_tab8_cruz_slow_last_idx=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
+      m_tab8_montar_tab_last=m_tab8_montar_tabs.SelectedTab();
       for(int i=0;i<4;i++)
          m_tab8_montar_indic_last_idx[i]=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
       Show((uint)m_window_index);
@@ -10871,6 +10884,7 @@ public:
 
       // Keep cross shortcut buttons synced even without explicit combo change events.
       PollCrossComboChanges();
+      PollMontarTabChanges();
       PollMontarIndicChanges();
      }
   };
