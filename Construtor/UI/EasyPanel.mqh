@@ -95,6 +95,7 @@ private:
    int               m_tab8_cruz_fast_last_idx;
    int               m_tab8_cruz_slow_last_idx;
    int               m_tab8_sobre_indic_last_idx;
+   int               m_tab8_montar_indic_last_idx[4];
    CEF_CWindow       m_window;
    CEF_CTextLabel    m_title;
    CEF_CTextLabel    m_note;
@@ -307,6 +308,7 @@ private:
    CEF_CTextLabel    m_tab8_card_montar_indic_title;
    CEF_CTextLabel    m_tab8_montar_indic_label[4];
    CEF_CComboBox     m_tab8_montar_indic_combo[4];
+   CEF_CButton       m_tab8_montar_indic_btn[4];
    CEF_CTabs         m_tab8_montar_tabs;
    CEF_CTextLabel    m_tab8_montar_param_placeholder;
    CEF_CTextLabel    m_tab8_montar_sinais_placeholder;
@@ -739,6 +741,38 @@ private:
         }
      }
 
+   void UpdateMontarIndicButton(const int slot)
+     {
+      if(slot<0 || slot>=4)
+         return;
+      const int idx=m_tab8_montar_indic_combo[slot].GetListViewPointer().SelectedItemIndex();
+      if(idx>0)
+         m_tab8_montar_indic_btn[slot].LabelText((string)idx);
+      else
+         m_tab8_montar_indic_btn[slot].LabelText("");
+      if(m_visible)
+         m_tab8_montar_indic_btn[slot].Update(true);
+     }
+
+   void UpdateMontarIndicButtons(void)
+     {
+      for(int i=0;i<4;i++)
+         UpdateMontarIndicButton(i);
+     }
+
+   void PollMontarIndicChanges(void)
+     {
+      for(int i=0;i<4;i++)
+        {
+         const int idx=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
+         if(idx!=m_tab8_montar_indic_last_idx[i])
+           {
+            m_tab8_montar_indic_last_idx[i]=idx;
+            UpdateMontarIndicButton(i);
+           }
+        }
+     }
+
    bool CreateCruzPeriodShiftPrice(const int inner_tab_index,
                                   CEF_CTabs &inner_tabs,
                                   const int cruz_param_x,
@@ -1085,7 +1119,11 @@ private:
       }
 
 public:
-                     CConstrutorEasyPanel(void) : m_created(false), m_visible(false), m_window_index(-1), m_top_tab_last(-1), m_signal_is_buy(true), m_tab8_cruz_fast_last_idx(-1), m_tab8_cruz_slow_last_idx(-1), m_tab8_sobre_indic_last_idx(-1) {}
+                    CConstrutorEasyPanel(void) : m_created(false), m_visible(false), m_window_index(-1), m_top_tab_last(-1), m_signal_is_buy(true), m_tab8_cruz_fast_last_idx(-1), m_tab8_cruz_slow_last_idx(-1), m_tab8_sobre_indic_last_idx(-1)
+     {
+      for(int i=0;i<4;i++)
+         m_tab8_montar_indic_last_idx[i]=-1;
+     }
 
    bool              IsVisible(void) const { return(m_visible); }
    bool              IsCreated(void) const { return(m_created); }
@@ -1095,6 +1133,7 @@ public:
          return;
       PollCrossComboChanges();
       PollSobreIndicChanges();
+      PollMontarIndicChanges();
      }
 
    bool CreateIfNeeded(void)
@@ -5392,25 +5431,55 @@ public:
       m_tab8_card_montar_indic_title.LabelColor(C'43,43,43');
 
       string montar_indic_items[];
-      ArrayResize(montar_indic_items,14);
-      montar_indic_items[0]="MACD";
-      montar_indic_items[1]="Estocástico";
-      montar_indic_items[2]="RSI";
-      montar_indic_items[3]="Money Flow Index (MFI)";
-      montar_indic_items[4]="Bears Power";
-      montar_indic_items[5]="Bulls Power";
-      montar_indic_items[6]="Oscilador Chaikin";
-      montar_indic_items[7]="Oscilador Accelerator";
-      montar_indic_items[8]="Awesome Oscilador";
-      montar_indic_items[9]="Commodity Channel Index (CCI)";
-      montar_indic_items[10]="DeMarker";
-      montar_indic_items[11]="Regressão";
-      montar_indic_items[12]="Afastamento da média";
-      montar_indic_items[13]="Desvio médio";
+      ArrayResize(montar_indic_items,42);
+      montar_indic_items[0]="Não usar";
+      montar_indic_items[1]="Keltner";
+      montar_indic_items[2]="Dochian";
+      montar_indic_items[3]="Regressão";
+      montar_indic_items[4]="Afastamento da média";
+      montar_indic_items[5]="Desvio Médio";
+      montar_indic_items[6]="Canal ATR";
+      montar_indic_items[7]="Média Móvel";
+      montar_indic_items[8]="Bandas de Bolinger";
+      montar_indic_items[9]="MACD";
+      montar_indic_items[10]="Envelopes";
+      montar_indic_items[11]="Estocástico";
+      montar_indic_items[12]="Relative Strength Index (RSI)";
+      montar_indic_items[13]="Desvio Padrão";
+      montar_indic_items[14]="Volume";
+      montar_indic_items[15]="Average True Range (ATR)";
+      montar_indic_items[16]="Parabolic SAR";
+      montar_indic_items[17]="Fractal";
+      montar_indic_items[18]="On Balance Volume (OBV)";
+      montar_indic_items[19]="Acumulação/Distribuição (A/D)";
+      montar_indic_items[20]="Money Flow Index (MFI)";
+      montar_indic_items[21]="Vidya";
+      montar_indic_items[22]="Dema";
+      montar_indic_items[23]="Tema";
+      montar_indic_items[24]="Frama";
+      montar_indic_items[25]="Trix";
+      montar_indic_items[26]="Bears Power";
+      montar_indic_items[27]="Bulls Power";
+      montar_indic_items[28]="Chaikin Oscilador";
+      montar_indic_items[29]="Accelerator Oscilador";
+      montar_indic_items[30]="Awesome Oscilador";
+      montar_indic_items[31]="Commodity Channel Index (CCI)";
+      montar_indic_items[32]="DeMarker";
+      montar_indic_items[33]="Alligator";
+      montar_indic_items[34]="Nuvem de Ichimoku";
+      montar_indic_items[35]="Average Directional Index (ADX)";
+      montar_indic_items[36]="ADX Welles Wilder";
+      montar_indic_items[37]="Gator Oscilador";
+      montar_indic_items[38]="Williams Percent Range (WPR)";
+      montar_indic_items[39]="Market Facilitation Index";
+      montar_indic_items[40]="Momentum";
+      montar_indic_items[41]="Relative Vigor Index (RVI)";
 
       const int tab8_montar_inner_x=16;
       const int tab8_montar_label_w=tab8_montar_w-32;
-      const int tab8_montar_combo_w=tab8_montar_w-32;
+      const int tab8_montar_short_btn_w=30;
+      const int tab8_montar_combo_w=tab8_montar_w-32-tab8_montar_short_btn_w-6;
+      const int tab8_montar_short_btn_x=tab8_montar_inner_x+tab8_montar_combo_w+6;
       int tab8_montar_row_y=44;
 
       for(int i=0;i<4;i++)
@@ -5454,7 +5523,27 @@ public:
          if(!m_tab8_montar_indic_combo[i].CreateComboBox("",tab8_montar_inner_x,tab8_montar_row_y+18))
             return(false);
          AddToElementsArray(m_window_index,m_tab8_montar_indic_combo[i]);
-         m_tab8_montar_indic_combo[i].SelectItem(i);
+         m_tab8_montar_indic_combo[i].SelectItem(0);
+
+         m_tab8_montar_indic_btn[i].MainPointer(m_tab8_card_montar_indic);
+         m_tab8_tabs.AddToElementsArray(1,m_tab8_montar_indic_btn[i]);
+         m_tab8_montar_indic_btn[i].NamePart(StringFormat("montar_indic_btn_%d",i+1));
+         m_tab8_montar_indic_btn[i].XSize(tab8_montar_short_btn_w);
+         m_tab8_montar_indic_btn[i].YSize(20);
+         m_tab8_montar_indic_btn[i].IsCenterText(true);
+         m_tab8_montar_indic_btn[i].FontSize(9);
+         m_tab8_montar_indic_btn[i].BackColor(C'39,54,78');
+         m_tab8_montar_indic_btn[i].BackColorHover(C'62,79,101');
+         m_tab8_montar_indic_btn[i].BackColorPressed(C'226,114,64');
+         m_tab8_montar_indic_btn[i].BorderColor(C'18,29,43');
+         m_tab8_montar_indic_btn[i].BorderColorHover(C'62,79,101');
+         m_tab8_montar_indic_btn[i].BorderColorPressed(C'240,140,86');
+         m_tab8_montar_indic_btn[i].LabelColor(clrWhite);
+         m_tab8_montar_indic_btn[i].LabelColorHover(clrWhite);
+         m_tab8_montar_indic_btn[i].LabelColorPressed(clrWhite);
+         if(!m_tab8_montar_indic_btn[i].CreateButton("",tab8_montar_short_btn_x,tab8_montar_row_y+18))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab8_montar_indic_btn[i]);
 
          tab8_montar_row_y+=48;
         }
@@ -9840,8 +9929,11 @@ public:
       LoadSettingsToControls(g_settings);
       UpdateSignalUI();
       UpdateCrossUI();
+      UpdateMontarIndicButtons();
       m_tab8_cruz_fast_last_idx=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
       m_tab8_cruz_slow_last_idx=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
+      for(int i=0;i<4;i++)
+         m_tab8_montar_indic_last_idx[i]=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
       Show((uint)m_window_index);
       m_top_tabs.ShowTabElements();
       if(m_top_tabs.SelectedTab()==0)
@@ -10335,6 +10427,7 @@ public:
 
       // Keep cross shortcut buttons synced even without explicit combo change events.
       PollCrossComboChanges();
+      PollMontarIndicChanges();
      }
   };
 
