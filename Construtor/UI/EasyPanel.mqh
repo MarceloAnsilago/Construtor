@@ -318,13 +318,13 @@ private:
    CEF_CTextLabel    m_tab8_montar_param_card_subtitle[4];
    CEF_CTabs         m_tab8_montar_param_card_tabs[4];
    CEF_CTextLabel    m_tab8_montar_param_card_tab_placeholder[4][2];
-   CEF_CTextLabel    m_tab8_montar_keltner_title;
-   CEF_CTextLabel    m_tab8_montar_keltner_period_label;
-   CEF_CTextEdit     m_tab8_montar_keltner_period_spin;
-   CEF_CTextLabel    m_tab8_montar_keltner_deviation_label;
-   CEF_CTextEdit     m_tab8_montar_keltner_deviation_spin;
-   CEF_CTextLabel    m_tab8_montar_keltner_ma_type_label;
-   CEF_CComboBox     m_tab8_montar_keltner_ma_type_combo;
+   CEF_CTextLabel    m_tab8_montar_keltner_title[4];
+   CEF_CTextLabel    m_tab8_montar_keltner_period_label[4];
+   CEF_CTextEdit     m_tab8_montar_keltner_period_spin[4];
+   CEF_CTextLabel    m_tab8_montar_keltner_deviation_label[4];
+   CEF_CTextEdit     m_tab8_montar_keltner_deviation_spin[4];
+   CEF_CTextLabel    m_tab8_montar_keltner_ma_type_label[4];
+   CEF_CComboBox     m_tab8_montar_keltner_ma_type_combo[4];
    CEF_CFrame        m_tab8_montar_sinais_card;
    CEF_CTextLabel    m_tab8_montar_sinais_card_title;
    CEF_CTextLabel    m_tab8_montar_sinais_logic_title;
@@ -5819,7 +5819,7 @@ public:
 
          for(int p=0;p<2;p++)
            {
-            if(i==0 && p==0)
+            if(p==0)
               {
                const int montar_keltner_x=12;
                const int montar_keltner_title_y=8;
@@ -5827,123 +5827,124 @@ public:
                const int montar_keltner_w=montar_param_card_w-48;
                const int montar_keltner_h=20;
                const int montar_keltner_spin_edit_w=montar_keltner_w-34;
+               const string montar_keltner_title=(string)(i+1)+" kelter";
 
-               if(!CreateTextLabel(m_tab8_montar_keltner_title,"1 kelter",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_title_y,montar_keltner_w,16))
+               if(!CreateTextLabel(m_tab8_montar_keltner_title[i],montar_keltner_title,m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_title_y,montar_keltner_w,16))
                   return(false);
-               m_tab8_montar_keltner_title.FontSize(9);
-               m_tab8_montar_keltner_title.LabelColor(C'91,78,64');
+               m_tab8_montar_keltner_title[i].FontSize(9);
+               m_tab8_montar_keltner_title[i].LabelColor(C'91,78,64');
 
-               if(!CreateTextLabel(m_tab8_montar_keltner_period_label,"Período",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y,montar_keltner_w,16))
+               if(!CreateTextLabel(m_tab8_montar_keltner_period_label[i],"Período",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y,montar_keltner_w,16))
                   return(false);
-               m_tab8_montar_keltner_period_label.FontSize(9);
-               m_tab8_montar_keltner_period_label.LabelColor(C'91,78,64');
+               m_tab8_montar_keltner_period_label[i].FontSize(9);
+               m_tab8_montar_keltner_period_label[i].LabelColor(C'91,78,64');
 
-               m_tab8_montar_keltner_period_spin.MainPointer(m_tab8_montar_param_card_tabs[i]);
-               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_period_spin);
-               m_tab8_montar_keltner_period_spin.XSize(montar_keltner_w);
-               m_tab8_montar_keltner_period_spin.MaxValue(9999.0);
-               m_tab8_montar_keltner_period_spin.MinValue(1.0);
-               m_tab8_montar_keltner_period_spin.StepValue(1.0);
-               m_tab8_montar_keltner_period_spin.SetDigits(0);
-               m_tab8_montar_keltner_period_spin.SpinEditMode(true);
-               m_tab8_montar_keltner_period_spin.CheckBoxMode(false);
-               m_tab8_montar_keltner_period_spin.SetValue("20");
-               m_tab8_montar_keltner_period_spin.AnchorBottomWindowSide(false);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().XSize(montar_keltner_spin_edit_w);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().XGap(1);
-               if(!m_tab8_montar_keltner_period_spin.CreateTextEdit("",montar_keltner_x,montar_keltner_y+16))
+               m_tab8_montar_keltner_period_spin[i].MainPointer(m_tab8_montar_param_card_tabs[i]);
+               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_period_spin[i]);
+               m_tab8_montar_keltner_period_spin[i].XSize(montar_keltner_w);
+               m_tab8_montar_keltner_period_spin[i].MaxValue(9999.0);
+               m_tab8_montar_keltner_period_spin[i].MinValue(1.0);
+               m_tab8_montar_keltner_period_spin[i].StepValue(1.0);
+               m_tab8_montar_keltner_period_spin[i].SetDigits(0);
+               m_tab8_montar_keltner_period_spin[i].SpinEditMode(true);
+               m_tab8_montar_keltner_period_spin[i].CheckBoxMode(false);
+               m_tab8_montar_keltner_period_spin[i].SetValue("20");
+               m_tab8_montar_keltner_period_spin[i].AnchorBottomWindowSide(false);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().XSize(montar_keltner_spin_edit_w);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().XGap(1);
+               if(!m_tab8_montar_keltner_period_spin[i].CreateTextEdit("",montar_keltner_x,montar_keltner_y+16))
                   return(false);
-               AddToElementsArray(m_window_index,m_tab8_montar_keltner_period_spin);
-               m_tab8_montar_keltner_period_spin.BackColor(C'239,231,218');
-               m_tab8_montar_keltner_period_spin.BackColorHover(C'239,231,218');
-               m_tab8_montar_keltner_period_spin.BackColorPressed(C'239,231,218');
-               m_tab8_montar_keltner_period_spin.BorderColor(tab2_border);
-               m_tab8_montar_keltner_period_spin.BorderColorHover(tab2_border);
-               m_tab8_montar_keltner_period_spin.BorderColorPressed(tab2_border);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BackColor(clrWhite);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BorderColor(tab2_border);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
-               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+               AddToElementsArray(m_window_index,m_tab8_montar_keltner_period_spin[i]);
+               m_tab8_montar_keltner_period_spin[i].BackColor(C'239,231,218');
+               m_tab8_montar_keltner_period_spin[i].BackColorHover(C'239,231,218');
+               m_tab8_montar_keltner_period_spin[i].BackColorPressed(C'239,231,218');
+               m_tab8_montar_keltner_period_spin[i].BorderColor(tab2_border);
+               m_tab8_montar_keltner_period_spin[i].BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_period_spin[i].BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().BackColor(clrWhite);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().BackColorHover(clrWhite);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().BorderColor(tab2_border);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_period_spin[i].GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-               if(!CreateTextLabel(m_tab8_montar_keltner_deviation_label,"Desvios",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y+44,montar_keltner_w,16))
+               if(!CreateTextLabel(m_tab8_montar_keltner_deviation_label[i],"Desvios",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y+44,montar_keltner_w,16))
                   return(false);
-               m_tab8_montar_keltner_deviation_label.FontSize(9);
-               m_tab8_montar_keltner_deviation_label.LabelColor(C'91,78,64');
+               m_tab8_montar_keltner_deviation_label[i].FontSize(9);
+               m_tab8_montar_keltner_deviation_label[i].LabelColor(C'91,78,64');
 
-               m_tab8_montar_keltner_deviation_spin.MainPointer(m_tab8_montar_param_card_tabs[i]);
-               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_deviation_spin);
-               m_tab8_montar_keltner_deviation_spin.XSize(montar_keltner_w);
-               m_tab8_montar_keltner_deviation_spin.MaxValue(9999.0);
-               m_tab8_montar_keltner_deviation_spin.MinValue(0.0);
-               m_tab8_montar_keltner_deviation_spin.StepValue(0.1);
-               m_tab8_montar_keltner_deviation_spin.SetDigits(1);
-               m_tab8_montar_keltner_deviation_spin.SpinEditMode(true);
-               m_tab8_montar_keltner_deviation_spin.CheckBoxMode(false);
-               m_tab8_montar_keltner_deviation_spin.SetValue("2");
-               m_tab8_montar_keltner_deviation_spin.AnchorBottomWindowSide(false);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().XSize(montar_keltner_spin_edit_w);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().AutoSelectionMode(true);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().XGap(1);
-               if(!m_tab8_montar_keltner_deviation_spin.CreateTextEdit("",montar_keltner_x,montar_keltner_y+60))
+               m_tab8_montar_keltner_deviation_spin[i].MainPointer(m_tab8_montar_param_card_tabs[i]);
+               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_deviation_spin[i]);
+               m_tab8_montar_keltner_deviation_spin[i].XSize(montar_keltner_w);
+               m_tab8_montar_keltner_deviation_spin[i].MaxValue(9999.0);
+               m_tab8_montar_keltner_deviation_spin[i].MinValue(0.0);
+               m_tab8_montar_keltner_deviation_spin[i].StepValue(0.1);
+               m_tab8_montar_keltner_deviation_spin[i].SetDigits(1);
+               m_tab8_montar_keltner_deviation_spin[i].SpinEditMode(true);
+               m_tab8_montar_keltner_deviation_spin[i].CheckBoxMode(false);
+               m_tab8_montar_keltner_deviation_spin[i].SetValue("2");
+               m_tab8_montar_keltner_deviation_spin[i].AnchorBottomWindowSide(false);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().XSize(montar_keltner_spin_edit_w);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().XGap(1);
+               if(!m_tab8_montar_keltner_deviation_spin[i].CreateTextEdit("",montar_keltner_x,montar_keltner_y+60))
                   return(false);
-               AddToElementsArray(m_window_index,m_tab8_montar_keltner_deviation_spin);
-               m_tab8_montar_keltner_deviation_spin.BackColor(C'239,231,218');
-               m_tab8_montar_keltner_deviation_spin.BackColorHover(C'239,231,218');
-               m_tab8_montar_keltner_deviation_spin.BackColorPressed(C'239,231,218');
-               m_tab8_montar_keltner_deviation_spin.BorderColor(tab2_border);
-               m_tab8_montar_keltner_deviation_spin.BorderColorHover(tab2_border);
-               m_tab8_montar_keltner_deviation_spin.BorderColorPressed(tab2_border);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BackColor(clrWhite);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BackColorHover(clrWhite);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BorderColor(tab2_border);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
-               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+               AddToElementsArray(m_window_index,m_tab8_montar_keltner_deviation_spin[i]);
+               m_tab8_montar_keltner_deviation_spin[i].BackColor(C'239,231,218');
+               m_tab8_montar_keltner_deviation_spin[i].BackColorHover(C'239,231,218');
+               m_tab8_montar_keltner_deviation_spin[i].BackColorPressed(C'239,231,218');
+               m_tab8_montar_keltner_deviation_spin[i].BorderColor(tab2_border);
+               m_tab8_montar_keltner_deviation_spin[i].BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_deviation_spin[i].BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().BackColor(clrWhite);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().BackColorHover(clrWhite);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().BorderColor(tab2_border);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_deviation_spin[i].GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-               if(!CreateTextLabel(m_tab8_montar_keltner_ma_type_label,"Tipo de média",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y+88,montar_keltner_w,16))
+               if(!CreateTextLabel(m_tab8_montar_keltner_ma_type_label[i],"Tipo de média",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y+88,montar_keltner_w,16))
                   return(false);
-               m_tab8_montar_keltner_ma_type_label.FontSize(9);
-               m_tab8_montar_keltner_ma_type_label.LabelColor(C'91,78,64');
+               m_tab8_montar_keltner_ma_type_label[i].FontSize(9);
+               m_tab8_montar_keltner_ma_type_label[i].LabelColor(C'91,78,64');
 
-               m_tab8_montar_keltner_ma_type_combo.MainPointer(m_tab8_montar_param_card_tabs[i]);
-               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_ma_type_combo);
-               m_tab8_montar_keltner_ma_type_combo.XSize(montar_keltner_w);
-               m_tab8_montar_keltner_ma_type_combo.YSize(montar_keltner_h);
-               m_tab8_montar_keltner_ma_type_combo.BackColor(clrWhite);
-               m_tab8_montar_keltner_ma_type_combo.BackColorHover(clrWhite);
-               m_tab8_montar_keltner_ma_type_combo.BackColorPressed(clrWhite);
-               m_tab8_montar_keltner_ma_type_combo.BorderColor(tab2_border);
-               m_tab8_montar_keltner_ma_type_combo.BorderColorHover(tab2_border);
-               m_tab8_montar_keltner_ma_type_combo.BorderColorPressed(tab2_border);
-               m_tab8_montar_keltner_ma_type_combo.FontSize(10);
-               m_tab8_montar_keltner_ma_type_combo.ItemsTotal(ArraySize(montar_ma_type_items));
-               m_tab8_montar_keltner_ma_type_combo.CheckBoxMode(false);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().XGap(1);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().XSize(montar_keltner_w-2);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().YSize(montar_keltner_h);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().AnchorRightWindowSide(false);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BackColor(clrWhite);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BackColorHover(clrWhite);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BackColorPressed(clrWhite);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BorderColor(tab2_border);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BorderColorHover(tab2_border);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BorderColorPressed(tab2_border);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().IconXGap((montar_keltner_w-2)-18);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().LabelXGap(10);
-               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().LabelColor(C'43,43,43');
-               for(int m=0;m<ArraySize(montar_ma_type_items);m++) m_tab8_montar_keltner_ma_type_combo.SetValue(m,montar_ma_type_items[m]);
-               m_tab8_montar_keltner_ma_type_combo.GetListViewPointer().YSize(140);
-               m_tab8_montar_keltner_ma_type_combo.GetListViewPointer().LightsHover(true);
-               m_tab8_montar_keltner_ma_type_combo.GetListViewPointer().BackColor(clrWhite);
-               if(!m_tab8_montar_keltner_ma_type_combo.CreateComboBox("",montar_keltner_x,montar_keltner_y+104))
+               m_tab8_montar_keltner_ma_type_combo[i].MainPointer(m_tab8_montar_param_card_tabs[i]);
+               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_ma_type_combo[i]);
+               m_tab8_montar_keltner_ma_type_combo[i].XSize(montar_keltner_w);
+               m_tab8_montar_keltner_ma_type_combo[i].YSize(montar_keltner_h);
+               m_tab8_montar_keltner_ma_type_combo[i].BackColor(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo[i].BackColorHover(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo[i].BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo[i].BorderColor(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo[i].BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo[i].BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo[i].FontSize(10);
+               m_tab8_montar_keltner_ma_type_combo[i].ItemsTotal(ArraySize(montar_ma_type_items));
+               m_tab8_montar_keltner_ma_type_combo[i].CheckBoxMode(false);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().XGap(1);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().XSize(montar_keltner_w-2);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().YSize(montar_keltner_h);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().AnchorRightWindowSide(false);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().BackColor(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().BackColorHover(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().BorderColor(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().IconXGap((montar_keltner_w-2)-18);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().LabelXGap(10);
+               m_tab8_montar_keltner_ma_type_combo[i].GetButtonPointer().LabelColor(C'43,43,43');
+               for(int m=0;m<ArraySize(montar_ma_type_items);m++) m_tab8_montar_keltner_ma_type_combo[i].SetValue(m,montar_ma_type_items[m]);
+               m_tab8_montar_keltner_ma_type_combo[i].GetListViewPointer().YSize(140);
+               m_tab8_montar_keltner_ma_type_combo[i].GetListViewPointer().LightsHover(true);
+               m_tab8_montar_keltner_ma_type_combo[i].GetListViewPointer().BackColor(clrWhite);
+               if(!m_tab8_montar_keltner_ma_type_combo[i].CreateComboBox("",montar_keltner_x,montar_keltner_y+104))
                   return(false);
-               AddToElementsArray(m_window_index,m_tab8_montar_keltner_ma_type_combo);
-               m_tab8_montar_keltner_ma_type_combo.SelectItem(0);
+               AddToElementsArray(m_window_index,m_tab8_montar_keltner_ma_type_combo[i]);
+               m_tab8_montar_keltner_ma_type_combo[i].SelectItem(0);
               }
             else
               {
