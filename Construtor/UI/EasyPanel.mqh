@@ -316,9 +316,18 @@ private:
    CEF_CTextLabel    m_tab8_montar_param_card_title[4];
    CEF_CTabs         m_tab8_montar_param_card_tabs[4];
    CEF_CTextLabel    m_tab8_montar_param_card_tab_placeholder[4][2];
+   CEF_CTextLabel    m_tab8_montar_keltner_period_label;
+   CEF_CTextEdit     m_tab8_montar_keltner_period_spin;
+   CEF_CTextLabel    m_tab8_montar_keltner_deviation_label;
+   CEF_CTextEdit     m_tab8_montar_keltner_deviation_spin;
+   CEF_CTextLabel    m_tab8_montar_keltner_ma_type_label;
+   CEF_CComboBox     m_tab8_montar_keltner_ma_type_combo;
    CEF_CFrame        m_tab8_montar_sinais_card;
    CEF_CTextLabel    m_tab8_montar_sinais_card_title;
+   CEF_CTextLabel    m_tab8_montar_sinais_logic_title;
+   CEF_CTextLabel    m_tab8_montar_sinais_value_title;
    CEF_CComboBox     m_tab8_montar_sinais_logic_combo[5];
+   CEF_CComboBox     m_tab8_montar_sinais_value_combo[5];
    CEF_CTextLabel    m_tab8_padrao_label;
    CEF_CComboBox     m_tab8_padrao_combo;
    CEF_CFrame        m_tab8_card_ordens;
@@ -5650,18 +5659,24 @@ public:
 
       const int montar_param_content_x=12;
       const int montar_param_content_y=8;
-      const int montar_param_gap_x=16;
+      const int montar_param_gap_x=12;
       const int montar_param_gap_y=12;
-      const int montar_param_card_w=(tab8_montar_tabs_w-(montar_param_content_x*2)-montar_param_gap_x)/2;
-      const int montar_param_card_h=210;
+      const int montar_param_card_w=(tab8_montar_tabs_w-(montar_param_content_x*2)-(montar_param_gap_x*3))/4;
+      const int montar_param_card_h=330;
       const int montar_param_card_tabs_x=12;
       const int montar_param_card_tabs_y=30;
       const int montar_param_card_tabs_bottom_pad=12;
+      string montar_ma_type_items[];
+      ArrayResize(montar_ma_type_items,4);
+      montar_ma_type_items[0]="Simples (SMA)";
+      montar_ma_type_items[1]="Exponencial (EMA)";
+      montar_ma_type_items[2]="Suavisada (SMMA)";
+      montar_ma_type_items[3]="Linear-ponderada (LWMA)";
 
       for(int i=0;i<4;i++)
         {
-         const int montar_col=i%2;
-         const int montar_row=i/2;
+         const int montar_col=i;
+         const int montar_row=0;
          const int montar_card_x=montar_param_content_x+(montar_col*(montar_param_card_w+montar_param_gap_x));
          const int montar_card_y=montar_param_content_y+(montar_row*(montar_param_card_h+montar_param_gap_y));
          string montar_card_title=StringFormat("Indicador %d",i+1);
@@ -5723,10 +5738,133 @@ public:
 
          for(int p=0;p<2;p++)
            {
-            if(!CreateTextLabel(m_tab8_montar_param_card_tab_placeholder[i][p],"",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,10,6,montar_param_card_w-48,18))
-               return(false);
-            m_tab8_montar_param_card_tab_placeholder[i][p].FontSize(9);
-            m_tab8_montar_param_card_tab_placeholder[i][p].LabelColor(C'91,78,64');
+            if(i==0 && p==0)
+              {
+               const int montar_keltner_x=12;
+               const int montar_keltner_y=10;
+               const int montar_keltner_w=montar_param_card_w-48;
+               const int montar_keltner_h=20;
+               const int montar_keltner_spin_edit_w=montar_keltner_w-34;
+
+               if(!CreateTextLabel(m_tab8_montar_keltner_period_label,"Período",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y,montar_keltner_w,16))
+                  return(false);
+               m_tab8_montar_keltner_period_label.FontSize(9);
+               m_tab8_montar_keltner_period_label.LabelColor(C'91,78,64');
+
+               m_tab8_montar_keltner_period_spin.MainPointer(m_tab8_montar_param_card_tabs[i]);
+               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_period_spin);
+               m_tab8_montar_keltner_period_spin.XSize(montar_keltner_w);
+               m_tab8_montar_keltner_period_spin.MaxValue(9999.0);
+               m_tab8_montar_keltner_period_spin.MinValue(1.0);
+               m_tab8_montar_keltner_period_spin.StepValue(1.0);
+               m_tab8_montar_keltner_period_spin.SetDigits(0);
+               m_tab8_montar_keltner_period_spin.SpinEditMode(true);
+               m_tab8_montar_keltner_period_spin.CheckBoxMode(false);
+               m_tab8_montar_keltner_period_spin.SetValue("20");
+               m_tab8_montar_keltner_period_spin.AnchorBottomWindowSide(false);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().XSize(montar_keltner_spin_edit_w);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().AutoSelectionMode(true);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().XGap(1);
+               if(!m_tab8_montar_keltner_period_spin.CreateTextEdit("",montar_keltner_x,montar_keltner_y+16))
+                  return(false);
+               AddToElementsArray(m_window_index,m_tab8_montar_keltner_period_spin);
+               m_tab8_montar_keltner_period_spin.BackColor(C'239,231,218');
+               m_tab8_montar_keltner_period_spin.BackColorHover(C'239,231,218');
+               m_tab8_montar_keltner_period_spin.BackColorPressed(C'239,231,218');
+               m_tab8_montar_keltner_period_spin.BorderColor(tab2_border);
+               m_tab8_montar_keltner_period_spin.BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_period_spin.BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BackColor(clrWhite);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BorderColor(tab2_border);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_period_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+
+               if(!CreateTextLabel(m_tab8_montar_keltner_deviation_label,"Desvios",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y+44,montar_keltner_w,16))
+                  return(false);
+               m_tab8_montar_keltner_deviation_label.FontSize(9);
+               m_tab8_montar_keltner_deviation_label.LabelColor(C'91,78,64');
+
+               m_tab8_montar_keltner_deviation_spin.MainPointer(m_tab8_montar_param_card_tabs[i]);
+               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_deviation_spin);
+               m_tab8_montar_keltner_deviation_spin.XSize(montar_keltner_w);
+               m_tab8_montar_keltner_deviation_spin.MaxValue(9999.0);
+               m_tab8_montar_keltner_deviation_spin.MinValue(0.0);
+               m_tab8_montar_keltner_deviation_spin.StepValue(0.1);
+               m_tab8_montar_keltner_deviation_spin.SetDigits(1);
+               m_tab8_montar_keltner_deviation_spin.SpinEditMode(true);
+               m_tab8_montar_keltner_deviation_spin.CheckBoxMode(false);
+               m_tab8_montar_keltner_deviation_spin.SetValue("2");
+               m_tab8_montar_keltner_deviation_spin.AnchorBottomWindowSide(false);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().XSize(montar_keltner_spin_edit_w);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().AutoSelectionMode(true);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().XGap(1);
+               if(!m_tab8_montar_keltner_deviation_spin.CreateTextEdit("",montar_keltner_x,montar_keltner_y+60))
+                  return(false);
+               AddToElementsArray(m_window_index,m_tab8_montar_keltner_deviation_spin);
+               m_tab8_montar_keltner_deviation_spin.BackColor(C'239,231,218');
+               m_tab8_montar_keltner_deviation_spin.BackColorHover(C'239,231,218');
+               m_tab8_montar_keltner_deviation_spin.BackColorPressed(C'239,231,218');
+               m_tab8_montar_keltner_deviation_spin.BorderColor(tab2_border);
+               m_tab8_montar_keltner_deviation_spin.BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_deviation_spin.BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BackColor(clrWhite);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BackColorHover(clrWhite);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BorderColor(tab2_border);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_deviation_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
+
+               if(!CreateTextLabel(m_tab8_montar_keltner_ma_type_label,"Tipo de média",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y+88,montar_keltner_w,16))
+                  return(false);
+               m_tab8_montar_keltner_ma_type_label.FontSize(9);
+               m_tab8_montar_keltner_ma_type_label.LabelColor(C'91,78,64');
+
+               m_tab8_montar_keltner_ma_type_combo.MainPointer(m_tab8_montar_param_card_tabs[i]);
+               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_keltner_ma_type_combo);
+               m_tab8_montar_keltner_ma_type_combo.XSize(montar_keltner_w);
+               m_tab8_montar_keltner_ma_type_combo.YSize(montar_keltner_h);
+               m_tab8_montar_keltner_ma_type_combo.BackColor(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo.BackColorHover(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo.BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo.BorderColor(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo.BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo.BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo.FontSize(10);
+               m_tab8_montar_keltner_ma_type_combo.ItemsTotal(ArraySize(montar_ma_type_items));
+               m_tab8_montar_keltner_ma_type_combo.CheckBoxMode(false);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().XGap(1);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().XSize(montar_keltner_w-2);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().YSize(montar_keltner_h);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().AnchorRightWindowSide(false);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BackColor(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BackColorHover(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BackColorPressed(clrWhite);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BorderColor(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BorderColorHover(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().BorderColorPressed(tab2_border);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().IconXGap((montar_keltner_w-2)-18);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().LabelXGap(10);
+               m_tab8_montar_keltner_ma_type_combo.GetButtonPointer().LabelColor(C'43,43,43');
+               for(int m=0;m<ArraySize(montar_ma_type_items);m++) m_tab8_montar_keltner_ma_type_combo.SetValue(m,montar_ma_type_items[m]);
+               m_tab8_montar_keltner_ma_type_combo.GetListViewPointer().YSize(140);
+               m_tab8_montar_keltner_ma_type_combo.GetListViewPointer().LightsHover(true);
+               m_tab8_montar_keltner_ma_type_combo.GetListViewPointer().BackColor(clrWhite);
+               if(!m_tab8_montar_keltner_ma_type_combo.CreateComboBox("",montar_keltner_x,montar_keltner_y+104))
+                  return(false);
+               AddToElementsArray(m_window_index,m_tab8_montar_keltner_ma_type_combo);
+               m_tab8_montar_keltner_ma_type_combo.SelectItem(0);
+              }
+            else
+              {
+               if(!CreateTextLabel(m_tab8_montar_param_card_tab_placeholder[i][p],"",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,10,6,montar_param_card_w-48,18))
+                  return(false);
+               m_tab8_montar_param_card_tab_placeholder[i][p].FontSize(9);
+               m_tab8_montar_param_card_tab_placeholder[i][p].LabelColor(C'91,78,64');
+              }
            }
 
          m_tab8_montar_param_card_tabs[i].SelectTab(0);
@@ -5740,7 +5878,7 @@ public:
 
       const int montar_sinais_card_x=12;
       const int montar_sinais_card_y=8;
-      const int montar_sinais_card_w=320;
+      const int montar_sinais_card_w=560;
       const int montar_sinais_card_h=tab8_montar_tabs_h-28;
 
       if(!CreateFrame(m_tab8_montar_sinais_card,"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,1,montar_sinais_card_x,montar_sinais_card_y,montar_sinais_card_w,montar_sinais_card_h,1))
@@ -5763,10 +5901,44 @@ public:
       montar_sinais_logic_items[5]="E Também";
       montar_sinais_logic_items[6]="OU Também";
 
+      string montar_sinais_value_items[];
+      ArrayResize(montar_sinais_value_items,17);
+      montar_sinais_value_items[0]="Não usar";
+      montar_sinais_value_items[1]="Valor absoluto";
+      montar_sinais_value_items[2]="Valor em pontos";
+      montar_sinais_value_items[3]="Preço de entrada";
+      montar_sinais_value_items[4]="Preço Médio";
+      montar_sinais_value_items[5]="Preço Atual";
+      montar_sinais_value_items[6]="Fechamento da vela";
+      montar_sinais_value_items[7]="Abertura da vela";
+      montar_sinais_value_items[8]="Máxima da vela";
+      montar_sinais_value_items[9]="Mínima da vela";
+      montar_sinais_value_items[10]="Fechamento do dia";
+      montar_sinais_value_items[11]="Abertura do dia";
+      montar_sinais_value_items[12]="Máxima do dia";
+      montar_sinais_value_items[13]="Mínima do dia";
+      montar_sinais_value_items[14]="Tamanho da vela";
+      montar_sinais_value_items[15]="Corpo da vela";
+      montar_sinais_value_items[16]="Empty Value";
+
       const int montar_sinais_inner_x=16;
-      const int montar_sinais_combo_w=montar_sinais_card_w-32;
+      const int montar_sinais_col_gap=16;
+      const int montar_sinais_combo_w=(montar_sinais_card_w-32-montar_sinais_col_gap)/2;
+      const int montar_sinais_value_x=montar_sinais_inner_x+montar_sinais_combo_w+montar_sinais_col_gap;
       const int montar_sinais_combo_h=20;
-      int montar_sinais_row_y=46;
+      const int montar_sinais_col_title_y=40;
+      const int montar_sinais_col_title_h=16;
+      int montar_sinais_row_y=62;
+
+      if(!CreateTextLabel(m_tab8_montar_sinais_logic_title,"Operador",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_inner_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
+         return(false);
+      m_tab8_montar_sinais_logic_title.FontSize(9);
+      m_tab8_montar_sinais_logic_title.LabelColor(C'91,78,64');
+
+      if(!CreateTextLabel(m_tab8_montar_sinais_value_title,"Valor de referência",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_value_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
+         return(false);
+      m_tab8_montar_sinais_value_title.FontSize(9);
+      m_tab8_montar_sinais_value_title.LabelColor(C'91,78,64');
 
       for(int i=0;i<5;i++)
         {
@@ -5804,6 +5976,41 @@ public:
             return(false);
          AddToElementsArray(m_window_index,m_tab8_montar_sinais_logic_combo[i]);
          m_tab8_montar_sinais_logic_combo[i].SelectItem(0);
+
+         m_tab8_montar_sinais_value_combo[i].MainPointer(m_tab8_montar_sinais_card);
+         m_tab8_montar_tabs.AddToElementsArray(1,m_tab8_montar_sinais_value_combo[i]);
+         m_tab8_montar_sinais_value_combo[i].XSize(montar_sinais_combo_w);
+         m_tab8_montar_sinais_value_combo[i].YSize(montar_sinais_combo_h);
+         m_tab8_montar_sinais_value_combo[i].BackColor(clrWhite);
+         m_tab8_montar_sinais_value_combo[i].BackColorHover(clrWhite);
+         m_tab8_montar_sinais_value_combo[i].BackColorPressed(clrWhite);
+         m_tab8_montar_sinais_value_combo[i].BorderColor(tab2_border);
+         m_tab8_montar_sinais_value_combo[i].BorderColorHover(tab2_border);
+         m_tab8_montar_sinais_value_combo[i].BorderColorPressed(tab2_border);
+         m_tab8_montar_sinais_value_combo[i].FontSize(10);
+         m_tab8_montar_sinais_value_combo[i].ItemsTotal(ArraySize(montar_sinais_value_items));
+         m_tab8_montar_sinais_value_combo[i].CheckBoxMode(false);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().XGap(1);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().XSize(montar_sinais_combo_w-2);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().YSize(montar_sinais_combo_h);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().AnchorRightWindowSide(false);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().BackColor(clrWhite);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().BackColorHover(clrWhite);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().BackColorPressed(clrWhite);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().BorderColor(tab2_border);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().BorderColorHover(tab2_border);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().BorderColorPressed(tab2_border);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().IconXGap((montar_sinais_combo_w-2)-18);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().LabelXGap(10);
+         m_tab8_montar_sinais_value_combo[i].GetButtonPointer().LabelColor(C'43,43,43');
+         for(int p=0;p<ArraySize(montar_sinais_value_items);p++) m_tab8_montar_sinais_value_combo[i].SetValue(p,montar_sinais_value_items[p]);
+         m_tab8_montar_sinais_value_combo[i].GetListViewPointer().YSize(220);
+         m_tab8_montar_sinais_value_combo[i].GetListViewPointer().LightsHover(true);
+         m_tab8_montar_sinais_value_combo[i].GetListViewPointer().BackColor(clrWhite);
+         if(!m_tab8_montar_sinais_value_combo[i].CreateComboBox("",montar_sinais_value_x,montar_sinais_row_y))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab8_montar_sinais_value_combo[i]);
+         m_tab8_montar_sinais_value_combo[i].SelectItem(0);
 
          montar_sinais_row_y+=34;
         }
