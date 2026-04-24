@@ -674,26 +674,72 @@ private:
         }
      }
 
+   void UpdateShortcutButtonLabel(CEF_CButton &button,const int selected_idx,const int first_item_idx,const int tabs_total)
+     {
+      const int tab_idx=selected_idx-first_item_idx;
+      if(tab_idx>=0 && tab_idx<tabs_total)
+         button.LabelText((string)(tab_idx+1));
+      else
+         button.LabelText("");
+      if(m_visible)
+         button.Update(true);
+     }
+
+   bool ActivateShortcutTab(CEF_CTabs &parent_tabs,
+                            const int parent_tab_idx,
+                            CEF_CTabs &target_tabs,
+                            const int selected_idx,
+                            const int first_item_idx,
+                            const int tabs_total)
+     {
+      const int target_idx=selected_idx-first_item_idx;
+      if(target_idx<0 || target_idx>=tabs_total)
+         return(false);
+
+      parent_tabs.SelectTab(parent_tab_idx);
+      target_tabs.SelectTab(target_idx);
+      parent_tabs.ShowTabElements();
+      target_tabs.ShowTabElements();
+      parent_tabs.Update();
+      target_tabs.Update();
+      return(true);
+     }
+
+   bool ActivateNestedShortcutTab(CEF_CTabs &root_tabs,
+                                  const int root_tab_idx,
+                                  CEF_CTabs &middle_tabs,
+                                  const int middle_tab_idx,
+                                  CEF_CTabs &target_tabs,
+                                  const int selected_idx,
+                                  const int first_item_idx,
+                                  const int tabs_total)
+     {
+      const int target_idx=selected_idx-first_item_idx;
+      if(target_idx<0 || target_idx>=tabs_total)
+         return(false);
+
+      root_tabs.SelectTab(root_tab_idx);
+      middle_tabs.SelectTab(middle_tab_idx);
+      target_tabs.SelectTab(target_idx);
+      root_tabs.ShowTabElements();
+      middle_tabs.ShowTabElements();
+      target_tabs.ShowTabElements();
+      root_tabs.Update();
+      middle_tabs.Update();
+      target_tabs.Update();
+      return(true);
+     }
+
    void UpdateCrossFastButton(void)
      {
       const int v=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
-      if(v>=5 && v<=9)
-         m_tab8_cruz_fast_btn.LabelText((string)(v-4)); // 5->1, 6->2, ..., 9->5
-      else
-         m_tab8_cruz_fast_btn.LabelText("");
-      if(m_visible)
-         m_tab8_cruz_fast_btn.Update(true);
+      UpdateShortcutButtonLabel(m_tab8_cruz_fast_btn,v,5,5);
      }
 
    void UpdateCrossSlowButton(void)
      {
       const int v=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
-      if(v>=5 && v<=9)
-         m_tab8_cruz_slow_btn.LabelText((string)(v-4)); // 5->1, 6->2, ..., 9->5
-      else
-         m_tab8_cruz_slow_btn.LabelText("");
-      if(m_visible)
-         m_tab8_cruz_slow_btn.Update(true);
+      UpdateShortcutButtonLabel(m_tab8_cruz_slow_btn,v,5,5);
      }
 
    void UpdateCrossUI(void)
@@ -725,12 +771,7 @@ private:
    void UpdateSobreIndicButton(void)
      {
       const int idx=m_tab8_sobre_indic_combo.GetListViewPointer().SelectedItemIndex();
-      if(idx>=0)
-         m_tab8_sobre_indic_btn.LabelText((string)(idx+1));
-      else
-         m_tab8_sobre_indic_btn.LabelText("");
-      if(m_visible)
-         m_tab8_sobre_indic_btn.Update(true);
+      UpdateShortcutButtonLabel(m_tab8_sobre_indic_btn,idx,0,14);
      }
 
    void PollSobreIndicChanges(void)
@@ -748,12 +789,7 @@ private:
       if(slot<0 || slot>=4)
          return;
       const int idx=m_tab8_montar_indic_combo[slot].GetListViewPointer().SelectedItemIndex();
-      if(idx>0)
-         m_tab8_montar_indic_btn[slot].LabelText((string)idx);
-      else
-         m_tab8_montar_indic_btn[slot].LabelText("");
-      if(m_visible)
-         m_tab8_montar_indic_btn[slot].Update(true);
+      UpdateShortcutButtonLabel(m_tab8_montar_indic_btn[slot],idx,1,2);
      }
 
    void UpdateMontarIndicButtons(void)
@@ -10424,45 +10460,21 @@ public:
          if(m_tab8_cruz_fast_btn.CheckElementName(sparam))
            {
             const int v=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
-            if(v>=5 && v<=9)
-              {
-               m_tab8_cruz_tabs.SelectTab(1);
-               m_tab8_cruz_fast_tabs.SelectTab(v-5); // 5->0, ..., 9->4
-               m_tab8_cruz_tabs.ShowTabElements();
-               m_tab8_cruz_fast_tabs.ShowTabElements();
-               m_tab8_cruz_tabs.Update();
-               m_tab8_cruz_fast_tabs.Update();
-              }
+            ActivateShortcutTab(m_tab8_cruz_tabs,1,m_tab8_cruz_fast_tabs,v,5,5);
             return;
            }
 
          if(m_tab8_cruz_slow_btn.CheckElementName(sparam))
            {
             const int v=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
-            if(v>=5 && v<=9)
-              {
-               m_tab8_cruz_tabs.SelectTab(2);
-               m_tab8_cruz_slow_tabs.SelectTab(v-5); // 5->0, ..., 9->4
-               m_tab8_cruz_tabs.ShowTabElements();
-               m_tab8_cruz_slow_tabs.ShowTabElements();
-               m_tab8_cruz_tabs.Update();
-               m_tab8_cruz_slow_tabs.Update();
-              }
+            ActivateShortcutTab(m_tab8_cruz_tabs,2,m_tab8_cruz_slow_tabs,v,5,5);
             return;
            }
 
          if(m_tab8_sobre_indic_btn.CheckElementName(sparam))
            {
             const int v=m_tab8_sobre_indic_combo.GetListViewPointer().SelectedItemIndex();
-            if(v>=0 && v<14)
-              {
-               m_tab8_sobre_tabs.SelectTab(1);
-               m_tab8_sobre_param_tabs.SelectTab(v);
-               m_tab8_sobre_tabs.ShowTabElements();
-               m_tab8_sobre_param_tabs.ShowTabElements();
-               m_tab8_sobre_tabs.Update();
-               m_tab8_sobre_param_tabs.Update();
-              }
+            ActivateShortcutTab(m_tab8_sobre_tabs,1,m_tab8_sobre_param_tabs,v,0,14);
             return;
            }
 
@@ -10470,15 +10482,8 @@ public:
            {
             if(m_tab8_montar_indic_btn[i].CheckElementName(sparam))
               {
-               m_tab8_tabs.SelectTab(1);
-               m_tab8_montar_tabs.SelectTab(0);
-               m_tab8_montar_param_card_tabs[i].SelectTab(0);
-               m_tab8_tabs.ShowTabElements();
-               m_tab8_montar_tabs.ShowTabElements();
-               m_tab8_montar_param_card_tabs[i].ShowTabElements();
-               m_tab8_tabs.Update();
-               m_tab8_montar_tabs.Update();
-               m_tab8_montar_param_card_tabs[i].Update();
+               const int v=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
+               ActivateNestedShortcutTab(m_tab8_tabs,1,m_tab8_montar_tabs,0,m_tab8_montar_param_card_tabs[i],v,1,2);
                return;
               }
            }
