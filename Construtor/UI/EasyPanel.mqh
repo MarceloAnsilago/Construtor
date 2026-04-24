@@ -303,6 +303,15 @@ private:
    // Tab 8 (Sinais)
    CEF_CTabs         m_tab8_tabs;
    CEF_CTextLabel    m_tab8_placeholder_montar;
+   CEF_CFrame        m_tab8_card_montar_indic;
+   CEF_CTextLabel    m_tab8_card_montar_indic_title;
+   CEF_CTextLabel    m_tab8_montar_indic_label[4];
+   CEF_CComboBox     m_tab8_montar_indic_combo[4];
+   CEF_CTabs         m_tab8_montar_tabs;
+   CEF_CTextLabel    m_tab8_montar_param_placeholder;
+   CEF_CTextLabel    m_tab8_montar_sinais_placeholder;
+   CEF_CFrame        m_tab8_montar_param_card[4];
+   CEF_CTextLabel    m_tab8_montar_param_card_title[4];
    CEF_CTextLabel    m_tab8_padrao_label;
    CEF_CComboBox     m_tab8_padrao_combo;
    CEF_CFrame        m_tab8_card_ordens;
@@ -5366,11 +5375,182 @@ public:
 
       const int tab8_inner_y=tab8_info_y + 50;
 
-      // Subtab 1 placeholder (Montar sinais)
-      if(!CreateTextLabel(m_tab8_placeholder_montar,"Conteudo: Montar sinais (em migracao)",m_tab8_tabs,m_window_index,m_tab8_tabs,1,tab8_pad,10,tab8_tabs_w-(tab8_pad*2),22))
+      // Subtab 1 content (Montar sinais)
+      const int tab8_montar_x=tab8_pad;
+      const int tab8_montar_y=10;
+      const int tab8_montar_w=tab8_card_w;
+      const int tab8_montar_h=244;
+
+      if(!CreateFrame(m_tab8_card_montar_indic,"",m_tab8_tabs,m_window_index,m_tab8_tabs,1,tab8_montar_x,tab8_montar_y,tab8_montar_w,tab8_montar_h,1))
          return(false);
-      m_tab8_placeholder_montar.FontSize(11);
-      m_tab8_placeholder_montar.LabelColor(C'91,78,64');
+      m_tab8_card_montar_indic.BackColor(C'233,220,203');
+      m_tab8_card_montar_indic.BorderColor(C'197,168,136');
+
+      if(!CreateTextLabel(m_tab8_card_montar_indic_title,"Indicadores",m_tab8_card_montar_indic,m_window_index,m_tab8_tabs,1,16,12,tab8_montar_w-32,22))
+         return(false);
+      m_tab8_card_montar_indic_title.FontSize(12);
+      m_tab8_card_montar_indic_title.LabelColor(C'43,43,43');
+
+      string montar_indic_items[];
+      ArrayResize(montar_indic_items,14);
+      montar_indic_items[0]="MACD";
+      montar_indic_items[1]="Estocástico";
+      montar_indic_items[2]="RSI";
+      montar_indic_items[3]="Money Flow Index (MFI)";
+      montar_indic_items[4]="Bears Power";
+      montar_indic_items[5]="Bulls Power";
+      montar_indic_items[6]="Oscilador Chaikin";
+      montar_indic_items[7]="Oscilador Accelerator";
+      montar_indic_items[8]="Awesome Oscilador";
+      montar_indic_items[9]="Commodity Channel Index (CCI)";
+      montar_indic_items[10]="DeMarker";
+      montar_indic_items[11]="Regressão";
+      montar_indic_items[12]="Afastamento da média";
+      montar_indic_items[13]="Desvio médio";
+
+      const int tab8_montar_inner_x=16;
+      const int tab8_montar_label_w=tab8_montar_w-32;
+      const int tab8_montar_combo_w=tab8_montar_w-32;
+      int tab8_montar_row_y=44;
+
+      for(int i=0;i<4;i++)
+        {
+         string montar_label=StringFormat("Indicador %d",i+1);
+         if(!CreateTextLabel(m_tab8_montar_indic_label[i],montar_label,m_tab8_card_montar_indic,m_window_index,m_tab8_tabs,1,tab8_montar_inner_x,tab8_montar_row_y,tab8_montar_label_w,16))
+            return(false);
+         m_tab8_montar_indic_label[i].FontSize(9);
+         m_tab8_montar_indic_label[i].LabelColor(C'91,78,64');
+
+         m_tab8_montar_indic_combo[i].MainPointer(m_tab8_card_montar_indic);
+         m_tab8_tabs.AddToElementsArray(1,m_tab8_montar_indic_combo[i]);
+         m_tab8_montar_indic_combo[i].XSize(tab8_montar_combo_w);
+         m_tab8_montar_indic_combo[i].YSize(20);
+         m_tab8_montar_indic_combo[i].BackColor(clrWhite);
+         m_tab8_montar_indic_combo[i].BackColorHover(clrWhite);
+         m_tab8_montar_indic_combo[i].BackColorPressed(clrWhite);
+         m_tab8_montar_indic_combo[i].BorderColor(tab2_border);
+         m_tab8_montar_indic_combo[i].BorderColorHover(tab2_border);
+         m_tab8_montar_indic_combo[i].BorderColorPressed(tab2_border);
+         m_tab8_montar_indic_combo[i].FontSize(10);
+         m_tab8_montar_indic_combo[i].ItemsTotal(ArraySize(montar_indic_items));
+         m_tab8_montar_indic_combo[i].CheckBoxMode(false);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().XGap(1);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().XSize(tab8_montar_combo_w-2);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().YSize(20);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().AnchorRightWindowSide(false);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().BackColor(clrWhite);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().BackColorHover(clrWhite);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().BackColorPressed(clrWhite);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().BorderColor(tab2_border);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().BorderColorHover(tab2_border);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().BorderColorPressed(tab2_border);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().IconXGap((tab8_montar_combo_w-2)-18);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().LabelXGap(10);
+         m_tab8_montar_indic_combo[i].GetButtonPointer().LabelColor(C'43,43,43');
+         for(int p=0;p<ArraySize(montar_indic_items);p++) m_tab8_montar_indic_combo[i].SetValue(p,montar_indic_items[p]);
+         m_tab8_montar_indic_combo[i].GetListViewPointer().YSize(160);
+         m_tab8_montar_indic_combo[i].GetListViewPointer().LightsHover(true);
+         m_tab8_montar_indic_combo[i].GetListViewPointer().BackColor(clrWhite);
+         if(!m_tab8_montar_indic_combo[i].CreateComboBox("",tab8_montar_inner_x,tab8_montar_row_y+18))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab8_montar_indic_combo[i]);
+         m_tab8_montar_indic_combo[i].SelectItem(i);
+
+         tab8_montar_row_y+=48;
+        }
+
+      const int tab8_montar_tabs_x=tab8_montar_x+tab8_montar_w+24;
+      const int tab8_montar_tabs_y=tab8_montar_y+24;
+      const int tab8_montar_tabs_w=tab8_tabs_w-tab8_montar_tabs_x-tab8_pad;
+      const int tab8_montar_tabs_h=tab8_tabs_h-tab8_montar_tabs_y-16;
+      const int tab8_montar_tab_h=24;
+
+      string montar_tabs_text[];
+      int montar_tabs_widths[];
+      ArrayResize(montar_tabs_text,2);
+      ArrayResize(montar_tabs_widths,2);
+      montar_tabs_text[0]="Parâmetros";
+      montar_tabs_text[1]="Sinais";
+      montar_tabs_widths[0]=290;
+      montar_tabs_widths[1]=290;
+
+      m_tab8_montar_tabs.MainPointer(m_tab8_tabs);
+      m_tab8_tabs.AddToElementsArray(1,m_tab8_montar_tabs);
+      m_tab8_montar_tabs.XSize(tab8_montar_tabs_w);
+      m_tab8_montar_tabs.YSize(tab8_montar_tabs_h);
+      m_tab8_montar_tabs.IsCenterText(true);
+      m_tab8_montar_tabs.PositionMode(TABS_TOP);
+      m_tab8_montar_tabs.TabsYSize(tab8_montar_tab_h);
+      m_tab8_montar_tabs.AutoXResizeMode(true);
+      m_tab8_montar_tabs.AutoXResizeRightOffset(tab8_pad);
+      m_tab8_montar_tabs.AutoYResizeMode(true);
+      m_tab8_montar_tabs.AutoYResizeBottomOffset(16);
+      m_tab8_montar_tabs.BackColorPressed(C'233,220,203');
+      m_tab8_montar_tabs.BorderColor(C'197,168,136');
+      m_tab8_montar_tabs.BorderColorHover(C'197,168,136');
+      m_tab8_montar_tabs.BorderColorPressed(C'197,168,136');
+      for(int i=0;i<2;i++) m_tab8_montar_tabs.AddTab(montar_tabs_text[i],montar_tabs_widths[i]);
+
+      if(!m_tab8_montar_tabs.CreateTabs(tab8_montar_tabs_x,tab8_montar_tabs_y))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_montar_tabs);
+
+      CEF_CButtonsGroup *montar_tabs_bg=m_tab8_montar_tabs.GetButtonsGroupPointer();
+      if(montar_tabs_bg!=NULL)
+        {
+         for(int i=0;i<2;i++)
+           {
+            montar_tabs_bg.GetButtonPointer(i).FontSize(9);
+            montar_tabs_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            montar_tabs_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            montar_tabs_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            montar_tabs_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            montar_tabs_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            montar_tabs_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            montar_tabs_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            montar_tabs_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            montar_tabs_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      if(!CreateTextLabel(m_tab8_montar_param_placeholder,"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,0,12,8,tab8_montar_tabs_w-24,20))
+         return(false);
+      m_tab8_montar_param_placeholder.FontSize(10);
+      m_tab8_montar_param_placeholder.LabelColor(C'91,78,64');
+
+      const int montar_param_content_x=12;
+      const int montar_param_content_y=8;
+      const int montar_param_gap_x=16;
+      const int montar_param_gap_y=16;
+      const int montar_param_card_w=(tab8_montar_tabs_w-(montar_param_content_x*2)-montar_param_gap_x)/2;
+      const int montar_param_card_h=180;
+
+      for(int i=0;i<4;i++)
+        {
+         const int montar_col=i%2;
+         const int montar_row=i/2;
+         const int montar_card_x=montar_param_content_x+(montar_col*(montar_param_card_w+montar_param_gap_x));
+         const int montar_card_y=montar_param_content_y+(montar_row*(montar_param_card_h+montar_param_gap_y));
+         string montar_card_title=StringFormat("Indicador %d",i+1);
+
+         if(!CreateFrame(m_tab8_montar_param_card[i],"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,0,montar_card_x,montar_card_y,montar_param_card_w,montar_param_card_h,1))
+            return(false);
+         m_tab8_montar_param_card[i].BackColor(C'233,220,203');
+         m_tab8_montar_param_card[i].BorderColor(C'197,168,136');
+
+         if(!CreateTextLabel(m_tab8_montar_param_card_title[i],montar_card_title,m_tab8_montar_param_card[i],m_window_index,m_tab8_montar_tabs,0,16,12,montar_param_card_w-32,22))
+            return(false);
+         m_tab8_montar_param_card_title[i].FontSize(12);
+         m_tab8_montar_param_card_title[i].LabelColor(C'43,43,43');
+        }
+
+      if(!CreateTextLabel(m_tab8_montar_sinais_placeholder,"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,1,12,8,tab8_montar_tabs_w-24,20))
+         return(false);
+      m_tab8_montar_sinais_placeholder.FontSize(10);
+      m_tab8_montar_sinais_placeholder.LabelColor(C'91,78,64');
+
+      m_tab8_montar_tabs.SelectTab(0);
+      m_tab8_montar_tabs.ShowTabElements();
 
       // Subtab 0 content (Sinais)
       if(!CreateTextLabel(m_tab8_padrao_label,"Padrão",m_tab8_tabs,m_window_index,m_tab8_tabs,0,tab8_pad,tab8_inner_y,tab8_card_w,18))
