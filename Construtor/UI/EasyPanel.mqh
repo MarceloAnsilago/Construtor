@@ -328,6 +328,7 @@ private:
    CEF_CTextLabel    m_tab8_montar_sinais_card_title;
    CEF_CTextLabel    m_tab8_montar_sinais_logic_title;
    CEF_CTextLabel    m_tab8_montar_sinais_value_title;
+   CEF_CButton       m_tab8_montar_sinais_refresh_btn;
    CEF_CComboBox     m_tab8_montar_sinais_logic_combo[5];
    CEF_CComboBox     m_tab8_montar_sinais_value_combo[5];
    CEF_CTextLabel    m_tab8_padrao_label;
@@ -812,6 +813,64 @@ private:
          UpdateMontarIndicButton(i);
      }
 
+   void RefreshMontarValueCombos(void)
+     {
+      const int max_value_items=29; // 17 fixos + ate 12 dinamicos (4 slots * 3 saidas)
+      string value_items[];
+      ArrayResize(value_items,max_value_items);
+      int total=0;
+
+      value_items[total++]="Não usar";
+      value_items[total++]="Valor absoluto";
+      value_items[total++]="Valor em pontos";
+      value_items[total++]="Preço de entrada";
+      value_items[total++]="Preço Médio";
+      value_items[total++]="Preço Atual";
+      value_items[total++]="Fechamento da vela";
+      value_items[total++]="Abertura da vela";
+      value_items[total++]="Máxima da vela";
+      value_items[total++]="Mínima da vela";
+      value_items[total++]="Fechamento do dia";
+      value_items[total++]="Abertura do dia";
+      value_items[total++]="Máxima do dia";
+      value_items[total++]="Mínima do dia";
+      value_items[total++]="Tamanho da vela";
+      value_items[total++]="Corpo da vela";
+      value_items[total++]="Empty Value";
+
+      for(int slot=0;slot<4;slot++)
+        {
+         const int idx=m_tab8_montar_indic_combo[slot].GetListViewPointer().SelectedItemIndex();
+         if(idx==1) // Keltner
+           {
+            const string prefix=(string)(slot+1)+" keltner ";
+            value_items[total++]=prefix+"Central";
+            value_items[total++]=prefix+"superior";
+            value_items[total++]=prefix+"inferior";
+           }
+        }
+
+      ArrayResize(value_items,total);
+
+      for(int combo_idx=0;combo_idx<5;combo_idx++)
+        {
+         const int selected_idx=m_tab8_montar_sinais_value_combo[combo_idx].GetListViewPointer().SelectedItemIndex();
+         for(int item_idx=0;item_idx<total;item_idx++)
+            m_tab8_montar_sinais_value_combo[combo_idx].SetValue(item_idx,value_items[item_idx]);
+         for(int item_idx=total;item_idx<max_value_items;item_idx++)
+            m_tab8_montar_sinais_value_combo[combo_idx].SetValue(item_idx,"");
+
+         const int next_selected=(selected_idx>=0 && selected_idx<total ? selected_idx : 0);
+         m_tab8_montar_sinais_value_combo[combo_idx].SelectItem(next_selected);
+         if(m_visible)
+           {
+            m_tab8_montar_sinais_value_combo[combo_idx].Update(true);
+            m_tab8_montar_sinais_value_combo[combo_idx].GetButtonPointer().Update(true);
+            m_tab8_montar_sinais_value_combo[combo_idx].GetListViewPointer().Update(true);
+           }
+        }
+     }
+
    void PollMontarIndicChanges(void)
      {
       for(int i=0;i<4;i++)
@@ -821,6 +880,8 @@ private:
            {
             m_tab8_montar_indic_last_idx[i]=idx;
             UpdateMontarIndicButton(i);
+            ActivateNestedShortcutTab(m_tab8_tabs,1,m_tab8_montar_tabs,0,m_tab8_montar_param_card_tabs[i],idx,1,2);
+            RefreshMontarValueCombos();
            }
         }
      }
@@ -5905,6 +5966,26 @@ public:
       m_tab8_montar_sinais_card_title.FontSize(12);
       m_tab8_montar_sinais_card_title.LabelColor(C'43,43,43');
 
+      m_tab8_montar_sinais_refresh_btn.MainPointer(m_tab8_montar_sinais_card);
+      m_tab8_montar_tabs.AddToElementsArray(1,m_tab8_montar_sinais_refresh_btn);
+      m_tab8_montar_sinais_refresh_btn.NamePart("montar_sinais_refresh_btn");
+      m_tab8_montar_sinais_refresh_btn.XSize(88);
+      m_tab8_montar_sinais_refresh_btn.YSize(22);
+      m_tab8_montar_sinais_refresh_btn.IsCenterText(true);
+      m_tab8_montar_sinais_refresh_btn.FontSize(9);
+      m_tab8_montar_sinais_refresh_btn.BackColor(C'39,54,78');
+      m_tab8_montar_sinais_refresh_btn.BackColorHover(C'62,79,101');
+      m_tab8_montar_sinais_refresh_btn.BackColorPressed(C'226,114,64');
+      m_tab8_montar_sinais_refresh_btn.BorderColor(C'18,29,43');
+      m_tab8_montar_sinais_refresh_btn.BorderColorHover(C'62,79,101');
+      m_tab8_montar_sinais_refresh_btn.BorderColorPressed(C'240,140,86');
+      m_tab8_montar_sinais_refresh_btn.LabelColor(clrWhite);
+      m_tab8_montar_sinais_refresh_btn.LabelColorHover(clrWhite);
+      m_tab8_montar_sinais_refresh_btn.LabelColorPressed(clrWhite);
+      if(!m_tab8_montar_sinais_refresh_btn.CreateButton("Atualizar",montar_sinais_card_w-104,12))
+         return(false);
+      AddToElementsArray(m_window_index,m_tab8_montar_sinais_refresh_btn);
+
       string montar_sinais_logic_items[];
       ArrayResize(montar_sinais_logic_items,7);
       montar_sinais_logic_items[0]="SE";
@@ -5914,26 +5995,6 @@ public:
       montar_sinais_logic_items[4]="OU SE";
       montar_sinais_logic_items[5]="E Também";
       montar_sinais_logic_items[6]="OU Também";
-
-      string montar_sinais_value_items[];
-      ArrayResize(montar_sinais_value_items,17);
-      montar_sinais_value_items[0]="Não usar";
-      montar_sinais_value_items[1]="Valor absoluto";
-      montar_sinais_value_items[2]="Valor em pontos";
-      montar_sinais_value_items[3]="Preço de entrada";
-      montar_sinais_value_items[4]="Preço Médio";
-      montar_sinais_value_items[5]="Preço Atual";
-      montar_sinais_value_items[6]="Fechamento da vela";
-      montar_sinais_value_items[7]="Abertura da vela";
-      montar_sinais_value_items[8]="Máxima da vela";
-      montar_sinais_value_items[9]="Mínima da vela";
-      montar_sinais_value_items[10]="Fechamento do dia";
-      montar_sinais_value_items[11]="Abertura do dia";
-      montar_sinais_value_items[12]="Máxima do dia";
-      montar_sinais_value_items[13]="Mínima do dia";
-      montar_sinais_value_items[14]="Tamanho da vela";
-      montar_sinais_value_items[15]="Corpo da vela";
-      montar_sinais_value_items[16]="Empty Value";
 
       const int montar_sinais_inner_x=16;
       const int montar_sinais_col_gap=16;
@@ -6002,7 +6063,7 @@ public:
          m_tab8_montar_sinais_value_combo[i].BorderColorHover(tab2_border);
          m_tab8_montar_sinais_value_combo[i].BorderColorPressed(tab2_border);
          m_tab8_montar_sinais_value_combo[i].FontSize(10);
-         m_tab8_montar_sinais_value_combo[i].ItemsTotal(ArraySize(montar_sinais_value_items));
+         m_tab8_montar_sinais_value_combo[i].ItemsTotal(29);
          m_tab8_montar_sinais_value_combo[i].CheckBoxMode(false);
          m_tab8_montar_sinais_value_combo[i].GetButtonPointer().XGap(1);
          m_tab8_montar_sinais_value_combo[i].GetButtonPointer().XSize(montar_sinais_combo_w-2);
@@ -6017,17 +6078,17 @@ public:
          m_tab8_montar_sinais_value_combo[i].GetButtonPointer().IconXGap((montar_sinais_combo_w-2)-18);
          m_tab8_montar_sinais_value_combo[i].GetButtonPointer().LabelXGap(10);
          m_tab8_montar_sinais_value_combo[i].GetButtonPointer().LabelColor(C'43,43,43');
-         for(int p=0;p<ArraySize(montar_sinais_value_items);p++) m_tab8_montar_sinais_value_combo[i].SetValue(p,montar_sinais_value_items[p]);
          m_tab8_montar_sinais_value_combo[i].GetListViewPointer().YSize(220);
          m_tab8_montar_sinais_value_combo[i].GetListViewPointer().LightsHover(true);
          m_tab8_montar_sinais_value_combo[i].GetListViewPointer().BackColor(clrWhite);
          if(!m_tab8_montar_sinais_value_combo[i].CreateComboBox("",montar_sinais_value_x,montar_sinais_row_y))
             return(false);
          AddToElementsArray(m_window_index,m_tab8_montar_sinais_value_combo[i]);
-         m_tab8_montar_sinais_value_combo[i].SelectItem(0);
 
          montar_sinais_row_y+=34;
         }
+
+      RefreshMontarValueCombos();
 
       m_tab8_montar_tabs.SelectTab(0);
       m_tab8_montar_tabs.ShowTabElements();
@@ -10769,6 +10830,12 @@ public:
            {
             const int v=m_tab8_sobre_indic_combo.GetListViewPointer().SelectedItemIndex();
             ActivateShortcutTab(m_tab8_sobre_tabs,1,m_tab8_sobre_param_tabs,v,0,14);
+            return;
+           }
+
+         if(m_tab8_montar_sinais_refresh_btn.CheckElementName(sparam))
+           {
+            RefreshMontarValueCombos();
             return;
            }
 
