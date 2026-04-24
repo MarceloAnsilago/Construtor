@@ -6793,9 +6793,9 @@ public:
       m_tab8_sobre_param_tabs.TabsYSize(0);
       m_tab8_sobre_param_tabs.AutoXResizeMode(false);
       m_tab8_sobre_param_tabs.AutoYResizeMode(false);
-      m_tab8_sobre_param_tabs.BackColor(C'233,220,203');
-      m_tab8_sobre_param_tabs.BackColorHover(C'233,220,203');
-      m_tab8_sobre_param_tabs.BackColorPressed(C'233,220,203');
+      m_tab8_sobre_param_tabs.BackColor(C'239,231,218');
+      m_tab8_sobre_param_tabs.BackColorHover(C'239,231,218');
+      m_tab8_sobre_param_tabs.BackColorPressed(C'239,231,218');
       m_tab8_sobre_param_tabs.BorderColor(C'197,168,136');
       m_tab8_sobre_param_tabs.BorderColorHover(C'197,168,136');
       m_tab8_sobre_param_tabs.BorderColorPressed(C'197,168,136');
@@ -6874,15 +6874,18 @@ public:
            {
             const int macd_label_h=16;
             const int macd_control_h=20;
-            const int macd_spin_w=tab8_spin_w;
-            const int macd_spin_text_w=tab8_spin_text_w;
-            const int macd_signal_w=tab8_spin_w;
-            const int macd_signal_text_w=tab8_spin_text_w;
+            const int macd_group_gap=34;
+            const int macd_spin_w=sobre_param_content_w;
+            const int macd_spin_text_w=macd_spin_w-34;
+            const int macd_signal_w=macd_spin_w;
+            const int macd_signal_text_w=macd_spin_text_w;
             const int macd_left_x=sobre_param_content_x;
             const int macd_signal_x=sobre_param_content_x;
             const int macd_first_label_y=sobre_param_content_y+18;
-            const int macd_signal_label_y=sobre_param_content_y+102;
-            const int macd_signal_edit_y=macd_signal_label_y+macd_label_h+4;
+            const int macd_slow_label_y=macd_first_label_y+macd_group_gap;
+            const int macd_signal_label_y=macd_slow_label_y+macd_group_gap;
+            const int macd_price_label_y=macd_signal_label_y+macd_group_gap;
+            const int macd_signal_edit_y=macd_signal_label_y+macd_label_h-4;
 
             if(!CreateTextLabel(m_tab8_sobre_param_title[i],sobre_param_titles[i],m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,sobre_param_content_x,sobre_param_content_y-4,sobre_param_content_w,18))
                return(false);
@@ -6909,13 +6912,13 @@ public:
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().AutoSelectionMode(true);
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().AnchorRightWindowSide(false);
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().XGap(1);
-            if(!m_tab8_sobre_macd_fast_spin.CreateTextEdit("",macd_left_x,macd_first_label_y+macd_label_h+4))
+            if(!m_tab8_sobre_macd_fast_spin.CreateTextEdit("",macd_left_x,macd_first_label_y+macd_label_h-4))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_macd_fast_spin);
 
-            m_tab8_sobre_macd_fast_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_macd_fast_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_macd_fast_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_macd_fast_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_macd_fast_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_macd_fast_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_macd_fast_spin.BorderColor(tab2_border);
             m_tab8_sobre_macd_fast_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_macd_fast_spin.BorderColorPressed(tab2_border);
@@ -6926,8 +6929,7 @@ public:
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_macd_fast_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-            const int macd_slow_label_y=sobre_param_content_y+60;
-            const int macd_slow_edit_y=macd_slow_label_y+macd_label_h+4;
+            const int macd_slow_edit_y=macd_slow_label_y+macd_label_h-4;
 
             if(!CreateTextLabel(m_tab8_sobre_macd_slow_label,"EMA lenta",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,macd_left_x,macd_slow_label_y,macd_spin_w,macd_label_h))
                return(false);
@@ -6953,9 +6955,9 @@ public:
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_macd_slow_spin);
 
-            m_tab8_sobre_macd_slow_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_macd_slow_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_macd_slow_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_macd_slow_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_macd_slow_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_macd_slow_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_macd_slow_spin.BorderColor(tab2_border);
             m_tab8_sobre_macd_slow_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_macd_slow_spin.BorderColorPressed(tab2_border);
@@ -6990,9 +6992,9 @@ public:
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_macd_signal_spin);
 
-            m_tab8_sobre_macd_signal_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_macd_signal_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_macd_signal_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_macd_signal_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_macd_signal_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_macd_signal_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_macd_signal_spin.BorderColor(tab2_border);
             m_tab8_sobre_macd_signal_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_macd_signal_spin.BorderColorPressed(tab2_border);
@@ -7003,7 +7005,7 @@ public:
             m_tab8_sobre_macd_signal_spin.GetTextBoxPointer().BorderColorHover(tab2_border);
             m_tab8_sobre_macd_signal_spin.GetTextBoxPointer().BorderColorPressed(tab2_border);
 
-            if(!CreateTextLabel(m_tab8_sobre_macd_price_label,"Modo de preco",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,macd_signal_x,macd_signal_label_y+42,macd_signal_w,macd_label_h))
+            if(!CreateTextLabel(m_tab8_sobre_macd_price_label,"Modo de preco",m_tab8_sobre_param_tabs,m_window_index,m_tab8_sobre_param_tabs,i,macd_signal_x,macd_price_label_y,macd_signal_w,macd_label_h))
                return(false);
             m_tab8_sobre_macd_price_label.FontSize(9);
             m_tab8_sobre_macd_price_label.LabelColor(C'91,78,64');
@@ -7038,7 +7040,7 @@ public:
             m_tab8_sobre_macd_price_combo.GetListViewPointer().YSize(160);
             m_tab8_sobre_macd_price_combo.GetListViewPointer().LightsHover(true);
             m_tab8_sobre_macd_price_combo.GetListViewPointer().BackColor(clrWhite);
-            if(!m_tab8_sobre_macd_price_combo.CreateComboBox("",macd_signal_x,macd_signal_edit_y+42))
+            if(!m_tab8_sobre_macd_price_combo.CreateComboBox("",macd_signal_x,macd_price_label_y+macd_label_h+4))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_macd_price_combo);
             m_tab8_sobre_macd_price_combo.SelectItem(0);
@@ -7082,9 +7084,9 @@ public:
             if(!m_tab8_sobre_stoch_k_spin.CreateTextEdit("",stoch_obj_x,stoch_k_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_stoch_k_spin);
-            m_tab8_sobre_stoch_k_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_stoch_k_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_stoch_k_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_stoch_k_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_stoch_k_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_stoch_k_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_stoch_k_spin.BorderColor(tab2_border);
             m_tab8_sobre_stoch_k_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_stoch_k_spin.BorderColorPressed(tab2_border);
@@ -7118,9 +7120,9 @@ public:
             if(!m_tab8_sobre_stoch_d_spin.CreateTextEdit("",stoch_obj_x,stoch_d_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_stoch_d_spin);
-            m_tab8_sobre_stoch_d_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_stoch_d_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_stoch_d_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_stoch_d_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_stoch_d_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_stoch_d_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_stoch_d_spin.BorderColor(tab2_border);
             m_tab8_sobre_stoch_d_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_stoch_d_spin.BorderColorPressed(tab2_border);
@@ -7154,9 +7156,9 @@ public:
             if(!m_tab8_sobre_stoch_slow_spin.CreateTextEdit("",stoch_obj_x,stoch_l_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_stoch_slow_spin);
-            m_tab8_sobre_stoch_slow_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_stoch_slow_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_stoch_slow_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_stoch_slow_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_stoch_slow_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_stoch_slow_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_stoch_slow_spin.BorderColor(tab2_border);
             m_tab8_sobre_stoch_slow_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_stoch_slow_spin.BorderColorPressed(tab2_border);
@@ -7284,9 +7286,9 @@ public:
             if(!m_tab8_sobre_rsi_period_spin.CreateTextEdit("",rsi_obj_x,rsi_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_rsi_period_spin);
-            m_tab8_sobre_rsi_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_rsi_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_rsi_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_rsi_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_rsi_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_rsi_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_rsi_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_rsi_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_rsi_period_spin.BorderColorPressed(tab2_border);
@@ -7374,9 +7376,9 @@ public:
             if(!m_tab8_sobre_mfi_period_spin.CreateTextEdit("",mfi_obj_x,mfi_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_mfi_period_spin);
-            m_tab8_sobre_mfi_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_mfi_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_mfi_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_mfi_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_mfi_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_mfi_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_mfi_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_mfi_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_mfi_period_spin.BorderColorPressed(tab2_border);
@@ -7471,9 +7473,9 @@ public:
             if(!m_tab8_sobre_bears_period_spin.CreateTextEdit("",bear_obj_x,bear_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_bears_period_spin);
-            m_tab8_sobre_bears_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_bears_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_bears_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_bears_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_bears_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_bears_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_bears_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_bears_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_bears_period_spin.BorderColorPressed(tab2_border);
@@ -7522,9 +7524,9 @@ public:
             if(!m_tab8_sobre_bulls_period_spin.CreateTextEdit("",bull_obj_x,bull_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_bulls_period_spin);
-            m_tab8_sobre_bulls_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_bulls_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_bulls_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_bulls_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_bulls_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_bulls_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_bulls_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_bulls_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_bulls_period_spin.BorderColorPressed(tab2_border);
@@ -7581,9 +7583,9 @@ public:
             if(!m_tab8_sobre_chaikin_fast_spin.CreateTextEdit("",ch_spin_x,ch_y1+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_chaikin_fast_spin);
-            m_tab8_sobre_chaikin_fast_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_chaikin_fast_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_chaikin_fast_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_chaikin_fast_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_chaikin_fast_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_chaikin_fast_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_chaikin_fast_spin.BorderColor(tab2_border);
             m_tab8_sobre_chaikin_fast_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_chaikin_fast_spin.BorderColorPressed(tab2_border);
@@ -7616,9 +7618,9 @@ public:
             if(!m_tab8_sobre_chaikin_slow_spin.CreateTextEdit("",ch_spin_x,ch_y2+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_chaikin_slow_spin);
-            m_tab8_sobre_chaikin_slow_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_chaikin_slow_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_chaikin_slow_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_chaikin_slow_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_chaikin_slow_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_chaikin_slow_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_chaikin_slow_spin.BorderColor(tab2_border);
             m_tab8_sobre_chaikin_slow_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_chaikin_slow_spin.BorderColorPressed(tab2_border);
@@ -7757,9 +7759,9 @@ public:
             if(!m_tab8_sobre_cci_period_spin.CreateTextEdit("",cci_obj_x,cci_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_cci_period_spin);
-            m_tab8_sobre_cci_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_cci_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_cci_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_cci_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_cci_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_cci_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_cci_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_cci_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_cci_period_spin.BorderColorPressed(tab2_border);
@@ -7848,9 +7850,9 @@ public:
             if(!m_tab8_sobre_demarker_period_spin.CreateTextEdit("",demarker_obj_x,demarker_y))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_demarker_period_spin);
-            m_tab8_sobre_demarker_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_demarker_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_demarker_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_demarker_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_demarker_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_demarker_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_demarker_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_demarker_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_demarker_period_spin.BorderColorPressed(tab2_border);
@@ -7901,9 +7903,9 @@ public:
             if(!m_tab8_sobre_regressao_period_spin.CreateTextEdit("",reg_obj_x,reg_y1+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_regressao_period_spin);
-            m_tab8_sobre_regressao_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_regressao_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_regressao_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_regressao_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_regressao_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_regressao_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_regressao_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_regressao_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_regressao_period_spin.BorderColorPressed(tab2_border);
@@ -8035,9 +8037,9 @@ public:
             if(!m_tab8_sobre_afast_period_spin.CreateTextEdit("",afast_obj_x,afast_y1+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_afast_period_spin);
-            m_tab8_sobre_afast_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_afast_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_afast_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_afast_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_afast_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_afast_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_afast_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_afast_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_afast_period_spin.BorderColorPressed(tab2_border);
@@ -8071,9 +8073,9 @@ public:
             if(!m_tab8_sobre_afast_shift_spin.CreateTextEdit("",afast_obj_x,afast_y2+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_afast_shift_spin);
-            m_tab8_sobre_afast_shift_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_afast_shift_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_afast_shift_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_afast_shift_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_afast_shift_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_afast_shift_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_afast_shift_spin.BorderColor(tab2_border);
             m_tab8_sobre_afast_shift_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_afast_shift_spin.BorderColorPressed(tab2_border);
@@ -8204,9 +8206,9 @@ public:
             if(!m_tab8_sobre_desvio_period_spin.CreateTextEdit("",desvio_obj_x,desvio_y1+14))
                return(false);
             AddToElementsArray(m_window_index,m_tab8_sobre_desvio_period_spin);
-            m_tab8_sobre_desvio_period_spin.BackColor(C'233,220,203');
-            m_tab8_sobre_desvio_period_spin.BackColorHover(C'233,220,203');
-            m_tab8_sobre_desvio_period_spin.BackColorPressed(C'233,220,203');
+            m_tab8_sobre_desvio_period_spin.BackColor(C'239,231,218');
+            m_tab8_sobre_desvio_period_spin.BackColorHover(C'239,231,218');
+            m_tab8_sobre_desvio_period_spin.BackColorPressed(C'239,231,218');
             m_tab8_sobre_desvio_period_spin.BorderColor(tab2_border);
             m_tab8_sobre_desvio_period_spin.BorderColorHover(tab2_border);
             m_tab8_sobre_desvio_period_spin.BorderColorPressed(tab2_border);
