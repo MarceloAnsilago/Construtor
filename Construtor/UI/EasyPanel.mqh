@@ -314,8 +314,10 @@ private:
    CEF_CTextLabel    m_tab8_montar_sinais_placeholder;
    CEF_CFrame        m_tab8_montar_param_card[4];
    CEF_CTextLabel    m_tab8_montar_param_card_title[4];
+   CEF_CTextLabel    m_tab8_montar_param_card_subtitle[4];
    CEF_CTabs         m_tab8_montar_param_card_tabs[4];
    CEF_CTextLabel    m_tab8_montar_param_card_tab_placeholder[4][2];
+   CEF_CTextLabel    m_tab8_montar_keltner_title;
    CEF_CTextLabel    m_tab8_montar_keltner_period_label;
    CEF_CTextEdit     m_tab8_montar_keltner_period_spin;
    CEF_CTextLabel    m_tab8_montar_keltner_deviation_label;
@@ -5664,7 +5666,7 @@ public:
       const int montar_param_card_w=(tab8_montar_tabs_w-(montar_param_content_x*2)-(montar_param_gap_x*3))/4;
       const int montar_param_card_h=330;
       const int montar_param_card_tabs_x=12;
-      const int montar_param_card_tabs_y=30;
+      const int montar_param_card_tabs_y=50;
       const int montar_param_card_tabs_bottom_pad=12;
       string montar_ma_type_items[];
       ArrayResize(montar_ma_type_items,4);
@@ -5680,16 +5682,22 @@ public:
          const int montar_card_x=montar_param_content_x+(montar_col*(montar_param_card_w+montar_param_gap_x));
          const int montar_card_y=montar_param_content_y+(montar_row*(montar_param_card_h+montar_param_gap_y));
          string montar_card_title=StringFormat("Indicador %d",i+1);
+         string montar_card_subtitle="";
 
          if(!CreateFrame(m_tab8_montar_param_card[i],"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,0,montar_card_x,montar_card_y,montar_param_card_w,montar_param_card_h,1))
             return(false);
          m_tab8_montar_param_card[i].BackColor(C'233,220,203');
          m_tab8_montar_param_card[i].BorderColor(C'197,168,136');
 
-         if(!CreateTextLabel(m_tab8_montar_param_card_title[i],"",m_tab8_montar_param_card[i],m_window_index,m_tab8_montar_tabs,0,16,12,montar_param_card_w-32,22))
+         if(!CreateTextLabel(m_tab8_montar_param_card_title[i],montar_card_title,m_tab8_montar_param_card[i],m_window_index,m_tab8_montar_tabs,0,16,10,montar_param_card_w-32,18))
             return(false);
-         m_tab8_montar_param_card_title[i].FontSize(12);
+         m_tab8_montar_param_card_title[i].FontSize(10);
          m_tab8_montar_param_card_title[i].LabelColor(C'43,43,43');
+
+         if(!CreateTextLabel(m_tab8_montar_param_card_subtitle[i],montar_card_subtitle,m_tab8_montar_param_card[i],m_window_index,m_tab8_montar_tabs,0,16,28,montar_param_card_w-32,16))
+            return(false);
+         m_tab8_montar_param_card_subtitle[i].FontSize(9);
+         m_tab8_montar_param_card_subtitle[i].LabelColor(C'91,78,64');
 
          string montar_card_tabs_text[];
          int montar_card_tabs_widths[];
@@ -5741,10 +5749,16 @@ public:
             if(i==0 && p==0)
               {
                const int montar_keltner_x=12;
-               const int montar_keltner_y=10;
+               const int montar_keltner_title_y=8;
+               const int montar_keltner_y=28;
                const int montar_keltner_w=montar_param_card_w-48;
                const int montar_keltner_h=20;
                const int montar_keltner_spin_edit_w=montar_keltner_w-34;
+
+               if(!CreateTextLabel(m_tab8_montar_keltner_title,"1 kelter",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_title_y,montar_keltner_w,16))
+                  return(false);
+               m_tab8_montar_keltner_title.FontSize(9);
+               m_tab8_montar_keltner_title.LabelColor(C'91,78,64');
 
                if(!CreateTextLabel(m_tab8_montar_keltner_period_label,"Período",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_keltner_x,montar_keltner_y,montar_keltner_w,16))
                   return(false);
