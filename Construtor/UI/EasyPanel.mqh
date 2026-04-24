@@ -314,6 +314,8 @@ private:
    CEF_CTextLabel    m_tab8_montar_sinais_placeholder;
    CEF_CFrame        m_tab8_montar_param_card[4];
    CEF_CTextLabel    m_tab8_montar_param_card_title[4];
+   CEF_CTabs         m_tab8_montar_param_card_tabs[4];
+   CEF_CTextLabel    m_tab8_montar_param_card_tab_placeholder[4][2];
    CEF_CTextLabel    m_tab8_padrao_label;
    CEF_CComboBox     m_tab8_padrao_combo;
    CEF_CFrame        m_tab8_card_ordens;
@@ -5627,10 +5629,66 @@ public:
          m_tab8_montar_param_card[i].BackColor(C'233,220,203');
          m_tab8_montar_param_card[i].BorderColor(C'197,168,136');
 
-         if(!CreateTextLabel(m_tab8_montar_param_card_title[i],montar_card_title,m_tab8_montar_param_card[i],m_window_index,m_tab8_montar_tabs,0,16,12,montar_param_card_w-32,22))
+         if(!CreateTextLabel(m_tab8_montar_param_card_title[i],"",m_tab8_montar_param_card[i],m_window_index,m_tab8_montar_tabs,0,16,12,montar_param_card_w-32,22))
             return(false);
          m_tab8_montar_param_card_title[i].FontSize(12);
          m_tab8_montar_param_card_title[i].LabelColor(C'43,43,43');
+
+         string montar_card_tabs_text[];
+         int montar_card_tabs_widths[];
+         ArrayResize(montar_card_tabs_text,2);
+         ArrayResize(montar_card_tabs_widths,2);
+         montar_card_tabs_text[0]="1";
+         montar_card_tabs_text[1]="2";
+         montar_card_tabs_widths[0]=52;
+         montar_card_tabs_widths[1]=52;
+
+         m_tab8_montar_param_card_tabs[i].MainPointer(m_tab8_montar_param_card[i]);
+         m_tab8_montar_tabs.AddToElementsArray(0,m_tab8_montar_param_card_tabs[i]);
+         m_tab8_montar_param_card_tabs[i].XSize(montar_param_card_w-24);
+         m_tab8_montar_param_card_tabs[i].YSize(montar_param_card_h-20);
+         m_tab8_montar_param_card_tabs[i].IsCenterText(true);
+         m_tab8_montar_param_card_tabs[i].PositionMode(TABS_TOP);
+         m_tab8_montar_param_card_tabs[i].TabsYSize(22);
+         m_tab8_montar_param_card_tabs[i].AutoXResizeMode(false);
+         m_tab8_montar_param_card_tabs[i].AutoYResizeMode(false);
+         m_tab8_montar_param_card_tabs[i].BackColorPressed(C'239,231,218');
+         m_tab8_montar_param_card_tabs[i].BorderColor(C'197,168,136');
+         m_tab8_montar_param_card_tabs[i].BorderColorHover(C'197,168,136');
+         m_tab8_montar_param_card_tabs[i].BorderColorPressed(C'197,168,136');
+         for(int p=0;p<2;p++) m_tab8_montar_param_card_tabs[i].AddTab(montar_card_tabs_text[p],montar_card_tabs_widths[p]);
+         if(!m_tab8_montar_param_card_tabs[i].CreateTabs(12,30))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab8_montar_param_card_tabs[i]);
+
+         CEF_CButtonsGroup *montar_card_tabs_bg=m_tab8_montar_param_card_tabs[i].GetButtonsGroupPointer();
+         if(montar_card_tabs_bg!=NULL)
+           {
+            for(int p=0;p<2;p++)
+              {
+               montar_card_tabs_bg.GetButtonPointer(p).FontSize(8);
+               montar_card_tabs_bg.GetButtonPointer(p).BackColor(C'39,54,78');
+               montar_card_tabs_bg.GetButtonPointer(p).BackColorHover(C'62,79,101');
+               montar_card_tabs_bg.GetButtonPointer(p).BackColorPressed(C'226,114,64');
+               montar_card_tabs_bg.GetButtonPointer(p).BorderColor(C'18,29,43');
+               montar_card_tabs_bg.GetButtonPointer(p).BorderColorHover(C'62,79,101');
+               montar_card_tabs_bg.GetButtonPointer(p).BorderColorPressed(C'240,140,86');
+               montar_card_tabs_bg.GetButtonPointer(p).LabelColor(clrWhite);
+               montar_card_tabs_bg.GetButtonPointer(p).LabelColorHover(clrWhite);
+               montar_card_tabs_bg.GetButtonPointer(p).LabelColorPressed(clrWhite);
+              }
+           }
+
+         for(int p=0;p<2;p++)
+           {
+            if(!CreateTextLabel(m_tab8_montar_param_card_tab_placeholder[i][p],"",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,10,6,montar_param_card_w-48,18))
+               return(false);
+            m_tab8_montar_param_card_tab_placeholder[i][p].FontSize(9);
+            m_tab8_montar_param_card_tab_placeholder[i][p].LabelColor(C'91,78,64');
+           }
+
+         m_tab8_montar_param_card_tabs[i].SelectTab(0);
+         m_tab8_montar_param_card_tabs[i].ShowTabElements();
         }
 
       if(!CreateTextLabel(m_tab8_montar_sinais_placeholder,"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,1,12,8,tab8_montar_tabs_w-24,20))
@@ -10403,6 +10461,23 @@ public:
                m_tab8_sobre_param_tabs.Update();
               }
             return;
+           }
+
+         for(int i=0;i<4;i++)
+           {
+            if(m_tab8_montar_indic_btn[i].CheckElementName(sparam))
+              {
+               m_tab8_tabs.SelectTab(1);
+               m_tab8_montar_tabs.SelectTab(0);
+               m_tab8_montar_param_card_tabs[i].SelectTab(0);
+               m_tab8_tabs.ShowTabElements();
+               m_tab8_montar_tabs.ShowTabElements();
+               m_tab8_montar_param_card_tabs[i].ShowTabElements();
+               m_tab8_tabs.Update();
+               m_tab8_montar_tabs.Update();
+               m_tab8_montar_param_card_tabs[i].Update();
+               return;
+              }
            }
 
          if(m_btn_refresh.CheckElementName(sparam))
