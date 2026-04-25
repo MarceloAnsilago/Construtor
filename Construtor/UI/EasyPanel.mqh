@@ -330,10 +330,12 @@ private:
    CEF_CTextLabel    m_tab8_montar_sinais_logic_title;
    CEF_CTextLabel    m_tab8_montar_sinais_candle_title;
    CEF_CTextLabel    m_tab8_montar_sinais_value_title;
+   CEF_CTextLabel    m_tab8_montar_sinais_compare_title;
    CEF_CButton       m_tab8_montar_sinais_refresh_btn;
    CEF_CComboBox     m_tab8_montar_sinais_logic_combo[5];
    CEF_CComboBox     m_tab8_montar_sinais_candle_combo[5];
    CEF_CComboBox     m_tab8_montar_sinais_value_combo[5];
+   CEF_CComboBox     m_tab8_montar_sinais_compare_combo[5];
    CEF_CTextLabel    m_tab8_padrao_label;
    CEF_CComboBox     m_tab8_padrao_combo;
    CEF_CFrame        m_tab8_card_ordens;
@@ -6018,11 +6020,25 @@ public:
       montar_sinais_candle_items[2]="Penúltima vela";
       montar_sinais_candle_items[3]="Anti Penúltima";
 
+      string montar_sinais_compare_items[];
+      ArrayResize(montar_sinais_compare_items,10);
+      montar_sinais_compare_items[0]="Maior que";
+      montar_sinais_compare_items[1]="Menor que";
+      montar_sinais_compare_items[2]="Maior ou igual que";
+      montar_sinais_compare_items[3]="Menor ou igual que";
+      montar_sinais_compare_items[4]="Igual que";
+      montar_sinais_compare_items[5]="Diferente de";
+      montar_sinais_compare_items[6]="Cruzar p/ cima de";
+      montar_sinais_compare_items[7]="Cruzar p/ baixo de";
+      montar_sinais_compare_items[8]="Cruzar&fechar acima de";
+      montar_sinais_compare_items[9]="Cruzar&fechar abaixo de";
+
       const int montar_sinais_inner_x=16;
-      const int montar_sinais_col_gap=12;
-      const int montar_sinais_combo_w=(montar_sinais_card_w-32-(2*montar_sinais_col_gap))/3;
+      const int montar_sinais_col_gap=8;
+      const int montar_sinais_combo_w=(montar_sinais_card_w-32-(3*montar_sinais_col_gap))/4;
       const int montar_sinais_candle_x=montar_sinais_inner_x+montar_sinais_combo_w+montar_sinais_col_gap;
       const int montar_sinais_value_x=montar_sinais_candle_x+montar_sinais_combo_w+montar_sinais_col_gap;
+      const int montar_sinais_compare_x=montar_sinais_value_x+montar_sinais_combo_w+montar_sinais_col_gap;
       const int montar_sinais_combo_h=20;
       const int montar_sinais_col_title_y=40;
       const int montar_sinais_col_title_h=16;
@@ -6042,6 +6058,11 @@ public:
          return(false);
       m_tab8_montar_sinais_value_title.FontSize(9);
       m_tab8_montar_sinais_value_title.LabelColor(C'91,78,64');
+
+      if(!CreateTextLabel(m_tab8_montar_sinais_compare_title,"Comparação",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_compare_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
+         return(false);
+      m_tab8_montar_sinais_compare_title.FontSize(9);
+      m_tab8_montar_sinais_compare_title.LabelColor(C'91,78,64');
 
       for(int i=0;i<5;i++)
         {
@@ -6147,6 +6168,41 @@ public:
          if(!m_tab8_montar_sinais_value_combo[i].CreateComboBox("",montar_sinais_value_x,montar_sinais_row_y))
             return(false);
          AddToElementsArray(m_window_index,m_tab8_montar_sinais_value_combo[i]);
+
+         m_tab8_montar_sinais_compare_combo[i].MainPointer(m_tab8_montar_sinais_card);
+         m_tab8_montar_tabs.AddToElementsArray(1,m_tab8_montar_sinais_compare_combo[i]);
+         m_tab8_montar_sinais_compare_combo[i].XSize(montar_sinais_combo_w);
+         m_tab8_montar_sinais_compare_combo[i].YSize(montar_sinais_combo_h);
+         m_tab8_montar_sinais_compare_combo[i].BackColor(clrWhite);
+         m_tab8_montar_sinais_compare_combo[i].BackColorHover(clrWhite);
+         m_tab8_montar_sinais_compare_combo[i].BackColorPressed(clrWhite);
+         m_tab8_montar_sinais_compare_combo[i].BorderColor(tab2_border);
+         m_tab8_montar_sinais_compare_combo[i].BorderColorHover(tab2_border);
+         m_tab8_montar_sinais_compare_combo[i].BorderColorPressed(tab2_border);
+         m_tab8_montar_sinais_compare_combo[i].FontSize(10);
+         m_tab8_montar_sinais_compare_combo[i].ItemsTotal(ArraySize(montar_sinais_compare_items));
+         m_tab8_montar_sinais_compare_combo[i].CheckBoxMode(false);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().XGap(1);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().XSize(montar_sinais_combo_w-2);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().YSize(montar_sinais_combo_h);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().AnchorRightWindowSide(false);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().BackColor(clrWhite);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().BackColorHover(clrWhite);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().BackColorPressed(clrWhite);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().BorderColor(tab2_border);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().BorderColorHover(tab2_border);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().BorderColorPressed(tab2_border);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().IconXGap((montar_sinais_combo_w-2)-18);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().LabelXGap(10);
+         m_tab8_montar_sinais_compare_combo[i].GetButtonPointer().LabelColor(C'43,43,43');
+         for(int p=0;p<ArraySize(montar_sinais_compare_items);p++) m_tab8_montar_sinais_compare_combo[i].SetValue(p,montar_sinais_compare_items[p]);
+         m_tab8_montar_sinais_compare_combo[i].GetListViewPointer().YSize(160);
+         m_tab8_montar_sinais_compare_combo[i].GetListViewPointer().LightsHover(true);
+         m_tab8_montar_sinais_compare_combo[i].GetListViewPointer().BackColor(clrWhite);
+         if(!m_tab8_montar_sinais_compare_combo[i].CreateComboBox("",montar_sinais_compare_x,montar_sinais_row_y))
+            return(false);
+         AddToElementsArray(m_window_index,m_tab8_montar_sinais_compare_combo[i]);
+         m_tab8_montar_sinais_compare_combo[i].SelectItem(0);
 
          montar_sinais_row_y+=34;
         }
