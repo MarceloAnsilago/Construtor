@@ -5987,7 +5987,7 @@ public:
       const int montar_sinais_card_x=12;
       const int montar_sinais_card_y=8;
       const int montar_sinais_card_w=560;
-      const int montar_sinais_card_h=tab8_montar_tabs_h-28;
+      const int montar_sinais_card_h=260;
 
       if(!CreateFrame(m_tab8_montar_sinais_card,"",m_tab8_montar_tabs,m_window_index,m_tab8_montar_tabs,1,montar_sinais_card_x,montar_sinais_card_y,montar_sinais_card_w,montar_sinais_card_h,1))
          return(false);
