@@ -325,6 +325,9 @@ private:
    CEF_CTextEdit     m_tab8_montar_keltner_deviation_spin[4];
    CEF_CTextLabel    m_tab8_montar_keltner_ma_type_label[4];
    CEF_CComboBox     m_tab8_montar_keltner_ma_type_combo[4];
+   CEF_CTextLabel    m_tab8_montar_dochian_title[4];
+   CEF_CTextLabel    m_tab8_montar_dochian_period_label[4];
+   CEF_CTextEdit     m_tab8_montar_dochian_period_spin[4];
    CEF_CFrame        m_tab8_montar_sinais_card;
    CEF_CTextLabel    m_tab8_montar_sinais_card_title;
    CEF_CTextLabel    m_tab8_montar_sinais_logic_title;
@@ -855,6 +858,13 @@ private:
             const string prefix=(string)(slot+1)+" keltner ";
             value_items[total++]=prefix+"Central";
             value_items[total++]=prefix+"superior";
+            value_items[total++]=prefix+"inferior";
+           }
+         else if(idx==2) // Dochian
+           {
+            const string prefix=(string)(slot+1)+" dochian ";
+            value_items[total++]=prefix+"superior";
+            value_items[total++]=prefix+"central";
             value_items[total++]=prefix+"inferior";
            }
         }
@@ -5968,10 +5978,53 @@ public:
               }
             else
               {
-               if(!CreateTextLabel(m_tab8_montar_param_card_tab_placeholder[i][p],"",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,10,6,montar_param_card_w-48,18))
+               const int montar_dochian_x=12;
+               const int montar_dochian_title_y=8;
+               const int montar_dochian_y=28;
+               const int montar_dochian_w=montar_param_card_w-48;
+               const int montar_dochian_spin_edit_w=montar_dochian_w-34;
+               const string montar_dochian_title=(string)(i+1)+" dochian";
+
+               if(!CreateTextLabel(m_tab8_montar_dochian_title[i],montar_dochian_title,m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_dochian_x,montar_dochian_title_y,montar_dochian_w,16))
                   return(false);
-               m_tab8_montar_param_card_tab_placeholder[i][p].FontSize(9);
-               m_tab8_montar_param_card_tab_placeholder[i][p].LabelColor(C'91,78,64');
+               m_tab8_montar_dochian_title[i].FontSize(9);
+               m_tab8_montar_dochian_title[i].LabelColor(C'91,78,64');
+
+               if(!CreateTextLabel(m_tab8_montar_dochian_period_label[i],"Período",m_tab8_montar_param_card_tabs[i],m_window_index,m_tab8_montar_param_card_tabs[i],p,montar_dochian_x,montar_dochian_y,montar_dochian_w,16))
+                  return(false);
+               m_tab8_montar_dochian_period_label[i].FontSize(9);
+               m_tab8_montar_dochian_period_label[i].LabelColor(C'91,78,64');
+
+               m_tab8_montar_dochian_period_spin[i].MainPointer(m_tab8_montar_param_card_tabs[i]);
+               m_tab8_montar_param_card_tabs[i].AddToElementsArray(p,m_tab8_montar_dochian_period_spin[i]);
+               m_tab8_montar_dochian_period_spin[i].XSize(montar_dochian_w);
+               m_tab8_montar_dochian_period_spin[i].MaxValue(9999.0);
+               m_tab8_montar_dochian_period_spin[i].MinValue(1.0);
+               m_tab8_montar_dochian_period_spin[i].StepValue(1.0);
+               m_tab8_montar_dochian_period_spin[i].SetDigits(0);
+               m_tab8_montar_dochian_period_spin[i].SpinEditMode(true);
+               m_tab8_montar_dochian_period_spin[i].CheckBoxMode(false);
+               m_tab8_montar_dochian_period_spin[i].SetValue("21");
+               m_tab8_montar_dochian_period_spin[i].AnchorBottomWindowSide(false);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().XSize(montar_dochian_spin_edit_w);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().AutoSelectionMode(true);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().AnchorRightWindowSide(false);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().XGap(1);
+               if(!m_tab8_montar_dochian_period_spin[i].CreateTextEdit("",montar_dochian_x,montar_dochian_y+16))
+                  return(false);
+               AddToElementsArray(m_window_index,m_tab8_montar_dochian_period_spin[i]);
+               m_tab8_montar_dochian_period_spin[i].BackColor(C'239,231,218');
+               m_tab8_montar_dochian_period_spin[i].BackColorHover(C'239,231,218');
+               m_tab8_montar_dochian_period_spin[i].BackColorPressed(C'239,231,218');
+               m_tab8_montar_dochian_period_spin[i].BorderColor(tab2_border);
+               m_tab8_montar_dochian_period_spin[i].BorderColorHover(tab2_border);
+               m_tab8_montar_dochian_period_spin[i].BorderColorPressed(tab2_border);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().BackColor(clrWhite);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().BackColorHover(clrWhite);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().BackColorPressed(clrWhite);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().BorderColor(tab2_border);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().BorderColorHover(tab2_border);
+               m_tab8_montar_dochian_period_spin[i].GetTextBoxPointer().BorderColorPressed(tab2_border);
               }
            }
 
