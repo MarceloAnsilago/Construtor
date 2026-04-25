@@ -332,12 +332,14 @@ private:
    CEF_CTextLabel    m_tab8_montar_sinais_value_title;
    CEF_CTextLabel    m_tab8_montar_sinais_compare_title;
    CEF_CTextLabel    m_tab8_montar_sinais_compare_value_title;
+   CEF_CTextLabel    m_tab8_montar_sinais_compare_candle_title;
    CEF_CButton       m_tab8_montar_sinais_refresh_btn;
    CEF_CComboBox     m_tab8_montar_sinais_logic_combo[5];
    CEF_CComboBox     m_tab8_montar_sinais_candle_combo[5];
    CEF_CComboBox     m_tab8_montar_sinais_value_combo[5];
    CEF_CComboBox     m_tab8_montar_sinais_compare_combo[5];
    CEF_CComboBox     m_tab8_montar_sinais_compare_value_combo[5];
+   CEF_CComboBox     m_tab8_montar_sinais_compare_candle_combo[5];
    CEF_CTextLabel    m_tab8_padrao_label;
    CEF_CComboBox     m_tab8_padrao_combo;
    CEF_CFrame        m_tab8_card_ordens;
@@ -6050,9 +6052,9 @@ public:
       const int montar_sinais_inner_x=16;
       const int montar_sinais_col_gap=6;
       const int montar_sinais_combo_w=(montar_sinais_card_w-32-(4*montar_sinais_col_gap))/5;
-      const int montar_sinais_candle_x=montar_sinais_inner_x+montar_sinais_combo_w+montar_sinais_col_gap;
-      const int montar_sinais_value_x=montar_sinais_candle_x+montar_sinais_combo_w+montar_sinais_col_gap;
-      const int montar_sinais_compare_x=montar_sinais_value_x+montar_sinais_combo_w+montar_sinais_col_gap;
+      const int montar_sinais_value_x=montar_sinais_inner_x+montar_sinais_combo_w+montar_sinais_col_gap;
+      const int montar_sinais_candle_x=montar_sinais_value_x+montar_sinais_combo_w+montar_sinais_col_gap;
+      const int montar_sinais_compare_x=montar_sinais_candle_x+montar_sinais_combo_w+montar_sinais_col_gap;
       const int montar_sinais_compare_value_x=montar_sinais_compare_x+montar_sinais_combo_w+montar_sinais_col_gap;
       const int montar_sinais_combo_h=20;
       const int montar_sinais_col_title_y=40;
@@ -6064,22 +6066,22 @@ public:
       m_tab8_montar_sinais_logic_title.FontSize(9);
       m_tab8_montar_sinais_logic_title.LabelColor(C'91,78,64');
 
+      if(!CreateTextLabel(m_tab8_montar_sinais_value_title,"Valor ref.",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_value_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
+         return(false);
+      m_tab8_montar_sinais_value_title.FontSize(9);
+      m_tab8_montar_sinais_value_title.LabelColor(C'91,78,64');
+
       if(!CreateTextLabel(m_tab8_montar_sinais_candle_title,"Velas",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_candle_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
          return(false);
       m_tab8_montar_sinais_candle_title.FontSize(9);
       m_tab8_montar_sinais_candle_title.LabelColor(C'91,78,64');
-
-      if(!CreateTextLabel(m_tab8_montar_sinais_value_title,"Valor de referência",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_value_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
-         return(false);
-      m_tab8_montar_sinais_value_title.FontSize(9);
-      m_tab8_montar_sinais_value_title.LabelColor(C'91,78,64');
 
       if(!CreateTextLabel(m_tab8_montar_sinais_compare_title,"Comparação",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_compare_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
          return(false);
       m_tab8_montar_sinais_compare_title.FontSize(9);
       m_tab8_montar_sinais_compare_title.LabelColor(C'91,78,64');
 
-      if(!CreateTextLabel(m_tab8_montar_sinais_compare_value_title,"Valor de referência",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_compare_value_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
+      if(!CreateTextLabel(m_tab8_montar_sinais_compare_value_title,"Valor ref.",m_tab8_montar_sinais_card,m_window_index,m_tab8_montar_tabs,1,montar_sinais_compare_value_x,montar_sinais_col_title_y,montar_sinais_combo_w,montar_sinais_col_title_h))
          return(false);
       m_tab8_montar_sinais_compare_value_title.FontSize(9);
       m_tab8_montar_sinais_compare_value_title.LabelColor(C'91,78,64');
