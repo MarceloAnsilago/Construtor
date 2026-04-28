@@ -95,6 +95,9 @@ private:
    bool              m_signal_is_buy;
    int               m_tab8_cruz_fast_last_idx;
    int               m_tab8_cruz_slow_last_idx;
+   int               m_tab8_cruz_tab_last;
+   int               m_tab8_sobre_tab_last;
+   bool              m_tab8_bootstrap_pending;
    int               m_tab8_sobre_indic_last_idx;
    int               m_tab8_montar_indic_last_idx[4];
    CEF_CWindow       m_window;
@@ -785,6 +788,9 @@ private:
 
    void PollCrossComboChanges(void)
      {
+      if(m_tab8_tabs.SelectedTab()!=0)
+         return;
+
       // EasyAndFastGUI combo change events are not wired here; poll indexes to keep UI responsive.
       const int fast_idx=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
       const int slow_idx=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
@@ -810,6 +816,9 @@ private:
 
    void PollSobreIndicChanges(void)
      {
+      if(m_tab8_tabs.SelectedTab()!=0)
+         return;
+
       const int idx=m_tab8_sobre_indic_combo.GetListViewPointer().SelectedItemIndex();
       if(idx!=m_tab8_sobre_indic_last_idx)
         {
@@ -830,6 +839,141 @@ private:
      {
       for(int i=0;i<4;i++)
          UpdateMontarIndicButton(i);
+     }
+
+   void SyncTab8Availability(void)
+     {
+      const int tab8_selected=m_tab8_tabs.SelectedTab();
+      const bool montar_active=(tab8_selected==1);
+      m_tab8_card_montar_indic.IsAvailable(montar_active);
+      m_tab8_montar_tabs.IsAvailable(montar_active);
+
+      const int cruz_selected=m_tab8_cruz_tabs.SelectedTab();
+      m_tab8_cruz_fast_tabs.IsAvailable(tab8_selected==0 && cruz_selected==1);
+      m_tab8_cruz_slow_tabs.IsAvailable(tab8_selected==0 && cruz_selected==2);
+
+      const int sobre_selected=m_tab8_sobre_tabs.SelectedTab();
+      m_tab8_sobre_param_tabs.IsAvailable(tab8_selected==0 && sobre_selected==1);
+     }
+
+   void BootstrapTab8State(void)
+     {
+      if(!m_tab8_bootstrap_pending)
+         return;
+      if(m_top_tabs.SelectedTab()!=0 || m_tabs.SelectedTab()!=7)
+         return;
+
+      const int current_tab=m_tab8_tabs.SelectedTab();
+      if(current_tab==0)
+        {
+         m_tab8_tabs.SelectTab(1);
+         m_tab8_tabs.SelectTab(0);
+        }
+      else
+        {
+         m_tab8_tabs.SelectTab(0);
+         m_tab8_tabs.SelectTab(current_tab);
+        }
+
+      SyncTab8Availability();
+      CloseCruzHiddenDropdowns();
+      CloseSobreHiddenDropdowns();
+      m_tab8_bootstrap_pending=false;
+     }
+
+   void CloseComboList(CEF_CComboBox &combo)
+     {
+      combo.GetListViewPointer().Hide();
+      combo.GetButtonPointer().IsPressed(false);
+     }
+
+   void CloseCruzHiddenDropdowns(void)
+     {
+      const int selected_tab=m_tab8_cruz_tabs.SelectedTab();
+      if(selected_tab==0)
+        {
+         CloseComboList(m_tab8_cruz_fast_ma_type_combo);
+         CloseComboList(m_tab8_cruz_fast_ma_price_combo);
+         CloseComboList(m_tab8_cruz_fast_vidya_price_combo);
+         CloseComboList(m_tab8_cruz_fast_dema_price_combo);
+         CloseComboList(m_tab8_cruz_fast_tema_price_combo);
+         CloseComboList(m_tab8_cruz_fast_frama_price_combo);
+         CloseComboList(m_tab8_cruz_slow_ma_type_combo);
+         CloseComboList(m_tab8_cruz_slow_ma_price_combo);
+         CloseComboList(m_tab8_cruz_slow_vidya_price_combo);
+         CloseComboList(m_tab8_cruz_slow_dema_price_combo);
+         CloseComboList(m_tab8_cruz_slow_tema_price_combo);
+         CloseComboList(m_tab8_cruz_slow_frama_price_combo);
+        }
+      else if(selected_tab==1)
+        {
+         CloseComboList(m_tab8_cruz_fast_combo);
+         CloseComboList(m_tab8_cruz_signal_combo);
+         CloseComboList(m_tab8_cruz_slow_combo);
+         CloseComboList(m_tab8_cruz_slow_ma_type_combo);
+         CloseComboList(m_tab8_cruz_slow_ma_price_combo);
+         CloseComboList(m_tab8_cruz_slow_vidya_price_combo);
+         CloseComboList(m_tab8_cruz_slow_dema_price_combo);
+         CloseComboList(m_tab8_cruz_slow_tema_price_combo);
+         CloseComboList(m_tab8_cruz_slow_frama_price_combo);
+        }
+      else if(selected_tab==2)
+        {
+         CloseComboList(m_tab8_cruz_fast_combo);
+         CloseComboList(m_tab8_cruz_signal_combo);
+         CloseComboList(m_tab8_cruz_slow_combo);
+         CloseComboList(m_tab8_cruz_fast_ma_type_combo);
+         CloseComboList(m_tab8_cruz_fast_ma_price_combo);
+         CloseComboList(m_tab8_cruz_fast_vidya_price_combo);
+         CloseComboList(m_tab8_cruz_fast_dema_price_combo);
+         CloseComboList(m_tab8_cruz_fast_tema_price_combo);
+         CloseComboList(m_tab8_cruz_fast_frama_price_combo);
+        }
+     }
+
+   void CloseSobreHiddenDropdowns(void)
+     {
+      const int selected_tab=m_tab8_sobre_tabs.SelectedTab();
+      if(selected_tab==0)
+        {
+         CloseComboList(m_tab8_sobre_macd_price_combo);
+         CloseComboList(m_tab8_sobre_stoch_ma_combo);
+         CloseComboList(m_tab8_sobre_stoch_type_combo);
+         CloseComboList(m_tab8_sobre_rsi_price_combo);
+         CloseComboList(m_tab8_sobre_cci_price_combo);
+         CloseComboList(m_tab8_sobre_regressao_ma_combo);
+         CloseComboList(m_tab8_sobre_regressao_price_combo);
+         CloseComboList(m_tab8_sobre_afast_ma_combo);
+         CloseComboList(m_tab8_sobre_afast_price_combo);
+         CloseComboList(m_tab8_sobre_desvio_ma_combo);
+         CloseComboList(m_tab8_sobre_desvio_price_combo);
+         CloseComboList(m_tab8_sobre_mfi_volume_combo);
+         CloseComboList(m_tab8_sobre_chaikin_ma_combo);
+         CloseComboList(m_tab8_sobre_chaikin_volume_combo);
+        }
+      else if(selected_tab==1)
+        {
+         CloseComboList(m_tab8_sobre_indic_combo);
+         CloseComboList(m_tab8_sobre_entry_combo);
+         CloseComboList(m_tab8_sobre_sentido_combo);
+        }
+     }
+
+   void PollTab8CardTabChanges(void)
+     {
+      const int cruz_selected=m_tab8_cruz_tabs.SelectedTab();
+      if(cruz_selected!=m_tab8_cruz_tab_last)
+        {
+         m_tab8_cruz_tab_last=cruz_selected;
+         CloseCruzHiddenDropdowns();
+        }
+
+      const int sobre_selected=m_tab8_sobre_tabs.SelectedTab();
+      if(sobre_selected!=m_tab8_sobre_tab_last)
+        {
+         m_tab8_sobre_tab_last=sobre_selected;
+         CloseSobreHiddenDropdowns();
+        }
      }
 
    void RefreshMontarValueCombos(void)
@@ -916,6 +1060,9 @@ private:
 
    void PollMontarIndicChanges(void)
      {
+      if(m_tab8_tabs.SelectedTab()!=1)
+         return;
+
       for(int i=0;i<4;i++)
         {
          const int idx=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
@@ -1286,7 +1433,7 @@ private:
       }
 
 public:
-                    CConstrutorEasyPanel(void) : m_created(false), m_visible(false), m_window_index(-1), m_top_tab_last(-1), m_tab8_montar_tab_last(-1), m_signal_is_buy(true), m_tab8_cruz_fast_last_idx(-1), m_tab8_cruz_slow_last_idx(-1), m_tab8_sobre_indic_last_idx(-1)
+                    CConstrutorEasyPanel(void) : m_created(false), m_visible(false), m_window_index(-1), m_top_tab_last(-1), m_tab8_montar_tab_last(-1), m_signal_is_buy(true), m_tab8_cruz_fast_last_idx(-1), m_tab8_cruz_slow_last_idx(-1), m_tab8_cruz_tab_last(-1), m_tab8_sobre_tab_last(-1), m_tab8_bootstrap_pending(false), m_tab8_sobre_indic_last_idx(-1)
      {
       for(int i=0;i<4;i++)
          m_tab8_montar_indic_last_idx[i]=-1;
@@ -1298,6 +1445,8 @@ public:
      {
       if(!m_created || !m_visible)
          return;
+      SyncTab8Availability();
+      PollTab8CardTabChanges();
       PollCrossComboChanges();
       PollSobreIndicChanges();
       PollMontarIndicChanges();
@@ -6192,7 +6341,7 @@ public:
       m_tab8_montar_sinais_placeholder.LabelColor(C'91,78,64');
 
       const int montar_sinais_card_x=12;
-      const int montar_sinais_card_y=8;
+      const int montar_sinais_card_y=20;
       const int montar_sinais_card_w=tab8_montar_tabs_w-24;
       const int montar_sinais_card_h=260;
 
@@ -10810,6 +10959,8 @@ public:
       UpdateMontarIndicButtons();
       m_tab8_cruz_fast_last_idx=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
       m_tab8_cruz_slow_last_idx=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
+      m_tab8_cruz_tab_last=m_tab8_cruz_tabs.SelectedTab();
+      m_tab8_sobre_tab_last=m_tab8_sobre_tabs.SelectedTab();
       m_tab8_montar_tab_last=m_tab8_montar_tabs.SelectedTab();
       for(int i=0;i<4;i++)
          m_tab8_montar_indic_last_idx[i]=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
@@ -10818,6 +10969,7 @@ public:
       if(m_top_tabs.SelectedTab()==0)
          m_tabs.ShowTabElements();
       m_visible=true;
+      m_tab8_bootstrap_pending=true;
       return(true);
      }
 
@@ -11239,40 +11391,48 @@ public:
 
       if(id==CHARTEVENT_CUSTOM+ON_CLICK_BUTTON)
         {
-         if(m_tab8_cruz_fast_btn.CheckElementName(sparam))
+         const int tab8_selected=m_tab8_tabs.SelectedTab();
+
+         if(tab8_selected==0)
            {
-            const int v=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
-            ActivateShortcutTab(m_tab8_cruz_tabs,1,m_tab8_cruz_fast_tabs,v,5,5);
-            return;
+            if(m_tab8_cruz_fast_btn.CheckElementName(sparam))
+              {
+               const int v=m_tab8_cruz_fast_combo.GetListViewPointer().SelectedItemIndex();
+               ActivateShortcutTab(m_tab8_cruz_tabs,1,m_tab8_cruz_fast_tabs,v,5,5);
+               return;
+              }
+
+            if(m_tab8_cruz_slow_btn.CheckElementName(sparam))
+              {
+               const int v=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
+               ActivateShortcutTab(m_tab8_cruz_tabs,2,m_tab8_cruz_slow_tabs,v,5,5);
+               return;
+              }
+
+            if(m_tab8_sobre_indic_btn.CheckElementName(sparam))
+              {
+               const int v=m_tab8_sobre_indic_combo.GetListViewPointer().SelectedItemIndex();
+               ActivateShortcutTab(m_tab8_sobre_tabs,1,m_tab8_sobre_param_tabs,v,0,14);
+               return;
+              }
            }
 
-         if(m_tab8_cruz_slow_btn.CheckElementName(sparam))
-           {
-            const int v=m_tab8_cruz_slow_combo.GetListViewPointer().SelectedItemIndex();
-            ActivateShortcutTab(m_tab8_cruz_tabs,2,m_tab8_cruz_slow_tabs,v,5,5);
-            return;
-           }
-
-         if(m_tab8_sobre_indic_btn.CheckElementName(sparam))
-           {
-            const int v=m_tab8_sobre_indic_combo.GetListViewPointer().SelectedItemIndex();
-            ActivateShortcutTab(m_tab8_sobre_tabs,1,m_tab8_sobre_param_tabs,v,0,14);
-            return;
-           }
-
-         if(m_tab8_montar_sinais_refresh_btn.CheckElementName(sparam))
+         if(tab8_selected==1 && m_tab8_montar_sinais_refresh_btn.CheckElementName(sparam))
            {
             RefreshMontarValueCombos();
             return;
            }
 
-         for(int i=0;i<4;i++)
+         if(tab8_selected==1)
            {
-            if(m_tab8_montar_indic_btn[i].CheckElementName(sparam))
+            for(int i=0;i<4;i++)
               {
-               const int v=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
-               ActivateNestedShortcutTab(m_tab8_tabs,1,m_tab8_montar_tabs,0,m_tab8_montar_param_card_tabs[i],v,1,3);
-               return;
+               if(m_tab8_montar_indic_btn[i].CheckElementName(sparam))
+                 {
+                  const int v=m_tab8_montar_indic_combo[i].GetListViewPointer().SelectedItemIndex();
+                  ActivateNestedShortcutTab(m_tab8_tabs,1,m_tab8_montar_tabs,0,m_tab8_montar_param_card_tabs[i],v,1,3);
+                  return;
+                 }
               }
            }
 
@@ -11297,6 +11457,9 @@ public:
         }
 
       // Keep cross shortcut buttons synced even without explicit combo change events.
+      BootstrapTab8State();
+      SyncTab8Availability();
+      PollTab8CardTabChanges();
       PollCrossComboChanges();
       PollMontarTabChanges();
       PollMontarIndicChanges();
