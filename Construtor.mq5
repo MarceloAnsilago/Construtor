@@ -1,7 +1,6 @@
 #property strict
 
 #include "Construtor\\Settings.mqh"
-#include "Construtor\\UI\\EasyPanel.mqh"
 #include "Construtor\\UI\\V2\\EasyPanelV2.mqh"
 
 input string InpEstrategiaNome = "Minha estrategia";
@@ -79,21 +78,19 @@ input ENUM_CONSTRUTOR_BASE_MEDIA InpTrailingStopCandlesCountPosicao = CONSTRUTOR
 input ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR InpTrailingStopIndicador = CONSTRUTOR_STOP_IND_ATR;
 
 SConstrutorSettings g_settings;
-CConstrutorEasyPanel *g_panel_old=NULL;
 CConstrutorEasyPanelV2 *g_panel_new=NULL;
 
 string LAUNCHER_BG_NAME="ConstrutorLauncherBg";
-string LAUNCHER_OLD_BUTTON_NAME="ConstrutorLauncherOldButton";
 string LAUNCHER_NEW_BUTTON_NAME="ConstrutorLauncherNewButton";
 
 void Construtor_ToggleEasyPanel(void)
   {
-   if(g_panel_old!=NULL && g_panel_old.IsVisible())
+   if(g_panel_new!=NULL && g_panel_new.IsVisible())
      {
-      g_panel_old.HidePanel();
+      g_panel_new.HidePanel();
       return;
      }
-   ShowOldPanel();
+   ShowNewPanel();
   }
 
 bool CreateLauncherBackground(void)
@@ -106,7 +103,7 @@ bool CreateLauncherBackground(void)
    ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_XDISTANCE,12);
    ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_YDISTANCE,24);
    ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_XSIZE,240);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_YSIZE,94);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_YSIZE,62);
    ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BGCOLOR,clrWhiteSmoke);
    ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_COLOR,clrSilver);
    ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BORDER_TYPE,BORDER_FLAT);
@@ -142,9 +139,7 @@ bool CreateLauncher(void)
   {
    if(!CreateLauncherBackground())
       return(false);
-   if(!CreateLauncherButton(LAUNCHER_OLD_BUTTON_NAME,"Abrir Painel Atual",34))
-      return(false);
-   if(!CreateLauncherButton(LAUNCHER_NEW_BUTTON_NAME,"Abrir Painel V2",66))
+   if(!CreateLauncherButton(LAUNCHER_NEW_BUTTON_NAME,"Abrir Painel V2",34))
       return(false);
    return(true);
   }
@@ -158,15 +153,7 @@ void DeleteLauncherObject(const string name)
 void DeleteLauncher(void)
   {
    DeleteLauncherObject(LAUNCHER_NEW_BUTTON_NAME);
-   DeleteLauncherObject(LAUNCHER_OLD_BUTTON_NAME);
    DeleteLauncherObject(LAUNCHER_BG_NAME);
-  }
-
-bool EnsureOldPanel(void)
-  {
-   if(g_panel_old==NULL)
-      g_panel_old=new CConstrutorEasyPanel();
-   return(g_panel_old!=NULL);
   }
 
 bool EnsureNewPanel(void)
@@ -176,32 +163,12 @@ bool EnsureNewPanel(void)
    return(g_panel_new!=NULL);
   }
 
-bool ShowOldPanel(void)
-  {
-   if(!EnsureOldPanel())
-      return(false);
-   if(g_panel_new!=NULL)
-      g_panel_new.HidePanel();
-   return(g_panel_old.ShowPanel());
-  }
-
 bool ShowNewPanel(void)
   {
    if(!EnsureNewPanel())
       return(false);
    g_panel_new.SetSettings(g_settings);
-   if(g_panel_old!=NULL)
-      g_panel_old.HidePanel();
    return(g_panel_new.ShowPanel());
-  }
-
-void DestroyOldPanel(void)
-  {
-   if(g_panel_old==NULL)
-      return;
-   g_panel_old.Shutdown();
-   delete g_panel_old;
-   g_panel_old=NULL;
   }
 
 void DestroyNewPanel(void)
@@ -321,6 +288,11 @@ int OnInit()
    LoadInputsToSettings();
    if(!CreateLauncher())
       return(INIT_FAILED);
+   if(!ShowNewPanel())
+     {
+      Print(__FUNCTION__,": falha ao abrir o painel V2.");
+      return(INIT_FAILED);
+     }
    EventSetTimer(1);
    return(INIT_SUCCEEDED);
   }
@@ -329,7 +301,6 @@ void OnDeinit(const int reason)
   {
    EventKillTimer();
    DestroyNewPanel();
-   DestroyOldPanel();
    DeleteLauncher();
   }
 
@@ -339,11 +310,6 @@ void OnTick()
 
 void OnTimer()
   {
-   if(g_panel_old!=NULL && g_panel_old.IsVisible())
-     {
-      g_panel_old.OnTimerEvent();
-      return;
-     }
    if(g_panel_new!=NULL && g_panel_new.IsVisible())
       g_panel_new.OnTimerEvent();
   }
@@ -352,11 +318,6 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
   {
    if(id==CHARTEVENT_OBJECT_CLICK)
      {
-      if(sparam==LAUNCHER_OLD_BUTTON_NAME)
-        {
-         ShowOldPanel();
-         return;
-        }
       if(sparam==LAUNCHER_NEW_BUTTON_NAME)
         {
          ShowNewPanel();
@@ -364,11 +325,6 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
         }
      }
 
-   if(g_panel_old!=NULL && g_panel_old.IsVisible())
-     {
-      g_panel_old.ChartEvent(id,lparam,dparam,sparam);
-      return;
-     }
    if(g_panel_new!=NULL && g_panel_new.IsVisible())
      {
       g_panel_new.ChartEvent(id,lparam,dparam,sparam);
