@@ -4,5 +4,7 @@
 !Construtor/
 !Construtor.mq5
 !Construtor/UI/
+!Construtor/UI/V2/
+!Construtor/UI/V2/**
 !Construtor/UI/EasyPanel.mqh
 !Construtor/README.md
