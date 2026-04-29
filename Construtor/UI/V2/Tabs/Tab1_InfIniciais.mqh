@@ -38,14 +38,20 @@ private:
    CEF_CComboBox     m_sell_combo;
 
    CEF_CTextLabel    m_start_label;
-   CEF_CTimeEdit     m_start_time_edit;
+   CEF_CTextEdit     m_start_hour_edit;
+   CEF_CTextLabel    m_start_time_sep;
+   CEF_CTextEdit     m_start_minute_edit;
    CEF_CTextLabel    m_end_label;
-   CEF_CTimeEdit     m_end_time_edit;
+   CEF_CTextEdit     m_end_hour_edit;
+   CEF_CTextLabel    m_end_time_sep;
+   CEF_CTextEdit     m_end_minute_edit;
    CEF_CSeparateLine m_schedule_sep;
    CEF_CTextLabel    m_zero_label;
    CEF_CComboBox     m_zero_combo;
    CEF_CTextLabel    m_zero_time_label;
-   CEF_CTimeEdit     m_zero_time_edit;
+   CEF_CTextEdit     m_zero_hour_edit;
+   CEF_CTextLabel    m_zero_time_sep;
+   CEF_CTextEdit     m_zero_minute_edit;
 
    CEF_CTextLabel    m_tempo_label;
    CEF_CComboBox     m_tempo_combo;
@@ -93,55 +99,39 @@ public:
       return(true);
      }
 
-   bool CreateTimeEditControl(CEF_CTimeEdit &time_edit,CElement &owner,CEF_CTabs &tabs,const int x,const int y,const int width,const int hours,const int minutes)
+   bool CreateTimeControl(CEF_CTextEdit &hour_edit,CEF_CTextLabel &sep_label,CEF_CTextEdit &minute_edit,CElement &owner,CEF_CTabs &tabs,const int x,const int y,const int hours,const int minutes)
      {
-      time_edit.MainPointer(owner);
-      tabs.AddToElementsArray(m_tab_index,time_edit);
-      time_edit.XSize(width);
-      time_edit.YSize(20);
-      time_edit.CheckBoxMode(false);
-      time_edit.BackColor(clrWhite);
-      time_edit.BackColorHover(clrWhite);
-      time_edit.BackColorPressed(clrWhite);
-      time_edit.BorderColor(V2_COLOR_FIELD_BORDER);
-      time_edit.BorderColorHover(V2_COLOR_FIELD_BORDER);
-      time_edit.BorderColorPressed(V2_COLOR_FIELD_BORDER);
-      if(!time_edit.CreateTimeEdit("",x,y))
+      const int time_spin_width=84;
+      const int time_sep_gap=10;
+      const int sep_x=x+time_spin_width+4;
+      const int minute_x=sep_x+10+time_sep_gap;
+
+      if(!CreateSpinControl(hour_edit,owner,tabs,x,y,time_spin_width,23.0,0.0,1.0,0,StringFormat("%02d",V2ClampIndex(hours,0,23)),V2_COLOR_CARD_BACK,V2_COLOR_FIELD_BORDER))
          return(false);
-      m_host.RegisterElement(m_window_index,time_edit);
+      if(!CreateTextLabel(sep_label,":",owner,m_window_index,tabs,m_tab_index,sep_x,y+1,10,18))
+         return(false);
+      sep_label.FontSize(11);
+      sep_label.LabelColor(V2_COLOR_TEXT_PRIMARY);
 
-      CEF_CTextEdit *hours_edit=time_edit.GetHoursEditPointer();
-      CEF_CTextEdit *minutes_edit=time_edit.GetMinutesEditPointer();
-      if(hours_edit!=NULL)
-        {
-         hours_edit.BackColor(clrWhite);
-         hours_edit.BackColorHover(clrWhite);
-         hours_edit.BackColorPressed(clrWhite);
-         hours_edit.BorderColor(V2_COLOR_FIELD_BORDER);
-         hours_edit.BorderColorHover(V2_COLOR_FIELD_BORDER);
-         hours_edit.BorderColorPressed(V2_COLOR_FIELD_BORDER);
-         hours_edit.GetTextBoxPointer().BorderColor(V2_COLOR_FIELD_BORDER);
-         hours_edit.GetTextBoxPointer().BorderColorHover(V2_COLOR_FIELD_BORDER);
-         hours_edit.GetTextBoxPointer().BorderColorPressed(V2_COLOR_FIELD_BORDER);
-         hours_edit.SetDigits(0);
-        }
-      if(minutes_edit!=NULL)
-        {
-         minutes_edit.BackColor(clrWhite);
-         minutes_edit.BackColorHover(clrWhite);
-         minutes_edit.BackColorPressed(clrWhite);
-         minutes_edit.BorderColor(V2_COLOR_FIELD_BORDER);
-         minutes_edit.BorderColorHover(V2_COLOR_FIELD_BORDER);
-         minutes_edit.BorderColorPressed(V2_COLOR_FIELD_BORDER);
-         minutes_edit.GetTextBoxPointer().BorderColor(V2_COLOR_FIELD_BORDER);
-         minutes_edit.GetTextBoxPointer().BorderColorHover(V2_COLOR_FIELD_BORDER);
-         minutes_edit.GetTextBoxPointer().BorderColorPressed(V2_COLOR_FIELD_BORDER);
-         minutes_edit.SetDigits(0);
-        }
-
-      time_edit.SetHours((uint)V2ClampIndex(hours,0,23));
-      time_edit.SetMinutes((uint)V2ClampIndex(minutes,0,59));
+      if(!CreateSpinControl(minute_edit,owner,tabs,minute_x,y,time_spin_width,59.0,0.0,1.0,0,StringFormat("%02d",V2ClampIndex(minutes,0,59)),V2_COLOR_CARD_BACK,V2_COLOR_FIELD_BORDER))
+         return(false);
       return(true);
+     }
+
+   void SetTimeControl(CEF_CTextEdit &hour_edit,CEF_CTextEdit &minute_edit,const int hours,const int minutes)
+     {
+      hour_edit.SetValue(StringFormat("%02d",V2ClampIndex(hours,0,23)));
+      minute_edit.SetValue(StringFormat("%02d",V2ClampIndex(minutes,0,59)));
+     }
+
+   int TimeControlHour(CEF_CTextEdit &hour_edit)
+     {
+      return(V2ClampIndex((int)StringToInteger(hour_edit.GetValue()),0,23));
+     }
+
+   int TimeControlMinute(CEF_CTextEdit &minute_edit)
+     {
+      return(V2ClampIndex((int)StringToInteger(minute_edit.GetValue()),0,59));
      }
 
    void SetSettings(const SConstrutorSettings &settings)
@@ -195,14 +185,14 @@ public:
       if(!V2CreateCard(*m_host,m_card_config,tabs,m_window_index,m_tab_index,content_pad+(card_w+card_gap)*3,content_y,card_w,card_h,V2_COLOR_CARD_BACK,V2_COLOR_CARD_BORDER))
          return(false);
 
-      if(!V2CreateCardTitle(*m_host,m_card_basic_title,"Informacoes basicas",m_card_basic,tabs,m_window_index,m_tab_index,16,12,field_w))
-         return(false);
-      if(!V2CreateCardTitle(*m_host,m_card_direction_title,"Direcao operacional",m_card_direction,tabs,m_window_index,m_tab_index,16,12,field_w))
-         return(false);
-      if(!V2CreateCardTitle(*m_host,m_card_schedule_title,"Horario e zeragem",m_card_schedule,tabs,m_window_index,m_tab_index,16,12,field_w))
-         return(false);
-      if(!V2CreateCardTitle(*m_host,m_card_config_title,"Configuracao inicial",m_card_config,tabs,m_window_index,m_tab_index,16,12,field_w))
-         return(false);
+       if(!V2CreateCardTitle(*m_host,m_card_basic_title,"Informações básicas",m_card_basic,tabs,m_window_index,m_tab_index,16,12,field_w))
+          return(false);
+       if(!V2CreateCardTitle(*m_host,m_card_direction_title,"Direção operacional",m_card_direction,tabs,m_window_index,m_tab_index,16,12,field_w))
+          return(false);
+       if(!V2CreateCardTitle(*m_host,m_card_schedule_title,"Horário e zeragem",m_card_schedule,tabs,m_window_index,m_tab_index,16,12,field_w))
+          return(false);
+       if(!V2CreateCardTitle(*m_host,m_card_config_title,"Configuração inicial",m_card_config,tabs,m_window_index,m_tab_index,16,12,field_w))
+          return(false);
 
       string items_market[];
       string items_oper[];
@@ -216,15 +206,15 @@ public:
       V2ItemsTempoGrafico(items_tf);
 
       int y=start_y;
-      if(!V2CreateFieldLabel(*m_host,m_name_label,"Nome da estrategia",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_name_label,"Nome da estratégia",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
+          return(false);
       y+=label_h+4;
-      if(!CreateTextInputControl(m_name_edit,m_card_basic,tabs,field_x,y,field_w,"Minha estrategia"))
-         return(false);
+       if(!CreateTextInputControl(m_name_edit,m_card_basic,tabs,field_x,y,field_w,"Minha estratégia"))
+          return(false);
       y+=control_h+v_gap;
 
-      if(!V2CreateFieldLabel(*m_host,m_market_label,"Mercado desejado",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_market_label,"Mercado desejado",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
+          return(false);
       y+=label_h+4;
       if(!CreateComboControl(m_market_combo,m_card_basic,tabs,field_x,y,field_w,list_h,items_market,0))
          return(false);
@@ -237,22 +227,22 @@ public:
          return(false);
       y+=control_h+v_gap;
 
-      if(!V2CreateFieldLabel(*m_host,m_mode_label,"Modo de processamento",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_mode_label,"Modo de processamento",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
+          return(false);
       y+=label_h+4;
       if(!CreateComboControl(m_mode_combo,m_card_basic,tabs,field_x,y,field_w,list_h,items_mode,0))
          return(false);
 
       y=start_y;
-      if(!V2CreateFieldLabel(*m_host,m_buy_label,"Operar na compra",m_card_direction,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_buy_label,"Operar na compra",m_card_direction,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
+          return(false);
       y+=label_h+4;
       if(!CreateComboControl(m_buy_combo,m_card_direction,tabs,field_x,y,field_w,120,items_yesno,1))
          return(false);
       y+=control_h+v_gap;
 
-      if(!V2CreateFieldLabel(*m_host,m_sell_label,"Operar na venda",m_card_direction,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_sell_label,"Operar na venda",m_card_direction,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
+          return(false);
       y+=label_h+4;
       if(!CreateComboControl(m_sell_combo,m_card_direction,tabs,field_x,y,field_w,120,items_yesno,1))
          return(false);
@@ -261,18 +251,18 @@ public:
       const int sched_w=card_w-32;
       int sy=start_y;
 
-      if(!V2CreateFieldLabel(*m_host,m_start_label,"Inicio das operacoes",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
-         return(false);
-      sy+=22;
-      if(!CreateTimeEditControl(m_start_time_edit,m_card_schedule,tabs,sched_x,sy,sched_w,9,0))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_start_label,"Início das operações",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
+          return(false);
+       sy+=22;
+       if(!CreateTimeControl(m_start_hour_edit,m_start_time_sep,m_start_minute_edit,m_card_schedule,tabs,sched_x,sy,9,0))
+          return(false);
 
       sy+=control_h+12;
-      if(!V2CreateFieldLabel(*m_host,m_end_label,"Fim das operacoes",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
-         return(false);
-      sy+=22;
-      if(!CreateTimeEditControl(m_end_time_edit,m_card_schedule,tabs,sched_x,sy,sched_w,17,0))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_end_label,"Fim das operações",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
+          return(false);
+       sy+=22;
+       if(!CreateTimeControl(m_end_hour_edit,m_end_time_sep,m_end_minute_edit,m_card_schedule,tabs,sched_x,sy,17,0))
+          return(false);
 
       sy+=control_h+14;
       m_schedule_sep.MainPointer(m_card_schedule);
@@ -285,22 +275,22 @@ public:
       m_host.RegisterElement(m_window_index,m_schedule_sep);
       sy+=10;
 
-      if(!V2CreateFieldLabel(*m_host,m_zero_label,"Zerar posicoes",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_zero_label,"Zerar posições",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
+          return(false);
       sy+=22;
       if(!CreateComboControl(m_zero_combo,m_card_schedule,tabs,sched_x,sy,sched_w,120,items_yesno,0))
          return(false);
 
       sy+=control_h+12;
-      if(!V2CreateFieldLabel(*m_host,m_zero_time_label,"Horario de zeragem",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
-         return(false);
-      sy+=22;
-      if(!CreateTimeEditControl(m_zero_time_edit,m_card_schedule,tabs,sched_x,sy,sched_w,17,30))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_zero_time_label,"Horário de zeragem",m_card_schedule,tabs,m_window_index,m_tab_index,sched_x,sy,sched_w))
+          return(false);
+       sy+=22;
+       if(!CreateTimeControl(m_zero_hour_edit,m_zero_time_sep,m_zero_minute_edit,m_card_schedule,tabs,sched_x,sy,17,30))
+          return(false);
 
       int cy=start_y;
-      if(!V2CreateFieldLabel(*m_host,m_tempo_label,"Tempo grafico",m_card_config,tabs,m_window_index,m_tab_index,field_x,cy,field_w,label_h))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_tempo_label,"Tempo gráfico",m_card_config,tabs,m_window_index,m_tab_index,field_x,cy,field_w,label_h))
+          return(false);
       cy+=label_h+4;
       if(!CreateComboControl(m_tempo_combo,m_card_config,tabs,field_x,cy,field_w,200,items_tf,0))
          return(false);
@@ -313,11 +303,11 @@ public:
          return(false);
 
       cy+=control_h+v_gap;
-      if(!V2CreateFieldLabel(*m_host,m_spread_label,"Spread maximo",m_card_config,tabs,m_window_index,m_tab_index,field_x,cy,field_w,label_h))
-         return(false);
+       if(!V2CreateFieldLabel(*m_host,m_spread_label,"Spread máximo",m_card_config,tabs,m_window_index,m_tab_index,field_x,cy,field_w,label_h))
+          return(false);
       cy+=label_h+4;
-      if(!CreateSpinControl(m_spread_edit,m_card_config,tabs,field_x,cy,field_w,100000.0,0.0,1.0,0,"10",clrWhite,V2_COLOR_FIELD_BORDER))
-         return(false);
+       if(!CreateSpinControl(m_spread_edit,m_card_config,tabs,field_x,cy,field_w,100000.0,0.0,1.0,0,"10",V2_COLOR_CARD_BACK,V2_COLOR_FIELD_BORDER))
+          return(false);
 
       m_created=true;
       return(true);
@@ -334,19 +324,16 @@ public:
       m_mode_combo.SelectItem(V2ClampIndex((int)m_settings.modo_processamento,0,1));
       m_buy_combo.SelectItem(V2ClampIndex((int)m_settings.operar_compra,0,1));
       m_sell_combo.SelectItem(V2ClampIndex((int)m_settings.operar_venda,0,1));
-      m_start_time_edit.SetHours((uint)V2ClampIndex(m_settings.inicio_hora,0,23));
-      m_start_time_edit.SetMinutes((uint)V2ClampIndex(m_settings.inicio_minuto,0,59));
-      m_end_time_edit.SetHours((uint)V2ClampIndex(m_settings.fim_hora,0,23));
-      m_end_time_edit.SetMinutes((uint)V2ClampIndex(m_settings.fim_minuto,0,59));
-      m_zero_combo.SelectItem(V2ClampIndex((int)m_settings.zerar_posicoes,0,1));
+       SetTimeControl(m_start_hour_edit,m_start_minute_edit,m_settings.inicio_hora,m_settings.inicio_minuto);
+       SetTimeControl(m_end_hour_edit,m_end_minute_edit,m_settings.fim_hora,m_settings.fim_minuto);
+       m_zero_combo.SelectItem(V2ClampIndex((int)m_settings.zerar_posicoes,0,1));
 
       int zh=17;
       int zm=30;
       if(V2TryParseHourMin(m_settings.horario_zeragem,zh,zm))
         {
-         m_zero_time_edit.SetHours((uint)V2ClampIndex(zh,0,23));
-         m_zero_time_edit.SetMinutes((uint)V2ClampIndex(zm,0,59));
-        }
+          SetTimeControl(m_zero_hour_edit,m_zero_minute_edit,zh,zm);
+         }
 
       m_tempo_combo.SelectItem(V2ClampIndex((int)m_settings.tempo_grafico,0,20));
       m_volume_edit.SetValue(DoubleToString(m_settings.volume_inicial,2));
@@ -364,14 +351,14 @@ public:
       m_settings.modo_processamento=(ENUM_CONSTRUTOR_MODO_PROCESSAMENTO)V2ClampIndex(m_mode_combo.GetListViewPointer().SelectedItemIndex(),0,1);
       m_settings.operar_compra=(ENUM_CONSTRUTOR_SIM_NAO)V2ClampIndex(m_buy_combo.GetListViewPointer().SelectedItemIndex(),0,1);
       m_settings.operar_venda=(ENUM_CONSTRUTOR_SIM_NAO)V2ClampIndex(m_sell_combo.GetListViewPointer().SelectedItemIndex(),0,1);
-      m_settings.inicio_hora=m_start_time_edit.GetHours();
-      m_settings.inicio_minuto=m_start_time_edit.GetMinutes();
-      m_settings.fim_hora=m_end_time_edit.GetHours();
-      m_settings.fim_minuto=m_end_time_edit.GetMinutes();
-      m_settings.zerar_posicoes=(ENUM_CONSTRUTOR_SIM_NAO)V2ClampIndex(m_zero_combo.GetListViewPointer().SelectedItemIndex(),0,1);
+       m_settings.inicio_hora=TimeControlHour(m_start_hour_edit);
+       m_settings.inicio_minuto=TimeControlMinute(m_start_minute_edit);
+       m_settings.fim_hora=TimeControlHour(m_end_hour_edit);
+       m_settings.fim_minuto=TimeControlMinute(m_end_minute_edit);
+       m_settings.zerar_posicoes=(ENUM_CONSTRUTOR_SIM_NAO)V2ClampIndex(m_zero_combo.GetListViewPointer().SelectedItemIndex(),0,1);
 
-      const int zh=m_zero_time_edit.GetHours();
-      const int zm=m_zero_time_edit.GetMinutes();
+       const int zh=TimeControlHour(m_zero_hour_edit);
+       const int zm=TimeControlMinute(m_zero_minute_edit);
       m_settings.horario_zeragem=StringFormat("%02d:%02d",zh,zm);
 
       m_settings.tempo_grafico=(ENUM_CONSTRUTOR_TEMPO_GRAFICO)V2ClampIndex(m_tempo_combo.GetListViewPointer().SelectedItemIndex(),0,20);
