@@ -39,6 +39,7 @@
 
 #include "..\\..\\Settings.mqh"
 #include "..\\..\\..\\EasyAndFastGUI\\WndCreate.mqh"
+#include "V2Shared.mqh"
 #include "Tabs\\TabBase_Placeholder.mqh"
 #include "Tabs\\Tab1_InfIniciais.mqh"
 #include "Tabs\\Tab2_StopLoss.mqh"
@@ -263,6 +264,8 @@ private:
 
    void SaveVisiblePages(void)
      {
+      m_tab1.Save();
+      m_tab1.ExportSettings(m_settings);
       m_tab2.Save();
       m_tab2.ExportSettings(m_settings);
       m_has_settings=true;
@@ -284,7 +287,10 @@ public:
      {
       m_settings=settings;
       m_has_settings=true;
+      m_tab1.SetSettings(m_settings);
       m_tab2.SetSettings(m_settings);
+      if(m_created)
+         m_tab1.Load();
       if(m_created)
          m_tab2.Load();
      }
@@ -400,29 +406,29 @@ public:
       CreateParamHeaders();
       CreateExecHeaders();
 
-      if(!m_tab1.Create(m_window_index,m_param_tabs,0))
+      if(!m_tab1.Create(*this,m_window_index,m_param_tabs,0))
          return(false);
       if(!m_tab2.Create(m_window_index,m_param_tabs,1))
          return(false);
-      if(!m_tab3.Create(m_window_index,m_param_tabs,2))
+      if(!m_tab3.Create(*this,m_window_index,m_param_tabs,2))
          return(false);
-      if(!m_tab4.Create(m_window_index,m_param_tabs,3))
+      if(!m_tab4.Create(*this,m_window_index,m_param_tabs,3))
          return(false);
-      if(!m_tab5.Create(m_window_index,m_param_tabs,4))
+      if(!m_tab5.Create(*this,m_window_index,m_param_tabs,4))
          return(false);
-      if(!m_tab6.Create(m_window_index,m_param_tabs,5))
+      if(!m_tab6.Create(*this,m_window_index,m_param_tabs,5))
          return(false);
-      if(!m_tab7.Create(m_window_index,m_param_tabs,6))
+      if(!m_tab7.Create(*this,m_window_index,m_param_tabs,6))
          return(false);
-      if(!m_tab8.Create(m_window_index,m_param_tabs,7))
+      if(!m_tab8.Create(*this,m_window_index,m_param_tabs,7))
          return(false);
-      if(!m_tab9.Create(m_window_index,m_param_tabs,8))
+      if(!m_tab9.Create(*this,m_window_index,m_param_tabs,8))
          return(false);
-      if(!m_tab10.Create(m_window_index,m_param_tabs,9))
+      if(!m_tab10.Create(*this,m_window_index,m_param_tabs,9))
          return(false);
-      if(!m_execucao.Create(m_window_index,m_exec_tabs,0))
+      if(!m_execucao.Create(*this,m_window_index,m_exec_tabs,0))
          return(false);
-      if(!m_painel.Create(m_window_index,m_exec_tabs,1))
+      if(!m_painel.Create(*this,m_window_index,m_exec_tabs,1))
          return(false);
 
       if(!CreateButton(m_btn_apply,"Aplicar",m_top_tabs,m_window_index,top_tabs_w-156,top_tabs_h-44,120,false,false,C'39,54,78',C'62,79,101',C'226,114,64',clrWhite,C'18,29,43'))
@@ -431,7 +437,10 @@ public:
       m_top_tabs.AddToElementsArray(1,m_btn_apply);
 
       if(m_has_settings)
+        {
+         m_tab1.Load();
          m_tab2.Load();
+        }
 
       m_top_tabs.SelectTab(0);
       m_param_tabs.SelectTab(0);
@@ -454,6 +463,8 @@ public:
 
       if(m_has_settings)
         {
+         m_tab1.SetSettings(m_settings);
+         m_tab1.Load();
          m_tab2.SetSettings(m_settings);
          m_tab2.Load();
         }

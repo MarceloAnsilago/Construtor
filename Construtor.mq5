@@ -2,6 +2,7 @@
 
 #include "Construtor\\Settings.mqh"
 #include "Construtor\\UI\\EasyPanel.mqh"
+#include "Construtor\\UI\\V2\\EasyPanelV2.mqh"
 
 input string InpEstrategiaNome = "Minha estrategia";
 input ENUM_CONSTRUTOR_MERCADO InpMercadoDesejado = CONSTRUTOR_MERCADO_B3;
@@ -31,14 +32,14 @@ input double InpStopFixoDistancia = 100.0;
 input int InpStopCalculoMediaQtdCandles = 3;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopCalculoMediaBase = CONSTRUTOR_MEDIA_MAXIMA;
 input double InpStopCalculoMediaDistancia = 0.0;
-input int InpStopCalculoMediaExpirar = 0; // 0=Não expirar, 1..4=candles
+input int InpStopCalculoMediaExpirar = 0; // 0=Nao expirar, 1..4=candles
 input ENUM_CONSTRUTOR_BASE_MULTIPLICAR InpStopCalculoMultiplicarBase = CONSTRUTOR_MULTIPLICAR_CORPO;
 input int InpStopCalculoMultiplicarCandle = 3;
 input double InpStopCalculoMultiplicarQtd = 1.0;
 input ENUM_CONSTRUTOR_BASE_MEDIA InpStopCalculoReferenciaBase = CONSTRUTOR_MEDIA_MAXIMA;
 input ENUM_CONSTRUTOR_POSICAO_REFERENCIA InpStopCalculoReferenciaPosicao = CONSTRUTOR_POSICAO_ATUAL;
 input double InpStopCalculoReferenciaDistancia = 0.0;
-input int InpStopCalculoReferenciaExpirar = 0; // 0=Não expirar, 1..4=candles
+input int InpStopCalculoReferenciaExpirar = 0; // 0=Nao expirar, 1..4=candles
 
 // Take profit
 input ENUM_CONSTRUTOR_SIM_NAO InpUsarTakeProfit = CONSTRUTOR_NAO;
@@ -78,14 +79,138 @@ input ENUM_CONSTRUTOR_BASE_MEDIA InpTrailingStopCandlesCountPosicao = CONSTRUTOR
 input ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR InpTrailingStopIndicador = CONSTRUTOR_STOP_IND_ATR;
 
 SConstrutorSettings g_settings;
-CConstrutorEasyPanel *g_easy_panel=NULL;
+CConstrutorEasyPanel *g_panel_old=NULL;
+CConstrutorEasyPanelV2 *g_panel_new=NULL;
+
+string LAUNCHER_BG_NAME="ConstrutorLauncherBg";
+string LAUNCHER_OLD_BUTTON_NAME="ConstrutorLauncherOldButton";
+string LAUNCHER_NEW_BUTTON_NAME="ConstrutorLauncherNewButton";
 
 void Construtor_ToggleEasyPanel(void)
   {
-   if(g_easy_panel==NULL)
-      g_easy_panel=new CConstrutorEasyPanel();
-   if(g_easy_panel!=NULL)
-      g_easy_panel.Toggle();
+   if(g_panel_old!=NULL && g_panel_old.IsVisible())
+     {
+      g_panel_old.HidePanel();
+      return;
+     }
+   ShowOldPanel();
+  }
+
+bool CreateLauncherBackground(void)
+  {
+   if(ObjectFind(0,LAUNCHER_BG_NAME)>=0)
+      return(true);
+   if(!ObjectCreate(0,LAUNCHER_BG_NAME,OBJ_RECTANGLE_LABEL,0,0,0))
+      return(false);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_CORNER,CORNER_LEFT_UPPER);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_XDISTANCE,12);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_YDISTANCE,24);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_XSIZE,240);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_YSIZE,94);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BGCOLOR,clrWhiteSmoke);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_COLOR,clrSilver);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BORDER_TYPE,BORDER_FLAT);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BACK,false);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_HIDDEN,true);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_SELECTABLE,false);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_SELECTED,false);
+   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_ZORDER,0);
+   return(true);
+  }
+
+bool CreateLauncherButton(const string name,const string text,const int y_distance)
+  {
+   if(ObjectFind(0,name)<0 && !ObjectCreate(0,name,OBJ_BUTTON,0,0,0))
+      return(false);
+   ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
+   ObjectSetInteger(0,name,OBJPROP_XDISTANCE,24);
+   ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y_distance);
+   ObjectSetInteger(0,name,OBJPROP_XSIZE,216);
+   ObjectSetInteger(0,name,OBJPROP_YSIZE,28);
+   ObjectSetInteger(0,name,OBJPROP_BGCOLOR,clrGainsboro);
+   ObjectSetInteger(0,name,OBJPROP_COLOR,clrBlack);
+   ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,clrSilver);
+   ObjectSetInteger(0,name,OBJPROP_HIDDEN,true);
+   ObjectSetInteger(0,name,OBJPROP_SELECTABLE,false);
+   ObjectSetInteger(0,name,OBJPROP_SELECTED,false);
+   ObjectSetInteger(0,name,OBJPROP_ZORDER,1);
+   ObjectSetString(0,name,OBJPROP_TEXT,text);
+   return(true);
+  }
+
+bool CreateLauncher(void)
+  {
+   if(!CreateLauncherBackground())
+      return(false);
+   if(!CreateLauncherButton(LAUNCHER_OLD_BUTTON_NAME,"Abrir Painel Atual",34))
+      return(false);
+   if(!CreateLauncherButton(LAUNCHER_NEW_BUTTON_NAME,"Abrir Painel V2",66))
+      return(false);
+   return(true);
+  }
+
+void DeleteLauncherObject(const string name)
+  {
+   if(ObjectFind(0,name)>=0)
+      ObjectDelete(0,name);
+  }
+
+void DeleteLauncher(void)
+  {
+   DeleteLauncherObject(LAUNCHER_NEW_BUTTON_NAME);
+   DeleteLauncherObject(LAUNCHER_OLD_BUTTON_NAME);
+   DeleteLauncherObject(LAUNCHER_BG_NAME);
+  }
+
+bool EnsureOldPanel(void)
+  {
+   if(g_panel_old==NULL)
+      g_panel_old=new CConstrutorEasyPanel();
+   return(g_panel_old!=NULL);
+  }
+
+bool EnsureNewPanel(void)
+  {
+   if(g_panel_new==NULL)
+      g_panel_new=new CConstrutorEasyPanelV2();
+   return(g_panel_new!=NULL);
+  }
+
+bool ShowOldPanel(void)
+  {
+   if(!EnsureOldPanel())
+      return(false);
+   if(g_panel_new!=NULL)
+      g_panel_new.HidePanel();
+   return(g_panel_old.ShowPanel());
+  }
+
+bool ShowNewPanel(void)
+  {
+   if(!EnsureNewPanel())
+      return(false);
+   g_panel_new.SetSettings(g_settings);
+   if(g_panel_old!=NULL)
+      g_panel_old.HidePanel();
+   return(g_panel_new.ShowPanel());
+  }
+
+void DestroyOldPanel(void)
+  {
+   if(g_panel_old==NULL)
+      return;
+   g_panel_old.Shutdown();
+   delete g_panel_old;
+   g_panel_old=NULL;
+  }
+
+void DestroyNewPanel(void)
+  {
+   if(g_panel_new==NULL)
+      return;
+   g_panel_new.Shutdown();
+   delete g_panel_new;
+   g_panel_new=NULL;
   }
 
 void LoadInputsToSettings(void)
@@ -185,7 +310,7 @@ void LoadInputsToSettings(void)
    g_settings.saida_parcial_valor[0]=0.0;
    g_settings.saida_parcial_distancia[0]=0.0;
    for(int i=1; i<6; i++)
-      {
+     {
       g_settings.saida_parcial_valor[i]=0.0;
       g_settings.saida_parcial_distancia[i]=0.0;
      }
@@ -194,21 +319,18 @@ void LoadInputsToSettings(void)
 int OnInit()
   {
    LoadInputsToSettings();
-   if(g_easy_panel==NULL)
-      g_easy_panel=new CConstrutorEasyPanel();
-   if(g_easy_panel!=NULL)
-      g_easy_panel.ShowPanel(); // abre automaticamente ao anexar no gráfico
+   if(!CreateLauncher())
+      return(INIT_FAILED);
+   EventSetTimer(1);
    return(INIT_SUCCEEDED);
   }
 
 void OnDeinit(const int reason)
   {
-   if(g_easy_panel!=NULL)
-     {
-      g_easy_panel.Shutdown();
-      delete g_easy_panel;
-      g_easy_panel=NULL;
-     }
+   EventKillTimer();
+   DestroyNewPanel();
+   DestroyOldPanel();
+   DeleteLauncher();
   }
 
 void OnTick()
@@ -217,12 +339,39 @@ void OnTick()
 
 void OnTimer()
   {
-   if(g_easy_panel!=NULL && g_easy_panel.IsVisible())
-      g_easy_panel.OnTimerEvent();
+   if(g_panel_old!=NULL && g_panel_old.IsVisible())
+     {
+      g_panel_old.OnTimerEvent();
+      return;
+     }
+   if(g_panel_new!=NULL && g_panel_new.IsVisible())
+      g_panel_new.OnTimerEvent();
   }
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
-   if(g_easy_panel!=NULL)
-      g_easy_panel.ChartEvent(id,lparam,dparam,sparam);
+   if(id==CHARTEVENT_OBJECT_CLICK)
+     {
+      if(sparam==LAUNCHER_OLD_BUTTON_NAME)
+        {
+         ShowOldPanel();
+         return;
+        }
+      if(sparam==LAUNCHER_NEW_BUTTON_NAME)
+        {
+         ShowNewPanel();
+         return;
+        }
+     }
+
+   if(g_panel_old!=NULL && g_panel_old.IsVisible())
+     {
+      g_panel_old.ChartEvent(id,lparam,dparam,sparam);
+      return;
+     }
+   if(g_panel_new!=NULL && g_panel_new.IsVisible())
+     {
+      g_panel_new.ChartEvent(id,lparam,dparam,sparam);
+      g_panel_new.ConsumeApply(g_settings);
+     }
   }

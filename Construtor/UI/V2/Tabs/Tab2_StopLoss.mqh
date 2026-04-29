@@ -1,6 +1,8 @@
 #ifndef __CONSTRUTOR_V2_TAB2_STOP_LOSS_MQH__
 #define __CONSTRUTOR_V2_TAB2_STOP_LOSS_MQH__
 
+#include "..\\V2Shared.mqh"
+
 class CTab2StopLoss : public CEF_CWndCreate
   {
 private:
@@ -170,9 +172,9 @@ public:
       const int tab2_y=content_y;
       const int tab2_w=card_w;
       const int tab2_h=340;
-      const color tab2_border=C'91,78,64';
-      const color card_back=C'233,220,203';
-      const color card_border=C'197,168,136';
+      const color tab2_border=V2_COLOR_FIELD_BORDER;
+      const color card_back=V2_COLOR_CARD_BACK;
+      const color card_border=V2_COLOR_CARD_BORDER;
 
       if(!CreateFrame(m_tab2_card_stopfix,"",tabs,m_window_index,tabs,m_tab_index,tab2_x,tab2_y,tab2_w,tab2_h,1))
          return(false);
@@ -240,7 +242,7 @@ public:
       tabs.AddToElementsArray(m_tab_index,m_tab2_mult_base_combo);
       m_tab2_mult_base_combo.ItemsTotal(ArraySize(mult_base_items));
       for(int i=0;i<ArraySize(mult_base_items);i++) m_tab2_mult_base_combo.SetValue(i,mult_base_items[i]);
-      StyleCombo(m_tab2_mult_base_combo,tab2_border,mult_w,80,mult_w-2);
+      V2StyleCombo(m_tab2_mult_base_combo,tab2_border,mult_w,80,mult_w-2);
       if(!m_tab2_mult_base_combo.CreateComboBox("",mult_pad,mult_y))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_mult_base_combo);
@@ -264,7 +266,7 @@ public:
       tabs.AddToElementsArray(m_tab_index,m_tab2_mult_candle_combo);
       m_tab2_mult_candle_combo.ItemsTotal(ArraySize(mult_candle_items));
       for(int j=0;j<ArraySize(mult_candle_items);j++) m_tab2_mult_candle_combo.SetValue(j,mult_candle_items[j]);
-      StyleCombo(m_tab2_mult_candle_combo,tab2_border,mult_w,120,mult_w-2);
+      V2StyleCombo(m_tab2_mult_candle_combo,tab2_border,mult_w,120,mult_w-2);
       if(!m_tab2_mult_candle_combo.CreateComboBox("",mult_pad,mult_y))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_mult_candle_combo);
@@ -279,7 +281,7 @@ public:
 
       m_tab2_mult_qty_spin.MainPointer(m_tab2_card_mult);
       tabs.AddToElementsArray(m_tab_index,m_tab2_mult_qty_spin);
-      StyleSpin(m_tab2_mult_qty_spin,card_back,tab2_border,mult_w,1000.0,0.0,0.1,2,"1.0");
+      V2StyleSpin(m_tab2_mult_qty_spin,card_back,tab2_border,mult_w,1000.0,0.0,0.1,2,"1.0");
       if(!m_tab2_mult_qty_spin.CreateTextEdit("",mult_pad,mult_y))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_mult_qty_spin);
@@ -401,7 +403,7 @@ public:
       m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_base_combo);
       m_tab2_calc_ref_base_combo.ItemsTotal(ArraySize(ref_items));
       for(int r=0;r<ArraySize(ref_items);r++) m_tab2_calc_ref_base_combo.SetValue(r,ref_items[r]);
-      StyleCombo(m_tab2_calc_ref_base_combo,sub_border,f_w,120,sub_btn_w);
+      V2StyleCombo(m_tab2_calc_ref_base_combo,sub_border,f_w,120,sub_btn_w);
       if(!m_tab2_calc_ref_base_combo.CreateComboBox("",fpad,ry))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_ref_base_combo);
@@ -425,7 +427,7 @@ public:
       m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_candle_combo);
       m_tab2_calc_ref_candle_combo.ItemsTotal(ArraySize(candle_items));
       for(int c=0;c<ArraySize(candle_items);c++) m_tab2_calc_ref_candle_combo.SetValue(c,candle_items[c]);
-      StyleCombo(m_tab2_calc_ref_candle_combo,sub_border,f_w,120,sub_btn_w);
+      V2StyleCombo(m_tab2_calc_ref_candle_combo,sub_border,f_w,120,sub_btn_w);
       if(!m_tab2_calc_ref_candle_combo.CreateComboBox("",fpad,ry))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_ref_candle_combo);
@@ -440,7 +442,7 @@ public:
 
       m_tab2_calc_ref_distance_spin.MainPointer(m_tab2_calc_ref_card);
       m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_distance_spin);
-      StyleSpin(m_tab2_calc_ref_distance_spin,sub_back,sub_border,f_w,100000.0,0.0,1.0,1,"0.0");
+      V2StyleSpin(m_tab2_calc_ref_distance_spin,sub_back,sub_border,f_w,100000.0,0.0,1.0,1,"0.0");
       if(!m_tab2_calc_ref_distance_spin.CreateTextEdit("",fpad,ry))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_ref_distance_spin);
@@ -464,7 +466,7 @@ public:
       m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_expire_combo);
       m_tab2_calc_ref_expire_combo.ItemsTotal(ArraySize(expire_items));
       for(int e=0;e<ArraySize(expire_items);e++) m_tab2_calc_ref_expire_combo.SetValue(e,expire_items[e]);
-      StyleCombo(m_tab2_calc_ref_expire_combo,sub_border,f_w,120,sub_btn_w);
+      V2StyleCombo(m_tab2_calc_ref_expire_combo,sub_border,f_w,120,sub_btn_w);
       if(!m_tab2_calc_ref_expire_combo.CreateComboBox("",fpad,ry))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_ref_expire_combo);
@@ -479,7 +481,7 @@ public:
 
       m_tab2_calc_media_candles_spin.MainPointer(m_tab2_calc_media_card);
       m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_candles_spin);
-      StyleSpin(m_tab2_calc_media_candles_spin,sub_back,sub_border,f_w,9999.0,1.0,1.0,0,"3");
+      V2StyleSpin(m_tab2_calc_media_candles_spin,sub_back,sub_border,f_w,9999.0,1.0,1.0,0,"3");
       if(!m_tab2_calc_media_candles_spin.CreateTextEdit("",fpad,my))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_media_candles_spin);
@@ -495,7 +497,7 @@ public:
       m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_base_combo);
       m_tab2_calc_media_base_combo.ItemsTotal(ArraySize(ref_items));
       for(int mb=0;mb<ArraySize(ref_items);mb++) m_tab2_calc_media_base_combo.SetValue(mb,ref_items[mb]);
-      StyleCombo(m_tab2_calc_media_base_combo,sub_border,f_w,120,sub_btn_w);
+      V2StyleCombo(m_tab2_calc_media_base_combo,sub_border,f_w,120,sub_btn_w);
       if(!m_tab2_calc_media_base_combo.CreateComboBox("",fpad,my))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_media_base_combo);
@@ -510,7 +512,7 @@ public:
 
       m_tab2_calc_media_distance_spin.MainPointer(m_tab2_calc_media_card);
       m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_distance_spin);
-      StyleSpin(m_tab2_calc_media_distance_spin,sub_back,sub_border,f_w,100000.0,0.0,1.0,1,"0.0");
+      V2StyleSpin(m_tab2_calc_media_distance_spin,sub_back,sub_border,f_w,100000.0,0.0,1.0,1,"0.0");
       if(!m_tab2_calc_media_distance_spin.CreateTextEdit("",fpad,my))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_media_distance_spin);
@@ -526,7 +528,7 @@ public:
       m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_expire_combo);
       m_tab2_calc_media_expire_combo.ItemsTotal(ArraySize(expire_items));
       for(int me=0;me<ArraySize(expire_items);me++) m_tab2_calc_media_expire_combo.SetValue(me,expire_items[me]);
-      StyleCombo(m_tab2_calc_media_expire_combo,sub_border,f_w,120,sub_btn_w);
+      V2StyleCombo(m_tab2_calc_media_expire_combo,sub_border,f_w,120,sub_btn_w);
       if(!m_tab2_calc_media_expire_combo.CreateComboBox("",fpad,my))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_media_expire_combo);
@@ -550,7 +552,7 @@ public:
       m_tab2_calc_tabs.AddToElementsArray(2,m_tab2_calc_maxmin_base_combo);
       m_tab2_calc_maxmin_base_combo.ItemsTotal(ArraySize(maxmin_items));
       for(int mm=0;mm<ArraySize(maxmin_items);mm++) m_tab2_calc_maxmin_base_combo.SetValue(mm,maxmin_items[mm]);
-      StyleCombo(m_tab2_calc_maxmin_base_combo,sub_border,f_w,80,sub_btn_w);
+      V2StyleCombo(m_tab2_calc_maxmin_base_combo,sub_border,f_w,80,sub_btn_w);
       if(!m_tab2_calc_maxmin_base_combo.CreateComboBox("",fpad,maxmin_y))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_maxmin_base_combo);
@@ -565,7 +567,7 @@ public:
 
       m_tab2_calc_maxmin_count_spin.MainPointer(m_tab2_calc_maxmin_card);
       m_tab2_calc_tabs.AddToElementsArray(2,m_tab2_calc_maxmin_count_spin);
-      StyleSpin(m_tab2_calc_maxmin_count_spin,sub_back,sub_border,f_w,9999.0,1.0,1.0,0,"3");
+      V2StyleSpin(m_tab2_calc_maxmin_count_spin,sub_back,sub_border,f_w,9999.0,1.0,1.0,0,"3");
       if(!m_tab2_calc_maxmin_count_spin.CreateTextEdit("",fpad,maxmin_y))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_maxmin_count_spin);
@@ -584,7 +586,7 @@ public:
       tabs.AddToElementsArray(m_tab_index,m_tab2_calc_type);
       m_tab2_calc_type.ItemsTotal(ArraySize(items_stop_calc));
       for(int st=0;st<ArraySize(items_stop_calc);st++) m_tab2_calc_type.SetValue(st,items_stop_calc[st]);
-      StyleCombo(m_tab2_calc_type,tab2_border,260,80,258);
+      V2StyleCombo(m_tab2_calc_type,tab2_border,260,80,258);
       if(!m_tab2_calc_type.CreateComboBox("",content_pad,88))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_calc_type);
@@ -598,7 +600,7 @@ public:
       const int tab2_dist_w=tab2_w-32;
       m_tab2_dist_spin.MainPointer(m_tab2_card_stopfix);
       tabs.AddToElementsArray(m_tab_index,m_tab2_dist_spin);
-      StyleSpin(m_tab2_dist_spin,card_back,tab2_border,tab2_dist_w,100000.0,0.0,1.0,1,"100.0");
+      V2StyleSpin(m_tab2_dist_spin,card_back,tab2_border,tab2_dist_w,100000.0,0.0,1.0,1,"100.0");
       if(!m_tab2_dist_spin.CreateTextEdit("",16,98))
          return(false);
       AddToElementsArray(m_window_index,m_tab2_dist_spin);
@@ -620,23 +622,23 @@ public:
       m_tab2_use_calc.IsPressed(use_calc);
       m_tab2_use_fixed.IsPressed(use_fixed);
       m_tab2_use_mult.IsPressed(use_mult);
-      m_tab2_calc_type.SelectItem(ClampIndex((int)m_settings.tipo_stop_loss,0,1));
+      m_tab2_calc_type.SelectItem(V2ClampIndex((int)m_settings.tipo_stop_loss,0,1));
       m_tab2_dist_spin.SetValue(DoubleToString(m_settings.stop_fixo_distancia,1));
       m_tab2_calc_ref_check.IsPressed(m_settings.stop_calculo_referencia==CONSTRUTOR_SIM);
       m_tab2_calc_media_check.IsPressed(m_settings.stop_calculo_media==CONSTRUTOR_SIM);
       m_tab2_calc_maxmin_check.IsPressed(m_settings.stop_calculo_maxmin==CONSTRUTOR_SIM);
-      m_tab2_calc_maxmin_base_combo.SelectItem(ClampIndex((int)m_settings.stop_calculo_maxmin_base,0,3));
+      m_tab2_calc_maxmin_base_combo.SelectItem(V2ClampIndex((int)m_settings.stop_calculo_maxmin_base,0,3));
       m_tab2_calc_maxmin_count_spin.SetValue(IntegerToString(m_settings.stop_calculo_maxmin_ultimos>0 ? m_settings.stop_calculo_maxmin_ultimos : 3));
-      m_tab2_calc_ref_base_combo.SelectItem(ClampIndex((int)m_settings.stop_calculo_referencia_base,0,3));
-      m_tab2_calc_ref_candle_combo.SelectItem(ClampIndex((int)m_settings.stop_calculo_referencia_posicao,0,3));
+      m_tab2_calc_ref_base_combo.SelectItem(V2ClampIndex((int)m_settings.stop_calculo_referencia_base,0,3));
+      m_tab2_calc_ref_candle_combo.SelectItem(V2ClampIndex((int)m_settings.stop_calculo_referencia_posicao,0,3));
       m_tab2_calc_ref_distance_spin.SetValue(DoubleToString(m_settings.stop_calculo_referencia_distancia,1));
-      m_tab2_calc_ref_expire_combo.SelectItem(ClampIndex(m_settings.stop_calculo_referencia_expirar,0,4));
+      m_tab2_calc_ref_expire_combo.SelectItem(V2ClampIndex(m_settings.stop_calculo_referencia_expirar,0,4));
       m_tab2_calc_media_candles_spin.SetValue(IntegerToString(m_settings.stop_calculo_media_qtd_candles));
-      m_tab2_calc_media_base_combo.SelectItem(ClampIndex((int)m_settings.stop_calculo_media_base,0,3));
+      m_tab2_calc_media_base_combo.SelectItem(V2ClampIndex((int)m_settings.stop_calculo_media_base,0,3));
       m_tab2_calc_media_distance_spin.SetValue(DoubleToString(m_settings.stop_calculo_media_distancia,1));
-      m_tab2_calc_media_expire_combo.SelectItem(ClampIndex(m_settings.stop_calculo_media_expirar,0,4));
-      m_tab2_mult_base_combo.SelectItem(ClampIndex((int)m_settings.stop_calculo_multiplicar_base,0,1));
-      m_tab2_mult_candle_combo.SelectItem(ClampIndex(m_settings.stop_calculo_multiplicar_candle,0,3));
+      m_tab2_calc_media_expire_combo.SelectItem(V2ClampIndex(m_settings.stop_calculo_media_expirar,0,4));
+      m_tab2_mult_base_combo.SelectItem(V2ClampIndex((int)m_settings.stop_calculo_multiplicar_base,0,1));
+      m_tab2_mult_candle_combo.SelectItem(V2ClampIndex(m_settings.stop_calculo_multiplicar_candle,0,3));
       m_tab2_mult_qty_spin.SetValue(DoubleToString(m_settings.stop_calculo_multiplicar_qtd,2));
      }
 
@@ -652,23 +654,23 @@ public:
       m_settings.stop_calculo=(use_calc ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       m_settings.stop_calculo_multiplicar=(use_mult ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       m_settings.stop_fixo=(use_fixed ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
-      m_settings.tipo_stop_loss=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)ClampIndex(m_tab2_calc_type.GetListViewPointer().SelectedItemIndex(),0,1);
+      m_settings.tipo_stop_loss=(ENUM_CONSTRUTOR_TIPO_STOP_LOSS)V2ClampIndex(m_tab2_calc_type.GetListViewPointer().SelectedItemIndex(),0,1);
       m_settings.stop_fixo_distancia=StringToDouble(m_tab2_dist_spin.GetValue());
       m_settings.stop_calculo_referencia=(m_tab2_calc_ref_check.IsPressed() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       m_settings.stop_calculo_media=(m_tab2_calc_media_check.IsPressed() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
       m_settings.stop_calculo_maxmin=(m_tab2_calc_maxmin_check.IsPressed() ? CONSTRUTOR_SIM : CONSTRUTOR_NAO);
-      m_settings.stop_calculo_maxmin_base=(ENUM_CONSTRUTOR_BASE_MEDIA)ClampIndex(m_tab2_calc_maxmin_base_combo.GetListViewPointer().SelectedItemIndex(),0,3);
+      m_settings.stop_calculo_maxmin_base=(ENUM_CONSTRUTOR_BASE_MEDIA)V2ClampIndex(m_tab2_calc_maxmin_base_combo.GetListViewPointer().SelectedItemIndex(),0,3);
       m_settings.stop_calculo_maxmin_ultimos=(int)StringToInteger(m_tab2_calc_maxmin_count_spin.GetValue());
-      m_settings.stop_calculo_referencia_base=(ENUM_CONSTRUTOR_BASE_MEDIA)ClampIndex(m_tab2_calc_ref_base_combo.GetListViewPointer().SelectedItemIndex(),0,3);
-      m_settings.stop_calculo_referencia_posicao=(ENUM_CONSTRUTOR_POSICAO_REFERENCIA)ClampIndex(m_tab2_calc_ref_candle_combo.GetListViewPointer().SelectedItemIndex(),0,3);
+      m_settings.stop_calculo_referencia_base=(ENUM_CONSTRUTOR_BASE_MEDIA)V2ClampIndex(m_tab2_calc_ref_base_combo.GetListViewPointer().SelectedItemIndex(),0,3);
+      m_settings.stop_calculo_referencia_posicao=(ENUM_CONSTRUTOR_POSICAO_REFERENCIA)V2ClampIndex(m_tab2_calc_ref_candle_combo.GetListViewPointer().SelectedItemIndex(),0,3);
       m_settings.stop_calculo_media_qtd_candles=(int)StringToInteger(m_tab2_calc_media_candles_spin.GetValue());
-      m_settings.stop_calculo_media_base=(ENUM_CONSTRUTOR_BASE_MEDIA)ClampIndex(m_tab2_calc_media_base_combo.GetListViewPointer().SelectedItemIndex(),0,3);
+      m_settings.stop_calculo_media_base=(ENUM_CONSTRUTOR_BASE_MEDIA)V2ClampIndex(m_tab2_calc_media_base_combo.GetListViewPointer().SelectedItemIndex(),0,3);
       m_settings.stop_calculo_referencia_distancia=StringToDouble(m_tab2_calc_ref_distance_spin.GetValue());
-      m_settings.stop_calculo_referencia_expirar=ClampIndex(m_tab2_calc_ref_expire_combo.GetListViewPointer().SelectedItemIndex(),0,4);
+      m_settings.stop_calculo_referencia_expirar=V2ClampIndex(m_tab2_calc_ref_expire_combo.GetListViewPointer().SelectedItemIndex(),0,4);
       m_settings.stop_calculo_media_distancia=StringToDouble(m_tab2_calc_media_distance_spin.GetValue());
-      m_settings.stop_calculo_media_expirar=ClampIndex(m_tab2_calc_media_expire_combo.GetListViewPointer().SelectedItemIndex(),0,4);
-      m_settings.stop_calculo_multiplicar_base=(ENUM_CONSTRUTOR_BASE_MULTIPLICAR)ClampIndex(m_tab2_mult_base_combo.GetListViewPointer().SelectedItemIndex(),0,1);
-      m_settings.stop_calculo_multiplicar_candle=ClampIndex(m_tab2_mult_candle_combo.GetListViewPointer().SelectedItemIndex(),0,3);
+      m_settings.stop_calculo_media_expirar=V2ClampIndex(m_tab2_calc_media_expire_combo.GetListViewPointer().SelectedItemIndex(),0,4);
+      m_settings.stop_calculo_multiplicar_base=(ENUM_CONSTRUTOR_BASE_MULTIPLICAR)V2ClampIndex(m_tab2_mult_base_combo.GetListViewPointer().SelectedItemIndex(),0,1);
+      m_settings.stop_calculo_multiplicar_candle=V2ClampIndex(m_tab2_mult_candle_combo.GetListViewPointer().SelectedItemIndex(),0,3);
       m_settings.stop_calculo_multiplicar_qtd=StringToDouble(m_tab2_mult_qty_spin.GetValue());
      }
 

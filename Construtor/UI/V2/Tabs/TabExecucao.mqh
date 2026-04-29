@@ -4,9 +4,9 @@
 class CTabExecucaoV2 : public CConstrutorV2PlaceholderTab
   {
 public:
-   bool Create(int window_index,CEF_CTabs &tabs,const int tab_index)
+   bool Create(CEF_CWndCreate &host,int window_index,CEF_CTabs &tabs,const int tab_index)
      {
-      return(CreatePlaceholder(window_index,tabs,tab_index,"Estrutura reservada para execucao. Use este arquivo para acoplar envio, ciclo operacional e estados da estrategia."));
+      return(CreatePlaceholder(host,window_index,tabs,tab_index,"Estrutura reservada para execucao. Use este arquivo para acoplar envio, ciclo operacional e estados da estrategia."));
      }
   };
 
