@@ -6,6 +6,7 @@
 class CTab2StopLoss : public CEF_CWndCreate
   {
 private:
+   CEF_CWndCreate    *m_host;
    SConstrutorSettings m_settings;
    bool              m_has_settings;
    bool              m_created;
@@ -58,6 +59,32 @@ private:
    CEF_CComboBox     m_tab2_calc_type;
    CEF_CTextLabel    m_tab2_dist_label;
    CEF_CTextEdit     m_tab2_dist_spin;
+
+   bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index,const color border)
+     {
+      combo.MainPointer(owner);
+      tabs.AddToElementsArray(tab_index,combo);
+      combo.ItemsTotal(ArraySize(items));
+      for(int i=0;i<ArraySize(items);i++)
+         combo.SetValue(i,items[i]);
+      V2StyleCombo(combo,border,width,list_height,width-2);
+      if(!combo.CreateComboBox("",x,y))
+         return(false);
+      m_host.RegisterElement(m_window_index,combo);
+      combo.SelectItem(V2ClampIndex(selected_index,0,ArraySize(items)-1));
+      return(true);
+     }
+
+   bool CreateSpinControl(CEF_CTextEdit &spin,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const double max_value,const double min_value,const double step,const int digits,const string value,const color back,const color border)
+     {
+      spin.MainPointer(owner);
+      tabs.AddToElementsArray(tab_index,spin);
+      V2StyleSpin(spin,back,border,width,max_value,min_value,step,digits,value);
+      if(!spin.CreateTextEdit("",x,y))
+         return(false);
+      m_host.RegisterElement(m_window_index,spin);
+      return(true);
+     }
 
    int ClampIndex(const int value,const int min_value,const int max_value) const
      {
@@ -139,7 +166,7 @@ private:
      }
 
 public:
-                     CTab2StopLoss(void) : m_has_settings(false), m_created(false), m_window_index(-1), m_tab_index(-1) {}
+                     CTab2StopLoss(void) : m_host(NULL), m_has_settings(false), m_created(false), m_window_index(-1), m_tab_index(-1) {}
 
    void SetSettings(const SConstrutorSettings &settings)
      {
@@ -154,11 +181,12 @@ public:
       settings=m_settings;
      }
 
-   bool Create(int window_index, CEF_CTabs &tabs, int tab_index)
+   bool Create(CEF_CWndCreate &host,int window_index, CEF_CTabs &tabs, int tab_index)
      {
       if(m_created)
          return(true);
 
+      m_host=&host;
       m_window_index=window_index;
       m_tab_index=tab_index;
 
@@ -176,49 +204,31 @@ public:
       const color card_back=V2_COLOR_CARD_BACK;
       const color card_border=V2_COLOR_CARD_BORDER;
 
-      if(!CreateFrame(m_tab2_card_stopfix,"",tabs,m_window_index,tabs,m_tab_index,tab2_x,tab2_y,tab2_w,tab2_h,1))
+      if(!V2CreateCard(*m_host,m_tab2_card_stopfix,tabs,m_window_index,m_tab_index,tab2_x,tab2_y,tab2_w,tab2_h,card_back,card_border))
          return(false);
-      m_tab2_card_stopfix.BackColor(card_back);
-      m_tab2_card_stopfix.BorderColor(card_border);
-
-      if(!CreateTextLabel(m_tab2_card_title,"Stop loss (fixo)",m_tab2_card_stopfix,m_window_index,tabs,m_tab_index,16,12,tab2_w-32,22))
+      if(!V2CreateCardTitle(*m_host,m_tab2_card_title,"Stop loss (fixo)",m_tab2_card_stopfix,tabs,m_window_index,m_tab_index,16,12,tab2_w-32))
          return(false);
-      m_tab2_card_title.FontSize(12);
-      m_tab2_card_title.LabelColor(C'43,43,43');
-
-      if(!CreateCheckbox(m_tab2_use_fixed,"Usar stop fixo",m_tab2_card_stopfix,m_window_index,tabs,m_tab_index,16,44,tab2_w-32,false,false,false))
+      if(!m_host.CreateCheckbox(m_tab2_use_fixed,"Usar stop loss fixo",m_tab2_card_stopfix,m_window_index,tabs,m_tab_index,16,44,tab2_w-32,false,false,false))
          return(false);
       m_tab2_use_fixed.FontSize(10);
       m_tab2_use_fixed.LabelColor(C'43,43,43');
 
       const int tab2_calc_card_x=content_pad+card_w+card_gap;
-      if(!CreateFrame(m_tab2_card_calc,"",tabs,m_window_index,tabs,m_tab_index,tab2_calc_card_x,tab2_y,tab2_w,tab2_h,1))
+      if(!V2CreateCard(*m_host,m_tab2_card_calc,tabs,m_window_index,m_tab_index,tab2_calc_card_x,tab2_y,tab2_w,tab2_h,card_back,card_border))
          return(false);
-      m_tab2_card_calc.BackColor(card_back);
-      m_tab2_card_calc.BorderColor(card_border);
-
-      if(!CreateTextLabel(m_tab2_card_calc_title,"Stop loss (calculo)",m_tab2_card_calc,m_window_index,tabs,m_tab_index,16,12,tab2_w-32,22))
+      if(!V2CreateCardTitle(*m_host,m_tab2_card_calc_title,"Stop loss (calculo)",m_tab2_card_calc,tabs,m_window_index,m_tab_index,16,12,tab2_w-32))
          return(false);
-      m_tab2_card_calc_title.FontSize(12);
-      m_tab2_card_calc_title.LabelColor(C'43,43,43');
-
-      if(!CreateCheckbox(m_tab2_use_calc,"Usar calculo",m_tab2_card_calc,m_window_index,tabs,m_tab_index,16,34,tab2_w-32,false,false,false))
+      if(!m_host.CreateCheckbox(m_tab2_use_calc,"Usar calculo",m_tab2_card_calc,m_window_index,tabs,m_tab_index,16,34,tab2_w-32,false,false,false))
          return(false);
       m_tab2_use_calc.FontSize(10);
       m_tab2_use_calc.LabelColor(C'43,43,43');
 
       const int tab2_mult_card_x=content_pad+(card_w+card_gap)*2;
-      if(!CreateFrame(m_tab2_card_mult,"",tabs,m_window_index,tabs,m_tab_index,tab2_mult_card_x,tab2_y,tab2_w,tab2_h,1))
+      if(!V2CreateCard(*m_host,m_tab2_card_mult,tabs,m_window_index,m_tab_index,tab2_mult_card_x,tab2_y,tab2_w,tab2_h,card_back,card_border))
          return(false);
-      m_tab2_card_mult.BackColor(card_back);
-      m_tab2_card_mult.BorderColor(card_border);
-
-      if(!CreateTextLabel(m_tab2_card_mult_title,"Stop loss (multiplicador)",m_tab2_card_mult,m_window_index,tabs,m_tab_index,16,12,tab2_w-32,22))
+      if(!V2CreateCardTitle(*m_host,m_tab2_card_mult_title,"Stop loss (multiplicador)",m_tab2_card_mult,tabs,m_window_index,m_tab_index,16,12,tab2_w-32))
          return(false);
-      m_tab2_card_mult_title.FontSize(12);
-      m_tab2_card_mult_title.LabelColor(C'43,43,43');
-
-      if(!CreateCheckbox(m_tab2_use_mult,"Usar multiplicador",m_tab2_card_mult,m_window_index,tabs,m_tab_index,16,34,tab2_w-32,false,false,false))
+      if(!m_host.CreateCheckbox(m_tab2_use_mult,"Usar multiplicador",m_tab2_card_mult,m_window_index,tabs,m_tab_index,16,34,tab2_w-32,false,false,false))
          return(false);
       m_tab2_use_mult.FontSize(10);
       m_tab2_use_mult.LabelColor(C'43,43,43');
@@ -234,19 +244,10 @@ public:
       mult_y+=22;
 
       string mult_base_items[];
-      ArrayResize(mult_base_items,2);
-      mult_base_items[0]="Corpo do candle";
-      mult_base_items[1]="Range (pavio a pavio)";
+      V2ItemsBaseMultiplicador(mult_base_items);
 
-      m_tab2_mult_base_combo.MainPointer(m_tab2_card_mult);
-      tabs.AddToElementsArray(m_tab_index,m_tab2_mult_base_combo);
-      m_tab2_mult_base_combo.ItemsTotal(ArraySize(mult_base_items));
-      for(int i=0;i<ArraySize(mult_base_items);i++) m_tab2_mult_base_combo.SetValue(i,mult_base_items[i]);
-      V2StyleCombo(m_tab2_mult_base_combo,tab2_border,mult_w,80,mult_w-2);
-      if(!m_tab2_mult_base_combo.CreateComboBox("",mult_pad,mult_y))
+      if(!CreateComboControl(m_tab2_mult_base_combo,m_tab2_card_mult,tabs,m_tab_index,mult_pad,mult_y,mult_w,80,mult_base_items,0,tab2_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_mult_base_combo);
-      m_tab2_mult_base_combo.SelectItem(0);
       mult_y+=28;
 
       if(!CreateTextLabel(m_tab2_mult_candle_label,"Candle:",m_tab2_card_mult,m_window_index,tabs,m_tab_index,mult_pad,mult_y,mult_w,18))
@@ -256,21 +257,10 @@ public:
       mult_y+=22;
 
       string mult_candle_items[];
-      ArrayResize(mult_candle_items,4);
-      mult_candle_items[0]="Atual";
-      mult_candle_items[1]="Ultimo";
-      mult_candle_items[2]="Penultimo";
-      mult_candle_items[3]="Antepenultimo";
+      V2ItemsPosicaoReferencia(mult_candle_items);
 
-      m_tab2_mult_candle_combo.MainPointer(m_tab2_card_mult);
-      tabs.AddToElementsArray(m_tab_index,m_tab2_mult_candle_combo);
-      m_tab2_mult_candle_combo.ItemsTotal(ArraySize(mult_candle_items));
-      for(int j=0;j<ArraySize(mult_candle_items);j++) m_tab2_mult_candle_combo.SetValue(j,mult_candle_items[j]);
-      V2StyleCombo(m_tab2_mult_candle_combo,tab2_border,mult_w,120,mult_w-2);
-      if(!m_tab2_mult_candle_combo.CreateComboBox("",mult_pad,mult_y))
+      if(!CreateComboControl(m_tab2_mult_candle_combo,m_tab2_card_mult,tabs,m_tab_index,mult_pad,mult_y,mult_w,120,mult_candle_items,0,tab2_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_mult_candle_combo);
-      m_tab2_mult_candle_combo.SelectItem(0);
       mult_y+=28;
 
       if(!CreateTextLabel(m_tab2_mult_qty_label,"Multiplicador:",m_tab2_card_mult,m_window_index,tabs,m_tab_index,mult_pad,mult_y,mult_w,18))
@@ -279,12 +269,8 @@ public:
       m_tab2_mult_qty_label.LabelColor(C'91,78,64');
       mult_y+=22;
 
-      m_tab2_mult_qty_spin.MainPointer(m_tab2_card_mult);
-      tabs.AddToElementsArray(m_tab_index,m_tab2_mult_qty_spin);
-      V2StyleSpin(m_tab2_mult_qty_spin,card_back,tab2_border,mult_w,1000.0,0.0,0.1,2,"1.0");
-      if(!m_tab2_mult_qty_spin.CreateTextEdit("",mult_pad,mult_y))
+      if(!CreateSpinControl(m_tab2_mult_qty_spin,m_tab2_card_mult,tabs,m_tab_index,mult_pad,mult_y,mult_w,1000.0,0.0,0.1,2,"1.0",card_back,tab2_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_mult_qty_spin);
 
       const int calc_tabs_x=16;
       const int calc_tabs_y=76;
@@ -393,21 +379,10 @@ public:
       ry+=sub_label_h+2;
 
       string ref_items[];
-      ArrayResize(ref_items,4);
-      ref_items[0]="Maxima";
-      ref_items[1]="Minima";
-      ref_items[2]="Abertura";
-      ref_items[3]="Fechamento";
+      V2ItemsBaseMedia(ref_items);
 
-      m_tab2_calc_ref_base_combo.MainPointer(m_tab2_calc_ref_card);
-      m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_base_combo);
-      m_tab2_calc_ref_base_combo.ItemsTotal(ArraySize(ref_items));
-      for(int r=0;r<ArraySize(ref_items);r++) m_tab2_calc_ref_base_combo.SetValue(r,ref_items[r]);
-      V2StyleCombo(m_tab2_calc_ref_base_combo,sub_border,f_w,120,sub_btn_w);
-      if(!m_tab2_calc_ref_base_combo.CreateComboBox("",fpad,ry))
+      if(!CreateComboControl(m_tab2_calc_ref_base_combo,m_tab2_calc_ref_card,m_tab2_calc_tabs,0,fpad,ry,f_w,120,ref_items,0,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_ref_base_combo);
-      m_tab2_calc_ref_base_combo.SelectItem(0);
       ry+=sub_control_h+sub_vgap;
 
       if(!CreateTextLabel(m_tab2_calc_ref_candle_label,"Candle:",m_tab2_calc_ref_card,m_window_index,m_tab2_calc_tabs,0,fpad,ry,f_w,sub_label_h))
@@ -417,21 +392,10 @@ public:
       ry+=sub_label_h+2;
 
       string candle_items[];
-      ArrayResize(candle_items,4);
-      candle_items[0]="Atual";
-      candle_items[1]="Ultimo";
-      candle_items[2]="Penultimo";
-      candle_items[3]="Antepenultimo";
+      V2ItemsPosicaoReferencia(candle_items);
 
-      m_tab2_calc_ref_candle_combo.MainPointer(m_tab2_calc_ref_card);
-      m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_candle_combo);
-      m_tab2_calc_ref_candle_combo.ItemsTotal(ArraySize(candle_items));
-      for(int c=0;c<ArraySize(candle_items);c++) m_tab2_calc_ref_candle_combo.SetValue(c,candle_items[c]);
-      V2StyleCombo(m_tab2_calc_ref_candle_combo,sub_border,f_w,120,sub_btn_w);
-      if(!m_tab2_calc_ref_candle_combo.CreateComboBox("",fpad,ry))
+      if(!CreateComboControl(m_tab2_calc_ref_candle_combo,m_tab2_calc_ref_card,m_tab2_calc_tabs,0,fpad,ry,f_w,120,candle_items,0,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_ref_candle_combo);
-      m_tab2_calc_ref_candle_combo.SelectItem(0);
       ry+=sub_control_h+sub_vgap;
 
       if(!CreateTextLabel(m_tab2_calc_ref_distance_label,"Distancia:",m_tab2_calc_ref_card,m_window_index,m_tab2_calc_tabs,0,fpad,ry,f_w,sub_label_h))
@@ -440,12 +404,8 @@ public:
       m_tab2_calc_ref_distance_label.LabelColor(C'91,78,64');
       ry+=sub_label_h+2;
 
-      m_tab2_calc_ref_distance_spin.MainPointer(m_tab2_calc_ref_card);
-      m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_distance_spin);
-      V2StyleSpin(m_tab2_calc_ref_distance_spin,sub_back,sub_border,f_w,100000.0,0.0,1.0,1,"0.0");
-      if(!m_tab2_calc_ref_distance_spin.CreateTextEdit("",fpad,ry))
+      if(!CreateSpinControl(m_tab2_calc_ref_distance_spin,m_tab2_calc_ref_card,m_tab2_calc_tabs,0,fpad,ry,f_w,100000.0,0.0,1.0,1,"0.0",sub_back,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_ref_distance_spin);
       ry+=sub_control_h+sub_vgap;
 
       if(!CreateTextLabel(m_tab2_calc_ref_expire_label,"Expirar:",m_tab2_calc_ref_card,m_window_index,m_tab2_calc_tabs,0,fpad,ry,f_w,sub_label_h))
@@ -455,22 +415,10 @@ public:
       ry+=sub_label_h+2;
 
       string expire_items[];
-      ArrayResize(expire_items,5);
-      expire_items[0]="Nao expirar";
-      expire_items[1]="1 candle";
-      expire_items[2]="2 candles";
-      expire_items[3]="3 candles";
-      expire_items[4]="4 candles";
+      V2ItemsExpirar(expire_items);
 
-      m_tab2_calc_ref_expire_combo.MainPointer(m_tab2_calc_ref_card);
-      m_tab2_calc_tabs.AddToElementsArray(0,m_tab2_calc_ref_expire_combo);
-      m_tab2_calc_ref_expire_combo.ItemsTotal(ArraySize(expire_items));
-      for(int e=0;e<ArraySize(expire_items);e++) m_tab2_calc_ref_expire_combo.SetValue(e,expire_items[e]);
-      V2StyleCombo(m_tab2_calc_ref_expire_combo,sub_border,f_w,120,sub_btn_w);
-      if(!m_tab2_calc_ref_expire_combo.CreateComboBox("",fpad,ry))
+      if(!CreateComboControl(m_tab2_calc_ref_expire_combo,m_tab2_calc_ref_card,m_tab2_calc_tabs,0,fpad,ry,f_w,120,expire_items,0,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_ref_expire_combo);
-      m_tab2_calc_ref_expire_combo.SelectItem(0);
 
       int my=10;
       if(!CreateTextLabel(m_tab2_calc_media_candles_label,"Cand. media",m_tab2_calc_media_card,m_window_index,m_tab2_calc_tabs,1,fpad,my,f_w,sub_label_h))
@@ -479,12 +427,8 @@ public:
       m_tab2_calc_media_candles_label.LabelColor(C'91,78,64');
       my+=sub_label_h+2;
 
-      m_tab2_calc_media_candles_spin.MainPointer(m_tab2_calc_media_card);
-      m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_candles_spin);
-      V2StyleSpin(m_tab2_calc_media_candles_spin,sub_back,sub_border,f_w,9999.0,1.0,1.0,0,"3");
-      if(!m_tab2_calc_media_candles_spin.CreateTextEdit("",fpad,my))
+      if(!CreateSpinControl(m_tab2_calc_media_candles_spin,m_tab2_calc_media_card,m_tab2_calc_tabs,1,fpad,my,f_w,9999.0,1.0,1.0,0,"3",sub_back,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_media_candles_spin);
       my+=sub_control_h+sub_vgap;
 
       if(!CreateTextLabel(m_tab2_calc_media_base_label,"Referencia:",m_tab2_calc_media_card,m_window_index,m_tab2_calc_tabs,1,fpad,my,f_w,sub_label_h))
@@ -493,15 +437,8 @@ public:
       m_tab2_calc_media_base_label.LabelColor(C'91,78,64');
       my+=sub_label_h+2;
 
-      m_tab2_calc_media_base_combo.MainPointer(m_tab2_calc_media_card);
-      m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_base_combo);
-      m_tab2_calc_media_base_combo.ItemsTotal(ArraySize(ref_items));
-      for(int mb=0;mb<ArraySize(ref_items);mb++) m_tab2_calc_media_base_combo.SetValue(mb,ref_items[mb]);
-      V2StyleCombo(m_tab2_calc_media_base_combo,sub_border,f_w,120,sub_btn_w);
-      if(!m_tab2_calc_media_base_combo.CreateComboBox("",fpad,my))
+      if(!CreateComboControl(m_tab2_calc_media_base_combo,m_tab2_calc_media_card,m_tab2_calc_tabs,1,fpad,my,f_w,120,ref_items,0,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_media_base_combo);
-      m_tab2_calc_media_base_combo.SelectItem(0);
       my+=sub_control_h+sub_vgap;
 
       if(!CreateTextLabel(m_tab2_calc_media_distance_label,"Distancia:",m_tab2_calc_media_card,m_window_index,m_tab2_calc_tabs,1,fpad,my,f_w,sub_label_h))
@@ -510,12 +447,8 @@ public:
       m_tab2_calc_media_distance_label.LabelColor(C'91,78,64');
       my+=sub_label_h+2;
 
-      m_tab2_calc_media_distance_spin.MainPointer(m_tab2_calc_media_card);
-      m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_distance_spin);
-      V2StyleSpin(m_tab2_calc_media_distance_spin,sub_back,sub_border,f_w,100000.0,0.0,1.0,1,"0.0");
-      if(!m_tab2_calc_media_distance_spin.CreateTextEdit("",fpad,my))
+      if(!CreateSpinControl(m_tab2_calc_media_distance_spin,m_tab2_calc_media_card,m_tab2_calc_tabs,1,fpad,my,f_w,100000.0,0.0,1.0,1,"0.0",sub_back,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_media_distance_spin);
       my+=sub_control_h+sub_vgap;
 
       if(!CreateTextLabel(m_tab2_calc_media_expire_label,"Expirar:",m_tab2_calc_media_card,m_window_index,m_tab2_calc_tabs,1,fpad,my,f_w,sub_label_h))
@@ -524,15 +457,8 @@ public:
       m_tab2_calc_media_expire_label.LabelColor(C'91,78,64');
       my+=sub_label_h+2;
 
-      m_tab2_calc_media_expire_combo.MainPointer(m_tab2_calc_media_card);
-      m_tab2_calc_tabs.AddToElementsArray(1,m_tab2_calc_media_expire_combo);
-      m_tab2_calc_media_expire_combo.ItemsTotal(ArraySize(expire_items));
-      for(int me=0;me<ArraySize(expire_items);me++) m_tab2_calc_media_expire_combo.SetValue(me,expire_items[me]);
-      V2StyleCombo(m_tab2_calc_media_expire_combo,sub_border,f_w,120,sub_btn_w);
-      if(!m_tab2_calc_media_expire_combo.CreateComboBox("",fpad,my))
+      if(!CreateComboControl(m_tab2_calc_media_expire_combo,m_tab2_calc_media_card,m_tab2_calc_tabs,1,fpad,my,f_w,120,expire_items,0,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_media_expire_combo);
-      m_tab2_calc_media_expire_combo.SelectItem(0);
 
       int maxmin_y=10;
       if(!CreateTextLabel(m_tab2_calc_maxmin_base_label,"Base:",m_tab2_calc_maxmin_card,m_window_index,m_tab2_calc_tabs,2,fpad,maxmin_y,f_w,sub_label_h))
@@ -542,21 +468,10 @@ public:
       maxmin_y+=sub_label_h+2;
 
       string maxmin_items[];
-      ArrayResize(maxmin_items,4);
-      maxmin_items[0]="Maxima";
-      maxmin_items[1]="Minima";
-      maxmin_items[2]="Abertura";
-      maxmin_items[3]="Fechamento";
+      V2ItemsBaseMedia(maxmin_items);
 
-      m_tab2_calc_maxmin_base_combo.MainPointer(m_tab2_calc_maxmin_card);
-      m_tab2_calc_tabs.AddToElementsArray(2,m_tab2_calc_maxmin_base_combo);
-      m_tab2_calc_maxmin_base_combo.ItemsTotal(ArraySize(maxmin_items));
-      for(int mm=0;mm<ArraySize(maxmin_items);mm++) m_tab2_calc_maxmin_base_combo.SetValue(mm,maxmin_items[mm]);
-      V2StyleCombo(m_tab2_calc_maxmin_base_combo,sub_border,f_w,80,sub_btn_w);
-      if(!m_tab2_calc_maxmin_base_combo.CreateComboBox("",fpad,maxmin_y))
+      if(!CreateComboControl(m_tab2_calc_maxmin_base_combo,m_tab2_calc_maxmin_card,m_tab2_calc_tabs,2,fpad,maxmin_y,f_w,80,maxmin_items,0,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_maxmin_base_combo);
-      m_tab2_calc_maxmin_base_combo.SelectItem(0);
       maxmin_y+=sub_control_h+sub_vgap;
 
       if(!CreateTextLabel(m_tab2_calc_maxmin_count_label,"Dos ultimos:",m_tab2_calc_maxmin_card,m_window_index,m_tab2_calc_tabs,2,fpad,maxmin_y,f_w,sub_label_h))
@@ -565,45 +480,28 @@ public:
       m_tab2_calc_maxmin_count_label.LabelColor(C'91,78,64');
       maxmin_y+=sub_label_h+2;
 
-      m_tab2_calc_maxmin_count_spin.MainPointer(m_tab2_calc_maxmin_card);
-      m_tab2_calc_tabs.AddToElementsArray(2,m_tab2_calc_maxmin_count_spin);
-      V2StyleSpin(m_tab2_calc_maxmin_count_spin,sub_back,sub_border,f_w,9999.0,1.0,1.0,0,"3");
-      if(!m_tab2_calc_maxmin_count_spin.CreateTextEdit("",fpad,maxmin_y))
+      if(!CreateSpinControl(m_tab2_calc_maxmin_count_spin,m_tab2_calc_maxmin_card,m_tab2_calc_tabs,2,fpad,maxmin_y,f_w,9999.0,1.0,1.0,0,"3",sub_back,sub_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_maxmin_count_spin);
 
-      if(!CreateTextLabel(m_tab2_calc_type_label,"Tipo de calculo",tabs,m_window_index,tabs,m_tab_index,content_pad,66,card_w,18))
+      if(!CreateTextLabel(m_tab2_calc_type_label,"Tipo de stop",tabs,m_window_index,tabs,m_tab_index,content_pad,66,card_w,18))
          return(false);
       m_tab2_calc_type_label.FontSize(10);
       m_tab2_calc_type_label.LabelColor(C'91,78,64');
 
       string items_stop_calc[];
-      ArrayResize(items_stop_calc,2);
-      items_stop_calc[0]="Pontos";
-      items_stop_calc[1]="Percentual";
+      V2ItemsStopTipo(items_stop_calc);
 
-      m_tab2_calc_type.MainPointer(tabs);
-      tabs.AddToElementsArray(m_tab_index,m_tab2_calc_type);
-      m_tab2_calc_type.ItemsTotal(ArraySize(items_stop_calc));
-      for(int st=0;st<ArraySize(items_stop_calc);st++) m_tab2_calc_type.SetValue(st,items_stop_calc[st]);
-      V2StyleCombo(m_tab2_calc_type,tab2_border,260,80,258);
-      if(!m_tab2_calc_type.CreateComboBox("",content_pad,88))
+      if(!CreateComboControl(m_tab2_calc_type,tabs,tabs,m_tab_index,content_pad,88,260,80,items_stop_calc,0,tab2_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_calc_type);
-      m_tab2_calc_type.SelectItem(0);
 
-      if(!CreateTextLabel(m_tab2_dist_label,"Stop distancia",m_tab2_card_stopfix,m_window_index,tabs,m_tab_index,16,76,tab2_w-32,18))
+      if(!CreateTextLabel(m_tab2_dist_label,"Distancia do stop",m_tab2_card_stopfix,m_window_index,tabs,m_tab_index,16,76,tab2_w-32,18))
          return(false);
       m_tab2_dist_label.FontSize(10);
       m_tab2_dist_label.LabelColor(C'91,78,64');
 
       const int tab2_dist_w=tab2_w-32;
-      m_tab2_dist_spin.MainPointer(m_tab2_card_stopfix);
-      tabs.AddToElementsArray(m_tab_index,m_tab2_dist_spin);
-      V2StyleSpin(m_tab2_dist_spin,card_back,tab2_border,tab2_dist_w,100000.0,0.0,1.0,1,"100.0");
-      if(!m_tab2_dist_spin.CreateTextEdit("",16,98))
+      if(!CreateSpinControl(m_tab2_dist_spin,m_tab2_card_stopfix,tabs,m_tab_index,16,98,tab2_dist_w,100000.0,0.0,1.0,1,"100.0",card_back,tab2_border))
          return(false);
-      AddToElementsArray(m_window_index,m_tab2_dist_spin);
 
       m_tab2_calc_tabs.SelectTab(0);
       m_tab2_calc_tabs.ShowTabElements();
@@ -616,14 +514,16 @@ public:
       if(!m_has_settings || !m_created)
          return;
 
-      const bool use_calc=(m_settings.stop_calculo==CONSTRUTOR_SIM);
-      const bool use_mult=(!use_calc && m_settings.stop_calculo_multiplicar==CONSTRUTOR_SIM);
-      const bool use_fixed=(!use_calc && !use_mult && m_settings.stop_fixo==CONSTRUTOR_SIM);
+      const bool use_stop=(m_settings.usar_stop_loss==CONSTRUTOR_SIM);
+      const bool use_calc=(use_stop && m_settings.stop_calculo==CONSTRUTOR_SIM);
+      const bool use_mult=(use_stop && !use_calc && m_settings.stop_calculo_multiplicar==CONSTRUTOR_SIM);
+      const bool use_fixed=(use_stop && !use_calc && !use_mult && m_settings.stop_fixo==CONSTRUTOR_SIM);
       m_tab2_use_calc.IsPressed(use_calc);
       m_tab2_use_fixed.IsPressed(use_fixed);
       m_tab2_use_mult.IsPressed(use_mult);
       m_tab2_calc_type.SelectItem(V2ClampIndex((int)m_settings.tipo_stop_loss,0,1));
-      m_tab2_dist_spin.SetValue(DoubleToString(m_settings.stop_fixo_distancia,1));
+      const double fixed_distance=(m_settings.stop_fixo_distancia>0.0 ? m_settings.stop_fixo_distancia : 100.0);
+      m_tab2_dist_spin.SetValue(DoubleToString(fixed_distance,1));
       m_tab2_calc_ref_check.IsPressed(m_settings.stop_calculo_referencia==CONSTRUTOR_SIM);
       m_tab2_calc_media_check.IsPressed(m_settings.stop_calculo_media==CONSTRUTOR_SIM);
       m_tab2_calc_maxmin_check.IsPressed(m_settings.stop_calculo_maxmin==CONSTRUTOR_SIM);

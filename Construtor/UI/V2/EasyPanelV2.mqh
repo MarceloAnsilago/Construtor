@@ -408,7 +408,7 @@ public:
 
       if(!m_tab1.Create(*this,m_window_index,m_param_tabs,0))
          return(false);
-      if(!m_tab2.Create(m_window_index,m_param_tabs,1))
+      if(!m_tab2.Create(*this,m_window_index,m_param_tabs,1))
          return(false);
       if(!m_tab3.Create(*this,m_window_index,m_param_tabs,2))
          return(false);

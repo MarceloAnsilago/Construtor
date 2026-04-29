@@ -33,7 +33,7 @@ bool V2TryParseHourMin(const string value,int &hour,int &minute)
 void V2ItemsSimNao(string &items[])
   {
    ArrayResize(items,2);
-   items[0]="Não";
+   items[0]="Nao";
    items[1]="Sim";
   }
 
@@ -133,7 +133,7 @@ void V2ItemsPosicaoReferencia(string &items[])
 void V2ItemsExpirar(string &items[])
   {
    ArrayResize(items,5);
-   items[0]="Não expirar";
+   items[0]="Nao expirar";
    items[1]="1 candle";
    items[2]="2 candles";
    items[3]="3 candles";
