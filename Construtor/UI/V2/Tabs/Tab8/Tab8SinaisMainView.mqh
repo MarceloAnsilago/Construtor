@@ -10,13 +10,44 @@ private:
    bool            m_created;
    int             m_window_index;
    int             m_tab_index;
+   int             m_last_ord_tab;
 
    CEF_CFrame      m_card_ordens;
    CEF_CTextLabel  m_card_ordens_title;
-   CEF_CTextLabel  m_card_ordens_body;
+   CEF_CCheckBox   m_ordem_market;
+   CEF_CCheckBox   m_ordem_limit;
+   CEF_CTabs       m_ord_tabs;
+   CEF_CCheckBox   m_ord_ref_check;
+   CEF_CCheckBox   m_ord_media_check;
+   CEF_CFrame      m_ord_ref_card;
+   CEF_CFrame      m_ord_media_card;
+   CEF_CTextLabel  m_ord_ref_base_label;
+   CEF_CComboBox   m_ord_ref_base_combo;
+   CEF_CTextLabel  m_ord_ref_candle_label;
+   CEF_CComboBox   m_ord_ref_candle_combo;
+   CEF_CTextLabel  m_ord_ref_distance_label;
+   CEF_CTextEdit   m_ord_ref_distance_spin;
+   CEF_CTextLabel  m_ord_ref_expire_label;
+   CEF_CComboBox   m_ord_ref_expire_combo;
+   CEF_CTextLabel  m_ord_media_candles_label;
+   CEF_CTextEdit   m_ord_media_candles_spin;
+   CEF_CTextLabel  m_ord_media_base_label;
+   CEF_CComboBox   m_ord_media_base_combo;
+   CEF_CTextLabel  m_ord_media_distance_label;
+   CEF_CTextEdit   m_ord_media_distance_spin;
+   CEF_CTextLabel  m_ord_media_expire_label;
+   CEF_CComboBox   m_ord_media_expire_combo;
+
    CEF_CFrame      m_card_filtro;
    CEF_CTextLabel  m_card_filtro_title;
-   CEF_CTextLabel  m_card_filtro_body;
+   CEF_CCheckBox   m_use_filtro;
+   CEF_CTextLabel  m_filtro_padrao_label;
+   CEF_CComboBox   m_filtro_padrao_combo;
+   CEF_CTextLabel  m_filtro_time_label;
+   CEF_CComboBox   m_filtro_time_combo;
+   CEF_CTextLabel  m_filtro_range_label[4];
+   CEF_CTextEdit   m_filtro_range_spin[4];
+
    CEF_CFrame      m_card_canais;
    CEF_CTextLabel  m_card_canais_title;
    CEF_CTextLabel  m_card_canais_body;
@@ -27,8 +58,60 @@ private:
    CEF_CTextLabel  m_card_sobre_title;
    CEF_CTextLabel  m_card_sobre_body;
 
+   bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index,const color border)
+     {
+      combo.MainPointer(owner);
+      tabs.AddToElementsArray(tab_index,combo);
+      combo.ItemsTotal(ArraySize(items));
+      for(int i=0;i<ArraySize(items);i++)
+         combo.SetValue(i,items[i]);
+      V2StyleCombo(combo,border,width,list_height,width-2);
+      if(!combo.CreateComboBox("",x,y))
+         return(false);
+      m_host.RegisterElement(m_window_index,combo);
+      combo.SelectItem(V2ClampIndex(selected_index,0,ArraySize(items)-1));
+      return(true);
+     }
+
+   bool CreateSpinControl(CEF_CTextEdit &spin,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const double max_value,const double min_value,const double step,const int digits,const string value,const color back,const color border)
+     {
+      spin.MainPointer(owner);
+      tabs.AddToElementsArray(tab_index,spin);
+      V2StyleSpin(spin,back,border,width,max_value,min_value,step,digits,value);
+      if(!spin.CreateTextEdit("",x,y))
+         return(false);
+      m_host.RegisterElement(m_window_index,spin);
+      return(true);
+     }
+
+   void RefreshOrderChecks(void)
+     {
+      m_ordem_market.Update(true);
+      m_ordem_limit.Update(true);
+      m_ord_ref_check.Update(true);
+      m_ord_media_check.Update(true);
+     }
+
+   void SyncOrderTabChecks(void)
+     {
+      if(!m_created)
+         return;
+
+      const int selected=m_ord_tabs.SelectedTab();
+      if(selected==m_last_ord_tab)
+         return;
+
+      m_last_ord_tab=selected;
+      const bool use_ref=(selected!=1);
+      m_ord_ref_check.IsPressed(use_ref);
+      m_ord_media_check.IsPressed(!use_ref);
+      m_ord_tabs.ShowTabElements();
+      m_ord_ref_check.Update(true);
+      m_ord_media_check.Update(true);
+     }
+
 public:
-                     CTab8SinaisMainView(void) : m_host(NULL), m_created(false), m_window_index(-1), m_tab_index(-1) {}
+                     CTab8SinaisMainView(void) : m_host(NULL), m_created(false), m_window_index(-1), m_tab_index(-1), m_last_ord_tab(-1) {}
 
    bool Create(CEF_CWndCreate &host,int window_index,CEF_CTabs &tabs,const int tab_index)
      {
@@ -45,21 +128,279 @@ public:
       const int content_w=tabs_w-(content_pad*2);
       const int gap=12;
       const int col_w=(content_w-(gap*2))/3;
-      const int row_h=216;
+      const int card_h=340;
+      const int row2_y=content_y+card_h+gap;
+      const int row2_h=216;
+      const int field_x=16;
+      const int field_w=col_w-32;
+      const color card_back=V2_COLOR_CARD_BACK;
+      const color card_border=V2_COLOR_CARD_BORDER;
+      const color sub_back=V2_COLOR_SURFACE;
+      const color field_border=V2_COLOR_FIELD_BORDER;
 
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_ordens,m_card_ordens_title,m_card_ordens_body,tabs,tabs,m_window_index,m_tab_index,content_pad,content_y,col_w,row_h,"Tipo de ordens","Primeiro bloco a migrar. Aqui entram market, limit e a logica de exclusividade entre opcoes."))
+      if(!V2CreateCard(*m_host,m_card_ordens,tabs,m_window_index,m_tab_index,content_pad,content_y,col_w,card_h,card_back,card_border))
          return(false);
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_filtro,m_card_filtro_title,m_card_filtro_body,tabs,tabs,m_window_index,m_tab_index,content_pad+col_w+gap,content_y,col_w,row_h,"Filtro","Bloco isolavel. Deve portar padrao, timeframe e ranges sem depender da navegacao complexa da aba 8."))
+      if(!V2CreateCardTitle(*m_host,m_card_ordens_title,"Tipo de ordens",m_card_ordens,tabs,m_window_index,m_tab_index,16,12,field_w))
          return(false);
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_canais,m_card_canais_title,m_card_canais_body,tabs,tabs,m_window_index,m_tab_index,content_pad+(col_w+gap)*2,content_y,col_w,row_h,"Canais","Migracao propria para canais e bandas, com yes/no e parametros de indicador."))
+
+      const int order_gap=12;
+      const int order_w=(field_w-order_gap)/2;
+      if(!m_host.CreateCheckbox(m_ordem_market,"Mercado",m_card_ordens,m_window_index,tabs,m_tab_index,16,44,order_w,true,false,false))
          return(false);
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_cruz,m_card_cruz_title,m_card_cruz_body,tabs,tabs,m_window_index,m_tab_index,content_pad,content_y+row_h+gap,col_w,row_h,"Cruzamentos","Bloco mais sensivel de Sinais. Depende de tabs internas, atalhos e combinacao fast/slow."))
+      m_ordem_market.FontSize(10);
+      m_ordem_market.LabelColor(V2_COLOR_TEXT_PRIMARY);
+
+      if(!m_host.CreateCheckbox(m_ordem_limit,"Limite",m_card_ordens,m_window_index,tabs,m_tab_index,16+order_w+order_gap,44,order_w,false,false,false))
          return(false);
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_sobre,m_card_sobre_title,m_card_sobre_body,tabs,tabs,m_window_index,m_tab_index,content_pad+col_w+gap,content_y+row_h+gap,col_w,row_h,"Sobrecomprado / sobrevenda","Segundo bloco mais delicado. Tem indicador dinamico, parametros por familia e navegacao interna."))
+      m_ordem_limit.FontSize(10);
+      m_ordem_limit.LabelColor(V2_COLOR_TEXT_PRIMARY);
+
+      string ord_tab_text[];
+      int ord_tab_widths[];
+      ArrayResize(ord_tab_text,2);
+      ArrayResize(ord_tab_widths,2);
+      ord_tab_text[0]="Referencia";
+      ord_tab_text[1]="Media";
+      ord_tab_widths[0]=(field_w/2);
+      ord_tab_widths[1]=field_w-ord_tab_widths[0];
+
+      m_ord_tabs.MainPointer(m_card_ordens);
+      tabs.AddToElementsArray(m_tab_index,m_ord_tabs);
+      m_ord_tabs.XSize(field_w);
+      m_ord_tabs.YSize(card_h-96);
+      m_ord_tabs.IsCenterText(true);
+      m_ord_tabs.PositionMode(TABS_TOP);
+      m_ord_tabs.TabsYSize(22);
+      m_ord_tabs.AutoXResizeMode(false);
+      m_ord_tabs.AutoYResizeMode(false);
+      m_ord_tabs.BackColorPressed(sub_back);
+      m_ord_tabs.BorderColor(card_border);
+      m_ord_tabs.BorderColorHover(card_border);
+      m_ord_tabs.BorderColorPressed(card_border);
+      for(int i=0;i<2;i++)
+         m_ord_tabs.AddTab(ord_tab_text[i],ord_tab_widths[i]);
+      if(!m_ord_tabs.CreateTabs(16,84))
+         return(false);
+      m_host.RegisterElement(m_window_index,m_ord_tabs);
+
+      CEF_CButtonsGroup *ord_bg=m_ord_tabs.GetButtonsGroupPointer();
+      if(ord_bg!=NULL)
+        {
+         for(int i=0;i<2;i++)
+           {
+            ord_bg.GetButtonPointer(i).FontSize(8);
+            ord_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            ord_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            ord_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            ord_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            ord_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            ord_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            ord_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            ord_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            ord_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      const int ord_content_x=12;
+      const int ord_content_y=6;
+      const int ord_content_w=field_w-(ord_content_x*2);
+      const int ord_sub_y=ord_content_y+18;
+      const int ord_sub_h=(card_h-96)-ord_sub_y-10;
+
+      if(!m_host.CreateCheckbox(m_ord_ref_check,"Referencia",m_ord_tabs,m_window_index,m_ord_tabs,0,ord_content_x,ord_content_y,140,true,false,false))
+         return(false);
+      m_ord_ref_check.FontSize(10);
+      m_ord_ref_check.LabelColor(V2_COLOR_TEXT_PRIMARY);
+
+      if(!m_host.CreateCheckbox(m_ord_media_check,"Media",m_ord_tabs,m_window_index,m_ord_tabs,1,ord_content_x,ord_content_y,140,false,false,false))
+         return(false);
+      m_ord_media_check.FontSize(10);
+      m_ord_media_check.LabelColor(V2_COLOR_TEXT_PRIMARY);
+
+      if(!V2CreateCard(*m_host,m_ord_ref_card,m_ord_tabs,m_window_index,0,ord_content_x,ord_sub_y,ord_content_w,ord_sub_h,sub_back,card_border))
+         return(false);
+      if(!V2CreateCard(*m_host,m_ord_media_card,m_ord_tabs,m_window_index,1,ord_content_x,ord_sub_y,ord_content_w,ord_sub_h,sub_back,card_border))
+         return(false);
+
+      string base_items[];
+      ArrayResize(base_items,6);
+      base_items[0]="Maxima";
+      base_items[1]="Minima";
+      base_items[2]="Abertura";
+      base_items[3]="Fechamento";
+      base_items[4]="Corpo";
+      base_items[5]="Pavios";
+
+      string candle_items[];
+      V2ItemsPosicaoReferencia(candle_items);
+
+      string expire_items[];
+      V2ItemsExpirar(expire_items);
+
+      int y=10;
+      if(!V2CreateFieldLabel(*m_host,m_ord_ref_base_label,"Referencia:",m_ord_ref_card,m_ord_tabs,m_window_index,0,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_ord_ref_base_combo,m_ord_ref_card,m_ord_tabs,0,field_x,y,ord_content_w-24,120,base_items,0,card_border))
+         return(false);
+      y+=28;
+      if(!V2CreateFieldLabel(*m_host,m_ord_ref_candle_label,"Candle:",m_ord_ref_card,m_ord_tabs,m_window_index,0,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_ord_ref_candle_combo,m_ord_ref_card,m_ord_tabs,0,field_x,y,ord_content_w-24,120,candle_items,0,card_border))
+         return(false);
+      y+=28;
+      if(!V2CreateFieldLabel(*m_host,m_ord_ref_distance_label,"Distancia",m_ord_ref_card,m_ord_tabs,m_window_index,0,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateSpinControl(m_ord_ref_distance_spin,m_ord_ref_card,m_ord_tabs,0,field_x,y,ord_content_w-24,9999.0,0.0,1.0,0,"0",sub_back,card_border))
+         return(false);
+      y+=28;
+      if(!V2CreateFieldLabel(*m_host,m_ord_ref_expire_label,"Expirar:",m_ord_ref_card,m_ord_tabs,m_window_index,0,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_ord_ref_expire_combo,m_ord_ref_card,m_ord_tabs,0,field_x,y,ord_content_w-24,120,expire_items,0,card_border))
+         return(false);
+
+      y=10;
+      if(!V2CreateFieldLabel(*m_host,m_ord_media_candles_label,"Cand. media",m_ord_media_card,m_ord_tabs,m_window_index,1,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateSpinControl(m_ord_media_candles_spin,m_ord_media_card,m_ord_tabs,1,field_x,y,ord_content_w-24,9999.0,0.0,1.0,0,"0",sub_back,card_border))
+         return(false);
+      y+=28;
+      if(!V2CreateFieldLabel(*m_host,m_ord_media_base_label,"Referencia:",m_ord_media_card,m_ord_tabs,m_window_index,1,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_ord_media_base_combo,m_ord_media_card,m_ord_tabs,1,field_x,y,ord_content_w-24,120,base_items,0,card_border))
+         return(false);
+      y+=28;
+      if(!V2CreateFieldLabel(*m_host,m_ord_media_distance_label,"Distancia",m_ord_media_card,m_ord_tabs,m_window_index,1,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateSpinControl(m_ord_media_distance_spin,m_ord_media_card,m_ord_tabs,1,field_x,y,ord_content_w-24,9999.0,0.0,1.0,0,"0",sub_back,card_border))
+         return(false);
+      y+=28;
+      if(!V2CreateFieldLabel(*m_host,m_ord_media_expire_label,"Expirar:",m_ord_media_card,m_ord_tabs,m_window_index,1,field_x,y,ord_content_w-24,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_ord_media_expire_combo,m_ord_media_card,m_ord_tabs,1,field_x,y,ord_content_w-24,120,expire_items,0,card_border))
+         return(false);
+
+      m_ord_tabs.SelectTab(0);
+      m_ord_tabs.ShowTabElements();
+      m_last_ord_tab=0;
+
+      const int filtro_x=content_pad+col_w+gap;
+      if(!V2CreateCard(*m_host,m_card_filtro,tabs,m_window_index,m_tab_index,filtro_x,content_y,col_w,card_h,card_back,card_border))
+         return(false);
+      if(!V2CreateCardTitle(*m_host,m_card_filtro_title,"Usar filtro",m_card_filtro,tabs,m_window_index,m_tab_index,16,12,field_w))
+         return(false);
+      if(!m_host.CreateCheckbox(m_use_filtro,"Ativar filtro",m_card_filtro,m_window_index,tabs,m_tab_index,16,44,field_w,false,false,false))
+         return(false);
+      m_use_filtro.FontSize(10);
+      m_use_filtro.LabelColor(V2_COLOR_TEXT_PRIMARY);
+
+      string stop_type_items[];
+      V2ItemsStopTipo(stop_type_items);
+      string tf_items[];
+      V2ItemsTempoGrafico(tf_items);
+
+      y=76;
+      if(!V2CreateFieldLabel(*m_host,m_filtro_padrao_label,"Medir em",m_card_filtro,tabs,m_window_index,m_tab_index,field_x,y,field_w,18))
+         return(false);
+      y+=22;
+      if(!CreateComboControl(m_filtro_padrao_combo,m_card_filtro,tabs,m_tab_index,field_x,y,field_w,80,stop_type_items,0,field_border))
+         return(false);
+      y+=42;
+      if(!V2CreateFieldLabel(*m_host,m_filtro_time_label,"Tempo grafico",m_card_filtro,tabs,m_window_index,m_tab_index,field_x,y,field_w,18))
+         return(false);
+      y+=22;
+      if(!CreateComboControl(m_filtro_time_combo,m_card_filtro,tabs,m_tab_index,field_x,y,field_w,200,tf_items,0,field_border))
+         return(false);
+      y+=42;
+
+      string filter_labels[];
+      ArrayResize(filter_labels,4);
+      filter_labels[0]="Tam. min da vela";
+      filter_labels[1]="Tam. max";
+      filter_labels[2]="Min. pavios";
+      filter_labels[3]="Max. pavios";
+
+      for(int i=0;i<4;i++)
+        {
+         if(!V2CreateFieldLabel(*m_host,m_filtro_range_label[i],filter_labels[i],m_card_filtro,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
+            return(false);
+         y+=18;
+         if(!CreateSpinControl(m_filtro_range_spin[i],m_card_filtro,tabs,m_tab_index,field_x,y,field_w,9999.0,0.0,1.0,0,"0",card_back,field_border))
+            return(false);
+         y+=28;
+        }
+
+      const int canais_x=content_pad+(col_w+gap)*2;
+      if(!V2CreateSectionPlaceholder(*m_host,m_card_canais,m_card_canais_title,m_card_canais_body,tabs,tabs,m_window_index,m_tab_index,canais_x,content_y,col_w,card_h,"Canais","Migracao propria para canais e bandas, com yes/no e parametros de indicador."))
+         return(false);
+      if(!V2CreateSectionPlaceholder(*m_host,m_card_cruz,m_card_cruz_title,m_card_cruz_body,tabs,tabs,m_window_index,m_tab_index,content_pad,row2_y,col_w,row2_h,"Cruzamentos","Bloco mais sensivel de Sinais. Depende de tabs internas, atalhos e combinacao fast/slow."))
+         return(false);
+      if(!V2CreateSectionPlaceholder(*m_host,m_card_sobre,m_card_sobre_title,m_card_sobre_body,tabs,tabs,m_window_index,m_tab_index,content_pad+col_w+gap,row2_y,col_w,row2_h,"Sobrecomprado / sobrevenda","Segundo bloco mais delicado. Tem indicador dinamico, parametros por familia e navegacao interna."))
          return(false);
 
       m_created=true;
       return(true);
+     }
+
+   void OnTimerEvent(void)
+     {
+      SyncOrderTabChecks();
+     }
+
+   bool HandleEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
+     {
+      if(!m_created)
+         return(false);
+      if(id!=CHARTEVENT_CUSTOM+ON_CLICK_CHECKBOX)
+         return(false);
+
+      const int clicked_id=(int)lparam;
+      if(m_ordem_market.Id()==clicked_id)
+        {
+         if(!m_ordem_market.IsPressed())
+            m_ordem_market.IsPressed(true);
+         m_ordem_limit.IsPressed(false);
+         RefreshOrderChecks();
+         return(true);
+        }
+      if(m_ordem_limit.Id()==clicked_id)
+        {
+         if(!m_ordem_limit.IsPressed())
+            m_ordem_limit.IsPressed(true);
+         m_ordem_market.IsPressed(false);
+         RefreshOrderChecks();
+         return(true);
+        }
+      if(m_ord_ref_check.Id()==clicked_id)
+        {
+         if(!m_ord_ref_check.IsPressed())
+            m_ord_ref_check.IsPressed(true);
+         m_ord_media_check.IsPressed(false);
+         m_ord_tabs.SelectTab(0);
+         m_ord_tabs.ShowTabElements();
+         m_last_ord_tab=0;
+         RefreshOrderChecks();
+         return(true);
+        }
+      if(m_ord_media_check.Id()==clicked_id)
+        {
+         if(!m_ord_media_check.IsPressed())
+            m_ord_media_check.IsPressed(true);
+         m_ord_ref_check.IsPressed(false);
+         m_ord_tabs.SelectTab(1);
+         m_ord_tabs.ShowTabElements();
+         m_last_ord_tab=1;
+         RefreshOrderChecks();
+         return(true);
+        }
+      return(false);
      }
   };
 

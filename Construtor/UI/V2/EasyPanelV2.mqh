@@ -573,6 +573,8 @@ public:
          return;
       if(m_tab7.HandleEvent(id,lparam,dparam,sparam))
          return;
+      if(m_tab8.HandleEvent(id,lparam,dparam,sparam))
+         return;
 
       if(id==CHARTEVENT_CUSTOM+ON_CLICK_BUTTON && m_btn_apply.CheckElementName(sparam))
         {

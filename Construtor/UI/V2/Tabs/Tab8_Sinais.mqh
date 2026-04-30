@@ -109,6 +109,19 @@ public:
          m_last_selected_tab=selected;
          m_inner_tabs.ShowTabElements();
         }
+
+      m_sinais_view.OnTimerEvent();
+     }
+
+   bool HandleEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
+     {
+      if(!m_created)
+         return(false);
+
+      if(m_sinais_view.HandleEvent(id,lparam,dparam,sparam))
+         return(true);
+
+      return(false);
      }
   };
 
