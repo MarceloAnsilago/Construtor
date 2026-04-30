@@ -82,6 +82,7 @@ private:
    CEF_CTextEdit   m_sobre_sobrevenda_spin;
    CEF_CTextLabel  m_sobre_sentido_label;
    CEF_CComboBox   m_sobre_sentido_combo;
+   CEF_CFrame      m_sobre_param_card;
    CEF_CTextLabel  m_sobre_param_hint;
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index,const color border)
@@ -416,30 +417,36 @@ public:
       y+=16;
       if(!CreateComboControl(m_canais_indic_combo,m_card_canais,tabs,m_tab_index,field_x,y,field_w,120,canais_indic_items,0,field_border))
          return(false);
-      y+=40;
+      y+=42;
       if(!V2CreateFieldLabel(*m_host,m_canais_type_label,"Sinais",m_card_canais,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
          return(false);
       y+=16;
       if(!CreateComboControl(m_canais_type_combo,m_card_canais,tabs,m_tab_index,field_x,y,field_w,160,canais_type_items,0,field_border))
          return(false);
 
-      const int canais_spin_y=174;
-      const int canais_spin_w=(field_w-12)/2;
-      if(!V2CreateFieldLabel(*m_host,m_canais_period_label,"Periodo",m_card_canais,tabs,m_window_index,m_tab_index,field_x,canais_spin_y,canais_spin_w,16))
+      y+=42;
+      if(!V2CreateFieldLabel(*m_host,m_canais_period_label,"Periodo",m_card_canais,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
          return(false);
-      if(!CreateSpinControl(m_canais_period_spin,m_card_canais,tabs,m_tab_index,field_x,canais_spin_y+18,canais_spin_w,9999.0,0.0,1.0,0,"20",card_back,field_border))
+      y+=16;
+      if(!CreateSpinControl(m_canais_period_spin,m_card_canais,tabs,m_tab_index,field_x,y,field_w,9999.0,0.0,1.0,0,"20",card_back,field_border))
          return(false);
-      if(!V2CreateFieldLabel(*m_host,m_canais_deviation_label,"Desvio",m_card_canais,tabs,m_window_index,m_tab_index,field_x+canais_spin_w+12,canais_spin_y,canais_spin_w,16))
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,m_canais_deviation_label,"Desvio",m_card_canais,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
          return(false);
-      if(!CreateSpinControl(m_canais_deviation_spin,m_card_canais,tabs,m_tab_index,field_x+canais_spin_w+12,canais_spin_y+18,canais_spin_w,9999.0,0.0,0.1,1,"2.0",card_back,field_border))
+      y+=16;
+      if(!CreateSpinControl(m_canais_deviation_spin,m_card_canais,tabs,m_tab_index,field_x,y,field_w,9999.0,0.0,0.1,1,"2.0",card_back,field_border))
          return(false);
-      if(!V2CreateFieldLabel(*m_host,m_canais_shift_label,"Deslocamento",m_card_canais,tabs,m_window_index,m_tab_index,field_x,222,field_w,16))
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,m_canais_shift_label,"Deslocamento",m_card_canais,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
          return(false);
-      if(!CreateSpinControl(m_canais_shift_spin,m_card_canais,tabs,m_tab_index,field_x,240,field_w,9999.0,0.0,1.0,0,"0",card_back,field_border))
+      y+=16;
+      if(!CreateSpinControl(m_canais_shift_spin,m_card_canais,tabs,m_tab_index,field_x,y,field_w,9999.0,0.0,1.0,0,"0",card_back,field_border))
          return(false);
-      if(!V2CreateFieldLabel(*m_host,m_canais_price_label,"Modo de preco",m_card_canais,tabs,m_window_index,m_tab_index,field_x,268,field_w,16))
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,m_canais_price_label,"Modo de preco",m_card_canais,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
          return(false);
-      if(!CreateComboControl(m_canais_price_combo,m_card_canais,tabs,m_tab_index,field_x,286,field_w,160,canais_price_items,0,field_border))
+      y+=16;
+      if(!CreateComboControl(m_canais_price_combo,m_card_canais,tabs,m_tab_index,field_x,y,field_w,160,canais_price_items,0,field_border))
          return(false);
 
       const int cruz_x=content_pad+(col_w+gap)*3;
@@ -525,38 +532,44 @@ public:
       sobre_sentido_items[0]="Sobrecompra compra";
       sobre_sentido_items[1]="Sobrecompra venda";
 
+      const int sobre_content_x=12;
+      const int sobre_content_w=field_w-24;
+      const int sobre_tab_h=card_h-96;
+
       y=10;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_indic_label,"Indicador",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_indic_label,"Indicador",m_sobre_tabs,m_sobre_tabs,m_window_index,0,sobre_content_x,y,sobre_content_w,16))
          return(false);
       y+=18;
-      if(!CreateComboControl(m_sobre_indic_combo,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,180,sobre_indic_items,0,card_border))
+      if(!CreateComboControl(m_sobre_indic_combo,m_sobre_tabs,m_sobre_tabs,0,sobre_content_x,y,sobre_content_w,180,sobre_indic_items,0,card_border))
          return(false);
-      y+=30;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_entry_label,"Entrada",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
-         return(false);
-      y+=18;
-      if(!CreateComboControl(m_sobre_entry_combo,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,90,sobre_entry_items,0,card_border))
-         return(false);
-      y+=30;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_sobrecompra_label,"Sobrecompra",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+      y+=34;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_entry_label,"Entrada",m_sobre_tabs,m_sobre_tabs,m_window_index,0,sobre_content_x,y,sobre_content_w,16))
          return(false);
       y+=18;
-      if(!CreateSpinControl(m_sobre_sobrecompra_spin,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,100000.0,0.0,1.0,0,"2",sub_back,card_border))
+      if(!CreateComboControl(m_sobre_entry_combo,m_sobre_tabs,m_sobre_tabs,0,sobre_content_x,y,sobre_content_w,90,sobre_entry_items,0,card_border))
          return(false);
-      y+=30;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_sobrevenda_label,"Sobrevenda",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
-         return(false);
-      y+=18;
-      if(!CreateSpinControl(m_sobre_sobrevenda_spin,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,100000.0,-100000.0,1.0,0,"-2",sub_back,card_border))
-         return(false);
-      y+=30;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_sentido_label,"Sentido",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+      y+=34;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_sobrecompra_label,"Sobrecompra",m_sobre_tabs,m_sobre_tabs,m_window_index,0,sobre_content_x,y,sobre_content_w,16))
          return(false);
       y+=18;
-      if(!CreateComboControl(m_sobre_sentido_combo,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,70,sobre_sentido_items,0,card_border))
+      if(!CreateSpinControl(m_sobre_sobrecompra_spin,m_sobre_tabs,m_sobre_tabs,0,sobre_content_x,y,sobre_content_w,100000.0,0.0,1.0,0,"2",sub_back,card_border))
+         return(false);
+      y+=34;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_sobrevenda_label,"Sobrevenda",m_sobre_tabs,m_sobre_tabs,m_window_index,0,sobre_content_x,y,sobre_content_w,16))
+         return(false);
+      y+=18;
+      if(!CreateSpinControl(m_sobre_sobrevenda_spin,m_sobre_tabs,m_sobre_tabs,0,sobre_content_x,y,sobre_content_w,100000.0,-100000.0,1.0,0,"-2",sub_back,card_border))
+         return(false);
+      y+=34;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_sentido_label,"Sentido",m_sobre_tabs,m_sobre_tabs,m_window_index,0,sobre_content_x,y,sobre_content_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_sobre_sentido_combo,m_sobre_tabs,m_sobre_tabs,0,sobre_content_x,y,sobre_content_w,70,sobre_sentido_items,0,card_border))
          return(false);
 
-      if(!m_host.CreateTextLabel(m_sobre_param_hint,"Os parametros detalhados por indicador vao entrar na proxima etapa desta migracao.",m_sobre_tabs,m_window_index,m_sobre_tabs,1,field_x,16,field_w,120))
+      if(!V2CreateCard(*m_host,m_sobre_param_card,m_sobre_tabs,m_window_index,1,sobre_content_x,10,sobre_content_w,sobre_tab_h-20,sub_back,card_border))
+         return(false);
+      if(!m_host.CreateTextLabel(m_sobre_param_hint,"Os parametros detalhados por indicador vao entrar na proxima etapa desta migracao.",m_sobre_param_card,m_window_index,m_sobre_tabs,1,12,12,sobre_content_w-24,120))
          return(false);
       m_sobre_param_hint.FontSize(10);
       m_sobre_param_hint.LabelColor(V2_COLOR_TEXT_SECONDARY);
