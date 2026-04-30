@@ -140,6 +140,13 @@ void V2ItemsExpirar(string &items[])
    items[4]="4 candles";
   }
 
+string V2SignalDirectionMessage(const bool is_buy)
+  {
+   if(is_buy)
+      return("Voce esta criando um sinal de compra, o de venda sera gerado automaticamente.");
+   return("Voce esta criando um sinal de venda, o de compra sera gerado automaticamente.");
+  }
+
 void V2StyleCombo(CEF_CComboBox &combo,const color border,const int width,const int list_height,const int button_width)
   {
    combo.XSize(width);

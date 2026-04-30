@@ -12,6 +12,11 @@ private:
    bool              m_created;
    int               m_window_index;
    int               m_tab_index;
+   bool              m_signal_is_buy;
+
+   CEF_CCheckBox     m_signal_buy;
+   CEF_CCheckBox     m_signal_sell;
+   CEF_CTextLabel    m_signal_info;
 
    CEF_CTextLabel    m_type_label;
    CEF_CComboBox     m_type_combo;
@@ -77,8 +82,18 @@ private:
       m_use_indicador.Update(true);
      }
 
+   void RefreshSignalChecks(void)
+     {
+      m_signal_buy.IsPressed(m_signal_is_buy);
+      m_signal_sell.IsPressed(!m_signal_is_buy);
+      m_signal_info.LabelText(V2SignalDirectionMessage(m_signal_is_buy));
+      m_signal_buy.Update(true);
+      m_signal_sell.Update(true);
+      m_signal_info.Update(true);
+     }
+
 public:
-                     CTab3StopMovelV2(void) : m_host(NULL), m_has_settings(false), m_created(false), m_window_index(-1), m_tab_index(-1) {}
+                     CTab3StopMovelV2(void) : m_host(NULL), m_has_settings(false), m_created(false), m_window_index(-1), m_tab_index(-1), m_signal_is_buy(true) {}
 
    void SetSettings(const SConstrutorSettings &settings)
      {
@@ -104,7 +119,13 @@ public:
 
       const int tabs_w=tabs.XSize();
       const int content_pad=24;
-      const int content_y=120;
+      const int signal_y=66;
+      const int signal_w=220;
+      const int signal_gap=20;
+      const int signal2_x=content_pad+signal_w+signal_gap;
+      const int info_y=92;
+      const int type_y=128;
+      const int content_y=182;
       const int content_w=tabs_w-(content_pad*2);
       const int card_gap=12;
       const int card_w=(content_w-(card_gap*2))/3;
@@ -118,11 +139,24 @@ public:
       const color card_border=V2_COLOR_CARD_BORDER;
       const color field_border=V2_COLOR_FIELD_BORDER;
 
-      if(!V2CreateFieldLabel(*m_host,m_type_label,"Tipo de stop",tabs,tabs,m_window_index,m_tab_index,content_pad,66,260,18))
+      if(!m_host.CreateCheckbox(m_signal_buy,"Criar sinal de compra",tabs,m_window_index,tabs,m_tab_index,content_pad,signal_y,signal_w,true,false,false))
+         return(false);
+      m_signal_buy.FontSize(10);
+      m_signal_buy.LabelColor(V2_COLOR_TEXT_PRIMARY);
+      if(!m_host.CreateCheckbox(m_signal_sell,"Criar sinal de venda",tabs,m_window_index,tabs,m_tab_index,signal2_x,signal_y,signal_w,false,false,false))
+         return(false);
+      m_signal_sell.FontSize(10);
+      m_signal_sell.LabelColor(V2_COLOR_TEXT_PRIMARY);
+      if(!m_host.CreateTextLabel(m_signal_info,V2SignalDirectionMessage(m_signal_is_buy),tabs,m_window_index,tabs,m_tab_index,content_pad,info_y,tabs_w-(content_pad*2),18))
+         return(false);
+      m_signal_info.FontSize(10);
+      m_signal_info.LabelColor(V2_COLOR_TEXT_SECONDARY);
+
+      if(!V2CreateFieldLabel(*m_host,m_type_label,"Tipo de stop",tabs,tabs,m_window_index,m_tab_index,content_pad,type_y,260,18))
          return(false);
       string stop_items[];
       V2ItemsStopTipo(stop_items);
-      if(!CreateComboControl(m_type_combo,tabs,tabs,m_tab_index,content_pad,88,260,80,stop_items,0,field_border))
+      if(!CreateComboControl(m_type_combo,tabs,tabs,m_tab_index,content_pad,type_y+22,260,80,stop_items,0,field_border))
          return(false);
 
       if(!V2CreateCard(*m_host,m_card_padrao,tabs,m_window_index,m_tab_index,content_pad,content_y,card_w,card_h,card_back,card_border))
@@ -152,7 +186,7 @@ public:
          return(false);
       if(!V2CreateCardTitle(*m_host,m_card_candles_title,"Stop movel (candles)",m_card_candles,tabs,m_window_index,m_tab_index,16,12,field_w))
          return(false);
-      if(!m_host.CreateCheckbox(m_use_candles,"Usar por distancia",m_card_candles,m_window_index,tabs,m_tab_index,16,44,field_w,false,false,false))
+      if(!m_host.CreateCheckbox(m_use_candles,"Candle a candle",m_card_candles,m_window_index,tabs,m_tab_index,16,44,field_w,false,false,false))
          return(false);
       m_use_candles.FontSize(10);
       m_use_candles.LabelColor(V2_COLOR_TEXT_PRIMARY);
@@ -242,6 +276,7 @@ public:
       m_candles_dist_spin.SetValue(DoubleToString(m_settings.stop_movel_candles_distancia>=0.0 ? m_settings.stop_movel_candles_distancia : 0.0,1));
       m_indicador_trigger_spin.SetValue(DoubleToString(m_settings.stop_movel_indicador_disparo_distancia>=0.0 ? m_settings.stop_movel_indicador_disparo_distancia : 0.0,1));
       m_indicador_combo.SelectItem(V2ClampIndex((int)m_settings.stop_movel_indicador,0,4));
+      RefreshSignalChecks();
      }
 
    void Save()
@@ -282,6 +317,18 @@ public:
          return(false);
 
       const int clicked_id=(int)lparam;
+      if(m_signal_buy.Id()==clicked_id)
+        {
+         m_signal_is_buy=true;
+         RefreshSignalChecks();
+         return(true);
+        }
+      if(m_signal_sell.Id()==clicked_id)
+        {
+         m_signal_is_buy=false;
+         RefreshSignalChecks();
+         return(true);
+        }
       if(m_use_padrao.Id()==clicked_id)
         {
          if(m_use_padrao.IsPressed())
