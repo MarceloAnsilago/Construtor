@@ -268,6 +268,8 @@ private:
       m_tab1.ExportSettings(m_settings);
       m_tab2.Save();
       m_tab2.ExportSettings(m_settings);
+      m_tab3.Save();
+      m_tab3.ExportSettings(m_settings);
       m_has_settings=true;
      }
 
@@ -289,10 +291,13 @@ public:
       m_has_settings=true;
       m_tab1.SetSettings(m_settings);
       m_tab2.SetSettings(m_settings);
+      m_tab3.SetSettings(m_settings);
       if(m_created)
          m_tab1.Load();
       if(m_created)
          m_tab2.Load();
+      if(m_created)
+         m_tab3.Load();
      }
 
    bool ConsumeApply(SConstrutorSettings &settings)
@@ -440,6 +445,7 @@ public:
         {
          m_tab1.Load();
          m_tab2.Load();
+         m_tab3.Load();
         }
 
       m_top_tabs.SelectTab(0);
@@ -467,6 +473,8 @@ public:
          m_tab1.Load();
          m_tab2.SetSettings(m_settings);
          m_tab2.Load();
+         m_tab3.SetSettings(m_settings);
+         m_tab3.Load();
         }
 
       Show((uint)m_window_index);
@@ -517,6 +525,8 @@ public:
          return;
 
       if(m_tab2.HandleEvent(id,lparam,dparam,sparam))
+         return;
+      if(m_tab3.HandleEvent(id,lparam,dparam,sparam))
          return;
 
       if(id==CHARTEVENT_CUSTOM+ON_CLICK_BUTTON && m_btn_apply.CheckElementName(sparam))
