@@ -106,6 +106,7 @@ public:
         }
 
       m_sinais_view.OnTimerEvent();
+      m_montar_view.OnTimerEvent();
      }
 
    bool HandleEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
