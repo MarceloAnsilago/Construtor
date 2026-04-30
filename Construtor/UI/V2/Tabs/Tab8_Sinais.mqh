@@ -35,7 +35,7 @@ public:
       const int tabs_h=tabs.YSize();
       const int tab_h=28;
 
-      if(!m_host.CreateTextLabel(m_hint,"Arquitetura preparada para migracao gradual da aba 8. O objetivo aqui e separar navegacao, blocos e parametros antes de portar a logica completa.",tabs,m_window_index,tabs,m_tab_index,24,66,tabs_w-48,18))
+      if(!m_host.CreateTextLabel(m_hint,"Arquitetura preparada para migracao gradual da aba 8. O objetivo aqui e separar navegacao, blocos e parametros antes de portar a logica completa.",tabs,m_window_index,tabs,m_tab_index,24,50,tabs_w-48,18))
          return(false);
       m_hint.FontSize(10);
       m_hint.LabelColor(V2_COLOR_TEXT_SECONDARY);
@@ -52,7 +52,7 @@ public:
       m_inner_tabs.MainPointer(tabs);
       tabs.AddToElementsArray(m_tab_index,m_inner_tabs);
       m_inner_tabs.XSize(tabs_w);
-      m_inner_tabs.YSize(tabs_h-94);
+      m_inner_tabs.YSize(tabs_h-78);
       m_inner_tabs.IsCenterText(true);
       m_inner_tabs.PositionMode(TABS_TOP);
       m_inner_tabs.TabsYSize(tab_h);
@@ -64,7 +64,7 @@ public:
       for(int i=0;i<2;i++)
          m_inner_tabs.AddTab(inner_text[i],inner_widths[i]);
 
-      if(!m_inner_tabs.CreateTabs(0,94))
+      if(!m_inner_tabs.CreateTabs(0,78))
          return(false);
       m_host.RegisterElement(m_window_index,m_inner_tabs);
 

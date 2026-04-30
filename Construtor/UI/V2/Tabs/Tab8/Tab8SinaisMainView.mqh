@@ -50,7 +50,21 @@ private:
 
    CEF_CFrame      m_card_canais;
    CEF_CTextLabel  m_card_canais_title;
-   CEF_CTextLabel  m_card_canais_body;
+   CEF_CTextLabel  m_canais_label;
+   CEF_CCheckBox   m_canais_yes;
+   CEF_CCheckBox   m_canais_no;
+   CEF_CTextLabel  m_canais_indic_label;
+   CEF_CComboBox   m_canais_indic_combo;
+   CEF_CTextLabel  m_canais_type_label;
+   CEF_CComboBox   m_canais_type_combo;
+   CEF_CTextLabel  m_canais_period_label;
+   CEF_CTextEdit   m_canais_period_spin;
+   CEF_CTextLabel  m_canais_deviation_label;
+   CEF_CTextEdit   m_canais_deviation_spin;
+   CEF_CTextLabel  m_canais_shift_label;
+   CEF_CTextEdit   m_canais_shift_spin;
+   CEF_CTextLabel  m_canais_price_label;
+   CEF_CComboBox   m_canais_price_combo;
    CEF_CFrame      m_card_cruz;
    CEF_CTextLabel  m_card_cruz_title;
    CEF_CTextLabel  m_card_cruz_body;
@@ -92,6 +106,12 @@ private:
       m_ord_media_check.Update(true);
      }
 
+   void RefreshCanaisChecks(void)
+     {
+      m_canais_yes.Update(true);
+      m_canais_no.Update(true);
+     }
+
    void SyncOrderTabChecks(void)
      {
       if(!m_created)
@@ -124,12 +144,12 @@ public:
 
       const int tabs_w=tabs.XSize();
       const int content_pad=24;
-      const int content_y=82;
+      const int content_y=44;
       const int content_w=tabs_w-(content_pad*2);
       const int gap=12;
       const int col_w=(content_w-(gap*2))/3;
-      const int card_h=340;
-      const int row2_y=content_y+card_h+gap;
+      const int card_h=320;
+      const int row2_y=content_y+card_h+18;
       const int row2_h=216;
       const int field_x=16;
       const int field_w=col_w-32;
@@ -338,8 +358,80 @@ public:
         }
 
       const int canais_x=content_pad+(col_w+gap)*2;
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_canais,m_card_canais_title,m_card_canais_body,tabs,tabs,m_window_index,m_tab_index,canais_x,content_y,col_w,card_h,"Canais","Migracao propria para canais e bandas, com yes/no e parametros de indicador."))
+      if(!V2CreateCard(*m_host,m_card_canais,tabs,m_window_index,m_tab_index,canais_x,content_y,col_w,card_h,card_back,card_border))
          return(false);
+      if(!V2CreateCardTitle(*m_host,m_card_canais_title,"Canais de bandas",m_card_canais,tabs,m_window_index,m_tab_index,16,12,field_w))
+         return(false);
+      if(!V2CreateFieldLabel(*m_host,m_canais_label,"Usar canais de bandas?",m_card_canais,tabs,m_window_index,m_tab_index,16,40,field_w,18))
+         return(false);
+      if(!m_host.CreateCheckbox(m_canais_yes,"Sim",m_card_canais,m_window_index,tabs,m_tab_index,16,58,60,false,false,false))
+         return(false);
+      m_canais_yes.FontSize(10);
+      m_canais_yes.LabelColor(V2_COLOR_TEXT_SECONDARY);
+      if(!m_host.CreateCheckbox(m_canais_no,"Nao",m_card_canais,m_window_index,tabs,m_tab_index,86,58,60,true,false,false))
+         return(false);
+      m_canais_no.FontSize(10);
+      m_canais_no.LabelColor(V2_COLOR_TEXT_SECONDARY);
+
+      string canais_indic_items[];
+      ArrayResize(canais_indic_items,5);
+      canais_indic_items[0]="Bandas de Bollinger";
+      canais_indic_items[1]="Envelope";
+      canais_indic_items[2]="Keltner";
+      canais_indic_items[3]="Donchian";
+      canais_indic_items[4]="Canal ATR";
+
+      string canais_type_items[];
+      ArrayResize(canais_type_items,6);
+      canais_type_items[0]="Fechou fora";
+      canais_type_items[1]="Fechou dentro e saiu";
+      canais_type_items[2]="Fechou dentro e fechou fora";
+      canais_type_items[3]="Fechou fora e voltou";
+      canais_type_items[4]="Fechou fora e fechou dentro";
+      canais_type_items[5]="Estando fora";
+
+      string canais_price_items[];
+      ArrayResize(canais_price_items,7);
+      canais_price_items[0]="Fechamento";
+      canais_price_items[1]="Abertura";
+      canais_price_items[2]="Maximo";
+      canais_price_items[3]="Minimo";
+      canais_price_items[4]="Mediano";
+      canais_price_items[5]="Tipico";
+      canais_price_items[6]="Medio";
+
+      y=84;
+      if(!V2CreateFieldLabel(*m_host,m_canais_indic_label,"Indicador",m_card_canais,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
+         return(false);
+      y+=16;
+      if(!CreateComboControl(m_canais_indic_combo,m_card_canais,tabs,m_tab_index,field_x,y,field_w,120,canais_indic_items,0,field_border))
+         return(false);
+      y+=40;
+      if(!V2CreateFieldLabel(*m_host,m_canais_type_label,"Sinais",m_card_canais,tabs,m_window_index,m_tab_index,field_x,y,field_w,16))
+         return(false);
+      y+=16;
+      if(!CreateComboControl(m_canais_type_combo,m_card_canais,tabs,m_tab_index,field_x,y,field_w,160,canais_type_items,0,field_border))
+         return(false);
+
+      const int canais_spin_y=174;
+      const int canais_spin_w=(field_w-12)/2;
+      if(!V2CreateFieldLabel(*m_host,m_canais_period_label,"Periodo",m_card_canais,tabs,m_window_index,m_tab_index,field_x,canais_spin_y,canais_spin_w,16))
+         return(false);
+      if(!CreateSpinControl(m_canais_period_spin,m_card_canais,tabs,m_tab_index,field_x,canais_spin_y+18,canais_spin_w,9999.0,0.0,1.0,0,"20",card_back,field_border))
+         return(false);
+      if(!V2CreateFieldLabel(*m_host,m_canais_deviation_label,"Desvio",m_card_canais,tabs,m_window_index,m_tab_index,field_x+canais_spin_w+12,canais_spin_y,canais_spin_w,16))
+         return(false);
+      if(!CreateSpinControl(m_canais_deviation_spin,m_card_canais,tabs,m_tab_index,field_x+canais_spin_w+12,canais_spin_y+18,canais_spin_w,9999.0,0.0,0.1,1,"2.0",card_back,field_border))
+         return(false);
+      if(!V2CreateFieldLabel(*m_host,m_canais_shift_label,"Deslocamento",m_card_canais,tabs,m_window_index,m_tab_index,field_x,222,field_w,16))
+         return(false);
+      if(!CreateSpinControl(m_canais_shift_spin,m_card_canais,tabs,m_tab_index,field_x,240,field_w,9999.0,0.0,1.0,0,"0",card_back,field_border))
+         return(false);
+      if(!V2CreateFieldLabel(*m_host,m_canais_price_label,"Modo de preco",m_card_canais,tabs,m_window_index,m_tab_index,field_x,268,field_w,16))
+         return(false);
+      if(!CreateComboControl(m_canais_price_combo,m_card_canais,tabs,m_tab_index,field_x,286,field_w,160,canais_price_items,0,field_border))
+         return(false);
+
       if(!V2CreateSectionPlaceholder(*m_host,m_card_cruz,m_card_cruz_title,m_card_cruz_body,tabs,tabs,m_window_index,m_tab_index,content_pad,row2_y,col_w,row2_h,"Cruzamentos","Bloco mais sensivel de Sinais. Depende de tabs internas, atalhos e combinacao fast/slow."))
          return(false);
       if(!V2CreateSectionPlaceholder(*m_host,m_card_sobre,m_card_sobre_title,m_card_sobre_body,tabs,tabs,m_window_index,m_tab_index,content_pad+col_w+gap,row2_y,col_w,row2_h,"Sobrecomprado / sobrevenda","Segundo bloco mais delicado. Tem indicador dinamico, parametros por familia e navegacao interna."))
@@ -398,6 +490,22 @@ public:
          m_ord_tabs.ShowTabElements();
          m_last_ord_tab=1;
          RefreshOrderChecks();
+         return(true);
+        }
+      if(m_canais_yes.Id()==clicked_id)
+        {
+         if(!m_canais_yes.IsPressed())
+            m_canais_yes.IsPressed(true);
+         m_canais_no.IsPressed(false);
+         RefreshCanaisChecks();
+         return(true);
+        }
+      if(m_canais_no.Id()==clicked_id)
+        {
+         if(!m_canais_no.IsPressed())
+            m_canais_no.IsPressed(true);
+         m_canais_yes.IsPressed(false);
+         RefreshCanaisChecks();
          return(true);
         }
       return(false);
