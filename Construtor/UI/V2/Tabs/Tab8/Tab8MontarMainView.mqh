@@ -36,21 +36,16 @@ public:
       const int content_y=44;
       const int content_w=tabs_w-(content_pad*2);
       const int gap=12;
-      const int slot_w=(content_w-gap)/2;
-      const int slot_h=220;
-      const int logic_y=content_y+((slot_h+gap)*2);
+      const int slot_w=(content_w-(gap*3))/4;
+      const int slot_h=300;
+      const int logic_y=content_y+slot_h+gap;
       const int logic_h=176;
 
-      for(int row=0;row<2;row++)
+      for(int slot=0;slot<4;slot++)
         {
-         for(int col=0;col<2;col++)
-           {
-            const int slot=row*2+col;
-            const int slot_x=content_pad+(slot_w+gap)*col;
-            const int slot_y=content_y+(slot_h+gap)*row;
-            if(!m_slots[slot].Create(*m_host,m_window_index,tabs,m_tab_index,slot,slot_x,slot_y,slot_w,slot_h))
-               return(false);
-           }
+         const int slot_x=content_pad+(slot_w+gap)*slot;
+         if(!m_slots[slot].Create(*m_host,m_window_index,tabs,m_tab_index,slot,slot_x,content_y,slot_w,slot_h))
+            return(false);
         }
 
       if(!V2CreateCard(*m_host,m_logic_card,tabs,m_window_index,m_tab_index,content_pad,logic_y,content_w,logic_h,V2_COLOR_CARD_BACK,V2_COLOR_CARD_BORDER))
