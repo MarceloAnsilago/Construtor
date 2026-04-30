@@ -11,6 +11,11 @@ private:
    int             m_window_index;
    int             m_tab_index;
    int             m_last_ord_tab;
+   int             m_last_sobre_tab;
+   int             m_last_sobre_param_idx;
+   int             m_last_cruz_tab;
+   int             m_last_cruz_fast_idx;
+   int             m_last_cruz_slow_idx;
 
    CEF_CFrame      m_card_ordens;
    CEF_CTextLabel  m_card_ordens_title;
@@ -67,7 +72,95 @@ private:
    CEF_CComboBox   m_canais_price_combo;
    CEF_CFrame      m_card_cruz;
    CEF_CTextLabel  m_card_cruz_title;
-   CEF_CTextLabel  m_card_cruz_body;
+   CEF_CTextLabel  m_cruz_label;
+   CEF_CCheckBox   m_cruz_yes;
+   CEF_CCheckBox   m_cruz_no;
+   CEF_CTabs       m_cruz_tabs;
+   CEF_CTextLabel  m_cruz_fast_label;
+   CEF_CComboBox   m_cruz_fast_combo;
+   CEF_CTextLabel  m_cruz_signal_label;
+   CEF_CComboBox   m_cruz_signal_combo;
+   CEF_CTextLabel  m_cruz_slow_label;
+   CEF_CComboBox   m_cruz_slow_combo;
+   CEF_CTextLabel  m_cruz_note;
+   CEF_CTextLabel  m_cruz_fast_indic_label;
+   CEF_CComboBox   m_cruz_fast_indic_combo;
+   CEF_CFrame      m_cruz_fast_param_card;
+   CEF_CTabs       m_cruz_fast_param_tabs;
+   CEF_CTextLabel  m_cruz_fast_param_title[5];
+   CEF_CTextLabel  m_cruz_fast_ma_period_label;
+   CEF_CTextEdit   m_cruz_fast_ma_period_spin;
+   CEF_CTextLabel  m_cruz_fast_ma_shift_label;
+   CEF_CTextEdit   m_cruz_fast_ma_shift_spin;
+   CEF_CTextLabel  m_cruz_fast_ma_type_label;
+   CEF_CComboBox   m_cruz_fast_ma_type_combo;
+   CEF_CTextLabel  m_cruz_fast_ma_price_label;
+   CEF_CComboBox   m_cruz_fast_ma_price_combo;
+   CEF_CTextLabel  m_cruz_fast_vidya_cmo_label;
+   CEF_CTextEdit   m_cruz_fast_vidya_cmo_spin;
+   CEF_CTextLabel  m_cruz_fast_vidya_ema_label;
+   CEF_CTextEdit   m_cruz_fast_vidya_ema_spin;
+   CEF_CTextLabel  m_cruz_fast_vidya_shift_label;
+   CEF_CTextEdit   m_cruz_fast_vidya_shift_spin;
+   CEF_CTextLabel  m_cruz_fast_vidya_price_label;
+   CEF_CComboBox   m_cruz_fast_vidya_price_combo;
+   CEF_CTextLabel  m_cruz_fast_dema_period_label;
+   CEF_CTextEdit   m_cruz_fast_dema_period_spin;
+   CEF_CTextLabel  m_cruz_fast_dema_shift_label;
+   CEF_CTextEdit   m_cruz_fast_dema_shift_spin;
+   CEF_CTextLabel  m_cruz_fast_dema_price_label;
+   CEF_CComboBox   m_cruz_fast_dema_price_combo;
+   CEF_CTextLabel  m_cruz_fast_tema_period_label;
+   CEF_CTextEdit   m_cruz_fast_tema_period_spin;
+   CEF_CTextLabel  m_cruz_fast_tema_shift_label;
+   CEF_CTextEdit   m_cruz_fast_tema_shift_spin;
+   CEF_CTextLabel  m_cruz_fast_tema_price_label;
+   CEF_CComboBox   m_cruz_fast_tema_price_combo;
+   CEF_CTextLabel  m_cruz_fast_frama_period_label;
+   CEF_CTextEdit   m_cruz_fast_frama_period_spin;
+   CEF_CTextLabel  m_cruz_fast_frama_shift_label;
+   CEF_CTextEdit   m_cruz_fast_frama_shift_spin;
+   CEF_CTextLabel  m_cruz_fast_frama_price_label;
+   CEF_CComboBox   m_cruz_fast_frama_price_combo;
+   CEF_CTextLabel  m_cruz_slow_indic_label;
+   CEF_CComboBox   m_cruz_slow_indic_combo;
+   CEF_CFrame      m_cruz_slow_param_card;
+   CEF_CTabs       m_cruz_slow_param_tabs;
+   CEF_CTextLabel  m_cruz_slow_param_title[5];
+   CEF_CTextLabel  m_cruz_slow_ma_period_label;
+   CEF_CTextEdit   m_cruz_slow_ma_period_spin;
+   CEF_CTextLabel  m_cruz_slow_ma_shift_label;
+   CEF_CTextEdit   m_cruz_slow_ma_shift_spin;
+   CEF_CTextLabel  m_cruz_slow_ma_type_label;
+   CEF_CComboBox   m_cruz_slow_ma_type_combo;
+   CEF_CTextLabel  m_cruz_slow_ma_price_label;
+   CEF_CComboBox   m_cruz_slow_ma_price_combo;
+   CEF_CTextLabel  m_cruz_slow_vidya_cmo_label;
+   CEF_CTextEdit   m_cruz_slow_vidya_cmo_spin;
+   CEF_CTextLabel  m_cruz_slow_vidya_ema_label;
+   CEF_CTextEdit   m_cruz_slow_vidya_ema_spin;
+   CEF_CTextLabel  m_cruz_slow_vidya_shift_label;
+   CEF_CTextEdit   m_cruz_slow_vidya_shift_spin;
+   CEF_CTextLabel  m_cruz_slow_vidya_price_label;
+   CEF_CComboBox   m_cruz_slow_vidya_price_combo;
+   CEF_CTextLabel  m_cruz_slow_dema_period_label;
+   CEF_CTextEdit   m_cruz_slow_dema_period_spin;
+   CEF_CTextLabel  m_cruz_slow_dema_shift_label;
+   CEF_CTextEdit   m_cruz_slow_dema_shift_spin;
+   CEF_CTextLabel  m_cruz_slow_dema_price_label;
+   CEF_CComboBox   m_cruz_slow_dema_price_combo;
+   CEF_CTextLabel  m_cruz_slow_tema_period_label;
+   CEF_CTextEdit   m_cruz_slow_tema_period_spin;
+   CEF_CTextLabel  m_cruz_slow_tema_shift_label;
+   CEF_CTextEdit   m_cruz_slow_tema_shift_spin;
+   CEF_CTextLabel  m_cruz_slow_tema_price_label;
+   CEF_CComboBox   m_cruz_slow_tema_price_combo;
+   CEF_CTextLabel  m_cruz_slow_frama_period_label;
+   CEF_CTextEdit   m_cruz_slow_frama_period_spin;
+   CEF_CTextLabel  m_cruz_slow_frama_shift_label;
+   CEF_CTextEdit   m_cruz_slow_frama_shift_spin;
+   CEF_CTextLabel  m_cruz_slow_frama_price_label;
+   CEF_CComboBox   m_cruz_slow_frama_price_combo;
    CEF_CFrame      m_card_sobre;
    CEF_CTextLabel  m_card_sobre_title;
    CEF_CCheckBox   m_use_sobre;
@@ -83,6 +176,56 @@ private:
    CEF_CTextLabel  m_sobre_sentido_label;
    CEF_CComboBox   m_sobre_sentido_combo;
    CEF_CFrame      m_sobre_param_card;
+   CEF_CTabs       m_sobre_param_tabs;
+   CEF_CTextLabel  m_sobre_param_title[10];
+   CEF_CTextLabel  m_sobre_macd_fast_label;
+   CEF_CTextEdit   m_sobre_macd_fast_spin;
+   CEF_CTextLabel  m_sobre_macd_slow_label;
+   CEF_CTextEdit   m_sobre_macd_slow_spin;
+   CEF_CTextLabel  m_sobre_macd_signal_label;
+   CEF_CTextEdit   m_sobre_macd_signal_spin;
+   CEF_CTextLabel  m_sobre_macd_price_label;
+   CEF_CComboBox   m_sobre_macd_price_combo;
+   CEF_CTextLabel  m_sobre_stoch_k_label;
+   CEF_CTextEdit   m_sobre_stoch_k_spin;
+   CEF_CTextLabel  m_sobre_stoch_d_label;
+   CEF_CTextEdit   m_sobre_stoch_d_spin;
+   CEF_CTextLabel  m_sobre_stoch_slow_label;
+   CEF_CTextEdit   m_sobre_stoch_slow_spin;
+   CEF_CTextLabel  m_sobre_stoch_ma_label;
+   CEF_CComboBox   m_sobre_stoch_ma_combo;
+   CEF_CTextLabel  m_sobre_stoch_type_label;
+   CEF_CComboBox   m_sobre_stoch_type_combo;
+   CEF_CTextLabel  m_sobre_rsi_period_label;
+   CEF_CTextEdit   m_sobre_rsi_period_spin;
+   CEF_CTextLabel  m_sobre_rsi_price_label;
+   CEF_CComboBox   m_sobre_rsi_price_combo;
+   CEF_CTextLabel  m_sobre_demarker_period_label;
+   CEF_CTextEdit   m_sobre_demarker_period_spin;
+   CEF_CTextLabel  m_sobre_regressao_period_label;
+   CEF_CTextEdit   m_sobre_regressao_period_spin;
+   CEF_CTextLabel  m_sobre_regressao_ma_label;
+   CEF_CComboBox   m_sobre_regressao_ma_combo;
+   CEF_CTextLabel  m_sobre_regressao_price_label;
+   CEF_CComboBox   m_sobre_regressao_price_combo;
+   CEF_CTextLabel  m_sobre_desvio_period_label;
+   CEF_CTextEdit   m_sobre_desvio_period_spin;
+   CEF_CTextLabel  m_sobre_desvio_ma_label;
+   CEF_CComboBox   m_sobre_desvio_ma_combo;
+   CEF_CTextLabel  m_sobre_desvio_price_label;
+   CEF_CComboBox   m_sobre_desvio_price_combo;
+   CEF_CTextLabel  m_sobre_mfi_period_label;
+   CEF_CTextEdit   m_sobre_mfi_period_spin;
+   CEF_CTextLabel  m_sobre_mfi_volume_label;
+   CEF_CComboBox   m_sobre_mfi_volume_combo;
+   CEF_CTextLabel  m_sobre_bears_period_label;
+   CEF_CTextEdit   m_sobre_bears_period_spin;
+   CEF_CTextLabel  m_sobre_bulls_period_label;
+   CEF_CTextEdit   m_sobre_bulls_period_spin;
+   CEF_CTextLabel  m_sobre_cci_period_label;
+   CEF_CTextEdit   m_sobre_cci_period_spin;
+   CEF_CTextLabel  m_sobre_cci_price_label;
+   CEF_CComboBox   m_sobre_cci_price_combo;
    CEF_CTextLabel  m_sobre_param_hint;
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index,const color border)
@@ -125,6 +268,12 @@ private:
       m_canais_no.Update(true);
      }
 
+   void RefreshCruzChecks(void)
+     {
+      m_cruz_yes.Update(true);
+      m_cruz_no.Update(true);
+     }
+
    void SyncOrderTabChecks(void)
      {
       if(!m_created)
@@ -143,8 +292,153 @@ private:
       m_ord_media_check.Update(true);
      }
 
+   void SyncSobreParamView(void)
+     {
+      if(!m_created)
+         return;
+
+      const int sobre_selected=m_sobre_tabs.SelectedTab();
+      const int indic_selected=V2ClampIndex(m_sobre_indic_combo.GetListViewPointer().SelectedItemIndex(),0,9);
+      const bool tab_changed=(sobre_selected!=m_last_sobre_tab);
+      const bool indic_changed=(indic_selected!=m_last_sobre_param_idx);
+
+      if(!tab_changed && !indic_changed)
+         return;
+
+      m_last_sobre_tab=sobre_selected;
+      m_last_sobre_param_idx=indic_selected;
+      m_sobre_param_tabs.SelectTab(indic_selected);
+
+      if(sobre_selected==1)
+         m_sobre_param_tabs.ShowTabElements();
+      else
+         m_sobre_tabs.ShowTabElements();
+     }
+
+   void SyncCruzParamView(CEF_CComboBox &combo,CEF_CTabs &param_tabs,int &last_index)
+     {
+      const int selected=V2ClampIndex(combo.GetListViewPointer().SelectedItemIndex(),0,4);
+      if(selected==last_index)
+         return;
+
+      last_index=selected;
+      param_tabs.SelectTab(selected);
+      param_tabs.ShowTabElements();
+     }
+
+   void SyncCruzTabs(void)
+     {
+      if(!m_created)
+         return;
+
+      const int selected=m_cruz_tabs.SelectedTab();
+      const bool tab_changed=(selected!=m_last_cruz_tab);
+      const int geral_fast=V2ClampIndex(m_cruz_fast_combo.GetListViewPointer().SelectedItemIndex(),0,4);
+      const int geral_slow=V2ClampIndex(m_cruz_slow_combo.GetListViewPointer().SelectedItemIndex(),0,4);
+      const int detal_fast=V2ClampIndex(m_cruz_fast_indic_combo.GetListViewPointer().SelectedItemIndex(),0,4);
+      const int detal_slow=V2ClampIndex(m_cruz_slow_indic_combo.GetListViewPointer().SelectedItemIndex(),0,4);
+      if(tab_changed)
+        {
+         m_last_cruz_tab=selected;
+         m_cruz_tabs.ShowTabElements();
+        }
+
+      if(selected==0)
+        {
+         if(detal_fast!=geral_fast)
+            m_cruz_fast_indic_combo.SelectItem(geral_fast);
+         if(detal_slow!=geral_slow)
+            m_cruz_slow_indic_combo.SelectItem(geral_slow);
+        }
+      else
+        {
+         if(geral_fast!=detal_fast)
+            m_cruz_fast_combo.SelectItem(detal_fast);
+         if(geral_slow!=detal_slow)
+            m_cruz_slow_combo.SelectItem(detal_slow);
+        }
+
+      if(selected==1)
+         SyncCruzParamView(m_cruz_fast_indic_combo,m_cruz_fast_param_tabs,m_last_cruz_fast_idx);
+      else if(selected==2)
+         SyncCruzParamView(m_cruz_slow_indic_combo,m_cruz_slow_param_tabs,m_last_cruz_slow_idx);
+     }
+
+   bool CreateCruzParamBlock(CEF_CTabs &tabs,const int tab_index,const int x,const int &y_start,const int width,const color back,const color border,const string title,
+                             CEF_CTextLabel &title_label,CEF_CTextEdit &period_spin,CEF_CTextEdit &shift_spin,CEF_CComboBox &type_combo,CEF_CComboBox &price_combo,
+                             CEF_CTextLabel &period_label,CEF_CTextLabel &shift_label,CEF_CTextLabel &type_label,CEF_CTextLabel &price_label,
+                             const string period_value,const bool has_type,const string &type_items[],const string &price_items[])
+     {
+      int y=y_start;
+      if(!V2CreateFieldLabel(*m_host,title_label,title,tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=18;
+      if(!V2CreateFieldLabel(*m_host,period_label,"Periodo",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(period_spin,tabs,tabs,tab_index,x,y,width,9999.0,0.0,1.0,0,period_value,back,border))
+         return(false);
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,shift_label,"Deslocamento",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(shift_spin,tabs,tabs,tab_index,x,y,width,9999.0,0.0,1.0,0,"0",back,border))
+         return(false);
+      y+=38;
+      if(has_type)
+        {
+         if(!V2CreateFieldLabel(*m_host,type_label,"Tipo de media",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+            return(false);
+         y+=16;
+         if(!CreateComboControl(type_combo,tabs,tabs,tab_index,x,y,width,110,type_items,0,border))
+            return(false);
+         y+=38;
+        }
+      if(!V2CreateFieldLabel(*m_host,price_label,"Modo de preco",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateComboControl(price_combo,tabs,tabs,tab_index,x,y,width,140,price_items,0,border))
+         return(false);
+      return(true);
+     }
+
+   bool CreateCruzVidyaBlock(CEF_CTabs &tabs,const int tab_index,const int x,const int width,const color back,const color border,const string title,
+                             CEF_CTextLabel &title_label,CEF_CTextEdit &cmo_spin,CEF_CTextEdit &ema_spin,CEF_CTextEdit &shift_spin,CEF_CComboBox &price_combo,
+                             CEF_CTextLabel &cmo_label,CEF_CTextLabel &ema_label,CEF_CTextLabel &shift_label,CEF_CTextLabel &price_label,
+                             const string &price_items[])
+     {
+      int y=8;
+      if(!V2CreateFieldLabel(*m_host,title_label,title,tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=18;
+      if(!V2CreateFieldLabel(*m_host,cmo_label,"Periodo CMO",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(cmo_spin,tabs,tabs,tab_index,x,y,width,9999.0,0.0,1.0,0,"9",back,border))
+         return(false);
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,ema_label,"Periodo EMA",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(ema_spin,tabs,tabs,tab_index,x,y,width,9999.0,0.0,1.0,0,"12",back,border))
+         return(false);
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,shift_label,"Deslocamento",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(shift_spin,tabs,tabs,tab_index,x,y,width,9999.0,0.0,1.0,0,"0",back,border))
+         return(false);
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,price_label,"Modo de preco",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateComboControl(price_combo,tabs,tabs,tab_index,x,y,width,140,price_items,0,border))
+         return(false);
+      return(true);
+     }
+
 public:
-                     CTab8SinaisMainView(void) : m_host(NULL), m_created(false), m_window_index(-1), m_tab_index(-1), m_last_ord_tab(-1) {}
+                     CTab8SinaisMainView(void) : m_host(NULL), m_created(false), m_window_index(-1), m_tab_index(-1), m_last_ord_tab(-1), m_last_sobre_tab(-1), m_last_sobre_param_idx(-1), m_last_cruz_tab(-1), m_last_cruz_fast_idx(-1), m_last_cruz_slow_idx(-1) {}
 
    bool Create(CEF_CWndCreate &host,int window_index,CEF_CTabs &tabs,const int tab_index)
      {
@@ -450,8 +744,279 @@ public:
          return(false);
 
       const int cruz_x=content_pad+(col_w+gap)*3;
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_cruz,m_card_cruz_title,m_card_cruz_body,tabs,tabs,m_window_index,m_tab_index,cruz_x,content_y,col_w,card_h,"Cruzamentos","Bloco mais sensivel de Sinais. Depende de tabs internas, atalhos e combinacao fast/slow."))
+      if(!V2CreateCard(*m_host,m_card_cruz,tabs,m_window_index,m_tab_index,cruz_x,content_y,col_w,card_h,card_back,card_border))
          return(false);
+      if(!V2CreateCardTitle(*m_host,m_card_cruz_title,"Cruzamentos",m_card_cruz,tabs,m_window_index,m_tab_index,16,12,field_w))
+         return(false);
+      if(!V2CreateFieldLabel(*m_host,m_cruz_label,"Usar cruzamentos",m_card_cruz,tabs,m_window_index,m_tab_index,16,40,field_w,18))
+         return(false);
+      if(!m_host.CreateCheckbox(m_cruz_yes,"Sim",m_card_cruz,m_window_index,tabs,m_tab_index,16,58,60,false,false,false))
+         return(false);
+      m_cruz_yes.FontSize(10);
+      m_cruz_yes.LabelColor(V2_COLOR_TEXT_SECONDARY);
+      if(!m_host.CreateCheckbox(m_cruz_no,"Nao",m_card_cruz,m_window_index,tabs,m_tab_index,86,58,60,true,false,false))
+         return(false);
+      m_cruz_no.FontSize(10);
+      m_cruz_no.LabelColor(V2_COLOR_TEXT_SECONDARY);
+
+      string cruz_tab_text[];
+      int cruz_tab_widths[];
+      ArrayResize(cruz_tab_text,3);
+      ArrayResize(cruz_tab_widths,3);
+      cruz_tab_text[0]="Geral";
+      cruz_tab_text[1]="Rapida";
+      cruz_tab_text[2]="Lenta";
+      cruz_tab_widths[0]=field_w/3;
+      cruz_tab_widths[1]=field_w/3;
+      cruz_tab_widths[2]=field_w-cruz_tab_widths[0]-cruz_tab_widths[1];
+
+      m_cruz_tabs.MainPointer(m_card_cruz);
+      tabs.AddToElementsArray(m_tab_index,m_cruz_tabs);
+      m_cruz_tabs.XSize(field_w);
+      m_cruz_tabs.YSize(card_h-96);
+      m_cruz_tabs.IsCenterText(true);
+      m_cruz_tabs.PositionMode(TABS_TOP);
+      m_cruz_tabs.TabsYSize(22);
+      m_cruz_tabs.AutoXResizeMode(false);
+      m_cruz_tabs.AutoYResizeMode(false);
+      m_cruz_tabs.BackColorPressed(sub_back);
+      m_cruz_tabs.BorderColor(card_border);
+      m_cruz_tabs.BorderColorHover(card_border);
+      m_cruz_tabs.BorderColorPressed(card_border);
+      for(int i=0;i<3;i++)
+         m_cruz_tabs.AddTab(cruz_tab_text[i],cruz_tab_widths[i]);
+      if(!m_cruz_tabs.CreateTabs(16,84))
+         return(false);
+      m_host.RegisterElement(m_window_index,m_cruz_tabs);
+
+      CEF_CButtonsGroup *cruz_bg=m_cruz_tabs.GetButtonsGroupPointer();
+      if(cruz_bg!=NULL)
+        {
+         for(int i=0;i<3;i++)
+           {
+            cruz_bg.GetButtonPointer(i).FontSize(8);
+            cruz_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            cruz_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            cruz_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            cruz_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            cruz_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            cruz_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            cruz_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            cruz_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            cruz_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      string cruz_indic_items[];
+      ArrayResize(cruz_indic_items,5);
+      cruz_indic_items[0]="Media movel";
+      cruz_indic_items[1]="VIDYA";
+      cruz_indic_items[2]="DEMA";
+      cruz_indic_items[3]="TEMA";
+      cruz_indic_items[4]="FRAMA";
+
+      string cruz_signal_items[];
+      ArrayResize(cruz_signal_items,4);
+      cruz_signal_items[0]="Cruzar para cima";
+      cruz_signal_items[1]="Cruzar para baixo";
+      cruz_signal_items[2]="Cruzar e fechar acima";
+      cruz_signal_items[3]="Cruzar e fechar abaixo";
+
+      string cruz_price_items[];
+      ArrayResize(cruz_price_items,7);
+      cruz_price_items[0]="Fechamento";
+      cruz_price_items[1]="Abertura";
+      cruz_price_items[2]="Maximo";
+      cruz_price_items[3]="Minimo";
+      cruz_price_items[4]="Mediano";
+      cruz_price_items[5]="Tipico";
+      cruz_price_items[6]="Medio";
+
+      string cruz_ma_items[];
+      ArrayResize(cruz_ma_items,5);
+      cruz_ma_items[0]="Simples";
+      cruz_ma_items[1]="Exponencial";
+      cruz_ma_items[2]="Suavizada";
+      cruz_ma_items[3]="Linear ponderada";
+      cruz_ma_items[4]="Smoothed";
+
+      const int cruz_content_x=12;
+      const int cruz_content_w=field_w-24;
+
+      y=10;
+      if(!V2CreateFieldLabel(*m_host,m_cruz_fast_label,"Linha rapida",m_cruz_tabs,m_cruz_tabs,m_window_index,0,cruz_content_x,y,cruz_content_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_cruz_fast_combo,m_cruz_tabs,m_cruz_tabs,0,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,0,card_border))
+         return(false);
+      y+=36;
+      if(!V2CreateFieldLabel(*m_host,m_cruz_signal_label,"Sinal",m_cruz_tabs,m_cruz_tabs,m_window_index,0,cruz_content_x,y,cruz_content_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_cruz_signal_combo,m_cruz_tabs,m_cruz_tabs,0,cruz_content_x,y,cruz_content_w,100,cruz_signal_items,0,card_border))
+         return(false);
+      y+=36;
+      if(!V2CreateFieldLabel(*m_host,m_cruz_slow_label,"Linha lenta",m_cruz_tabs,m_cruz_tabs,m_window_index,0,cruz_content_x,y,cruz_content_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_cruz_slow_combo,m_cruz_tabs,m_cruz_tabs,0,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,1,card_border))
+         return(false);
+      y+=40;
+      if(!m_host.CreateTextLabel(m_cruz_note,"As abas Rapida e Lenta acompanham o indicador escolhido aqui.",m_cruz_tabs,m_window_index,m_cruz_tabs,0,cruz_content_x,y,cruz_content_w,42))
+         return(false);
+      m_cruz_note.FontSize(10);
+      m_cruz_note.LabelColor(V2_COLOR_TEXT_SECONDARY);
+
+      y=10;
+      if(!V2CreateFieldLabel(*m_host,m_cruz_fast_indic_label,"Indicador rapido",m_cruz_tabs,m_cruz_tabs,m_window_index,1,cruz_content_x,y,cruz_content_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_cruz_fast_indic_combo,m_cruz_tabs,m_cruz_tabs,1,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,0,card_border))
+         return(false);
+      y+=34;
+      if(!V2CreateCard(*m_host,m_cruz_fast_param_card,m_cruz_tabs,m_window_index,1,cruz_content_x,y,cruz_content_w,(card_h-96)-y-10,sub_back,card_border))
+         return(false);
+
+      m_cruz_fast_param_tabs.MainPointer(m_cruz_fast_param_card);
+      m_cruz_tabs.AddToElementsArray(1,m_cruz_fast_param_tabs);
+      m_cruz_fast_param_tabs.XSize(cruz_content_w-24);
+      m_cruz_fast_param_tabs.YSize((card_h-96)-y-34);
+      m_cruz_fast_param_tabs.IsCenterText(true);
+      m_cruz_fast_param_tabs.PositionMode(TABS_TOP);
+      m_cruz_fast_param_tabs.TabsYSize(0);
+      m_cruz_fast_param_tabs.AutoXResizeMode(false);
+      m_cruz_fast_param_tabs.AutoYResizeMode(false);
+      m_cruz_fast_param_tabs.BackColor(sub_back);
+      m_cruz_fast_param_tabs.BackColorHover(sub_back);
+      m_cruz_fast_param_tabs.BackColorPressed(sub_back);
+      m_cruz_fast_param_tabs.BorderColor(sub_back);
+      m_cruz_fast_param_tabs.BorderColorHover(sub_back);
+      m_cruz_fast_param_tabs.BorderColorPressed(sub_back);
+      for(int i=0;i<5;i++)
+         m_cruz_fast_param_tabs.AddTab(IntegerToString(i+1),cruz_content_w-24);
+      if(!m_cruz_fast_param_tabs.CreateTabs(12,12))
+         return(false);
+      m_host.RegisterElement(m_window_index,m_cruz_fast_param_tabs);
+
+      y=10;
+      if(!V2CreateFieldLabel(*m_host,m_cruz_slow_indic_label,"Indicador lento",m_cruz_tabs,m_cruz_tabs,m_window_index,2,cruz_content_x,y,cruz_content_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_cruz_slow_indic_combo,m_cruz_tabs,m_cruz_tabs,2,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,1,card_border))
+         return(false);
+      y+=34;
+      if(!V2CreateCard(*m_host,m_cruz_slow_param_card,m_cruz_tabs,m_window_index,2,cruz_content_x,y,cruz_content_w,(card_h-96)-y-10,sub_back,card_border))
+         return(false);
+
+      m_cruz_slow_param_tabs.MainPointer(m_cruz_slow_param_card);
+      m_cruz_tabs.AddToElementsArray(2,m_cruz_slow_param_tabs);
+      m_cruz_slow_param_tabs.XSize(cruz_content_w-24);
+      m_cruz_slow_param_tabs.YSize((card_h-96)-y-34);
+      m_cruz_slow_param_tabs.IsCenterText(true);
+      m_cruz_slow_param_tabs.PositionMode(TABS_TOP);
+      m_cruz_slow_param_tabs.TabsYSize(0);
+      m_cruz_slow_param_tabs.AutoXResizeMode(false);
+      m_cruz_slow_param_tabs.AutoYResizeMode(false);
+      m_cruz_slow_param_tabs.BackColor(sub_back);
+      m_cruz_slow_param_tabs.BackColorHover(sub_back);
+      m_cruz_slow_param_tabs.BackColorPressed(sub_back);
+      m_cruz_slow_param_tabs.BorderColor(sub_back);
+      m_cruz_slow_param_tabs.BorderColorHover(sub_back);
+      m_cruz_slow_param_tabs.BorderColorPressed(sub_back);
+      for(int i=0;i<5;i++)
+         m_cruz_slow_param_tabs.AddTab(IntegerToString(i+1),cruz_content_w-24);
+      if(!m_cruz_slow_param_tabs.CreateTabs(12,12))
+         return(false);
+      m_host.RegisterElement(m_window_index,m_cruz_slow_param_tabs);
+
+      CEF_CButtonsGroup *cruz_fast_bg=m_cruz_fast_param_tabs.GetButtonsGroupPointer();
+      if(cruz_fast_bg!=NULL)
+        {
+         for(int i=0;i<5;i++)
+           {
+            cruz_fast_bg.GetButtonPointer(i).BackColor(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).BackColorHover(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).BackColorPressed(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).BorderColor(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).BorderColorHover(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).BorderColorPressed(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).LabelColor(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).LabelColorHover(sub_back);
+            cruz_fast_bg.GetButtonPointer(i).LabelColorPressed(sub_back);
+           }
+        }
+      CEF_CButtonsGroup *cruz_slow_bg=m_cruz_slow_param_tabs.GetButtonsGroupPointer();
+      if(cruz_slow_bg!=NULL)
+        {
+         for(int i=0;i<5;i++)
+           {
+            cruz_slow_bg.GetButtonPointer(i).BackColor(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).BackColorHover(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).BackColorPressed(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).BorderColor(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).BorderColorHover(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).BorderColorPressed(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).LabelColor(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).LabelColorHover(sub_back);
+            cruz_slow_bg.GetButtonPointer(i).LabelColorPressed(sub_back);
+           }
+        }
+
+      const int cruz_param_x=12;
+      const int cruz_param_w=cruz_content_w-48;
+      const int cruz_param_y=8;
+
+      if(!CreateCruzParamBlock(m_cruz_fast_param_tabs,0,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"Media movel",
+                               m_cruz_fast_param_title[0],m_cruz_fast_ma_period_spin,m_cruz_fast_ma_shift_spin,m_cruz_fast_ma_type_combo,m_cruz_fast_ma_price_combo,
+                               m_cruz_fast_ma_period_label,m_cruz_fast_ma_shift_label,m_cruz_fast_ma_type_label,m_cruz_fast_ma_price_label,"14",true,cruz_ma_items,cruz_price_items))
+         return(false);
+      if(!CreateCruzVidyaBlock(m_cruz_fast_param_tabs,1,cruz_param_x,cruz_param_w,sub_back,card_border,"VIDYA",
+                               m_cruz_fast_param_title[1],m_cruz_fast_vidya_cmo_spin,m_cruz_fast_vidya_ema_spin,m_cruz_fast_vidya_shift_spin,m_cruz_fast_vidya_price_combo,
+                               m_cruz_fast_vidya_cmo_label,m_cruz_fast_vidya_ema_label,m_cruz_fast_vidya_shift_label,m_cruz_fast_vidya_price_label,cruz_price_items))
+         return(false);
+      if(!CreateCruzParamBlock(m_cruz_fast_param_tabs,2,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"DEMA",
+                               m_cruz_fast_param_title[2],m_cruz_fast_dema_period_spin,m_cruz_fast_dema_shift_spin,m_cruz_fast_ma_type_combo,m_cruz_fast_dema_price_combo,
+                               m_cruz_fast_dema_period_label,m_cruz_fast_dema_shift_label,m_cruz_fast_ma_type_label,m_cruz_fast_dema_price_label,"14",false,cruz_ma_items,cruz_price_items))
+         return(false);
+      if(!CreateCruzParamBlock(m_cruz_fast_param_tabs,3,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"TEMA",
+                               m_cruz_fast_param_title[3],m_cruz_fast_tema_period_spin,m_cruz_fast_tema_shift_spin,m_cruz_fast_ma_type_combo,m_cruz_fast_tema_price_combo,
+                               m_cruz_fast_tema_period_label,m_cruz_fast_tema_shift_label,m_cruz_fast_ma_type_label,m_cruz_fast_tema_price_label,"14",false,cruz_ma_items,cruz_price_items))
+         return(false);
+      if(!CreateCruzParamBlock(m_cruz_fast_param_tabs,4,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"FRAMA",
+                               m_cruz_fast_param_title[4],m_cruz_fast_frama_period_spin,m_cruz_fast_frama_shift_spin,m_cruz_fast_ma_type_combo,m_cruz_fast_frama_price_combo,
+                               m_cruz_fast_frama_period_label,m_cruz_fast_frama_shift_label,m_cruz_fast_ma_type_label,m_cruz_fast_frama_price_label,"14",false,cruz_ma_items,cruz_price_items))
+         return(false);
+
+      if(!CreateCruzParamBlock(m_cruz_slow_param_tabs,0,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"Media movel",
+                               m_cruz_slow_param_title[0],m_cruz_slow_ma_period_spin,m_cruz_slow_ma_shift_spin,m_cruz_slow_ma_type_combo,m_cruz_slow_ma_price_combo,
+                               m_cruz_slow_ma_period_label,m_cruz_slow_ma_shift_label,m_cruz_slow_ma_type_label,m_cruz_slow_ma_price_label,"21",true,cruz_ma_items,cruz_price_items))
+         return(false);
+      if(!CreateCruzVidyaBlock(m_cruz_slow_param_tabs,1,cruz_param_x,cruz_param_w,sub_back,card_border,"VIDYA",
+                               m_cruz_slow_param_title[1],m_cruz_slow_vidya_cmo_spin,m_cruz_slow_vidya_ema_spin,m_cruz_slow_vidya_shift_spin,m_cruz_slow_vidya_price_combo,
+                               m_cruz_slow_vidya_cmo_label,m_cruz_slow_vidya_ema_label,m_cruz_slow_vidya_shift_label,m_cruz_slow_vidya_price_label,cruz_price_items))
+         return(false);
+      if(!CreateCruzParamBlock(m_cruz_slow_param_tabs,2,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"DEMA",
+                               m_cruz_slow_param_title[2],m_cruz_slow_dema_period_spin,m_cruz_slow_dema_shift_spin,m_cruz_slow_ma_type_combo,m_cruz_slow_dema_price_combo,
+                               m_cruz_slow_dema_period_label,m_cruz_slow_dema_shift_label,m_cruz_slow_ma_type_label,m_cruz_slow_dema_price_label,"21",false,cruz_ma_items,cruz_price_items))
+         return(false);
+      if(!CreateCruzParamBlock(m_cruz_slow_param_tabs,3,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"TEMA",
+                               m_cruz_slow_param_title[3],m_cruz_slow_tema_period_spin,m_cruz_slow_tema_shift_spin,m_cruz_slow_ma_type_combo,m_cruz_slow_tema_price_combo,
+                               m_cruz_slow_tema_period_label,m_cruz_slow_tema_shift_label,m_cruz_slow_ma_type_label,m_cruz_slow_tema_price_label,"21",false,cruz_ma_items,cruz_price_items))
+         return(false);
+      if(!CreateCruzParamBlock(m_cruz_slow_param_tabs,4,cruz_param_x,cruz_param_y,cruz_param_w,sub_back,card_border,"FRAMA",
+                               m_cruz_slow_param_title[4],m_cruz_slow_frama_period_spin,m_cruz_slow_frama_shift_spin,m_cruz_slow_ma_type_combo,m_cruz_slow_frama_price_combo,
+                               m_cruz_slow_frama_period_label,m_cruz_slow_frama_shift_label,m_cruz_slow_ma_type_label,m_cruz_slow_frama_price_label,"21",false,cruz_ma_items,cruz_price_items))
+         return(false);
+
+      m_cruz_fast_param_tabs.SelectTab(0);
+      m_cruz_fast_param_tabs.ShowTabElements();
+      m_cruz_slow_param_tabs.SelectTab(1);
+      m_cruz_slow_param_tabs.ShowTabElements();
+      m_cruz_tabs.SelectTab(0);
+      m_cruz_tabs.ShowTabElements();
+      m_last_cruz_tab=0;
+      m_last_cruz_fast_idx=0;
+      m_last_cruz_slow_idx=1;
       const int sobre_x=content_pad+(col_w+gap)*4;
       if(!V2CreateCard(*m_host,m_card_sobre,tabs,m_window_index,m_tab_index,sobre_x,content_y,col_w,card_h,card_back,card_border))
          return(false);
@@ -569,13 +1134,282 @@ public:
 
       if(!V2CreateCard(*m_host,m_sobre_param_card,m_sobre_tabs,m_window_index,1,sobre_content_x,10,sobre_content_w,sobre_tab_h-20,sub_back,card_border))
          return(false);
-      if(!m_host.CreateTextLabel(m_sobre_param_hint,"Os parametros detalhados por indicador vao entrar na proxima etapa desta migracao.",m_sobre_param_card,m_window_index,m_sobre_tabs,1,12,12,sobre_content_w-24,120))
+      m_sobre_param_tabs.MainPointer(m_sobre_param_card);
+      m_sobre_tabs.AddToElementsArray(1,m_sobre_param_tabs);
+      m_sobre_param_tabs.XSize(sobre_content_w-24);
+      m_sobre_param_tabs.YSize(sobre_tab_h-44);
+      m_sobre_param_tabs.IsCenterText(true);
+      m_sobre_param_tabs.PositionMode(TABS_TOP);
+      m_sobre_param_tabs.TabsYSize(0);
+      m_sobre_param_tabs.AutoXResizeMode(false);
+      m_sobre_param_tabs.AutoYResizeMode(false);
+      m_sobre_param_tabs.BackColor(sub_back);
+      m_sobre_param_tabs.BackColorHover(sub_back);
+      m_sobre_param_tabs.BackColorPressed(sub_back);
+      m_sobre_param_tabs.BorderColor(sub_back);
+      m_sobre_param_tabs.BorderColorHover(sub_back);
+      m_sobre_param_tabs.BorderColorPressed(sub_back);
+      for(int i=0;i<10;i++)
+         m_sobre_param_tabs.AddTab(IntegerToString(i+1),sobre_content_w-24);
+      if(!m_sobre_param_tabs.CreateTabs(12,12))
+         return(false);
+      m_host.RegisterElement(m_window_index,m_sobre_param_tabs);
+
+      CEF_CButtonsGroup *sobre_param_bg=m_sobre_param_tabs.GetButtonsGroupPointer();
+      if(sobre_param_bg!=NULL)
+        {
+         for(int i=0;i<10;i++)
+           {
+            sobre_param_bg.GetButtonPointer(i).BackColor(sub_back);
+            sobre_param_bg.GetButtonPointer(i).BackColorHover(sub_back);
+            sobre_param_bg.GetButtonPointer(i).BackColorPressed(sub_back);
+            sobre_param_bg.GetButtonPointer(i).BorderColor(sub_back);
+            sobre_param_bg.GetButtonPointer(i).BorderColorHover(sub_back);
+            sobre_param_bg.GetButtonPointer(i).BorderColorPressed(sub_back);
+            sobre_param_bg.GetButtonPointer(i).LabelColor(sub_back);
+            sobre_param_bg.GetButtonPointer(i).LabelColorHover(sub_back);
+            sobre_param_bg.GetButtonPointer(i).LabelColorPressed(sub_back);
+           }
+        }
+
+      string sobre_param_titles[];
+      ArrayResize(sobre_param_titles,10);
+      sobre_param_titles[0]="MACD";
+      sobre_param_titles[1]="Estocastico";
+      sobre_param_titles[2]="RSI";
+      sobre_param_titles[3]="DeMarker";
+      sobre_param_titles[4]="Regressao linear";
+      sobre_param_titles[5]="Desvio da media";
+      sobre_param_titles[6]="MFI";
+      sobre_param_titles[7]="Bears Power";
+      sobre_param_titles[8]="Bulls Power";
+      sobre_param_titles[9]="CCI";
+
+      string sobre_price_items[];
+      ArrayResize(sobre_price_items,7);
+      sobre_price_items[0]="Fechamento";
+      sobre_price_items[1]="Abertura";
+      sobre_price_items[2]="Maximo";
+      sobre_price_items[3]="Minimo";
+      sobre_price_items[4]="Mediano";
+      sobre_price_items[5]="Tipico";
+      sobre_price_items[6]="Medio";
+
+      string sobre_ma_items[];
+      ArrayResize(sobre_ma_items,5);
+      sobre_ma_items[0]="Simples";
+      sobre_ma_items[1]="Exponencial";
+      sobre_ma_items[2]="Suavizada";
+      sobre_ma_items[3]="Linear ponderada";
+      sobre_ma_items[4]="Smoothed";
+
+      string sobre_stoch_type_items[];
+      ArrayResize(sobre_stoch_type_items,2);
+      sobre_stoch_type_items[0]="Minimo/Maximo";
+      sobre_stoch_type_items[1]="Fechamento/Abertura";
+
+      string sobre_volume_items[];
+      ArrayResize(sobre_volume_items,2);
+      sobre_volume_items[0]="Tick";
+      sobre_volume_items[1]="Real";
+
+      const int param_x=12;
+      const int param_w=sobre_content_w-48;
+      int py=8;
+
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[0],sobre_param_titles[0],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_macd_fast_label,"EMA rapida",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_macd_fast_spin,m_sobre_param_tabs,m_sobre_param_tabs,0,param_x,py,param_w,9999.0,0.0,1.0,0,"12",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_macd_slow_label,"EMA lenta",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_macd_slow_spin,m_sobre_param_tabs,m_sobre_param_tabs,0,param_x,py,param_w,9999.0,0.0,1.0,0,"16",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_macd_signal_label,"Sinal",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_macd_signal_spin,m_sobre_param_tabs,m_sobre_param_tabs,0,param_x,py,param_w,9999.0,0.0,1.0,0,"9",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_macd_price_label,"Modo de preco",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_macd_price_combo,m_sobre_param_tabs,m_sobre_param_tabs,0,param_x,py,param_w,140,sobre_price_items,0,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[1],sobre_param_titles[1],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_stoch_k_label,"K",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_stoch_k_spin,m_sobre_param_tabs,m_sobre_param_tabs,1,param_x,py,param_w,9999.0,0.0,1.0,0,"5",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_stoch_d_label,"D",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_stoch_d_spin,m_sobre_param_tabs,m_sobre_param_tabs,1,param_x,py,param_w,9999.0,0.0,1.0,0,"3",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_stoch_slow_label,"Slowing",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_stoch_slow_spin,m_sobre_param_tabs,m_sobre_param_tabs,1,param_x,py,param_w,9999.0,0.0,1.0,0,"3",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_stoch_ma_label,"Media",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_stoch_ma_combo,m_sobre_param_tabs,m_sobre_param_tabs,1,param_x,py,param_w,140,sobre_ma_items,0,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_stoch_type_label,"Tipo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_stoch_type_combo,m_sobre_param_tabs,m_sobre_param_tabs,1,param_x,py,param_w,80,sobre_stoch_type_items,0,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[2],sobre_param_titles[2],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,2,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_rsi_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,2,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_rsi_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,2,param_x,py,param_w,9999.0,0.0,1.0,0,"14",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_rsi_price_label,"Modo de preco",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,2,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_rsi_price_combo,m_sobre_param_tabs,m_sobre_param_tabs,2,param_x,py,param_w,140,sobre_price_items,0,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[3],sobre_param_titles[3],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,3,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_demarker_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,3,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_demarker_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,3,param_x,py,param_w,9999.0,0.0,1.0,0,"14",sub_back,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[4],sobre_param_titles[4],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,4,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_regressao_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,4,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_regressao_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,4,param_x,py,param_w,9999.0,0.0,1.0,0,"20",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_regressao_ma_label,"Tipo de regressao",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,4,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_regressao_ma_combo,m_sobre_param_tabs,m_sobre_param_tabs,4,param_x,py,param_w,140,sobre_ma_items,0,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_regressao_price_label,"Modo de fechamento",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,4,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_regressao_price_combo,m_sobre_param_tabs,m_sobre_param_tabs,4,param_x,py,param_w,140,sobre_price_items,0,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[5],sobre_param_titles[5],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,5,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_desvio_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,5,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_desvio_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,5,param_x,py,param_w,9999.0,0.0,1.0,0,"20",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_desvio_ma_label,"Tipo de desvio",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,5,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_desvio_ma_combo,m_sobre_param_tabs,m_sobre_param_tabs,5,param_x,py,param_w,140,sobre_ma_items,0,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_desvio_price_label,"Modo de fechamento",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,5,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_desvio_price_combo,m_sobre_param_tabs,m_sobre_param_tabs,5,param_x,py,param_w,140,sobre_price_items,0,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[6],sobre_param_titles[6],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,6,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_mfi_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,6,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_mfi_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,6,param_x,py,param_w,9999.0,0.0,1.0,0,"14",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_mfi_volume_label,"Volume",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,6,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_mfi_volume_combo,m_sobre_param_tabs,m_sobre_param_tabs,6,param_x,py,param_w,80,sobre_volume_items,0,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[7],sobre_param_titles[7],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,7,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_bears_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,7,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_bears_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,7,param_x,py,param_w,9999.0,0.0,1.0,0,"14",sub_back,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[8],sobre_param_titles[8],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,8,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_bulls_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,8,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_bulls_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,8,param_x,py,param_w,9999.0,0.0,1.0,0,"14",sub_back,card_border))
+         return(false);
+
+      py=8;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[9],sobre_param_titles[9],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,9,param_x,py,param_w,16))
+         return(false);
+      py+=18;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_cci_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,9,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateSpinControl(m_sobre_cci_period_spin,m_sobre_param_tabs,m_sobre_param_tabs,9,param_x,py,param_w,9999.0,0.0,1.0,0,"14",sub_back,card_border))
+         return(false);
+      py+=38;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_cci_price_label,"Modo de preco",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,9,param_x,py,param_w,16))
+         return(false);
+      py+=16;
+      if(!CreateComboControl(m_sobre_cci_price_combo,m_sobre_param_tabs,m_sobre_param_tabs,9,param_x,py,param_w,140,sobre_price_items,0,card_border))
+         return(false);
+
+      if(!m_host.CreateTextLabel(m_sobre_param_hint,"Os parametros acompanham o indicador selecionado na aba ao lado.",m_sobre_param_card,m_window_index,m_sobre_tabs,1,12,sobre_tab_h-44,sobre_content_w-24,20))
          return(false);
       m_sobre_param_hint.FontSize(10);
       m_sobre_param_hint.LabelColor(V2_COLOR_TEXT_SECONDARY);
 
+      m_sobre_param_tabs.SelectTab(0);
       m_sobre_tabs.SelectTab(0);
       m_sobre_tabs.ShowTabElements();
+      m_last_sobre_tab=0;
+      m_last_sobre_param_idx=0;
 
       m_created=true;
       return(true);
@@ -584,6 +1418,8 @@ public:
    void OnTimerEvent(void)
      {
       SyncOrderTabChecks();
+      SyncCruzTabs();
+      SyncSobreParamView();
      }
 
    bool HandleEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
@@ -646,6 +1482,22 @@ public:
             m_canais_no.IsPressed(true);
          m_canais_yes.IsPressed(false);
          RefreshCanaisChecks();
+         return(true);
+        }
+      if(m_cruz_yes.Id()==clicked_id)
+        {
+         if(!m_cruz_yes.IsPressed())
+            m_cruz_yes.IsPressed(true);
+         m_cruz_no.IsPressed(false);
+         RefreshCruzChecks();
+         return(true);
+        }
+      if(m_cruz_no.Id()==clicked_id)
+        {
+         if(!m_cruz_no.IsPressed())
+            m_cruz_no.IsPressed(true);
+         m_cruz_yes.IsPressed(false);
+         RefreshCruzChecks();
          return(true);
         }
       return(false);
