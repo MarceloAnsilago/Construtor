@@ -331,7 +331,12 @@ public:
 
    bool IsVisible(void) const { return(m_visible); }
    bool IsCreated(void) const { return(m_created); }
-   void OnTimerEvent(void) {}
+   void OnTimerEvent(void)
+     {
+      if(!m_created || !m_visible)
+         return;
+      m_tab8.OnTimerEvent();
+     }
 
    bool CreateIfNeeded(void)
      {
