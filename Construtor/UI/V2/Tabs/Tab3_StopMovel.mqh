@@ -319,43 +319,44 @@ public:
       const int clicked_id=(int)lparam;
       if(m_signal_buy.Id()==clicked_id)
         {
+         if(!m_signal_buy.IsPressed())
+            m_signal_buy.IsPressed(true);
          m_signal_is_buy=true;
          RefreshSignalChecks();
          return(true);
         }
       if(m_signal_sell.Id()==clicked_id)
         {
+         if(!m_signal_sell.IsPressed())
+            m_signal_sell.IsPressed(true);
          m_signal_is_buy=false;
          RefreshSignalChecks();
          return(true);
         }
       if(m_use_padrao.Id()==clicked_id)
         {
-         if(m_use_padrao.IsPressed())
-           {
-            m_use_candles.IsPressed(false);
-            m_use_indicador.IsPressed(false);
-           }
+         if(!m_use_padrao.IsPressed())
+            m_use_padrao.IsPressed(true);
+         m_use_candles.IsPressed(false);
+         m_use_indicador.IsPressed(false);
          RefreshModeChecks();
          return(true);
         }
       if(m_use_candles.Id()==clicked_id)
         {
-         if(m_use_candles.IsPressed())
-           {
-            m_use_padrao.IsPressed(false);
-            m_use_indicador.IsPressed(false);
-           }
+         if(!m_use_candles.IsPressed())
+            m_use_candles.IsPressed(true);
+         m_use_padrao.IsPressed(false);
+         m_use_indicador.IsPressed(false);
          RefreshModeChecks();
          return(true);
         }
       if(m_use_indicador.Id()==clicked_id)
         {
-         if(m_use_indicador.IsPressed())
-           {
-            m_use_padrao.IsPressed(false);
-            m_use_candles.IsPressed(false);
-           }
+         if(!m_use_indicador.IsPressed())
+            m_use_indicador.IsPressed(true);
+         m_use_padrao.IsPressed(false);
+         m_use_candles.IsPressed(false);
          RefreshModeChecks();
          return(true);
         }
