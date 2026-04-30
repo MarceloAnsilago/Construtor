@@ -237,10 +237,8 @@ public:
       const int mult_w=tab2_w-32;
       int mult_y=66;
 
-      if(!CreateTextLabel(m_tab2_mult_base_label,"Base:",m_tab2_card_mult,m_window_index,tabs,m_tab_index,mult_pad,mult_y,mult_w,18))
+      if(!V2CreateFieldLabel(*m_host,m_tab2_mult_base_label,"Base da referencia",m_tab2_card_mult,tabs,m_window_index,m_tab_index,mult_pad,mult_y,mult_w,18))
          return(false);
-      m_tab2_mult_base_label.FontSize(10);
-      m_tab2_mult_base_label.LabelColor(C'91,78,64');
       mult_y+=22;
 
       string mult_base_items[];
@@ -250,23 +248,19 @@ public:
          return(false);
       mult_y+=28;
 
-      if(!CreateTextLabel(m_tab2_mult_candle_label,"Candle:",m_tab2_card_mult,m_window_index,tabs,m_tab_index,mult_pad,mult_y,mult_w,18))
+      if(!V2CreateFieldLabel(*m_host,m_tab2_mult_candle_label,"Candle de referencia",m_tab2_card_mult,tabs,m_window_index,m_tab_index,mult_pad,mult_y,mult_w,18))
          return(false);
-      m_tab2_mult_candle_label.FontSize(10);
-      m_tab2_mult_candle_label.LabelColor(C'91,78,64');
       mult_y+=22;
 
       string mult_candle_items[];
       V2ItemsPosicaoReferencia(mult_candle_items);
 
-      if(!CreateComboControl(m_tab2_mult_candle_combo,m_tab2_card_mult,tabs,m_tab_index,mult_pad,mult_y,mult_w,120,mult_candle_items,0,tab2_border))
+      if(!CreateComboControl(m_tab2_mult_candle_combo,m_tab2_card_mult,tabs,m_tab_index,mult_pad,mult_y,mult_w,120,mult_candle_items,2,tab2_border))
          return(false);
       mult_y+=28;
 
-      if(!CreateTextLabel(m_tab2_mult_qty_label,"Multiplicador:",m_tab2_card_mult,m_window_index,tabs,m_tab_index,mult_pad,mult_y,mult_w,18))
+      if(!V2CreateFieldLabel(*m_host,m_tab2_mult_qty_label,"Multiplicador",m_tab2_card_mult,tabs,m_window_index,m_tab_index,mult_pad,mult_y,mult_w,18))
          return(false);
-      m_tab2_mult_qty_label.FontSize(10);
-      m_tab2_mult_qty_label.LabelColor(C'91,78,64');
       mult_y+=22;
 
       if(!CreateSpinControl(m_tab2_mult_qty_spin,m_tab2_card_mult,tabs,m_tab_index,mult_pad,mult_y,mult_w,1000.0,0.0,0.1,2,"1.0",card_back,tab2_border))
@@ -518,8 +512,10 @@ public:
       m_tab2_calc_media_distance_spin.SetValue(DoubleToString(m_settings.stop_calculo_media_distancia,1));
       m_tab2_calc_media_expire_combo.SelectItem(V2ClampIndex(m_settings.stop_calculo_media_expirar,0,4));
       m_tab2_mult_base_combo.SelectItem(V2ClampIndex((int)m_settings.stop_calculo_multiplicar_base,0,1));
-      m_tab2_mult_candle_combo.SelectItem(V2ClampIndex(m_settings.stop_calculo_multiplicar_candle,0,3));
-      m_tab2_mult_qty_spin.SetValue(DoubleToString(m_settings.stop_calculo_multiplicar_qtd,2));
+      const int mult_candle=(m_settings.stop_calculo_multiplicar_candle>=0 ? m_settings.stop_calculo_multiplicar_candle : 2);
+      const double mult_qty=(m_settings.stop_calculo_multiplicar_qtd>0.0 ? m_settings.stop_calculo_multiplicar_qtd : 1.0);
+      m_tab2_mult_candle_combo.SelectItem(V2ClampIndex(mult_candle,0,3));
+      m_tab2_mult_qty_spin.SetValue(DoubleToString(mult_qty,2));
      }
 
    void Save()
