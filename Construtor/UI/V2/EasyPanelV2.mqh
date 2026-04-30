@@ -1,4 +1,4 @@
-#ifndef __CONSTRUTOR_EASY_PANEL_V2_MQH__
+﻿#ifndef __CONSTRUTOR_EASY_PANEL_V2_MQH__
 #define __CONSTRUTOR_EASY_PANEL_V2_MQH__
 
 #define CButton       CEF_CButton
@@ -376,8 +376,8 @@ public:
       ArrayResize(top_widths,TOP_TAB_COUNT);
       top_text[0]="Parametrizacao e montagem";
       top_text[1]="Execucao e painel";
-      top_widths[0]=320;
-      top_widths[1]=240;
+      top_widths[0]=top_tabs_w/2;
+      top_widths[1]=top_tabs_w-top_widths[0];
 
       m_top_tabs.MainPointer(m_window);
       m_top_tabs.XSize(top_tabs_w);
@@ -616,3 +616,4 @@ public:
   };
 
 #endif // __CONSTRUTOR_EASY_PANEL_V2_MQH__
+

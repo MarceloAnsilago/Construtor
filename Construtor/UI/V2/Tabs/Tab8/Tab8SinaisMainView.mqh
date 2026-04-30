@@ -370,7 +370,8 @@ private:
                              const string period_value,const bool has_type,const string &type_items[],const string &price_items[])
      {
       int y=y_start;
-      if(!V2CreateFieldLabel(*m_host,title_label,title,tabs,tabs,m_window_index,tab_index,x,y,width,16))
+      const int title_w=MathMax(72,width-64);
+      if(!V2CreateFieldLabel(*m_host,title_label,title,tabs,tabs,m_window_index,tab_index,x,y,title_w,16))
          return(false);
       y+=18;
       if(!V2CreateFieldLabel(*m_host,period_label,"Periodo",tabs,tabs,m_window_index,tab_index,x,y,width,16))
@@ -408,7 +409,8 @@ private:
                              const string &price_items[])
      {
       int y=8;
-      if(!V2CreateFieldLabel(*m_host,title_label,title,tabs,tabs,m_window_index,tab_index,x,y,width,16))
+      const int title_w=MathMax(72,width-64);
+      if(!V2CreateFieldLabel(*m_host,title_label,title,tabs,tabs,m_window_index,tab_index,x,y,title_w,16))
          return(false);
       y+=18;
       if(!V2CreateFieldLabel(*m_host,cmo_label,"Periodo CMO",tabs,tabs,m_window_index,tab_index,x,y,width,16))
@@ -770,10 +772,14 @@ public:
       cruz_tab_widths[1]=field_w/3;
       cruz_tab_widths[2]=field_w-cruz_tab_widths[0]-cruz_tab_widths[1];
 
+      const int cruz_tabs_y=106;
+      const int cruz_tabs_bottom_gap=12;
+      const int cruz_tabs_h=card_h-cruz_tabs_y-cruz_tabs_bottom_gap;
+
       m_cruz_tabs.MainPointer(m_card_cruz);
       tabs.AddToElementsArray(m_tab_index,m_cruz_tabs);
       m_cruz_tabs.XSize(field_w);
-      m_cruz_tabs.YSize(card_h-96);
+      m_cruz_tabs.YSize(cruz_tabs_h);
       m_cruz_tabs.IsCenterText(true);
       m_cruz_tabs.PositionMode(TABS_TOP);
       m_cruz_tabs.TabsYSize(22);
@@ -785,7 +791,7 @@ public:
       m_cruz_tabs.BorderColorPressed(card_border);
       for(int i=0;i<3;i++)
          m_cruz_tabs.AddTab(cruz_tab_text[i],cruz_tab_widths[i]);
-      if(!m_cruz_tabs.CreateTabs(16,84))
+      if(!m_cruz_tabs.CreateTabs(16,cruz_tabs_y))
          return(false);
       m_host.RegisterElement(m_window_index,m_cruz_tabs);
 
@@ -874,13 +880,13 @@ public:
       if(!CreateComboControl(m_cruz_fast_indic_combo,m_cruz_tabs,m_cruz_tabs,1,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,0,card_border))
          return(false);
       y+=34;
-      if(!V2CreateCard(*m_host,m_cruz_fast_param_card,m_cruz_tabs,m_window_index,1,cruz_content_x,y,cruz_content_w,(card_h-96)-y-10,sub_back,card_border))
+      if(!V2CreateCard(*m_host,m_cruz_fast_param_card,m_cruz_tabs,m_window_index,1,cruz_content_x,y,cruz_content_w,cruz_tabs_h-y-10,sub_back,card_border))
          return(false);
 
       m_cruz_fast_param_tabs.MainPointer(m_cruz_fast_param_card);
       m_cruz_tabs.AddToElementsArray(1,m_cruz_fast_param_tabs);
       m_cruz_fast_param_tabs.XSize(cruz_content_w-24);
-      m_cruz_fast_param_tabs.YSize((card_h-96)-y-34);
+      m_cruz_fast_param_tabs.YSize(cruz_tabs_h-y-34);
       m_cruz_fast_param_tabs.IsCenterText(true);
       m_cruz_fast_param_tabs.PositionMode(TABS_TOP);
       m_cruz_fast_param_tabs.TabsYSize(0);
@@ -893,7 +899,7 @@ public:
       m_cruz_fast_param_tabs.BorderColorHover(sub_back);
       m_cruz_fast_param_tabs.BorderColorPressed(sub_back);
       for(int i=0;i<5;i++)
-         m_cruz_fast_param_tabs.AddTab(IntegerToString(i+1),cruz_content_w-24);
+         m_cruz_fast_param_tabs.AddTab(IntegerToString(i+1),0);
       if(!m_cruz_fast_param_tabs.CreateTabs(12,12))
          return(false);
       m_host.RegisterElement(m_window_index,m_cruz_fast_param_tabs);
@@ -905,13 +911,13 @@ public:
       if(!CreateComboControl(m_cruz_slow_indic_combo,m_cruz_tabs,m_cruz_tabs,2,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,1,card_border))
          return(false);
       y+=34;
-      if(!V2CreateCard(*m_host,m_cruz_slow_param_card,m_cruz_tabs,m_window_index,2,cruz_content_x,y,cruz_content_w,(card_h-96)-y-10,sub_back,card_border))
+      if(!V2CreateCard(*m_host,m_cruz_slow_param_card,m_cruz_tabs,m_window_index,2,cruz_content_x,y,cruz_content_w,cruz_tabs_h-y-10,sub_back,card_border))
          return(false);
 
       m_cruz_slow_param_tabs.MainPointer(m_cruz_slow_param_card);
       m_cruz_tabs.AddToElementsArray(2,m_cruz_slow_param_tabs);
       m_cruz_slow_param_tabs.XSize(cruz_content_w-24);
-      m_cruz_slow_param_tabs.YSize((card_h-96)-y-34);
+      m_cruz_slow_param_tabs.YSize(cruz_tabs_h-y-34);
       m_cruz_slow_param_tabs.IsCenterText(true);
       m_cruz_slow_param_tabs.PositionMode(TABS_TOP);
       m_cruz_slow_param_tabs.TabsYSize(0);
@@ -924,7 +930,7 @@ public:
       m_cruz_slow_param_tabs.BorderColorHover(sub_back);
       m_cruz_slow_param_tabs.BorderColorPressed(sub_back);
       for(int i=0;i<5;i++)
-         m_cruz_slow_param_tabs.AddTab(IntegerToString(i+1),cruz_content_w-24);
+         m_cruz_slow_param_tabs.AddTab(IntegerToString(i+1),0);
       if(!m_cruz_slow_param_tabs.CreateTabs(12,12))
          return(false);
       m_host.RegisterElement(m_window_index,m_cruz_slow_param_tabs);
@@ -934,6 +940,9 @@ public:
         {
          for(int i=0;i<5;i++)
            {
+            cruz_fast_bg.GetButtonPointer(i).FontSize(1);
+            cruz_fast_bg.GetButtonPointer(i).LabelXGap(0);
+            cruz_fast_bg.GetButtonPointer(i).LabelYGap(0);
             cruz_fast_bg.GetButtonPointer(i).BackColor(sub_back);
             cruz_fast_bg.GetButtonPointer(i).BackColorHover(sub_back);
             cruz_fast_bg.GetButtonPointer(i).BackColorPressed(sub_back);
@@ -950,6 +959,9 @@ public:
         {
          for(int i=0;i<5;i++)
            {
+            cruz_slow_bg.GetButtonPointer(i).FontSize(1);
+            cruz_slow_bg.GetButtonPointer(i).LabelXGap(0);
+            cruz_slow_bg.GetButtonPointer(i).LabelYGap(0);
             cruz_slow_bg.GetButtonPointer(i).BackColor(sub_back);
             cruz_slow_bg.GetButtonPointer(i).BackColorHover(sub_back);
             cruz_slow_bg.GetButtonPointer(i).BackColorPressed(sub_back);
@@ -1150,7 +1162,7 @@ public:
       m_sobre_param_tabs.BorderColorHover(sub_back);
       m_sobre_param_tabs.BorderColorPressed(sub_back);
       for(int i=0;i<10;i++)
-         m_sobre_param_tabs.AddTab(IntegerToString(i+1),sobre_content_w-24);
+         m_sobre_param_tabs.AddTab(IntegerToString(i+1),0);
       if(!m_sobre_param_tabs.CreateTabs(12,12))
          return(false);
       m_host.RegisterElement(m_window_index,m_sobre_param_tabs);
@@ -1160,6 +1172,9 @@ public:
         {
          for(int i=0;i<10;i++)
            {
+            sobre_param_bg.GetButtonPointer(i).FontSize(1);
+            sobre_param_bg.GetButtonPointer(i).LabelXGap(0);
+            sobre_param_bg.GetButtonPointer(i).LabelYGap(0);
             sobre_param_bg.GetButtonPointer(i).BackColor(sub_back);
             sobre_param_bg.GetButtonPointer(i).BackColorHover(sub_back);
             sobre_param_bg.GetButtonPointer(i).BackColorPressed(sub_back);
@@ -1215,9 +1230,10 @@ public:
 
       const int param_x=12;
       const int param_w=sobre_content_w-48;
+      const int param_title_w=MathMax(72,param_w-70);
       int py=8;
 
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[0],sobre_param_titles[0],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[0],sobre_param_titles[0],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_macd_fast_label,"EMA rapida",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,0,param_x,py,param_w,16))
@@ -1245,7 +1261,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[1],sobre_param_titles[1],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[1],sobre_param_titles[1],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_stoch_k_label,"K",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,1,param_x,py,param_w,16))
@@ -1279,7 +1295,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[2],sobre_param_titles[2],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,2,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[2],sobre_param_titles[2],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,2,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_rsi_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,2,param_x,py,param_w,16))
@@ -1295,7 +1311,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[3],sobre_param_titles[3],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,3,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[3],sobre_param_titles[3],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,3,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_demarker_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,3,param_x,py,param_w,16))
@@ -1305,7 +1321,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[4],sobre_param_titles[4],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,4,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[4],sobre_param_titles[4],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,4,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_regressao_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,4,param_x,py,param_w,16))
@@ -1327,7 +1343,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[5],sobre_param_titles[5],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,5,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[5],sobre_param_titles[5],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,5,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_desvio_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,5,param_x,py,param_w,16))
@@ -1349,7 +1365,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[6],sobre_param_titles[6],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,6,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[6],sobre_param_titles[6],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,6,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_mfi_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,6,param_x,py,param_w,16))
@@ -1365,7 +1381,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[7],sobre_param_titles[7],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,7,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[7],sobre_param_titles[7],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,7,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_bears_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,7,param_x,py,param_w,16))
@@ -1375,7 +1391,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[8],sobre_param_titles[8],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,8,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[8],sobre_param_titles[8],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,8,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_bulls_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,8,param_x,py,param_w,16))
@@ -1385,7 +1401,7 @@ public:
          return(false);
 
       py=8;
-      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[9],sobre_param_titles[9],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,9,param_x,py,param_w,16))
+      if(!V2CreateFieldLabel(*m_host,m_sobre_param_title[9],sobre_param_titles[9],m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,9,param_x,py,param_title_w,16))
          return(false);
       py+=18;
       if(!V2CreateFieldLabel(*m_host,m_sobre_cci_period_label,"Periodo",m_sobre_param_tabs,m_sobre_param_tabs,m_window_index,9,param_x,py,param_w,16))
