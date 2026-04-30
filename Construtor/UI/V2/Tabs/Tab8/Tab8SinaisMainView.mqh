@@ -70,7 +70,19 @@ private:
    CEF_CTextLabel  m_card_cruz_body;
    CEF_CFrame      m_card_sobre;
    CEF_CTextLabel  m_card_sobre_title;
-   CEF_CTextLabel  m_card_sobre_body;
+   CEF_CCheckBox   m_use_sobre;
+   CEF_CTabs       m_sobre_tabs;
+   CEF_CTextLabel  m_sobre_indic_label;
+   CEF_CComboBox   m_sobre_indic_combo;
+   CEF_CTextLabel  m_sobre_entry_label;
+   CEF_CComboBox   m_sobre_entry_combo;
+   CEF_CTextLabel  m_sobre_sobrecompra_label;
+   CEF_CTextEdit   m_sobre_sobrecompra_spin;
+   CEF_CTextLabel  m_sobre_sobrevenda_label;
+   CEF_CTextEdit   m_sobre_sobrevenda_spin;
+   CEF_CTextLabel  m_sobre_sentido_label;
+   CEF_CComboBox   m_sobre_sentido_combo;
+   CEF_CTextLabel  m_sobre_param_hint;
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index,const color border)
      {
@@ -147,10 +159,8 @@ public:
       const int content_y=44;
       const int content_w=tabs_w-(content_pad*2);
       const int gap=12;
-      const int col_w=(content_w-(gap*2))/3;
-      const int card_h=320;
-      const int row2_y=content_y+card_h+18;
-      const int row2_h=216;
+      const int col_w=(content_w-(gap*4))/5;
+      const int card_h=520;
       const int field_x=16;
       const int field_w=col_w-32;
       const color card_back=V2_COLOR_CARD_BACK;
@@ -432,10 +442,127 @@ public:
       if(!CreateComboControl(m_canais_price_combo,m_card_canais,tabs,m_tab_index,field_x,286,field_w,160,canais_price_items,0,field_border))
          return(false);
 
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_cruz,m_card_cruz_title,m_card_cruz_body,tabs,tabs,m_window_index,m_tab_index,content_pad,row2_y,col_w,row2_h,"Cruzamentos","Bloco mais sensivel de Sinais. Depende de tabs internas, atalhos e combinacao fast/slow."))
+      const int cruz_x=content_pad+(col_w+gap)*3;
+      if(!V2CreateSectionPlaceholder(*m_host,m_card_cruz,m_card_cruz_title,m_card_cruz_body,tabs,tabs,m_window_index,m_tab_index,cruz_x,content_y,col_w,card_h,"Cruzamentos","Bloco mais sensivel de Sinais. Depende de tabs internas, atalhos e combinacao fast/slow."))
          return(false);
-      if(!V2CreateSectionPlaceholder(*m_host,m_card_sobre,m_card_sobre_title,m_card_sobre_body,tabs,tabs,m_window_index,m_tab_index,content_pad+col_w+gap,row2_y,col_w,row2_h,"Sobrecomprado / sobrevenda","Segundo bloco mais delicado. Tem indicador dinamico, parametros por familia e navegacao interna."))
+      const int sobre_x=content_pad+(col_w+gap)*4;
+      if(!V2CreateCard(*m_host,m_card_sobre,tabs,m_window_index,m_tab_index,sobre_x,content_y,col_w,card_h,card_back,card_border))
          return(false);
+      if(!V2CreateCardTitle(*m_host,m_card_sobre_title,"Sobrecomprado / sobrevenda",m_card_sobre,tabs,m_window_index,m_tab_index,16,12,field_w))
+         return(false);
+      if(!m_host.CreateCheckbox(m_use_sobre,"Usar sobrecomprado / sobrevenda",m_card_sobre,m_window_index,tabs,m_tab_index,16,44,field_w,false,false,false))
+         return(false);
+      m_use_sobre.FontSize(10);
+      m_use_sobre.LabelColor(V2_COLOR_TEXT_PRIMARY);
+
+      string sobre_tab_text[];
+      int sobre_tab_widths[];
+      ArrayResize(sobre_tab_text,2);
+      ArrayResize(sobre_tab_widths,2);
+      sobre_tab_text[0]="Indicador";
+      sobre_tab_text[1]="Parametros";
+      sobre_tab_widths[0]=field_w/2;
+      sobre_tab_widths[1]=field_w-sobre_tab_widths[0];
+
+      m_sobre_tabs.MainPointer(m_card_sobre);
+      tabs.AddToElementsArray(m_tab_index,m_sobre_tabs);
+      m_sobre_tabs.XSize(field_w);
+      m_sobre_tabs.YSize(card_h-96);
+      m_sobre_tabs.IsCenterText(true);
+      m_sobre_tabs.PositionMode(TABS_TOP);
+      m_sobre_tabs.TabsYSize(22);
+      m_sobre_tabs.AutoXResizeMode(false);
+      m_sobre_tabs.AutoYResizeMode(false);
+      m_sobre_tabs.BackColorPressed(sub_back);
+      m_sobre_tabs.BorderColor(card_border);
+      m_sobre_tabs.BorderColorHover(card_border);
+      m_sobre_tabs.BorderColorPressed(card_border);
+      for(int i=0;i<2;i++)
+         m_sobre_tabs.AddTab(sobre_tab_text[i],sobre_tab_widths[i]);
+      if(!m_sobre_tabs.CreateTabs(16,84))
+         return(false);
+      m_host.RegisterElement(m_window_index,m_sobre_tabs);
+
+      CEF_CButtonsGroup *sobre_bg=m_sobre_tabs.GetButtonsGroupPointer();
+      if(sobre_bg!=NULL)
+        {
+         for(int i=0;i<2;i++)
+           {
+            sobre_bg.GetButtonPointer(i).FontSize(8);
+            sobre_bg.GetButtonPointer(i).BackColor(C'39,54,78');
+            sobre_bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
+            sobre_bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
+            sobre_bg.GetButtonPointer(i).BorderColor(C'18,29,43');
+            sobre_bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
+            sobre_bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
+            sobre_bg.GetButtonPointer(i).LabelColor(clrWhite);
+            sobre_bg.GetButtonPointer(i).LabelColorHover(clrWhite);
+            sobre_bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
+           }
+        }
+
+      string sobre_indic_items[];
+      ArrayResize(sobre_indic_items,10);
+      sobre_indic_items[0]="MACD";
+      sobre_indic_items[1]="Estocastico";
+      sobre_indic_items[2]="RSI";
+      sobre_indic_items[3]="DeMarker";
+      sobre_indic_items[4]="Regressao linear";
+      sobre_indic_items[5]="Desvio da media";
+      sobre_indic_items[6]="MFI";
+      sobre_indic_items[7]="Bears Power";
+      sobre_indic_items[8]="Bulls Power";
+      sobre_indic_items[9]="CCI";
+
+      string sobre_entry_items[];
+      ArrayResize(sobre_entry_items,3);
+      sobre_entry_items[0]="Ao entrar";
+      sobre_entry_items[1]="Ao sair";
+      sobre_entry_items[2]="Estando";
+
+      string sobre_sentido_items[];
+      ArrayResize(sobre_sentido_items,2);
+      sobre_sentido_items[0]="Sobrecompra compra";
+      sobre_sentido_items[1]="Sobrecompra venda";
+
+      y=10;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_indic_label,"Indicador",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_sobre_indic_combo,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,180,sobre_indic_items,0,card_border))
+         return(false);
+      y+=30;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_entry_label,"Entrada",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_sobre_entry_combo,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,90,sobre_entry_items,0,card_border))
+         return(false);
+      y+=30;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_sobrecompra_label,"Sobrecompra",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+         return(false);
+      y+=18;
+      if(!CreateSpinControl(m_sobre_sobrecompra_spin,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,100000.0,0.0,1.0,0,"2",sub_back,card_border))
+         return(false);
+      y+=30;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_sobrevenda_label,"Sobrevenda",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+         return(false);
+      y+=18;
+      if(!CreateSpinControl(m_sobre_sobrevenda_spin,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,100000.0,-100000.0,1.0,0,"-2",sub_back,card_border))
+         return(false);
+      y+=30;
+      if(!V2CreateFieldLabel(*m_host,m_sobre_sentido_label,"Sentido",m_sobre_tabs,m_sobre_tabs,m_window_index,0,field_x,y,field_w,16))
+         return(false);
+      y+=18;
+      if(!CreateComboControl(m_sobre_sentido_combo,m_sobre_tabs,m_sobre_tabs,0,field_x,y,field_w,70,sobre_sentido_items,0,card_border))
+         return(false);
+
+      if(!m_host.CreateTextLabel(m_sobre_param_hint,"Os parametros detalhados por indicador vao entrar na proxima etapa desta migracao.",m_sobre_tabs,m_window_index,m_sobre_tabs,1,field_x,16,field_w,120))
+         return(false);
+      m_sobre_param_hint.FontSize(10);
+      m_sobre_param_hint.LabelColor(V2_COLOR_TEXT_SECONDARY);
+
+      m_sobre_tabs.SelectTab(0);
+      m_sobre_tabs.ShowTabElements();
 
       m_created=true;
       return(true);
