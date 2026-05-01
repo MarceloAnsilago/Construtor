@@ -278,13 +278,13 @@ public:
       const color card_border=V2_COLOR_CARD_BORDER;
       const color field_border=V2_COLOR_FIELD_BORDER;
       const color sub_back=V2_COLOR_SURFACE;
-      const int outer_pad=10;
+      const int outer_pad=8;
       const int body_w=w-(outer_pad*2);
       const int body_x=x+outer_pad;
-      const int body_y=y+88;
-      const int body_h=h-100;
-      const int content_x=14;
-      const int content_y=14;
+      const int body_y=y+74;
+      const int body_h=h-82;
+      const int content_x=12;
+      const int content_y=10;
       const int inner_w=body_w-(content_x*2);
 
       if(!V2CreateCard(*m_host,m_card,tabs,m_window_index,m_tab_index,x,y,w,h,card_back,card_border))
@@ -294,12 +294,12 @@ public:
       if(!V2CreateCardTitle(*m_host,m_title,title_text,m_card,tabs,m_window_index,m_tab_index,16,12,w-32))
          return(false);
 
-      if(!V2CreateFieldLabel(*m_host,m_combo_label,"Indicador",m_card,tabs,m_window_index,m_tab_index,16,38,w-32,16))
+      if(!V2CreateFieldLabel(*m_host,m_combo_label,"Indicador",m_card,tabs,m_window_index,m_tab_index,16,32,w-32,16))
          return(false);
 
       string indicator_items[];
       BuildIndicatorItems(indicator_items);
-      if(!CreateComboControl(m_combo,m_card,16,54,w-32,220,indicator_items,0,field_border))
+      if(!CreateComboControl(m_combo,m_card,16,46,w-32,220,indicator_items,0,field_border))
          return(false);
 
       if(!V2CreateCard(*m_host,m_body,tabs,m_window_index,m_tab_index,body_x,body_y,body_w,body_h,sub_back,card_border))
@@ -328,66 +328,66 @@ public:
       ma_type_items[3]="Linear ponderada";
       ma_type_items[4]="Smoothed";
 
-      int y_cursor=content_y+24;
+      int y_cursor=content_y+18;
       if(!CreateBodyLabel(m_ma_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateSpinControl(m_ma_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"14",sub_back,field_border))
          return(false);
-      y_cursor+=24;
+      y_cursor+=22;
       if(!CreateBodyLabel(m_ma_shift_label,"Deslocamento",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateSpinControl(m_ma_shift_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"0",sub_back,field_border))
          return(false);
-      y_cursor+=24;
+      y_cursor+=22;
       if(!CreateBodyLabel(m_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateComboControl(m_ma_type_combo,m_body,content_x,y_cursor,inner_w,120,ma_type_items,0,field_border))
          return(false);
-      y_cursor+=24;
+      y_cursor+=22;
       if(!CreateBodyLabel(m_ma_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateComboControl(m_ma_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
          return(false);
 
-      y_cursor=content_y+24;
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_rsi_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateSpinControl(m_rsi_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"14",sub_back,field_border))
          return(false);
-      y_cursor+=24;
+      y_cursor+=22;
       if(!CreateBodyLabel(m_rsi_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateComboControl(m_rsi_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
          return(false);
 
-      y_cursor=content_y+24;
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_macd_fast_label,"EMA rapida",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateSpinControl(m_macd_fast_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"12",sub_back,field_border))
          return(false);
-      y_cursor+=24;
+      y_cursor+=22;
       if(!CreateBodyLabel(m_macd_slow_label,"EMA lenta",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateSpinControl(m_macd_slow_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"26",sub_back,field_border))
          return(false);
-      y_cursor+=24;
+      y_cursor+=22;
       if(!CreateBodyLabel(m_macd_signal_label,"Sinal",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateSpinControl(m_macd_signal_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"9",sub_back,field_border))
          return(false);
-      y_cursor+=24;
+      y_cursor+=22;
       if(!CreateBodyLabel(m_macd_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
          return(false);
-      y_cursor+=18;
+      y_cursor+=16;
       if(!CreateComboControl(m_macd_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
          return(false);
 

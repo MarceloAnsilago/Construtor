@@ -34,11 +34,11 @@ public:
       const int tabs_w=tabs.XSize();
       const int tabs_h=tabs.YSize();
       const int content_pad=18;
-      const int content_y=40;
+      const int content_y=26;
       const int content_w=tabs_w-(content_pad*2);
       const int gap=10;
       const int slot_w=(content_w-(gap*3))/4;
-      const int available_h=tabs_h-content_y-18;
+      const int available_h=tabs_h-content_y-14;
       const int slot_h=(available_h-12)/2;
       const int logic_y=content_y+slot_h+gap;
       const int logic_h=available_h-slot_h-gap;
