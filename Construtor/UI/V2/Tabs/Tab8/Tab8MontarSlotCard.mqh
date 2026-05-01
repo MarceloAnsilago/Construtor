@@ -36,6 +36,13 @@ private:
    CEF_CTextLabel  m_reg_price_label;
    CEF_CComboBox   m_reg_price_combo;
 
+   CEF_CTextLabel  m_keltner_period_label;
+   CEF_CTextEdit   m_keltner_period_spin;
+   CEF_CTextLabel  m_keltner_deviation_label;
+   CEF_CTextEdit   m_keltner_deviation_spin;
+   CEF_CTextLabel  m_keltner_ma_type_label;
+   CEF_CComboBox   m_keltner_ma_type_combo;
+
    CEF_CTextLabel  m_ma_period_label;
    CEF_CTextEdit   m_ma_period_spin;
    CEF_CTextLabel  m_ma_shift_label;
@@ -56,6 +63,13 @@ private:
 
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
+
+   CEF_CTextLabel  m_stddev_period_label;
+   CEF_CTextEdit   m_stddev_period_spin;
+   CEF_CTextLabel  m_stddev_ma_type_label;
+   CEF_CComboBox   m_stddev_ma_type_combo;
+   CEF_CTextLabel  m_stddev_price_label;
+   CEF_CComboBox   m_stddev_price_combo;
 
    void HideFrame(CEF_CFrame &frame) { frame.Hide(); frame.Update(true); }
    void ShowFrame(CEF_CFrame &frame) { frame.Show(); frame.Update(true); }
@@ -162,6 +176,13 @@ private:
       HideLabel(m_reg_price_label);
       HideCombo(m_reg_price_combo);
 
+      HideLabel(m_keltner_period_label);
+      HideSpin(m_keltner_period_spin);
+      HideLabel(m_keltner_deviation_label);
+      HideSpin(m_keltner_deviation_spin);
+      HideLabel(m_keltner_ma_type_label);
+      HideCombo(m_keltner_ma_type_combo);
+
       HideLabel(m_ma_period_label);
       HideSpin(m_ma_period_spin);
       HideLabel(m_ma_shift_label);
@@ -182,6 +203,13 @@ private:
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
+
+      HideLabel(m_stddev_period_label);
+      HideSpin(m_stddev_period_spin);
+      HideLabel(m_stddev_ma_type_label);
+      HideCombo(m_stddev_ma_type_combo);
+      HideLabel(m_stddev_price_label);
+      HideCombo(m_stddev_price_combo);
      }
 
    void SetViewText(const string title,const string note)
@@ -247,6 +275,20 @@ private:
       ShowCombo(m_reg_price_combo);
      }
 
+   void ShowKeltnerView(void)
+     {
+      HideAllContent();
+      SetViewText("Keltner","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_keltner_period_label);
+      ShowSpin(m_keltner_period_spin);
+      ShowLabel(m_keltner_deviation_label);
+      ShowSpin(m_keltner_deviation_spin);
+      ShowLabel(m_keltner_ma_type_label);
+      ShowCombo(m_keltner_ma_type_combo);
+     }
+
    void ShowMACDView(void)
      {
       HideAllContent();
@@ -273,12 +315,31 @@ private:
       ShowCombo(m_obv_volume_combo);
      }
 
+   void ShowStdDevView(void)
+     {
+      HideAllContent();
+      SetViewText("StdDev","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_stddev_period_label);
+      ShowSpin(m_stddev_period_spin);
+      ShowLabel(m_stddev_ma_type_label);
+      ShowCombo(m_stddev_ma_type_combo);
+      ShowLabel(m_stddev_price_label);
+      ShowCombo(m_stddev_price_combo);
+     }
+
    void ApplySelectedIndicator(const int selected)
      {
       string items[];
       BuildIndicatorItems(items);
       const int safe_index=V2ClampIndex(selected,0,ArraySize(items)-1);
 
+      if(safe_index==1)
+        {
+         ShowKeltnerView();
+         return;
+        }
       if(safe_index==3)
         {
          ShowRegressaoView();
@@ -292,6 +353,11 @@ private:
       if(safe_index==11)
         {
          ShowRSIView();
+         return;
+        }
+      if(safe_index==12)
+        {
+         ShowStdDevView();
          return;
         }
       if(safe_index==16)
@@ -415,6 +481,25 @@ public:
       volume_items[1]="Real";
 
       int y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_keltner_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_keltner_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"20",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_keltner_deviation_label,"Desvio",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_keltner_deviation_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.1,1,"2.0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_keltner_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_keltner_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_ma_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -501,6 +586,25 @@ public:
          return(false);
       y_cursor+=16;
       if(!CreateComboControl(m_obv_volume_combo,m_body,content_x,y_cursor,inner_w,80,volume_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_stddev_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_stddev_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"20",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_stddev_ma_type_label,"Tipo de desvio",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_stddev_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_stddev_price_label,"Modo de fechamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_stddev_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
          return(false);
 
       m_combo.SelectItem(0);
