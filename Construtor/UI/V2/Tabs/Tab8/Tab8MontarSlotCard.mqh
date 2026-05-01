@@ -28,6 +28,13 @@ private:
    CEF_CTextLabel  m_rsi_price_label;
    CEF_CComboBox   m_rsi_price_combo;
 
+   CEF_CTextLabel  m_reg_period_label;
+   CEF_CTextEdit   m_reg_period_spin;
+   CEF_CTextLabel  m_reg_ma_type_label;
+   CEF_CComboBox   m_reg_ma_type_combo;
+   CEF_CTextLabel  m_reg_price_label;
+   CEF_CComboBox   m_reg_price_combo;
+
    CEF_CTextLabel  m_ma_period_label;
    CEF_CTextEdit   m_ma_period_spin;
    CEF_CTextLabel  m_ma_shift_label;
@@ -45,6 +52,9 @@ private:
    CEF_CTextEdit   m_macd_signal_spin;
    CEF_CTextLabel  m_macd_price_label;
    CEF_CComboBox   m_macd_price_combo;
+
+   CEF_CTextLabel  m_obv_volume_label;
+   CEF_CComboBox   m_obv_volume_combo;
 
    void RegisterTabElement(CElement &element)
      {
@@ -142,6 +152,13 @@ private:
       HideLabel(m_rsi_price_label);
       HideCombo(m_rsi_price_combo);
 
+      HideLabel(m_reg_period_label);
+      HideSpin(m_reg_period_spin);
+      HideLabel(m_reg_ma_type_label);
+      HideCombo(m_reg_ma_type_combo);
+      HideLabel(m_reg_price_label);
+      HideCombo(m_reg_price_combo);
+
       HideLabel(m_ma_period_label);
       HideSpin(m_ma_period_spin);
       HideLabel(m_ma_shift_label);
@@ -159,6 +176,9 @@ private:
       HideSpin(m_macd_signal_spin);
       HideLabel(m_macd_price_label);
       HideCombo(m_macd_price_combo);
+
+      HideLabel(m_obv_volume_label);
+      HideCombo(m_obv_volume_combo);
      }
 
    void SetViewText(const string title,const string note)
@@ -210,6 +230,20 @@ private:
       ShowPlaceholderView("Fractal","Sem parametros.");
      }
 
+   void ShowRegressaoView(void)
+     {
+      HideAllContent();
+      SetViewText("Regressao linear","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_reg_period_label);
+      ShowSpin(m_reg_period_spin);
+      ShowLabel(m_reg_ma_type_label);
+      ShowCombo(m_reg_ma_type_combo);
+      ShowLabel(m_reg_price_label);
+      ShowCombo(m_reg_price_combo);
+     }
+
    void ShowMACDView(void)
      {
       HideAllContent();
@@ -226,12 +260,27 @@ private:
       ShowCombo(m_macd_price_combo);
      }
 
+   void ShowOBVView(void)
+     {
+      HideAllContent();
+      SetViewText("OBV","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_obv_volume_label);
+      ShowCombo(m_obv_volume_combo);
+     }
+
    void ApplySelectedIndicator(const int selected)
      {
       string items[];
       BuildIndicatorItems(items);
       const int safe_index=V2ClampIndex(selected,0,ArraySize(items)-1);
 
+      if(safe_index==3)
+        {
+         ShowRegressaoView();
+         return;
+        }
       if(safe_index==7)
         {
          ShowMediaMovelView();
@@ -245,6 +294,11 @@ private:
       if(safe_index==16)
         {
          ShowFractalView();
+         return;
+        }
+      if(safe_index==17)
+        {
+         ShowOBVView();
          return;
         }
       if(safe_index==18)
@@ -328,6 +382,11 @@ public:
       ma_type_items[3]="Linear ponderada";
       ma_type_items[4]="Smoothed";
 
+      string volume_items[];
+      ArrayResize(volume_items,2);
+      volume_items[0]="Tick";
+      volume_items[1]="Real";
+
       int y_cursor=content_y+18;
       if(!CreateBodyLabel(m_ma_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
@@ -367,6 +426,25 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_reg_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_reg_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"20",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_reg_ma_type_label,"Tipo de regressao",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_reg_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_reg_price_label,"Modo de fechamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_reg_price_combo,m_body,content_x,y_cursor,inner_w,140,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_macd_fast_label,"EMA rapida",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -389,6 +467,13 @@ public:
          return(false);
       y_cursor+=16;
       if(!CreateComboControl(m_macd_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_obv_volume_combo,m_body,content_x,y_cursor,inner_w,80,volume_items,0,field_border))
          return(false);
 
       m_combo.SelectItem(0);
