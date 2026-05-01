@@ -9,6 +9,7 @@ class CTab8MontarMainView : public CEF_CWndCreate
 private:
    CEF_CWndCreate        *m_host;
    bool                   m_created;
+   bool                   m_is_active;
    int                    m_window_index;
    int                    m_tab_index;
 
@@ -19,8 +20,26 @@ private:
    CEF_CTextLabel         m_logic_cols[6];
    CEF_CTextLabel         m_logic_rows[5];
 
+   void SetLabelVisible(CEF_CTextLabel &label,const bool visible)
+     {
+      if(visible)
+         label.Show();
+      else
+         label.Hide();
+      label.Update(true);
+     }
+
+   void SetFrameVisible(CEF_CFrame &frame,const bool visible)
+     {
+      if(visible)
+         frame.Show();
+      else
+         frame.Hide();
+      frame.Update(true);
+     }
+
 public:
-                        CTab8MontarMainView(void) : m_host(NULL), m_created(false), m_window_index(-1), m_tab_index(-1) {}
+                        CTab8MontarMainView(void) : m_host(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1) {}
 
    bool Create(CEF_CWndCreate &host,int window_index,CEF_CTabs &tabs,const int tab_index)
      {
@@ -91,6 +110,7 @@ public:
         }
 
       m_created=true;
+      SetActive(false);
       return(true);
      }
 
@@ -101,6 +121,36 @@ public:
 
       for(int i=0;i<4;i++)
          m_slots[i].OnTimerEvent();
+     }
+
+   void RefreshSlots(void)
+     {
+      if(!m_created || !m_is_active)
+         return;
+
+      for(int i=0;i<4;i++)
+         m_slots[i].RefreshView();
+     }
+
+   void SetActive(const bool active)
+     {
+      if(!m_created)
+         return;
+
+      m_is_active=active;
+      for(int i=0;i<4;i++)
+         m_slots[i].SetActive(active);
+
+      SetFrameVisible(m_logic_card,active);
+      SetLabelVisible(m_logic_title,active);
+      SetLabelVisible(m_logic_note,active);
+      for(int i=0;i<6;i++)
+         SetLabelVisible(m_logic_cols[i],active);
+      for(int i=0;i<5;i++)
+         SetLabelVisible(m_logic_rows[i],active);
+
+      if(active)
+         RefreshSlots();
      }
   };
 

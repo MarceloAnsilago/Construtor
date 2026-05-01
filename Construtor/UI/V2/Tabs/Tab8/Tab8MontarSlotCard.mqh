@@ -9,6 +9,7 @@ private:
    CEF_CWndCreate *m_host;
    CEF_CTabs      *m_tabs;
    bool            m_created;
+   bool            m_is_active;
    int             m_window_index;
    int             m_tab_index;
    int             m_slot_index;
@@ -56,17 +57,15 @@ private:
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
 
-   void RegisterTabElement(CElement &element)
-     {
-      if(m_tabs!=NULL)
-         (*m_tabs).AddToElementsArray(m_tab_index,element);
-     }
+   void HideFrame(CEF_CFrame &frame) { frame.Hide(); frame.Update(true); }
+   void ShowFrame(CEF_CFrame &frame) { frame.Show(); frame.Update(true); }
 
    bool CreateBodyLabel(CEF_CTextLabel &label,const string text,CElement &owner,const int x,const int y,const int width,const int height,const int font_size=10,const color text_color=clrNONE)
      {
-      if(!m_host.CreateTextLabel(label,text,owner,m_window_index,x,y,width,height))
+      if(m_tabs==NULL)
          return(false);
-      RegisterTabElement(label);
+      if(!m_host.CreateTextLabel(label,text,owner,m_window_index,*m_tabs,m_tab_index,x,y,width,height))
+         return(false);
       label.FontSize(font_size);
       label.LabelColor(text_color==clrNONE ? V2_COLOR_TEXT_SECONDARY : text_color);
       return(true);
@@ -74,14 +73,16 @@ private:
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,const int x,const int y,const int width,const int list_height,string &items[],const int selected_index,const color border)
      {
+      if(m_tabs==NULL)
+         return(false);
       combo.MainPointer(owner);
+      (*m_tabs).AddToElementsArray(m_tab_index,combo);
       combo.ItemsTotal(ArraySize(items));
       for(int i=0;i<ArraySize(items);i++)
          combo.SetValue(i,items[i]);
       V2StyleCombo(combo,border,width,list_height,width-2);
       if(!combo.CreateComboBox("",x,y))
          return(false);
-      RegisterTabElement(combo);
       m_host.RegisterElement(m_window_index,combo);
       combo.SelectItem(V2ClampIndex(selected_index,0,ArraySize(items)-1));
       return(true);
@@ -89,11 +90,13 @@ private:
 
    bool CreateSpinControl(CEF_CTextEdit &spin,CElement &owner,const int x,const int y,const int width,const double max_value,const double min_value,const double step,const int digits,const string value,const color back,const color border)
      {
+      if(m_tabs==NULL)
+         return(false);
       spin.MainPointer(owner);
+      (*m_tabs).AddToElementsArray(m_tab_index,spin);
       V2StyleSpin(spin,back,border,width,max_value,min_value,step,digits,value);
       if(!spin.CreateTextEdit("",x,y))
          return(false);
-      RegisterTabElement(spin);
       m_host.RegisterElement(m_window_index,spin);
       return(true);
      }
@@ -135,12 +138,12 @@ private:
       body_text="Os parametros de "+indicator_name+" serao portados aqui no proprio card deste slot.";
      }
 
-   void HideLabel(CEF_CTextLabel &label) { label.Hide(); }
-   void ShowLabel(CEF_CTextLabel &label) { label.Show(); }
-   void HideCombo(CEF_CComboBox &combo) { combo.Hide(); }
-   void ShowCombo(CEF_CComboBox &combo) { combo.Show(); }
-   void HideSpin(CEF_CTextEdit &spin) { spin.Hide(); }
-   void ShowSpin(CEF_CTextEdit &spin) { spin.Show(); }
+   void HideLabel(CEF_CTextLabel &label) { label.Hide(); label.Update(true); }
+   void ShowLabel(CEF_CTextLabel &label) { label.Show(); label.Update(true); }
+   void HideCombo(CEF_CComboBox &combo) { combo.Hide(); combo.Update(true); }
+   void ShowCombo(CEF_CComboBox &combo) { combo.Show(); combo.Update(true); }
+   void HideSpin(CEF_CTextEdit &spin) { spin.Hide(); spin.Update(true); }
+   void ShowSpin(CEF_CTextEdit &spin) { spin.Show(); spin.Update(true); }
 
    void HideAllContent(void)
      {
@@ -313,8 +316,32 @@ private:
       ShowPlaceholderView(placeholder_title,placeholder_body);
      }
 
+   void HideCardContent(void)
+     {
+      HideAllContent();
+     }
+
+   void HideSlot(void)
+     {
+      HideCardContent();
+      HideFrame(m_body);
+      HideCombo(m_combo);
+      HideLabel(m_combo_label);
+      HideLabel(m_title);
+      HideFrame(m_card);
+     }
+
+   void ShowSlot(void)
+     {
+      ShowFrame(m_card);
+      ShowLabel(m_title);
+      ShowLabel(m_combo_label);
+      ShowCombo(m_combo);
+      ShowFrame(m_body);
+     }
+
 public:
-                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1) {}
+                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1) {}
 
    bool Create(CEF_CWndCreate &host,const int window_index,CEF_CTabs &tabs,const int tab_index,const int slot_index,
                const int x,const int y,const int w,const int h)
@@ -477,23 +504,49 @@ public:
          return(false);
 
       m_combo.SelectItem(0);
-      ApplySelectedIndicator(0);
-      m_last_selected_index=0;
+      HideSlot();
+      m_last_selected_index=-1;
       m_created=true;
       return(true);
      }
 
-   void OnTimerEvent(void)
+   void RefreshView(void)
+     {
+      if(!m_created || !m_is_active)
+         return;
+
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,18);
+      m_last_selected_index=selected;
+      ApplySelectedIndicator(selected);
+     }
+
+   void SetActive(const bool active)
      {
       if(!m_created)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,18);
-      if(selected==m_last_selected_index)
+      m_is_active=active;
+      if(!active)
+        {
+         HideSlot();
+         return;
+        }
+
+      ShowSlot();
+      RefreshView();
+     }
+
+   void OnTimerEvent(void)
+     {
+      if(!m_created || !m_is_active)
          return;
 
-      m_last_selected_index=selected;
-      ApplySelectedIndicator(selected);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,18);
+      if(selected!=m_last_selected_index)
+        {
+         m_last_selected_index=selected;
+         ApplySelectedIndicator(selected);
+        }
      }
   };
 

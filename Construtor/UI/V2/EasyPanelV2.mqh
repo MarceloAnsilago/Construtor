@@ -482,6 +482,7 @@ public:
       m_exec_tabs.SelectTab(0);
       m_top_tabs.ShowTabElements();
       m_param_tabs.ShowTabElements();
+      m_tab8.SetActive(false);
 
       CompletedGUI();
       m_top_tab_last=0;
@@ -520,6 +521,7 @@ public:
          m_param_tabs.ShowTabElements();
       else
          m_exec_tabs.ShowTabElements();
+      m_tab8.SetActive(m_top_tabs.SelectedTab()==0 && m_param_tabs.SelectedTab()==7);
       m_visible=true;
       return(true);
      }
@@ -592,6 +594,7 @@ public:
             m_param_tabs.ShowTabElements();
          else
             m_exec_tabs.ShowTabElements();
+         m_tab8.SetActive(top_selected==0 && m_param_tabs.SelectedTab()==7);
         }
 
       if(top_selected==0)
@@ -601,10 +604,12 @@ public:
            {
             m_param_tab_last=selected;
             m_param_tabs.ShowTabElements();
+            m_tab8.SetActive(selected==7);
            }
         }
       else
         {
+         m_tab8.SetActive(false);
          const int selected=m_exec_tabs.SelectedTab();
          if(selected!=m_exec_tab_last)
            {

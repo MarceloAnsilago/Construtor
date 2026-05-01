@@ -10,6 +10,7 @@ class CTab8SinaisV2 : public CEF_CWndCreate
 private:
    CEF_CWndCreate        *m_host;
    bool                   m_created;
+   bool                   m_is_active;
    int                    m_window_index;
    int                    m_tab_index;
    int                    m_last_selected_tab;
@@ -19,7 +20,7 @@ private:
    CTab8MontarMainView    m_montar_view;
 
 public:
-                        CTab8SinaisV2(void) : m_host(NULL), m_created(false), m_window_index(-1), m_tab_index(-1), m_last_selected_tab(-1) {}
+                        CTab8SinaisV2(void) : m_host(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1), m_last_selected_tab(-1) {}
 
    bool Create(CEF_CWndCreate &host,int window_index,CEF_CTabs &tabs,const int tab_index)
      {
@@ -88,14 +89,30 @@ public:
 
       m_inner_tabs.SelectTab(0);
       m_inner_tabs.ShowTabElements();
+      m_montar_view.SetActive(false);
       m_last_selected_tab=0;
       m_created=true;
       return(true);
      }
 
-   void OnTimerEvent(void)
+   void SetActive(const bool active)
      {
       if(!m_created)
+         return;
+
+      m_is_active=active;
+      if(!active)
+        {
+         m_montar_view.SetActive(false);
+         return;
+        }
+
+      m_montar_view.SetActive(m_inner_tabs.SelectedTab()==1);
+     }
+
+   void OnTimerEvent(void)
+     {
+      if(!m_created || !m_is_active)
          return;
 
       const int selected=m_inner_tabs.SelectedTab();
@@ -103,6 +120,13 @@ public:
         {
          m_last_selected_tab=selected;
          m_inner_tabs.ShowTabElements();
+         if(selected==1)
+           {
+            m_montar_view.SetActive(true);
+            m_montar_view.RefreshSlots();
+           }
+         else
+            m_montar_view.SetActive(false);
         }
 
       m_sinais_view.OnTimerEvent();
