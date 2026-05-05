@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,113);
+      ArrayResize(items,115);
       int total=0;
 
       items[total++]="Nao usar";
@@ -275,6 +275,11 @@ private:
          else if(idx==39)
            {
             items[total++]=prefix+"momentum";
+           }
+         else if(idx==40)
+           {
+            items[total++]=prefix+"rvi sinal";
+            items[total++]=prefix+"rvi principal";
            }
         }
 
