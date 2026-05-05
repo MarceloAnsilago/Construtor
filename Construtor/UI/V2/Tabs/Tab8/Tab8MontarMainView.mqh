@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,110);
+      ArrayResize(items,111);
       int total=0;
 
       items[total++]="Nao usar";
@@ -263,6 +263,10 @@ private:
            {
             items[total++]=prefix+"gator superior";
             items[total++]=prefix+"gator inferior";
+           }
+         else if(idx==37)
+           {
+            items[total++]=prefix+"wpr";
            }
         }
 
