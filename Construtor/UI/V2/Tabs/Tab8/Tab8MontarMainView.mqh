@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,86);
+      ArrayResize(items,87);
       int total=0;
 
       items[total++]="Nao usar";
@@ -216,6 +216,10 @@ private:
          else if(idx==27)
            {
             items[total++]=prefix+"chaikin oscilador valor";
+           }
+         else if(idx==28)
+           {
+            items[total++]=prefix+"accelerator oscillator valor";
            }
         }
 

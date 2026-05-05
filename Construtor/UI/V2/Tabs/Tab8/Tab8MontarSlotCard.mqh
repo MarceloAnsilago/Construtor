@@ -230,7 +230,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,28);
+      ArrayResize(items,29);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -259,6 +259,7 @@ private:
       items[25]="Bears Power";
       items[26]="Bulls Power";
       items[27]="Chaikin Oscilador";
+      items[28]="Accelerator Oscillator";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -759,6 +760,11 @@ private:
       ShowCombo(m_chaikin_volume_combo);
      }
 
+   void ShowAcceleratorOscillatorView(void)
+     {
+      ShowPlaceholderView("Accelerator Oscillator","Sem parametros.");
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -941,6 +947,11 @@ private:
       if(safe_index==27)
         {
          ShowChaikinOsciladorView();
+         return;
+        }
+      if(safe_index==28)
+        {
+         ShowAcceleratorOscillatorView();
          return;
         }
 
@@ -1501,7 +1512,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,27);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,28);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1527,7 +1538,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,27);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,28);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1540,8 +1551,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,27));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,27));
+         return(V2ClampIndex(m_last_selected_index,0,28));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,28));
     }
   };
 
