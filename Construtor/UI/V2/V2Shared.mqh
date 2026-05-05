@@ -266,4 +266,67 @@ bool V2CreateFieldLabel(CEF_CWndCreate &wnd,CEF_CTextLabel &label,const string t
    return(true);
   }
 
+class CV2BusyProgress
+  {
+private:
+   CEF_CProgressBar m_bar;
+   bool             m_created;
+
+public:
+                     CV2BusyProgress(void) : m_created(false) {}
+
+   bool Create(CEF_CWndCreate &wnd,CElement &owner,const int window_index,const int x,const int y,const int width,const string text="Carregando interface")
+     {
+      if(m_created)
+         return(true);
+
+      m_bar.XSize(width);
+      m_bar.YSize(18);
+      m_bar.BarYSize(12);
+      m_bar.BarBorderWidth(1);
+      m_bar.BarYGap(4);
+      m_bar.LabelXGap(0);
+      m_bar.LabelYGap(0);
+      m_bar.PercentXGap(6);
+      m_bar.PercentYGap(0);
+      m_bar.FontSize(9);
+      m_bar.LabelColor(V2_COLOR_TEXT_SECONDARY);
+      m_bar.BorderColor(V2_COLOR_CARD_BORDER);
+      m_bar.IndicatorBackColor(clrWhite);
+      m_bar.IndicatorColor(C'226,114,64');
+      if(!wnd.CreateProgressBar(m_bar,text,owner,window_index,x,y))
+         return(false);
+
+      m_bar.Hide();
+      m_created=true;
+      return(true);
+     }
+
+   void Begin(const string text,const int total=3)
+     {
+      if(!m_created)
+         return;
+      m_bar.LabelText(text);
+      m_bar.Show();
+      m_bar.Update(0,total);
+      ChartRedraw();
+     }
+
+   void Step(const int index,const int total=3)
+     {
+      if(!m_created)
+         return;
+      m_bar.Update(index,total);
+      ChartRedraw();
+     }
+
+   void Finish(void)
+     {
+      if(!m_created)
+         return;
+      m_bar.Hide();
+      ChartRedraw();
+     }
+  };
+
 #endif // __CONSTRUTOR_V2_SHARED_MQH__

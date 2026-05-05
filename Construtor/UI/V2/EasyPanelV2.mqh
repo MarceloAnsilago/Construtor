@@ -32,10 +32,16 @@ private:
    bool                 m_visible;
    bool                 m_has_settings;
    bool                 m_apply_requested;
+   bool                 m_busy_pending;
+   int                  m_busy_phase;
    int                  m_window_index;
    int                  m_top_tab_last;
    int                  m_param_tab_last;
    int                  m_exec_tab_last;
+   int                  m_pending_top_tab;
+   int                  m_pending_param_tab;
+   int                  m_pending_exec_tab;
+   string               m_busy_text;
    SConstrutorSettings  m_settings;
 
    CEF_CWindow          m_window;
@@ -45,6 +51,7 @@ private:
    CEF_CTabs            m_param_tabs;
    CEF_CTabs            m_exec_tabs;
    CEF_CButton          m_btn_apply;
+   CV2BusyProgress      m_busy_progress;
 
    CEF_CTextLabel       m_param_header_title[PARAM_TAB_COUNT];
    CEF_CTextLabel       m_param_header_note[PARAM_TAB_COUNT];
@@ -209,16 +216,48 @@ private:
       m_has_settings=true;
      }
 
+   void QueueBusyTransition(const string text)
+     {
+      m_busy_text=text;
+      m_pending_top_tab=m_top_tabs.SelectedTab();
+      m_pending_param_tab=m_param_tabs.SelectedTab();
+      m_pending_exec_tab=m_exec_tabs.SelectedTab();
+      m_busy_phase=0;
+      m_busy_pending=true;
+     }
+
+   void ApplyPendingTabState(void)
+     {
+      m_top_tab_last=m_pending_top_tab;
+      m_param_tab_last=m_pending_param_tab;
+      m_exec_tab_last=m_pending_exec_tab;
+
+      m_top_tabs.ShowTabElements();
+      if(m_pending_top_tab==0)
+         m_param_tabs.ShowTabElements();
+      else
+         m_exec_tabs.ShowTabElements();
+
+      m_tab8.SetActive(m_pending_top_tab==0 && m_pending_param_tab==7);
+      ChartRedraw();
+     }
+
 public:
                         CConstrutorEasyPanelV2(void) :
                            m_created(false),
                            m_visible(false),
                            m_has_settings(false),
                            m_apply_requested(false),
+                           m_busy_pending(false),
+                           m_busy_phase(0),
                            m_window_index(-1),
                            m_top_tab_last(-1),
                            m_param_tab_last(-1),
-                           m_exec_tab_last(-1)
+                           m_exec_tab_last(-1),
+                           m_pending_top_tab(-1),
+                           m_pending_param_tab(-1),
+                           m_pending_exec_tab(-1),
+                           m_busy_text("")
                         {}
 
    void SetSettings(const SConstrutorSettings &settings)
@@ -263,6 +302,30 @@ public:
      {
       if(!m_created || !m_visible)
          return;
+
+      if(m_busy_pending)
+        {
+         if(m_busy_phase==0)
+           {
+            m_busy_progress.Begin(m_busy_text,3);
+            m_busy_progress.Step(1,3);
+            m_busy_phase=1;
+           }
+         else if(m_busy_phase==1)
+           {
+            ApplyPendingTabState();
+            m_busy_progress.Step(2,3);
+            m_busy_phase=2;
+           }
+         else
+           {
+            m_busy_progress.Step(3,3);
+            m_busy_progress.Finish();
+            m_busy_pending=false;
+            m_busy_phase=0;
+           }
+        }
+
       m_tab8.OnTimerEvent();
      }
 
@@ -291,6 +354,11 @@ public:
          return(false);
       m_note.FontSize(10);
       m_note.LabelColor(C'91,78,64');
+
+      const int busy_w=280;
+      const int busy_x=(chart_w-busy_w-24>560 ? chart_w-busy_w-24 : 560);
+      if(!m_busy_progress.Create(*this,m_window,m_window_index,busy_x,46,busy_w))
+         return(false);
 
       const int padding=16;
       const int top_tabs_x=padding;
@@ -483,6 +551,11 @@ public:
       m_top_tab_last=-1;
       m_param_tab_last=-1;
       m_exec_tab_last=-1;
+      m_pending_top_tab=-1;
+      m_pending_param_tab=-1;
+      m_pending_exec_tab=-1;
+      m_busy_pending=false;
+      m_busy_phase=0;
      }
 
    void ChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
@@ -516,34 +589,19 @@ public:
 
       const int top_selected=m_top_tabs.SelectedTab();
       if(top_selected!=m_top_tab_last)
-        {
-         m_top_tab_last=top_selected;
-         if(top_selected==0)
-            m_param_tabs.ShowTabElements();
-         else
-            m_exec_tabs.ShowTabElements();
-         m_tab8.SetActive(top_selected==0 && m_param_tabs.SelectedTab()==7);
-        }
+         QueueBusyTransition("Carregando abas...");
 
       if(top_selected==0)
         {
          const int selected=m_param_tabs.SelectedTab();
          if(selected!=m_param_tab_last)
-           {
-            m_param_tab_last=selected;
-            m_param_tabs.ShowTabElements();
-            m_tab8.SetActive(selected==7);
-           }
+            QueueBusyTransition("Carregando aba lateral...");
         }
       else
         {
-         m_tab8.SetActive(false);
          const int selected=m_exec_tabs.SelectedTab();
          if(selected!=m_exec_tab_last)
-           {
-            m_exec_tab_last=selected;
-            m_exec_tabs.ShowTabElements();
-           }
+            QueueBusyTransition("Carregando aba lateral...");
         }
      }
   };
