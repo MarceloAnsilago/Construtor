@@ -117,6 +117,20 @@ private:
    CEF_CTextLabel  m_ad_volume_label;
    CEF_CComboBox   m_ad_volume_combo;
 
+   CEF_CTextLabel  m_mfi_period_label;
+   CEF_CTextEdit   m_mfi_period_spin;
+   CEF_CTextLabel  m_mfi_volume_label;
+   CEF_CComboBox   m_mfi_volume_combo;
+
+   CEF_CTextLabel  m_vidya_cmo_period_label;
+   CEF_CTextEdit   m_vidya_cmo_period_spin;
+   CEF_CTextLabel  m_vidya_ema_period_label;
+   CEF_CTextEdit   m_vidya_ema_period_spin;
+   CEF_CTextLabel  m_vidya_shift_label;
+   CEF_CTextEdit   m_vidya_shift_spin;
+   CEF_CTextLabel  m_vidya_price_label;
+   CEF_CComboBox   m_vidya_price_combo;
+
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
 
@@ -184,7 +198,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,20);
+      ArrayResize(items,22);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -205,6 +219,8 @@ private:
       items[17]="OBV";
       items[18]="MACD";
       items[19]="Acumulacao/Distribuicao (A/D)";
+      items[20]="MFI (Money Flow Index)";
+      items[21]="Vidya";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -324,6 +340,20 @@ private:
 
       HideLabel(m_ad_volume_label);
       HideCombo(m_ad_volume_combo);
+
+      HideLabel(m_mfi_period_label);
+      HideSpin(m_mfi_period_spin);
+      HideLabel(m_mfi_volume_label);
+      HideCombo(m_mfi_volume_combo);
+
+      HideLabel(m_vidya_cmo_period_label);
+      HideSpin(m_vidya_cmo_period_spin);
+      HideLabel(m_vidya_ema_period_label);
+      HideSpin(m_vidya_ema_period_spin);
+      HideLabel(m_vidya_shift_label);
+      HideSpin(m_vidya_shift_spin);
+      HideLabel(m_vidya_price_label);
+      HideCombo(m_vidya_price_combo);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -555,6 +585,34 @@ private:
       ShowCombo(m_ad_volume_combo);
      }
 
+   void ShowMFIView(void)
+     {
+      HideAllContent();
+      SetViewText("MFI (Money Flow Index)","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_mfi_period_label);
+      ShowSpin(m_mfi_period_spin);
+      ShowLabel(m_mfi_volume_label);
+      ShowCombo(m_mfi_volume_combo);
+     }
+
+   void ShowVidyaView(void)
+     {
+      HideAllContent();
+      SetViewText("Vidya","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_vidya_cmo_period_label);
+      ShowSpin(m_vidya_cmo_period_spin);
+      ShowLabel(m_vidya_ema_period_label);
+      ShowSpin(m_vidya_ema_period_spin);
+      ShowLabel(m_vidya_shift_label);
+      ShowSpin(m_vidya_shift_spin);
+      ShowLabel(m_vidya_price_label);
+      ShowCombo(m_vidya_price_combo);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -697,6 +755,16 @@ private:
       if(safe_index==19)
         {
          ShowAccumDistView();
+         return;
+        }
+      if(safe_index==20)
+        {
+         ShowMFIView();
+         return;
+        }
+      if(safe_index==21)
+        {
+         ShowVidyaView();
          return;
         }
 
@@ -1065,6 +1133,44 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_mfi_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_mfi_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_mfi_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_mfi_volume_combo,m_body,content_x,y_cursor,inner_w,80,volume_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_vidya_cmo_period_label,"Periodo CMO",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_vidya_cmo_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"9",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_vidya_ema_period_label,"Periodo EMA",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_vidya_ema_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"12",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_vidya_shift_label,"Deslocamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_vidya_shift_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_vidya_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_vidya_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1129,7 +1235,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,19);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,21);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1155,7 +1261,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,19);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,21);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1168,8 +1274,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,19));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,19));
+         return(V2ClampIndex(m_last_selected_index,0,21));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,21));
     }
   };
 
