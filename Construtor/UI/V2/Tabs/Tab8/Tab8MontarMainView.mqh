@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,77);
+      ArrayResize(items,78);
       int total=0;
 
       items[total++]="Nao usar";
@@ -180,6 +180,10 @@ private:
            {
             items[total++]=prefix+"macd histograma";
             items[total++]=prefix+"mack sinal";
+           }
+         else if(idx==19)
+           {
+            items[total++]=prefix+"acumulacao/distribuicao (a/d)";
            }
         }
 
