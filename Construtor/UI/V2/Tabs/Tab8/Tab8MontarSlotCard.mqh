@@ -946,22 +946,24 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      const int stoch_col_gap=10;
+      const int stoch_half_w=(inner_w-stoch_col_gap)/2;
+      const int stoch_right_x=content_x+stoch_half_w+stoch_col_gap;
+
       if(!CreateBodyLabel(m_stoch_k_label,"K periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
       if(!CreateSpinControl(m_stoch_k_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"5",sub_back,field_border))
          return(false);
       y_cursor+=22;
-      if(!CreateBodyLabel(m_stoch_d_label,"D periodo",m_body,content_x,y_cursor,inner_w,16))
+      if(!CreateBodyLabel(m_stoch_d_label,"D periodo",m_body,content_x,y_cursor,stoch_half_w,16))
+         return(false);
+      if(!CreateBodyLabel(m_stoch_slow_label,"Lentidao",m_body,stoch_right_x,y_cursor,stoch_half_w,16))
          return(false);
       y_cursor+=16;
-      if(!CreateSpinControl(m_stoch_d_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"3",sub_back,field_border))
+      if(!CreateSpinControl(m_stoch_d_spin,m_body,content_x,y_cursor,stoch_half_w,9999.0,1.0,1.0,0,"3",sub_back,field_border))
          return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_stoch_slow_label,"Lentidao",m_body,content_x,y_cursor,inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_stoch_slow_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"3",sub_back,field_border))
+      if(!CreateSpinControl(m_stoch_slow_spin,m_body,stoch_right_x,y_cursor,stoch_half_w,9999.0,1.0,1.0,0,"3",sub_back,field_border))
          return(false);
       y_cursor+=22;
       if(!CreateBodyLabel(m_stoch_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))

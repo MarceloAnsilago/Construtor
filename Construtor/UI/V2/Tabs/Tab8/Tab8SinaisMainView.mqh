@@ -814,19 +814,23 @@ public:
         }
 
       string cruz_indic_items[];
-      ArrayResize(cruz_indic_items,5);
-      cruz_indic_items[0]="Media movel";
-      cruz_indic_items[1]="VIDYA";
-      cruz_indic_items[2]="DEMA";
-      cruz_indic_items[3]="TEMA";
-      cruz_indic_items[4]="FRAMA";
+      ArrayResize(cruz_indic_items,10);
+      cruz_indic_items[0]="Nao usar";
+      cruz_indic_items[1]="Fechamento da vela";
+      cruz_indic_items[2]="Abertura da vela";
+      cruz_indic_items[3]="Maxima da vela";
+      cruz_indic_items[4]="Minima da vela";
+      cruz_indic_items[5]="Media movel";
+      cruz_indic_items[6]="VIDYA";
+      cruz_indic_items[7]="DEMA";
+      cruz_indic_items[8]="TEMA";
+      cruz_indic_items[9]="FRAMA";
 
       string cruz_signal_items[];
-      ArrayResize(cruz_signal_items,4);
-      cruz_signal_items[0]="Cruzar para cima";
-      cruz_signal_items[1]="Cruzar para baixo";
-      cruz_signal_items[2]="Cruzar e fechar acima";
-      cruz_signal_items[3]="Cruzar e fechar abaixo";
+      ArrayResize(cruz_signal_items,3);
+      cruz_signal_items[0]="Cruzamento para baixo";
+      cruz_signal_items[1]="Cruzamento para cima";
+      cruz_signal_items[2]="Ambos";
 
       string cruz_price_items[];
       ArrayResize(cruz_price_items,7);
@@ -865,7 +869,7 @@ public:
       if(!V2CreateFieldLabel(*m_host,m_cruz_slow_label,"Linha lenta",m_cruz_tabs,m_cruz_tabs,m_window_index,0,cruz_content_x,y,cruz_content_w,16))
          return(false);
       y+=18;
-      if(!CreateComboControl(m_cruz_slow_combo,m_cruz_tabs,m_cruz_tabs,0,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,1,card_border))
+      if(!CreateComboControl(m_cruz_slow_combo,m_cruz_tabs,m_cruz_tabs,0,cruz_content_x,y,cruz_content_w,120,cruz_indic_items,0,card_border))
          return(false);
       y+=40;
       if(!m_host.CreateTextLabel(m_cruz_note,"As abas Rapida e Lenta acompanham o indicador escolhido aqui.",m_cruz_tabs,m_window_index,m_cruz_tabs,0,cruz_content_x,y,cruz_content_w,42))
