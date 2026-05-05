@@ -359,7 +359,7 @@ public:
 
    void OnTimerEvent(void)
      {
-      if(!m_created)
+      if(!m_created || !m_is_active)
          return;
 
       for(int i=0;i<4;i++)

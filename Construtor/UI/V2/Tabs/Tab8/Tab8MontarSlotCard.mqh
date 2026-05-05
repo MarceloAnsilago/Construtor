@@ -1138,6 +1138,8 @@ public:
      {
       if(!m_created)
          return(0);
+      if(m_last_selected_index>=0)
+         return(V2ClampIndex(m_last_selected_index,0,18));
       return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,18));
      }
   };
