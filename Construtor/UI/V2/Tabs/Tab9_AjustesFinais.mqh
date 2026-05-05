@@ -82,13 +82,15 @@ public:
 
       for(int i=0;i<9;i++)
         {
-         const int y=row_start_y+(i*row_step);
-         if(!V2CreateFieldLabel(*m_host,m_option_labels[i],option_texts[i],m_card,tabs,m_window_index,m_tab_index,row_x,y,label_w,18))
+         const int y=content_y+row_start_y+(i*row_step);
+         const int abs_x=content_pad+row_x;
+         const int abs_combo_x=content_pad+combo_x;
+         if(!V2CreateFieldLabel(*m_host,m_option_labels[i],option_texts[i],tabs,tabs,m_window_index,m_tab_index,abs_x,y,label_w,18))
             return(false);
          m_option_labels[i].FontSize(10);
          m_option_labels[i].LabelColor(V2_COLOR_TEXT_PRIMARY);
 
-         if(!CreateComboControl(m_option_combos[i],m_card,tabs,m_tab_index,combo_x,y-2,combo_w,70,yes_no_items,0,field_border))
+         if(!CreateComboControl(m_option_combos[i],tabs,tabs,m_tab_index,abs_combo_x,y-2,combo_w,70,yes_no_items,0,field_border))
             return(false);
         }
 

@@ -94,6 +94,7 @@ public:
 
       m_inner_tabs.SelectTab(0);
       m_inner_tabs.ShowTabElements();
+      m_sinais_view.SetActive(true);
       m_montar_view.SetActive(false);
       m_last_selected_tab=0;
       m_created=true;
@@ -108,11 +109,19 @@ public:
       m_is_active=active;
       if(!active)
         {
+         m_sinais_view.SetActive(false);
          m_montar_view.SetActive(false);
+         m_inner_tabs.Hide();
+         m_inner_tabs.Update();
          return;
         }
 
-      m_montar_view.SetActive(m_inner_tabs.SelectedTab()==1);
+      m_inner_tabs.Show();
+      m_inner_tabs.Update();
+      m_inner_tabs.ShowTabElements();
+      const int selected=m_inner_tabs.SelectedTab();
+      m_sinais_view.SetActive(selected==0);
+      m_montar_view.SetActive(selected==1);
      }
 
    void OnTimerEvent(void)
@@ -127,13 +136,12 @@ public:
          m_busy_progress.Step(1,3);
          m_last_selected_tab=selected;
          m_inner_tabs.ShowTabElements();
+         m_sinais_view.SetActive(selected==0);
+         m_montar_view.SetActive(selected==1);
          if(selected==1)
            {
-            m_montar_view.SetActive(true);
             m_montar_view.RefreshSlots();
            }
-         else
-            m_montar_view.SetActive(false);
          m_busy_progress.Step(2,3);
          m_busy_progress.Step(3,3);
          m_busy_progress.Finish();
@@ -146,6 +154,8 @@ public:
    bool HandleEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
      {
       if(!m_created)
+         return(false);
+      if(!m_is_active)
          return(false);
 
       if(m_sinais_view.HandleEvent(id,lparam,dparam,sparam))

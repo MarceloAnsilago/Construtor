@@ -8,6 +8,7 @@ class CTab8SinaisMainView : public CEF_CWndCreate
 private:
    CEF_CWndCreate *m_host;
    bool            m_created;
+   bool            m_is_active;
    int             m_window_index;
    int             m_tab_index;
    int             m_last_ord_tab;
@@ -233,6 +234,42 @@ private:
    CEF_CTextLabel  m_sobre_ichimoku_senkou_b_label[5];
    CEF_CTextEdit   m_sobre_ichimoku_senkou_b_spin[5];
    CEF_CTextLabel  m_sobre_param_hint;
+
+   void SetFrameVisible(CEF_CFrame &frame,const bool visible)
+     {
+      if(visible)
+         frame.Show();
+      else
+         frame.Hide();
+      frame.Update(true);
+     }
+
+   void SetLabelVisible(CEF_CTextLabel &label,const bool visible)
+     {
+      if(visible)
+         label.Show();
+      else
+         label.Hide();
+      label.Update(true);
+     }
+
+   void SetCheckVisible(CEF_CCheckBox &check,const bool visible)
+     {
+      if(visible)
+         check.Show();
+      else
+         check.Hide();
+      check.Update(true);
+     }
+
+   void SetTabsVisible(CEF_CTabs &tabs,const bool visible)
+     {
+      if(visible)
+         tabs.Show();
+      else
+         tabs.Hide();
+      tabs.Update();
+     }
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index,const color border)
      {
@@ -475,7 +512,7 @@ private:
      }
 
 public:
-                     CTab8SinaisMainView(void) : m_host(NULL), m_created(false), m_window_index(-1), m_tab_index(-1), m_last_ord_tab(-1), m_last_sobre_tab(-1), m_last_sobre_param_idx(-1), m_last_cruz_tab(-1), m_last_cruz_fast_idx(-1), m_last_cruz_slow_idx(-1) {}
+                     CTab8SinaisMainView(void) : m_host(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1), m_last_ord_tab(-1), m_last_sobre_tab(-1), m_last_sobre_param_idx(-1), m_last_cruz_tab(-1), m_last_cruz_fast_idx(-1), m_last_cruz_slow_idx(-1) {}
 
    bool Create(CEF_CWndCreate &host,int window_index,CEF_CTabs &tabs,const int tab_index)
      {
@@ -1494,8 +1531,68 @@ public:
       return(true);
      }
 
+   void SetActive(const bool active)
+     {
+      if(!m_created)
+         return;
+
+      m_is_active=active;
+
+      SetFrameVisible(m_card_ordens,active);
+      SetLabelVisible(m_card_ordens_title,active);
+      SetCheckVisible(m_ordem_market,active);
+      SetCheckVisible(m_ordem_limit,active);
+      SetTabsVisible(m_ord_tabs,active);
+      SetCheckVisible(m_ord_ref_check,active);
+      SetCheckVisible(m_ord_media_check,active);
+      SetFrameVisible(m_ord_ref_card,active);
+      SetFrameVisible(m_ord_media_card,active);
+
+      SetFrameVisible(m_card_filtro,active);
+      SetLabelVisible(m_card_filtro_title,active);
+      SetCheckVisible(m_use_filtro,active);
+
+      SetFrameVisible(m_card_canais,active);
+      SetLabelVisible(m_card_canais_title,active);
+      SetLabelVisible(m_canais_label,active);
+      SetCheckVisible(m_canais_yes,active);
+      SetCheckVisible(m_canais_no,active);
+
+      SetFrameVisible(m_card_cruz,active);
+      SetLabelVisible(m_card_cruz_title,active);
+      SetLabelVisible(m_cruz_label,active);
+      SetCheckVisible(m_cruz_yes,active);
+      SetCheckVisible(m_cruz_no,active);
+      SetTabsVisible(m_cruz_tabs,active);
+      SetFrameVisible(m_cruz_fast_param_card,active);
+      SetTabsVisible(m_cruz_fast_param_tabs,active);
+      SetFrameVisible(m_cruz_slow_param_card,active);
+      SetTabsVisible(m_cruz_slow_param_tabs,active);
+
+      SetFrameVisible(m_card_sobre,active);
+      SetLabelVisible(m_card_sobre_title,active);
+      SetCheckVisible(m_use_sobre,active);
+      SetTabsVisible(m_sobre_tabs,active);
+      SetFrameVisible(m_sobre_param_card,active);
+      SetTabsVisible(m_sobre_param_tabs,active);
+      SetLabelVisible(m_sobre_param_hint,active);
+
+      if(active)
+        {
+         m_ord_tabs.ShowTabElements();
+         m_cruz_tabs.ShowTabElements();
+         m_sobre_tabs.ShowTabElements();
+         SyncOrderTabChecks();
+         SyncCruzTabs();
+         SyncSobreParamView();
+        }
+     }
+
    void OnTimerEvent(void)
      {
+      if(!m_created || !m_is_active)
+         return;
+
       SyncOrderTabChecks();
       SyncCruzTabs();
       SyncSobreParamView();
