@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,89);
+      ArrayResize(items,90);
       int total=0;
 
       items[total++]="Nao usar";
@@ -228,6 +228,10 @@ private:
          else if(idx==30)
            {
             items[total++]=prefix+"cci (commodity channel index) valor";
+           }
+         else if(idx==31)
+           {
+            items[total++]=prefix+"demarker valor";
            }
         }
 

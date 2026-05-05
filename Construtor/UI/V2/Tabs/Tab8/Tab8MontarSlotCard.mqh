@@ -166,6 +166,8 @@ private:
    CEF_CTextEdit   m_cci_period_spin;
    CEF_CTextLabel  m_cci_price_label;
    CEF_CComboBox   m_cci_price_combo;
+   CEF_CTextLabel  m_demarker_period_label;
+   CEF_CTextEdit   m_demarker_period_spin;
 
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
@@ -234,7 +236,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,31);
+      ArrayResize(items,32);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -266,6 +268,7 @@ private:
       items[28]="Accelerator Oscillator";
       items[29]="Awesome Oscillator";
       items[30]="CCI (Commodity Channel Index)";
+      items[31]="DeMarker";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -435,6 +438,8 @@ private:
       HideSpin(m_cci_period_spin);
       HideLabel(m_cci_price_label);
       HideCombo(m_cci_price_combo);
+      HideLabel(m_demarker_period_label);
+      HideSpin(m_demarker_period_spin);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -792,6 +797,16 @@ private:
       ShowCombo(m_cci_price_combo);
      }
 
+   void ShowDeMarkerView(void)
+     {
+      HideAllContent();
+      SetViewText("DeMarker","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_demarker_period_label);
+      ShowSpin(m_demarker_period_spin);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -989,6 +1004,11 @@ private:
       if(safe_index==30)
         {
          ShowCCIView();
+         return;
+        }
+      if(safe_index==31)
+        {
+         ShowDeMarkerView();
          return;
         }
 
@@ -1498,6 +1518,13 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_demarker_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_demarker_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1562,7 +1589,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,30);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,31);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1588,7 +1615,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,30);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,31);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1601,8 +1628,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,30));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,30));
+         return(V2ClampIndex(m_last_selected_index,0,31));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,31));
     }
   };
 
