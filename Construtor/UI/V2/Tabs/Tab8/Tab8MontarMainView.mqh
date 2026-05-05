@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,87);
+      ArrayResize(items,88);
       int total=0;
 
       items[total++]="Nao usar";
@@ -220,6 +220,10 @@ private:
          else if(idx==28)
            {
             items[total++]=prefix+"accelerator oscillator valor";
+           }
+         else if(idx==29)
+           {
+            items[total++]=prefix+"awesome oscillator valor";
            }
         }
 
