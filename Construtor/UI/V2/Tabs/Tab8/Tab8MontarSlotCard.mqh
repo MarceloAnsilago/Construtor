@@ -1133,6 +1133,13 @@ public:
          ApplySelectedIndicator(selected);
         }
      }
+
+   int SelectedIndicatorIndex(void)
+     {
+      if(!m_created)
+         return(0);
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,18));
+     }
   };
 
 #endif // __CONSTRUTOR_V2_TAB8_MONTAR_SLOT_CARD_MQH__
