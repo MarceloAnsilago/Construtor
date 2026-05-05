@@ -192,6 +192,9 @@ private:
    CEF_CTextLabel  m_ichimoku_senkou_b_label;
    CEF_CTextEdit   m_ichimoku_senkou_b_spin;
 
+   CEF_CTextLabel  m_adx_period_label;
+   CEF_CTextEdit   m_adx_period_spin;
+
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
 
@@ -259,7 +262,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,34);
+      ArrayResize(items,35);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -294,6 +297,7 @@ private:
       items[31]="DeMarker";
       items[32]="Alligator";
       items[33]="Nuvem de Ichimoku";
+      items[34]="ADX (Average Direcional index)";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -488,6 +492,9 @@ private:
       HideSpin(m_ichimoku_kijun_spin);
       HideLabel(m_ichimoku_senkou_b_label);
       HideSpin(m_ichimoku_senkou_b_spin);
+
+      HideLabel(m_adx_period_label);
+      HideSpin(m_adx_period_spin);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -892,6 +899,15 @@ private:
       ShowSpin(m_ichimoku_senkou_b_spin);
      }
 
+   void ShowADXView(void)
+     {
+      HideAllContent();
+      SetViewText("ADX (Average Direcional index)","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_adx_period_label);
+      ShowSpin(m_adx_period_spin);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -1104,6 +1120,11 @@ private:
       if(safe_index==33)
         {
          ShowIchimokuView();
+         return;
+        }
+      if(safe_index==34)
+        {
+         ShowADXView();
          return;
         }
 
@@ -1683,6 +1704,13 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_adx_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_adx_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1747,7 +1775,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,33);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,34);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1773,7 +1801,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,33);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,34);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1786,8 +1814,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,33));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,33));
+         return(V2ClampIndex(m_last_selected_index,0,34));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,34));
     }
   };
 

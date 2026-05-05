@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,100);
+      ArrayResize(items,104);
       int total=0;
 
       items[total++]="Nao usar";
@@ -246,6 +246,12 @@ private:
             items[total++]=prefix+"ichimoku senkou span a";
             items[total++]=prefix+"ichimoku senkou span b";
             items[total++]=prefix+"ichimoku chinkou span";
+           }
+         else if(idx==34)
+           {
+            items[total++]=prefix+"adx";
+            items[total++]=prefix+"di+";
+            items[total++]=prefix+"di-";
            }
         }
 
