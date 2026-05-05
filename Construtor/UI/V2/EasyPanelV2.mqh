@@ -589,7 +589,12 @@ public:
 
       const int top_selected=m_top_tabs.SelectedTab();
       if(top_selected!=m_top_tab_last)
-         QueueBusyTransition("Carregando abas...");
+        {
+         if(top_selected==0)
+            QueueBusyTransition("Carregando Parametrizacao e montagem...");
+         else
+            QueueBusyTransition("Carregando Execucao e painel...");
+        }
 
       if(top_selected==0)
         {
