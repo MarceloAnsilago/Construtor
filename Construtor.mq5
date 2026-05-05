@@ -80,82 +80,6 @@ input ENUM_CONSTRUTOR_STOP_MOVEL_INDICADOR InpTrailingStopIndicador = CONSTRUTOR
 SConstrutorSettings g_settings;
 CConstrutorEasyPanelV2 *g_panel_new=NULL;
 
-string LAUNCHER_BG_NAME="ConstrutorLauncherBg";
-string LAUNCHER_PANEL_BUTTON_NAME="ConstrutorLauncherPanelButton";
-
-void Construtor_ToggleEasyPanel(void)
-  {
-   if(g_panel_new!=NULL && g_panel_new.IsVisible())
-     {
-      g_panel_new.HidePanel();
-      return;
-     }
-   ShowNewPanel();
-  }
-
-bool CreateLauncherBackground(void)
-  {
-   if(ObjectFind(0,LAUNCHER_BG_NAME)>=0)
-      return(true);
-   if(!ObjectCreate(0,LAUNCHER_BG_NAME,OBJ_RECTANGLE_LABEL,0,0,0))
-      return(false);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_CORNER,CORNER_LEFT_UPPER);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_XDISTANCE,12);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_YDISTANCE,24);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_XSIZE,240);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_YSIZE,96);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BGCOLOR,clrWhiteSmoke);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_COLOR,clrSilver);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BORDER_TYPE,BORDER_FLAT);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_BACK,false);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_HIDDEN,true);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_SELECTABLE,false);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_SELECTED,false);
-   ObjectSetInteger(0,LAUNCHER_BG_NAME,OBJPROP_ZORDER,0);
-   return(true);
-  }
-
-bool CreateLauncherButton(const string name,const string text,const int y_distance)
-  {
-   if(ObjectFind(0,name)<0 && !ObjectCreate(0,name,OBJ_BUTTON,0,0,0))
-      return(false);
-   ObjectSetInteger(0,name,OBJPROP_CORNER,CORNER_LEFT_UPPER);
-   ObjectSetInteger(0,name,OBJPROP_XDISTANCE,24);
-   ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y_distance);
-   ObjectSetInteger(0,name,OBJPROP_XSIZE,216);
-   ObjectSetInteger(0,name,OBJPROP_YSIZE,28);
-   ObjectSetInteger(0,name,OBJPROP_BGCOLOR,clrGainsboro);
-   ObjectSetInteger(0,name,OBJPROP_COLOR,clrBlack);
-   ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,clrSilver);
-   ObjectSetInteger(0,name,OBJPROP_HIDDEN,true);
-   ObjectSetInteger(0,name,OBJPROP_SELECTABLE,false);
-   ObjectSetInteger(0,name,OBJPROP_SELECTED,false);
-   ObjectSetInteger(0,name,OBJPROP_ZORDER,1);
-   ObjectSetString(0,name,OBJPROP_TEXT,text);
-   return(true);
-  }
-
-bool CreateLauncher(void)
-  {
-   if(!CreateLauncherBackground())
-      return(false);
-   if(!CreateLauncherButton(LAUNCHER_PANEL_BUTTON_NAME,"Abrir Painel",34))
-      return(false);
-   return(true);
-  }
-
-void DeleteLauncherObject(const string name)
-  {
-   if(ObjectFind(0,name)>=0)
-      ObjectDelete(0,name);
-  }
-
-void DeleteLauncher(void)
-  {
-   DeleteLauncherObject(LAUNCHER_PANEL_BUTTON_NAME);
-   DeleteLauncherObject(LAUNCHER_BG_NAME);
-  }
-
 bool EnsureNewPanel(void)
   {
    if(g_panel_new==NULL)
@@ -286,8 +210,6 @@ void LoadInputsToSettings(void)
 int OnInit()
   {
    LoadInputsToSettings();
-   if(!CreateLauncher())
-      return(INIT_FAILED);
    if(!ShowNewPanel())
      {
       Print(__FUNCTION__,": falha ao abrir o painel V2.");
@@ -301,7 +223,6 @@ void OnDeinit(const int reason)
   {
    EventKillTimer();
    DestroyNewPanel();
-   DeleteLauncher();
   }
 
 void OnTick()
@@ -316,15 +237,6 @@ void OnTimer()
 
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
-   if(id==CHARTEVENT_OBJECT_CLICK)
-     {
-      if(sparam==LAUNCHER_PANEL_BUTTON_NAME)
-        {
-         ShowNewPanel();
-         return;
-        }
-     }
-
    if(g_panel_new!=NULL && g_panel_new.IsVisible())
      {
       g_panel_new.ChartEvent(id,lparam,dparam,sparam);
