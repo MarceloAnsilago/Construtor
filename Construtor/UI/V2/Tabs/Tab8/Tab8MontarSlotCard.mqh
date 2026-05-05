@@ -43,6 +43,30 @@ private:
    CEF_CTextLabel  m_keltner_ma_type_label;
    CEF_CComboBox   m_keltner_ma_type_combo;
 
+   CEF_CTextLabel  m_donchian_period_label;
+   CEF_CTextEdit   m_donchian_period_spin;
+
+   CEF_CTextLabel  m_afast_period_label;
+   CEF_CTextEdit   m_afast_period_spin;
+   CEF_CTextLabel  m_afast_shift_label;
+   CEF_CTextEdit   m_afast_shift_spin;
+   CEF_CTextLabel  m_afast_ma_type_label;
+   CEF_CComboBox   m_afast_ma_type_combo;
+   CEF_CTextLabel  m_afast_price_label;
+   CEF_CComboBox   m_afast_price_combo;
+
+   CEF_CTextLabel  m_desvio_period_label;
+   CEF_CTextEdit   m_desvio_period_spin;
+   CEF_CTextLabel  m_desvio_ma_type_label;
+   CEF_CComboBox   m_desvio_ma_type_combo;
+   CEF_CTextLabel  m_desvio_price_label;
+   CEF_CComboBox   m_desvio_price_combo;
+
+   CEF_CTextLabel  m_atr_channel_period_label;
+   CEF_CTextEdit   m_atr_channel_period_spin;
+   CEF_CTextLabel  m_atr_channel_deviation_label;
+   CEF_CTextEdit   m_atr_channel_deviation_spin;
+
    CEF_CTextLabel  m_ma_period_label;
    CEF_CTextEdit   m_ma_period_spin;
    CEF_CTextLabel  m_ma_shift_label;
@@ -51,6 +75,35 @@ private:
    CEF_CComboBox   m_ma_type_combo;
    CEF_CTextLabel  m_ma_price_label;
    CEF_CComboBox   m_ma_price_combo;
+
+   CEF_CTextLabel  m_bbands_period_label;
+   CEF_CTextEdit   m_bbands_period_spin;
+   CEF_CTextLabel  m_bbands_deviation_label;
+   CEF_CTextEdit   m_bbands_deviation_spin;
+   CEF_CTextLabel  m_bbands_shift_label;
+   CEF_CTextEdit   m_bbands_shift_spin;
+   CEF_CTextLabel  m_bbands_price_label;
+   CEF_CComboBox   m_bbands_price_combo;
+
+   CEF_CTextLabel  m_env_period_label;
+   CEF_CTextEdit   m_env_period_spin;
+   CEF_CTextLabel  m_env_shift_label;
+   CEF_CTextEdit   m_env_shift_spin;
+   CEF_CTextLabel  m_env_ma_type_label;
+   CEF_CComboBox   m_env_ma_type_combo;
+   CEF_CTextLabel  m_env_deviation_label;
+   CEF_CTextEdit   m_env_deviation_spin;
+
+   CEF_CTextLabel  m_stoch_k_label;
+   CEF_CTextEdit   m_stoch_k_spin;
+   CEF_CTextLabel  m_stoch_d_label;
+   CEF_CTextEdit   m_stoch_d_spin;
+   CEF_CTextLabel  m_stoch_slow_label;
+   CEF_CTextEdit   m_stoch_slow_spin;
+   CEF_CTextLabel  m_stoch_ma_type_label;
+   CEF_CComboBox   m_stoch_ma_type_combo;
+   CEF_CTextLabel  m_stoch_price_type_label;
+   CEF_CComboBox   m_stoch_price_type_combo;
 
    CEF_CTextLabel  m_macd_fast_label;
    CEF_CTextEdit   m_macd_fast_spin;
@@ -70,6 +123,17 @@ private:
    CEF_CComboBox   m_stddev_ma_type_combo;
    CEF_CTextLabel  m_stddev_price_label;
    CEF_CComboBox   m_stddev_price_combo;
+
+   CEF_CTextLabel  m_volume_type_label;
+   CEF_CComboBox   m_volume_type_combo;
+
+   CEF_CTextLabel  m_atr_period_label;
+   CEF_CTextEdit   m_atr_period_spin;
+
+   CEF_CTextLabel  m_sar_step_label;
+   CEF_CTextEdit   m_sar_step_spin;
+   CEF_CTextLabel  m_sar_max_label;
+   CEF_CTextEdit   m_sar_max_spin;
 
    void HideFrame(CEF_CFrame &frame) { frame.Hide(); frame.Update(true); }
    void ShowFrame(CEF_CFrame &frame) { frame.Show(); frame.Update(true); }
@@ -183,6 +247,30 @@ private:
       HideLabel(m_keltner_ma_type_label);
       HideCombo(m_keltner_ma_type_combo);
 
+      HideLabel(m_donchian_period_label);
+      HideSpin(m_donchian_period_spin);
+
+      HideLabel(m_afast_period_label);
+      HideSpin(m_afast_period_spin);
+      HideLabel(m_afast_shift_label);
+      HideSpin(m_afast_shift_spin);
+      HideLabel(m_afast_ma_type_label);
+      HideCombo(m_afast_ma_type_combo);
+      HideLabel(m_afast_price_label);
+      HideCombo(m_afast_price_combo);
+
+      HideLabel(m_desvio_period_label);
+      HideSpin(m_desvio_period_spin);
+      HideLabel(m_desvio_ma_type_label);
+      HideCombo(m_desvio_ma_type_combo);
+      HideLabel(m_desvio_price_label);
+      HideCombo(m_desvio_price_combo);
+
+      HideLabel(m_atr_channel_period_label);
+      HideSpin(m_atr_channel_period_spin);
+      HideLabel(m_atr_channel_deviation_label);
+      HideSpin(m_atr_channel_deviation_spin);
+
       HideLabel(m_ma_period_label);
       HideSpin(m_ma_period_spin);
       HideLabel(m_ma_shift_label);
@@ -191,6 +279,35 @@ private:
       HideCombo(m_ma_type_combo);
       HideLabel(m_ma_price_label);
       HideCombo(m_ma_price_combo);
+
+      HideLabel(m_bbands_period_label);
+      HideSpin(m_bbands_period_spin);
+      HideLabel(m_bbands_deviation_label);
+      HideSpin(m_bbands_deviation_spin);
+      HideLabel(m_bbands_shift_label);
+      HideSpin(m_bbands_shift_spin);
+      HideLabel(m_bbands_price_label);
+      HideCombo(m_bbands_price_combo);
+
+      HideLabel(m_env_period_label);
+      HideSpin(m_env_period_spin);
+      HideLabel(m_env_shift_label);
+      HideSpin(m_env_shift_spin);
+      HideLabel(m_env_ma_type_label);
+      HideCombo(m_env_ma_type_combo);
+      HideLabel(m_env_deviation_label);
+      HideSpin(m_env_deviation_spin);
+
+      HideLabel(m_stoch_k_label);
+      HideSpin(m_stoch_k_spin);
+      HideLabel(m_stoch_d_label);
+      HideSpin(m_stoch_d_spin);
+      HideLabel(m_stoch_slow_label);
+      HideSpin(m_stoch_slow_spin);
+      HideLabel(m_stoch_ma_type_label);
+      HideCombo(m_stoch_ma_type_combo);
+      HideLabel(m_stoch_price_type_label);
+      HideCombo(m_stoch_price_type_combo);
 
       HideLabel(m_macd_fast_label);
       HideSpin(m_macd_fast_spin);
@@ -210,7 +327,18 @@ private:
       HideCombo(m_stddev_ma_type_combo);
       HideLabel(m_stddev_price_label);
       HideCombo(m_stddev_price_combo);
-     }
+
+      HideLabel(m_volume_type_label);
+      HideCombo(m_volume_type_combo);
+
+      HideLabel(m_atr_period_label);
+      HideSpin(m_atr_period_spin);
+
+      HideLabel(m_sar_step_label);
+      HideSpin(m_sar_step_spin);
+      HideLabel(m_sar_max_label);
+      HideSpin(m_sar_max_spin);
+    }
 
    void SetViewText(const string title,const string note)
      {
@@ -261,6 +389,54 @@ private:
       ShowPlaceholderView("Fractal","Sem parametros.");
      }
 
+   void ShowDonchianView(void)
+     {
+      HideAllContent();
+      SetViewText("Donchian","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_donchian_period_label);
+      ShowSpin(m_donchian_period_spin);
+     }
+
+   void ShowAfastamentoView(void)
+     {
+      HideAllContent();
+      SetViewText("Afastamento da media","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_afast_period_label);
+      ShowSpin(m_afast_period_spin);
+      ShowLabel(m_afast_shift_label);
+      ShowSpin(m_afast_shift_spin);
+      ShowLabel(m_afast_ma_type_label);
+      ShowCombo(m_afast_ma_type_combo);
+      ShowLabel(m_afast_price_label);
+      ShowCombo(m_afast_price_combo);
+     }
+
+   void ShowDesvioMedioView(void)
+     {
+      HideAllContent();
+      SetViewText("Desvio medio","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_desvio_period_label);
+      ShowSpin(m_desvio_period_spin);
+      ShowLabel(m_desvio_ma_type_label);
+      ShowCombo(m_desvio_ma_type_combo);
+      ShowLabel(m_desvio_price_label);
+      ShowCombo(m_desvio_price_combo);
+     }
+
+   void ShowAtrChannelView(void)
+     {
+      HideAllContent();
+      SetViewText("ATR com desvio","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_atr_channel_period_label);
+      ShowSpin(m_atr_channel_period_spin);
+      ShowLabel(m_atr_channel_deviation_label);
+      ShowSpin(m_atr_channel_deviation_spin);
+     }
+
    void ShowRegressaoView(void)
      {
       HideAllContent();
@@ -287,6 +463,53 @@ private:
       ShowSpin(m_keltner_deviation_spin);
       ShowLabel(m_keltner_ma_type_label);
       ShowCombo(m_keltner_ma_type_combo);
+     }
+
+   void ShowBandasView(void)
+     {
+      HideAllContent();
+      SetViewText("Bandas de Bollinger","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_bbands_period_label);
+      ShowSpin(m_bbands_period_spin);
+      ShowLabel(m_bbands_deviation_label);
+      ShowSpin(m_bbands_deviation_spin);
+      ShowLabel(m_bbands_shift_label);
+      ShowSpin(m_bbands_shift_spin);
+      ShowLabel(m_bbands_price_label);
+      ShowCombo(m_bbands_price_combo);
+     }
+
+   void ShowEnvelopesView(void)
+     {
+      HideAllContent();
+      SetViewText("Envelopes","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_env_period_label);
+      ShowSpin(m_env_period_spin);
+      ShowLabel(m_env_shift_label);
+      ShowSpin(m_env_shift_spin);
+      ShowLabel(m_env_ma_type_label);
+      ShowCombo(m_env_ma_type_combo);
+      ShowLabel(m_env_deviation_label);
+      ShowSpin(m_env_deviation_spin);
+     }
+
+   void ShowEstocasticoView(void)
+     {
+      HideAllContent();
+      SetViewText("Estocastico","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_stoch_k_label);
+      ShowSpin(m_stoch_k_spin);
+      ShowLabel(m_stoch_d_label);
+      ShowSpin(m_stoch_d_spin);
+      ShowLabel(m_stoch_slow_label);
+      ShowSpin(m_stoch_slow_spin);
+      ShowLabel(m_stoch_ma_type_label);
+      ShowCombo(m_stoch_ma_type_combo);
+      ShowLabel(m_stoch_price_type_label);
+      ShowCombo(m_stoch_price_type_combo);
      }
 
    void ShowMACDView(void)
@@ -329,6 +552,35 @@ private:
       ShowCombo(m_stddev_price_combo);
      }
 
+   void ShowVolumeView(void)
+     {
+      HideAllContent();
+      SetViewText("Volume","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_volume_type_label);
+      ShowCombo(m_volume_type_combo);
+     }
+
+   void ShowATRView(void)
+     {
+      HideAllContent();
+      SetViewText("ATR","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_atr_period_label);
+      ShowSpin(m_atr_period_spin);
+     }
+
+   void ShowParabolicSarView(void)
+     {
+      HideAllContent();
+      SetViewText("Parabolic SAR","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_sar_step_label);
+      ShowSpin(m_sar_step_spin);
+      ShowLabel(m_sar_max_label);
+      ShowSpin(m_sar_max_spin);
+     }
+
    void ApplySelectedIndicator(const int selected)
      {
       string items[];
@@ -345,9 +597,44 @@ private:
          ShowRegressaoView();
          return;
         }
+      if(safe_index==2)
+        {
+         ShowDonchianView();
+         return;
+        }
+      if(safe_index==4)
+        {
+         ShowAfastamentoView();
+         return;
+        }
+      if(safe_index==5)
+        {
+         ShowDesvioMedioView();
+         return;
+        }
+      if(safe_index==6)
+        {
+         ShowAtrChannelView();
+         return;
+        }
       if(safe_index==7)
         {
          ShowMediaMovelView();
+         return;
+        }
+      if(safe_index==8)
+        {
+         ShowBandasView();
+         return;
+        }
+      if(safe_index==9)
+        {
+         ShowEnvelopesView();
+         return;
+        }
+      if(safe_index==10)
+        {
+         ShowEstocasticoView();
          return;
         }
       if(safe_index==11)
@@ -358,6 +645,21 @@ private:
       if(safe_index==12)
         {
          ShowStdDevView();
+         return;
+        }
+      if(safe_index==13)
+        {
+         ShowVolumeView();
+         return;
+        }
+      if(safe_index==14)
+        {
+         ShowATRView();
+         return;
+        }
+      if(safe_index==15)
+        {
+         ShowParabolicSarView();
          return;
         }
       if(safe_index==16)
@@ -480,6 +782,11 @@ public:
       volume_items[0]="Tick";
       volume_items[1]="Real";
 
+      string stoch_type_items[];
+      ArrayResize(stoch_type_items,2);
+      stoch_type_items[0]="Minimo/Maximo";
+      stoch_type_items[1]="Fechamento/Fechamento";
+
       int y_cursor=content_y+18;
       if(!CreateBodyLabel(m_keltner_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
@@ -497,6 +804,70 @@ public:
          return(false);
       y_cursor+=16;
       if(!CreateComboControl(m_keltner_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_donchian_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_donchian_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"21",sub_back,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_afast_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_afast_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_afast_shift_label,"Deslocamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_afast_shift_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_afast_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_afast_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_afast_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_afast_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_desvio_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_desvio_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_desvio_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_desvio_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_desvio_price_label,"Modo de fechamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_desvio_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_atr_channel_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_atr_channel_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"20",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_atr_channel_deviation_label,"Desvio",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_atr_channel_deviation_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"0",sub_back,field_border))
          return(false);
 
       y_cursor=content_y+18;
@@ -522,6 +893,87 @@ public:
          return(false);
       y_cursor+=16;
       if(!CreateComboControl(m_ma_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_bbands_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_bbands_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_bbands_deviation_label,"Desvio",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_bbands_deviation_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.1,1,"2.0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_bbands_shift_label,"Deslocamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_bbands_shift_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_bbands_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_bbands_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_env_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_env_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_env_shift_label,"Deslocamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_env_shift_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_env_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_env_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_env_deviation_label,"Desvio",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_env_deviation_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.1,1,"0.0",sub_back,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_stoch_k_label,"K periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_stoch_k_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"5",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_stoch_d_label,"D periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_stoch_d_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"3",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_stoch_slow_label,"Lentidao",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_stoch_slow_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"3",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_stoch_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_stoch_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_stoch_price_type_label,"Tipo de estocastico",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_stoch_price_type_combo,m_body,content_x,y_cursor,inner_w,100,stoch_type_items,0,field_border))
          return(false);
 
       y_cursor=content_y+18;
@@ -605,6 +1057,33 @@ public:
          return(false);
       y_cursor+=16;
       if(!CreateComboControl(m_stddev_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_volume_type_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_volume_type_combo,m_body,content_x,y_cursor,inner_w,80,volume_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_atr_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_atr_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_sar_step_label,"Passo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_sar_step_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.01,2,"0.02",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_sar_max_label,"Maximo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_sar_max_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.01,2,"0.20",sub_back,field_border))
          return(false);
 
       m_combo.SelectItem(0);
