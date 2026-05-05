@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,93);
+      ArrayResize(items,100);
       int total=0;
 
       items[total++]="Nao usar";
@@ -238,6 +238,14 @@ private:
             items[total++]=prefix+"alligator mandibula";
             items[total++]=prefix+"alligator dente";
             items[total++]=prefix+"alligator boca";
+           }
+         else if(idx==33)
+           {
+            items[total++]=prefix+"ichimoku tenkan-sen";
+            items[total++]=prefix+"ichimoku kijun-sen";
+            items[total++]=prefix+"ichimoku senkou span a";
+            items[total++]=prefix+"ichimoku senkou span b";
+            items[total++]=prefix+"ichimoku chinkou span";
            }
         }
 

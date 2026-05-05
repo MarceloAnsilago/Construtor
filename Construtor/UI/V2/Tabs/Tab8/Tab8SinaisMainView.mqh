@@ -177,7 +177,7 @@ private:
    CEF_CComboBox   m_sobre_sentido_combo;
    CEF_CFrame      m_sobre_param_card;
    CEF_CTabs       m_sobre_param_tabs;
-   CEF_CTextLabel  m_sobre_param_title[10];
+   CEF_CTextLabel  m_sobre_param_title[15];
    CEF_CTextLabel  m_sobre_macd_fast_label;
    CEF_CTextEdit   m_sobre_macd_fast_spin;
    CEF_CTextLabel  m_sobre_macd_slow_label;
@@ -226,6 +226,12 @@ private:
    CEF_CTextEdit   m_sobre_cci_period_spin;
    CEF_CTextLabel  m_sobre_cci_price_label;
    CEF_CComboBox   m_sobre_cci_price_combo;
+   CEF_CTextLabel  m_sobre_ichimoku_tenkan_label[5];
+   CEF_CTextEdit   m_sobre_ichimoku_tenkan_spin[5];
+   CEF_CTextLabel  m_sobre_ichimoku_kijun_label[5];
+   CEF_CTextEdit   m_sobre_ichimoku_kijun_spin[5];
+   CEF_CTextLabel  m_sobre_ichimoku_senkou_b_label[5];
+   CEF_CTextEdit   m_sobre_ichimoku_senkou_b_spin[5];
    CEF_CTextLabel  m_sobre_param_hint;
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int tab_index,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index,const color border)
@@ -298,7 +304,7 @@ private:
          return;
 
       const int sobre_selected=m_sobre_tabs.SelectedTab();
-      const int indic_selected=V2ClampIndex(m_sobre_indic_combo.GetListViewPointer().SelectedItemIndex(),0,9);
+      const int indic_selected=V2ClampIndex(m_sobre_indic_combo.GetListViewPointer().SelectedItemIndex(),0,14);
       const bool tab_changed=(sobre_selected!=m_last_sobre_tab);
       const bool indic_changed=(indic_selected!=m_last_sobre_param_idx);
 
@@ -435,6 +441,35 @@ private:
          return(false);
       y+=16;
       if(!CreateComboControl(price_combo,tabs,tabs,tab_index,x,y,width,140,price_items,0,border))
+         return(false);
+      return(true);
+     }
+
+   bool CreateSobreIchimokuBlock(CEF_CTabs &tabs,const int tab_index,const int x,const int width,const color back,const color border,const string title,
+                                 CEF_CTextLabel &title_label,CEF_CTextEdit &tenkan_spin,CEF_CTextEdit &kijun_spin,CEF_CTextEdit &senkou_b_spin,
+                                 CEF_CTextLabel &tenkan_label,CEF_CTextLabel &kijun_label,CEF_CTextLabel &senkou_b_label)
+     {
+      int y=8;
+      const int title_w=MathMax(72,width-64);
+      if(!V2CreateFieldLabel(*m_host,title_label,title,tabs,tabs,m_window_index,tab_index,x,y,title_w,16))
+         return(false);
+      y+=18;
+      if(!V2CreateFieldLabel(*m_host,tenkan_label,"Tenkan-sen",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(tenkan_spin,tabs,tabs,tab_index,x,y,width,9999.0,1.0,1.0,0,"9",back,border))
+         return(false);
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,kijun_label,"Kijun-sen",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(kijun_spin,tabs,tabs,tab_index,x,y,width,9999.0,1.0,1.0,0,"26",back,border))
+         return(false);
+      y+=38;
+      if(!V2CreateFieldLabel(*m_host,senkou_b_label,"Senkou Span B",tabs,tabs,m_window_index,tab_index,x,y,width,16))
+         return(false);
+      y+=16;
+      if(!CreateSpinControl(senkou_b_spin,tabs,tabs,tab_index,x,y,width,9999.0,1.0,1.0,0,"52",back,border))
          return(false);
       return(true);
      }
@@ -1090,7 +1125,7 @@ public:
         }
 
       string sobre_indic_items[];
-      ArrayResize(sobre_indic_items,10);
+      ArrayResize(sobre_indic_items,15);
       sobre_indic_items[0]="MACD";
       sobre_indic_items[1]="Estocastico";
       sobre_indic_items[2]="RSI";
@@ -1101,6 +1136,11 @@ public:
       sobre_indic_items[7]="Bears Power";
       sobre_indic_items[8]="Bulls Power";
       sobre_indic_items[9]="CCI";
+      sobre_indic_items[10]="Ichimoku Tenkan-sen";
+      sobre_indic_items[11]="Ichimoku Kijun-sen";
+      sobre_indic_items[12]="Ichimoku Senkou Span A";
+      sobre_indic_items[13]="Ichimoku Senkou Span B";
+      sobre_indic_items[14]="Ichimoku Chinkou Spa";
 
       string sobre_entry_items[];
       ArrayResize(sobre_entry_items,3);
@@ -1165,7 +1205,7 @@ public:
       m_sobre_param_tabs.BorderColor(sub_back);
       m_sobre_param_tabs.BorderColorHover(sub_back);
       m_sobre_param_tabs.BorderColorPressed(sub_back);
-      for(int i=0;i<10;i++)
+      for(int i=0;i<15;i++)
          m_sobre_param_tabs.AddTab(IntegerToString(i+1),0);
       if(!m_sobre_param_tabs.CreateTabs(12,12))
          return(false);
@@ -1174,7 +1214,7 @@ public:
       CEF_CButtonsGroup *sobre_param_bg=m_sobre_param_tabs.GetButtonsGroupPointer();
       if(sobre_param_bg!=NULL)
         {
-         for(int i=0;i<10;i++)
+         for(int i=0;i<15;i++)
            {
             sobre_param_bg.GetButtonPointer(i).FontSize(1);
             sobre_param_bg.GetButtonPointer(i).LabelXGap(0);
@@ -1192,7 +1232,7 @@ public:
         }
 
       string sobre_param_titles[];
-      ArrayResize(sobre_param_titles,10);
+      ArrayResize(sobre_param_titles,15);
       sobre_param_titles[0]="MACD";
       sobre_param_titles[1]="Estocastico";
       sobre_param_titles[2]="RSI";
@@ -1203,6 +1243,11 @@ public:
       sobre_param_titles[7]="Bears Power";
       sobre_param_titles[8]="Bulls Power";
       sobre_param_titles[9]="CCI";
+      sobre_param_titles[10]="Ichimoku Tenkan-sen";
+      sobre_param_titles[11]="Ichimoku Kijun-sen";
+      sobre_param_titles[12]="Ichimoku Senkou Span A";
+      sobre_param_titles[13]="Ichimoku Senkou Span B";
+      sobre_param_titles[14]="Ichimoku Chinkou Spa";
 
       string sobre_price_items[];
       ArrayResize(sobre_price_items,7);
@@ -1419,6 +1464,20 @@ public:
       py+=16;
       if(!CreateComboControl(m_sobre_cci_price_combo,m_sobre_param_tabs,m_sobre_param_tabs,9,param_x,py,param_w,140,sobre_price_items,0,card_border))
          return(false);
+
+      for(int ichimoku_idx=0;ichimoku_idx<5;ichimoku_idx++)
+        {
+         const int tab_index=10+ichimoku_idx;
+         if(!CreateSobreIchimokuBlock(m_sobre_param_tabs,tab_index,param_x,param_w,sub_back,card_border,sobre_param_titles[tab_index],
+                                      m_sobre_param_title[tab_index],
+                                      m_sobre_ichimoku_tenkan_spin[ichimoku_idx],
+                                      m_sobre_ichimoku_kijun_spin[ichimoku_idx],
+                                      m_sobre_ichimoku_senkou_b_spin[ichimoku_idx],
+                                      m_sobre_ichimoku_tenkan_label[ichimoku_idx],
+                                      m_sobre_ichimoku_kijun_label[ichimoku_idx],
+                                      m_sobre_ichimoku_senkou_b_label[ichimoku_idx]))
+            return(false);
+        }
 
       if(!m_host.CreateTextLabel(m_sobre_param_hint,"Os parametros acompanham o indicador selecionado na aba ao lado.",m_sobre_param_card,m_window_index,m_sobre_tabs,1,12,sobre_tab_h-44,sobre_content_w-24,20))
          return(false);

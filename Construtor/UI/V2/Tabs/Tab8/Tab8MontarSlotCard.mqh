@@ -185,6 +185,13 @@ private:
    CEF_CTextLabel  m_alligator_price_label;
    CEF_CComboBox   m_alligator_price_combo;
 
+   CEF_CTextLabel  m_ichimoku_tenkan_label;
+   CEF_CTextEdit   m_ichimoku_tenkan_spin;
+   CEF_CTextLabel  m_ichimoku_kijun_label;
+   CEF_CTextEdit   m_ichimoku_kijun_spin;
+   CEF_CTextLabel  m_ichimoku_senkou_b_label;
+   CEF_CTextEdit   m_ichimoku_senkou_b_spin;
+
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
 
@@ -252,7 +259,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,33);
+      ArrayResize(items,34);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -286,6 +293,7 @@ private:
       items[30]="CCI (Commodity Channel Index)";
       items[31]="DeMarker";
       items[32]="Alligator";
+      items[33]="Nuvem de Ichimoku";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -473,6 +481,13 @@ private:
       HideCombo(m_alligator_ma_type_combo);
       HideLabel(m_alligator_price_label);
       HideCombo(m_alligator_price_combo);
+
+      HideLabel(m_ichimoku_tenkan_label);
+      HideSpin(m_ichimoku_tenkan_spin);
+      HideLabel(m_ichimoku_kijun_label);
+      HideSpin(m_ichimoku_kijun_spin);
+      HideLabel(m_ichimoku_senkou_b_label);
+      HideSpin(m_ichimoku_senkou_b_spin);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -864,6 +879,19 @@ private:
       ShowCombo(m_alligator_price_combo);
      }
 
+   void ShowIchimokuView(void)
+     {
+      HideAllContent();
+      SetViewText("Nuvem de Ichimoku","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_ichimoku_tenkan_label);
+      ShowSpin(m_ichimoku_tenkan_spin);
+      ShowLabel(m_ichimoku_kijun_label);
+      ShowSpin(m_ichimoku_kijun_spin);
+      ShowLabel(m_ichimoku_senkou_b_label);
+      ShowSpin(m_ichimoku_senkou_b_spin);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -1071,6 +1099,11 @@ private:
       if(safe_index==32)
         {
          ShowAlligatorView();
+         return;
+        }
+      if(safe_index==33)
+        {
+         ShowIchimokuView();
          return;
         }
 
@@ -1631,6 +1664,25 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_ichimoku_tenkan_label,"Tenkan-sen",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_ichimoku_tenkan_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"9",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_ichimoku_kijun_label,"Kijun-sen",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_ichimoku_kijun_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"26",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_ichimoku_senkou_b_label,"Senkou Span B",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_ichimoku_senkou_b_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"52",sub_back,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1695,7 +1747,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,32);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,33);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1721,7 +1773,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,32);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,33);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1734,8 +1786,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,32));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,32));
+         return(V2ClampIndex(m_last_selected_index,0,33));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,33));
     }
   };
 
