@@ -1,6 +1,8 @@
 #ifndef __CONSTRUTOR_V2_SHARED_MQH__
 #define __CONSTRUTOR_V2_SHARED_MQH__
 
+#include "..\\CEFGuiAliases.mqh"
+
 const color V2_COLOR_CARD_BACK=C'233,220,203';
 const color V2_COLOR_CARD_BORDER=C'197,168,136';
 const color V2_COLOR_FIELD_BORDER=C'91,78,64';

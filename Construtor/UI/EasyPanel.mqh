@@ -4,80 +4,8 @@
 // EasyAndFastGUI shares class names with MQL5 <Controls\...> (CButton, CScroll, etc.).
 // To allow both frameworks in the same compilation unit, we rename the EasyAndFastGUI
 // identifiers via preprocessor macros for this include only.
-#define CButton       CEF_CButton
-#define CButtonsGroup CEF_CButtonsGroup
-#define CCalendar     CEF_CCalendar
-#define CCheckBox     CEF_CCheckBox
-#define CContextMenu  CEF_CContextMenu
-#define CComboBox     CEF_CComboBox
-#define CDropCalendar CEF_CDropCalendar
-#define CFileNavigator CEF_CFileNavigator
-#define CFrame        CEF_CFrame
-#define CGraph        CEF_CGraph
-#define CScroll       CEF_CScroll
-#define CScrollV      CEF_CScrollV
-#define CScrollH      CEF_CScrollH
-#define CListView     CEF_CListView
-#define CMenuBar      CEF_CMenuBar
-#define CMenuItem     CEF_CMenuItem
-#define CProgressBar  CEF_CProgressBar
-#define CSeparateLine CEF_CSeparateLine
-#define CSlider       CEF_CSlider
-#define CSplitButton  CEF_CSplitButton
-#define CStandardChart CEF_CStandardChart
-#define CStatusBar    CEF_CStatusBar
-#define CTable        CEF_CTable
-#define CTabs         CEF_CTabs
-#define CTextBox      CEF_CTextBox
-#define CTextEdit     CEF_CTextEdit
-#define CWndContainer CEF_CWndContainer
-#define CWndEvents    CEF_CWndEvents
-#define CWndCreate    CEF_CWndCreate
-#define CTimeEdit     CEF_CTimeEdit
-#define CTooltip      CEF_CTooltip
-#define CTreeItem     CEF_CTreeItem
-#define CTreeView     CEF_CTreeView
-#define CWindow       CEF_CWindow
-#define CTextLabel    CEF_CTextLabel
-
 #include "..\\Settings.mqh"
-#include "..\\..\\EasyAndFastGUI\\WndCreate.mqh"
-
-#undef CTextLabel
-#undef CWindow
-#undef CTreeView
-#undef CTreeItem
-#undef CTooltip
-#undef CTimeEdit
-#undef CWndCreate
-#undef CWndEvents
-#undef CWndContainer
-#undef CTextEdit
-#undef CTextBox
-#undef CTabs
-#undef CTable
-#undef CStatusBar
-#undef CStandardChart
-#undef CSplitButton
-#undef CSlider
-#undef CSeparateLine
-#undef CProgressBar
-#undef CMenuItem
-#undef CMenuBar
-#undef CListView
-#undef CScrollH
-#undef CScrollV
-#undef CScroll
-#undef CGraph
-#undef CFrame
-#undef CFileNavigator
-#undef CDropCalendar
-#undef CComboBox
-#undef CContextMenu
-#undef CCheckBox
-#undef CCalendar
-#undef CButtonsGroup
-#undef CButton
+#include "CEFGuiAliases.mqh"
 
 class CConstrutorEasyPanel : public CEF_CWndCreate
   {
