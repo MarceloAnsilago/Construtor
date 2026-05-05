@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,108);
+      ArrayResize(items,110);
       int total=0;
 
       items[total++]="Nao usar";
@@ -258,6 +258,11 @@ private:
             items[total++]=prefix+"adx wilder";
             items[total++]=prefix+"adx wilder di +";
             items[total++]=prefix+"adx wilder di-";
+           }
+         else if(idx==36)
+           {
+            items[total++]=prefix+"gator superior";
+            items[total++]=prefix+"gator inferior";
            }
         }
 

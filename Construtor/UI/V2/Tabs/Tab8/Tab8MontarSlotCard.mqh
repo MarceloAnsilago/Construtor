@@ -197,6 +197,25 @@ private:
    CEF_CTextLabel  m_adx_wilder_period_label;
    CEF_CTextEdit   m_adx_wilder_period_spin;
 
+   CEF_CTextLabel  m_gator_period_label;
+   CEF_CTextEdit   m_gator_period_spin;
+   CEF_CTextLabel  m_gator_jaw_period_label;
+   CEF_CTextEdit   m_gator_jaw_period_spin;
+   CEF_CTextLabel  m_gator_jaw_shift_label;
+   CEF_CTextEdit   m_gator_jaw_shift_spin;
+   CEF_CTextLabel  m_gator_teeth_period_label;
+   CEF_CTextEdit   m_gator_teeth_period_spin;
+   CEF_CTextLabel  m_gator_teeth_shift_label;
+   CEF_CTextEdit   m_gator_teeth_shift_spin;
+   CEF_CTextLabel  m_gator_lips_period_label;
+   CEF_CTextEdit   m_gator_lips_period_spin;
+   CEF_CTextLabel  m_gator_lips_shift_label;
+   CEF_CTextEdit   m_gator_lips_shift_spin;
+   CEF_CTextLabel  m_gator_ma_type_label;
+   CEF_CComboBox   m_gator_ma_type_combo;
+   CEF_CTextLabel  m_gator_price_label;
+   CEF_CComboBox   m_gator_price_combo;
+
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
 
@@ -264,7 +283,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,36);
+      ArrayResize(items,37);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -301,6 +320,7 @@ private:
       items[33]="Nuvem de Ichimoku";
       items[34]="ADX (Average Direcional index)";
       items[35]="ADX Wilder";
+      items[36]="Gator";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -500,6 +520,25 @@ private:
       HideSpin(m_adx_period_spin);
       HideLabel(m_adx_wilder_period_label);
       HideSpin(m_adx_wilder_period_spin);
+
+      HideLabel(m_gator_period_label);
+      HideSpin(m_gator_period_spin);
+      HideLabel(m_gator_jaw_period_label);
+      HideSpin(m_gator_jaw_period_spin);
+      HideLabel(m_gator_jaw_shift_label);
+      HideSpin(m_gator_jaw_shift_spin);
+      HideLabel(m_gator_teeth_period_label);
+      HideSpin(m_gator_teeth_period_spin);
+      HideLabel(m_gator_teeth_shift_label);
+      HideSpin(m_gator_teeth_shift_spin);
+      HideLabel(m_gator_lips_period_label);
+      HideSpin(m_gator_lips_period_spin);
+      HideLabel(m_gator_lips_shift_label);
+      HideSpin(m_gator_lips_shift_spin);
+      HideLabel(m_gator_ma_type_label);
+      HideCombo(m_gator_ma_type_combo);
+      HideLabel(m_gator_price_label);
+      HideCombo(m_gator_price_combo);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -922,6 +961,31 @@ private:
       ShowSpin(m_adx_wilder_period_spin);
      }
 
+   void ShowGatorView(void)
+     {
+      HideAllContent();
+      SetViewText("Gator","");
+      ShowLabel(m_view_title);
+      ShowLabel(m_gator_period_label);
+      ShowSpin(m_gator_period_spin);
+      ShowLabel(m_gator_jaw_period_label);
+      ShowSpin(m_gator_jaw_period_spin);
+      ShowLabel(m_gator_jaw_shift_label);
+      ShowSpin(m_gator_jaw_shift_spin);
+      ShowLabel(m_gator_teeth_period_label);
+      ShowSpin(m_gator_teeth_period_spin);
+      ShowLabel(m_gator_teeth_shift_label);
+      ShowSpin(m_gator_teeth_shift_spin);
+      ShowLabel(m_gator_lips_period_label);
+      ShowSpin(m_gator_lips_period_spin);
+      ShowLabel(m_gator_lips_shift_label);
+      ShowSpin(m_gator_lips_shift_spin);
+      ShowLabel(m_gator_ma_type_label);
+      ShowCombo(m_gator_ma_type_combo);
+      ShowLabel(m_gator_price_label);
+      ShowCombo(m_gator_price_combo);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -1144,6 +1208,11 @@ private:
       if(safe_index==35)
         {
          ShowADXWilderView();
+         return;
+        }
+      if(safe_index==36)
+        {
+         ShowGatorView();
          return;
         }
 
@@ -1737,6 +1806,53 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_gator_period_label,"Periodo",m_body,content_x,y_cursor,pair_col_w,14))
+         return(false);
+      y_cursor+=14;
+      if(!CreateSpinControl(m_gator_period_spin,m_body,content_x,y_cursor,pair_col_w,9999.0,1.0,1.0,0,"9",sub_back,field_border))
+         return(false);
+      y_cursor+=20;
+      if(!CreateBodyLabel(m_gator_jaw_period_label,"Periodo mandibula",m_body,content_x,y_cursor,pair_col_w,15))
+         return(false);
+      if(!CreateBodyLabel(m_gator_jaw_shift_label,"Desloc. mandibula",m_body,pair_right_x,y_cursor,pair_col_w,15))
+         return(false);
+      y_cursor+=15;
+      if(!CreateSpinControl(m_gator_jaw_period_spin,m_body,content_x,y_cursor,pair_col_w,9999.0,1.0,1.0,0,"13",sub_back,field_border))
+         return(false);
+      if(!CreateSpinControl(m_gator_jaw_shift_spin,m_body,pair_right_x,y_cursor,pair_col_w,9999.0,0.0,1.0,0,"8",sub_back,field_border))
+         return(false);
+      y_cursor+=20;
+      if(!CreateBodyLabel(m_gator_teeth_period_label,"Periodo dente",m_body,content_x,y_cursor,pair_col_w,15))
+         return(false);
+      if(!CreateBodyLabel(m_gator_teeth_shift_label,"Desloc. dente",m_body,pair_right_x,y_cursor,pair_col_w,15))
+         return(false);
+      y_cursor+=15;
+      if(!CreateSpinControl(m_gator_teeth_period_spin,m_body,content_x,y_cursor,pair_col_w,9999.0,1.0,1.0,0,"8",sub_back,field_border))
+         return(false);
+      if(!CreateSpinControl(m_gator_teeth_shift_spin,m_body,pair_right_x,y_cursor,pair_col_w,9999.0,0.0,1.0,0,"5",sub_back,field_border))
+         return(false);
+      y_cursor+=20;
+      if(!CreateBodyLabel(m_gator_lips_period_label,"Periodo boca",m_body,content_x,y_cursor,pair_col_w,15))
+         return(false);
+      if(!CreateBodyLabel(m_gator_lips_shift_label,"Desloc. boca",m_body,pair_right_x,y_cursor,pair_col_w,15))
+         return(false);
+      y_cursor+=15;
+      if(!CreateSpinControl(m_gator_lips_period_spin,m_body,content_x,y_cursor,pair_col_w,9999.0,1.0,1.0,0,"5",sub_back,field_border))
+         return(false);
+      if(!CreateSpinControl(m_gator_lips_shift_spin,m_body,pair_right_x,y_cursor,pair_col_w,9999.0,0.0,1.0,0,"3",sub_back,field_border))
+         return(false);
+      y_cursor+=20;
+      if(!CreateBodyLabel(m_gator_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,pair_col_w,15))
+         return(false);
+      if(!CreateBodyLabel(m_gator_price_label,"Modo de preco",m_body,pair_right_x,y_cursor,pair_col_w,15))
+         return(false);
+      y_cursor+=15;
+      if(!CreateComboControl(m_gator_ma_type_combo,m_body,content_x,y_cursor,pair_col_w,120,ma_type_items,0,field_border))
+         return(false);
+      if(!CreateComboControl(m_gator_price_combo,m_body,pair_right_x,y_cursor,pair_col_w,140,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1801,7 +1917,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,35);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,36);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1827,7 +1943,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,35);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,36);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1840,8 +1956,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,35));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,35));
+         return(V2ClampIndex(m_last_selected_index,0,36));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,36));
     }
   };
 
