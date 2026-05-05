@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,90);
+      ArrayResize(items,93);
       int total=0;
 
       items[total++]="Nao usar";
@@ -232,6 +232,12 @@ private:
          else if(idx==31)
            {
             items[total++]=prefix+"demarker valor";
+           }
+         else if(idx==32)
+           {
+            items[total++]=prefix+"alligator mandibula";
+            items[total++]=prefix+"alligator dente";
+            items[total++]=prefix+"alligator boca";
            }
         }
 

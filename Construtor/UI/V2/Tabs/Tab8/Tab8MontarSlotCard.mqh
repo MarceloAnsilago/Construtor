@@ -168,6 +168,22 @@ private:
    CEF_CComboBox   m_cci_price_combo;
    CEF_CTextLabel  m_demarker_period_label;
    CEF_CTextEdit   m_demarker_period_spin;
+   CEF_CTextLabel  m_alligator_jaw_period_label;
+   CEF_CTextEdit   m_alligator_jaw_period_spin;
+   CEF_CTextLabel  m_alligator_jaw_shift_label;
+   CEF_CTextEdit   m_alligator_jaw_shift_spin;
+   CEF_CTextLabel  m_alligator_teeth_period_label;
+   CEF_CTextEdit   m_alligator_teeth_period_spin;
+   CEF_CTextLabel  m_alligator_teeth_shift_label;
+   CEF_CTextEdit   m_alligator_teeth_shift_spin;
+   CEF_CTextLabel  m_alligator_lips_period_label;
+   CEF_CTextEdit   m_alligator_lips_period_spin;
+   CEF_CTextLabel  m_alligator_lips_shift_label;
+   CEF_CTextEdit   m_alligator_lips_shift_spin;
+   CEF_CTextLabel  m_alligator_ma_type_label;
+   CEF_CComboBox   m_alligator_ma_type_combo;
+   CEF_CTextLabel  m_alligator_price_label;
+   CEF_CComboBox   m_alligator_price_combo;
 
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
@@ -236,7 +252,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,32);
+      ArrayResize(items,33);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -269,6 +285,7 @@ private:
       items[29]="Awesome Oscillator";
       items[30]="CCI (Commodity Channel Index)";
       items[31]="DeMarker";
+      items[32]="Alligator";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -440,6 +457,22 @@ private:
       HideCombo(m_cci_price_combo);
       HideLabel(m_demarker_period_label);
       HideSpin(m_demarker_period_spin);
+      HideLabel(m_alligator_jaw_period_label);
+      HideSpin(m_alligator_jaw_period_spin);
+      HideLabel(m_alligator_jaw_shift_label);
+      HideSpin(m_alligator_jaw_shift_spin);
+      HideLabel(m_alligator_teeth_period_label);
+      HideSpin(m_alligator_teeth_period_spin);
+      HideLabel(m_alligator_teeth_shift_label);
+      HideSpin(m_alligator_teeth_shift_spin);
+      HideLabel(m_alligator_lips_period_label);
+      HideSpin(m_alligator_lips_period_spin);
+      HideLabel(m_alligator_lips_shift_label);
+      HideSpin(m_alligator_lips_shift_spin);
+      HideLabel(m_alligator_ma_type_label);
+      HideCombo(m_alligator_ma_type_combo);
+      HideLabel(m_alligator_price_label);
+      HideCombo(m_alligator_price_combo);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -807,6 +840,30 @@ private:
       ShowSpin(m_demarker_period_spin);
      }
 
+   void ShowAlligatorView(void)
+     {
+      HideAllContent();
+      SetViewText("Alligator","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_alligator_jaw_period_label);
+      ShowSpin(m_alligator_jaw_period_spin);
+      ShowLabel(m_alligator_jaw_shift_label);
+      ShowSpin(m_alligator_jaw_shift_spin);
+      ShowLabel(m_alligator_teeth_period_label);
+      ShowSpin(m_alligator_teeth_period_spin);
+      ShowLabel(m_alligator_teeth_shift_label);
+      ShowSpin(m_alligator_teeth_shift_spin);
+      ShowLabel(m_alligator_lips_period_label);
+      ShowSpin(m_alligator_lips_period_spin);
+      ShowLabel(m_alligator_lips_shift_label);
+      ShowSpin(m_alligator_lips_shift_spin);
+      ShowLabel(m_alligator_ma_type_label);
+      ShowCombo(m_alligator_ma_type_combo);
+      ShowLabel(m_alligator_price_label);
+      ShowCombo(m_alligator_price_combo);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -1009,6 +1066,11 @@ private:
       if(safe_index==31)
         {
          ShowDeMarkerView();
+         return;
+        }
+      if(safe_index==32)
+        {
+         ShowAlligatorView();
          return;
         }
 
@@ -1525,6 +1587,50 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      const int pair_col_gap=10;
+      const int pair_col_w=(inner_w-pair_col_gap)/2;
+      const int pair_right_x=content_x+pair_col_w+pair_col_gap;
+      if(!CreateBodyLabel(m_alligator_jaw_period_label,"Periodo mandibula",m_body,content_x,y_cursor,pair_col_w,16))
+         return(false);
+      if(!CreateBodyLabel(m_alligator_jaw_shift_label,"Desloc. mandibula",m_body,pair_right_x,y_cursor,pair_col_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_alligator_jaw_period_spin,m_body,content_x,y_cursor,pair_col_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      if(!CreateSpinControl(m_alligator_jaw_shift_spin,m_body,pair_right_x,y_cursor,pair_col_w,9999.0,0.0,1.0,0,"8",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_alligator_teeth_period_label,"Periodo dente",m_body,content_x,y_cursor,pair_col_w,16))
+         return(false);
+      if(!CreateBodyLabel(m_alligator_teeth_shift_label,"Desloc. dente",m_body,pair_right_x,y_cursor,pair_col_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_alligator_teeth_period_spin,m_body,content_x,y_cursor,pair_col_w,9999.0,1.0,1.0,0,"8",sub_back,field_border))
+         return(false);
+      if(!CreateSpinControl(m_alligator_teeth_shift_spin,m_body,pair_right_x,y_cursor,pair_col_w,9999.0,0.0,1.0,0,"5",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_alligator_lips_period_label,"Periodo boca",m_body,content_x,y_cursor,pair_col_w,16))
+         return(false);
+      if(!CreateBodyLabel(m_alligator_lips_shift_label,"Desloc. boca",m_body,pair_right_x,y_cursor,pair_col_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_alligator_lips_period_spin,m_body,content_x,y_cursor,pair_col_w,9999.0,1.0,1.0,0,"5",sub_back,field_border))
+         return(false);
+      if(!CreateSpinControl(m_alligator_lips_shift_spin,m_body,pair_right_x,y_cursor,pair_col_w,9999.0,0.0,1.0,0,"3",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_alligator_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,pair_col_w,16))
+         return(false);
+      if(!CreateBodyLabel(m_alligator_price_label,"Modo de preco",m_body,pair_right_x,y_cursor,pair_col_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_alligator_ma_type_combo,m_body,content_x,y_cursor,pair_col_w,140,ma_type_items,0,field_border))
+         return(false);
+      if(!CreateComboControl(m_alligator_price_combo,m_body,pair_right_x,y_cursor,pair_col_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1589,7 +1695,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,31);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,32);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1615,7 +1721,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,31);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,32);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1628,8 +1734,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,31));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,31));
+         return(V2ClampIndex(m_last_selected_index,0,32));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,32));
     }
   };
 
