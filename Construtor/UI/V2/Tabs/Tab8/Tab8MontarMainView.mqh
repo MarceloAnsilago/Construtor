@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,111);
+      ArrayResize(items,112);
       int total=0;
 
       items[total++]="Nao usar";
@@ -267,6 +267,10 @@ private:
          else if(idx==37)
            {
             items[total++]=prefix+"wpr";
+           }
+         else if(idx==38)
+           {
+            items[total++]=prefix+"market facilitation index";
            }
         }
 
