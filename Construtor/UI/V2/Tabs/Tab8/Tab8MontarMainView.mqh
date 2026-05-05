@@ -98,19 +98,19 @@ private:
 
          if(idx==1)
            {
-            items[total++]=prefix+"keltner central";
+            items[total++]=prefix+"keltner Central";
             items[total++]=prefix+"keltner superior";
             items[total++]=prefix+"keltner inferior";
            }
          else if(idx==2)
            {
-            items[total++]=prefix+"donchian superior";
-            items[total++]=prefix+"donchian central";
-            items[total++]=prefix+"donchian inferior";
+            items[total++]=prefix+"dochian superior";
+            items[total++]=prefix+"dochian central";
+            items[total++]=prefix+"dochian inferior";
            }
          else if(idx==3)
            {
-            items[total++]=prefix+"regressao ratio";
+            items[total++]=prefix+"regressao Ratio";
            }
          else if(idx==4)
            {
@@ -179,7 +179,7 @@ private:
          else if(idx==18)
            {
             items[total++]=prefix+"macd histograma";
-            items[total++]=prefix+"macd sinal";
+            items[total++]=prefix+"mack sinal";
            }
         }
 
@@ -211,7 +211,11 @@ private:
          m_logic_value_combo[row].SelectItem(next_selected);
          m_logic_compare_value_combo[row].SelectItem(next_compare_selected);
          m_logic_value_combo[row].Update(true);
+         m_logic_value_combo[row].GetButtonPointer().Update(true);
+         m_logic_value_combo[row].GetListViewPointer().Update(true);
          m_logic_compare_value_combo[row].Update(true);
+         m_logic_compare_value_combo[row].GetButtonPointer().Update(true);
+         m_logic_compare_value_combo[row].GetListViewPointer().Update(true);
         }
      }
 
