@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,104);
+      ArrayResize(items,108);
       int total=0;
 
       items[total++]="Nao usar";
@@ -252,6 +252,12 @@ private:
             items[total++]=prefix+"adx";
             items[total++]=prefix+"di+";
             items[total++]=prefix+"di-";
+           }
+         else if(idx==35)
+           {
+            items[total++]=prefix+"adx wilder";
+            items[total++]=prefix+"adx wilder di +";
+            items[total++]=prefix+"adx wilder di-";
            }
         }
 
