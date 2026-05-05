@@ -93,9 +93,10 @@ public:
          return(false);
 
       m_inner_tabs.SelectTab(0);
-      m_inner_tabs.ShowTabElements();
-      m_sinais_view.SetActive(true);
+      m_sinais_view.SetActive(false);
       m_montar_view.SetActive(false);
+      m_inner_tabs.Hide();
+      m_inner_tabs.Update();
       m_last_selected_tab=0;
       m_created=true;
       return(true);

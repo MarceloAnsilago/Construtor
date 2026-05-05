@@ -457,6 +457,7 @@ public:
       else
          m_exec_tabs.ShowTabElements();
       m_tab8.SetActive(m_top_tabs.SelectedTab()==0 && m_param_tabs.SelectedTab()==7);
+      ChartRedraw();
       m_visible=true;
       return(true);
      }
