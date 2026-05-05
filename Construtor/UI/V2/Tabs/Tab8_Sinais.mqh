@@ -11,43 +11,17 @@ private:
    CEF_CWndCreate        *m_host;
    bool                   m_created;
    bool                   m_is_active;
-   bool                   m_busy_pending;
-   int                    m_busy_phase;
    int                    m_window_index;
    int                    m_tab_index;
    int                    m_last_selected_tab;
-   int                    m_pending_selected_tab;
-   string                 m_busy_text;
 
    CEF_CTabs              m_inner_tabs;
    CV2BusyProgress        m_busy_progress;
    CTab8SinaisMainView    m_sinais_view;
    CTab8MontarMainView    m_montar_view;
 
-   void QueueBusyTransition(const string text)
-     {
-      m_busy_text=text;
-      m_pending_selected_tab=m_inner_tabs.SelectedTab();
-      m_busy_phase=0;
-      m_busy_pending=true;
-     }
-
-   void ApplyPendingTabState(void)
-     {
-      m_last_selected_tab=m_pending_selected_tab;
-      m_inner_tabs.ShowTabElements();
-      if(m_pending_selected_tab==1)
-        {
-         m_montar_view.SetActive(true);
-         m_montar_view.RefreshSlots();
-        }
-      else
-         m_montar_view.SetActive(false);
-      ChartRedraw();
-     }
-
 public:
-                       CTab8SinaisV2(void) : m_host(NULL), m_created(false), m_is_active(false), m_busy_pending(false), m_busy_phase(0), m_window_index(-1), m_tab_index(-1), m_last_selected_tab(-1), m_pending_selected_tab(-1), m_busy_text("") {}
+                       CTab8SinaisV2(void) : m_host(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1), m_last_selected_tab(-1) {}
 
    bool Create(CEF_CWndCreate &host,int window_index,CEF_CTabs &tabs,const int tab_index)
      {
@@ -147,30 +121,22 @@ public:
          return;
 
       const int selected=m_inner_tabs.SelectedTab();
-      if(selected!=m_last_selected_tab && !m_busy_pending)
-         QueueBusyTransition(selected==0 ? "Carregando Sinais..." : "Carregando Montar sinais...");
-
-      if(m_busy_pending)
+      if(selected!=m_last_selected_tab)
         {
-         if(m_busy_phase==0)
+         m_busy_progress.Begin(selected==0 ? "Carregando Sinais..." : "Carregando Montar sinais...",3);
+         m_busy_progress.Step(1,3);
+         m_last_selected_tab=selected;
+         m_inner_tabs.ShowTabElements();
+         if(selected==1)
            {
-            m_busy_progress.Begin(m_busy_text,3);
-            m_busy_progress.Step(1,3);
-            m_busy_phase=1;
-           }
-         else if(m_busy_phase==1)
-           {
-            ApplyPendingTabState();
-            m_busy_progress.Step(2,3);
-            m_busy_phase=2;
+            m_montar_view.SetActive(true);
+            m_montar_view.RefreshSlots();
            }
          else
-           {
-            m_busy_progress.Step(3,3);
-            m_busy_progress.Finish();
-            m_busy_pending=false;
-            m_busy_phase=0;
-           }
+            m_montar_view.SetActive(false);
+         m_busy_progress.Step(2,3);
+         m_busy_progress.Step(3,3);
+         m_busy_progress.Finish();
         }
 
       m_sinais_view.OnTimerEvent();
