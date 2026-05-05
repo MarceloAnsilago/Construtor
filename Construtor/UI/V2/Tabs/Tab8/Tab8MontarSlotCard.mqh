@@ -152,6 +152,8 @@ private:
 
    CEF_CTextLabel  m_bears_power_period_label;
    CEF_CTextEdit   m_bears_power_period_spin;
+   CEF_CTextLabel  m_bulls_power_period_label;
+   CEF_CTextEdit   m_bulls_power_period_spin;
 
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
@@ -220,7 +222,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,26);
+      ArrayResize(items,27);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -247,6 +249,7 @@ private:
       items[23]="FRAMA";
       items[24]="Trix";
       items[25]="Bears Power";
+      items[26]="Bulls Power";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -402,6 +405,8 @@ private:
 
       HideLabel(m_bears_power_period_label);
       HideSpin(m_bears_power_period_spin);
+      HideLabel(m_bulls_power_period_label);
+      HideSpin(m_bulls_power_period_spin);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -711,6 +716,16 @@ private:
       ShowSpin(m_bears_power_period_spin);
      }
 
+   void ShowBullsPowerView(void)
+     {
+      HideAllContent();
+      SetViewText("Bulls Power","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_bulls_power_period_label);
+      ShowSpin(m_bulls_power_period_spin);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -883,6 +898,11 @@ private:
       if(safe_index==25)
         {
          ShowBearsPowerView();
+         return;
+        }
+      if(safe_index==26)
+        {
+         ShowBullsPowerView();
          return;
         }
 
@@ -1347,6 +1367,13 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_bulls_power_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_bulls_power_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"13",sub_back,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1411,7 +1438,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,25);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,26);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1437,7 +1464,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,25);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,26);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1450,8 +1477,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,25));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,25));
+         return(V2ClampIndex(m_last_selected_index,0,26));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,26));
     }
   };
 

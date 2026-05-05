@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,84);
+      ArrayResize(items,85);
       int total=0;
 
       items[total++]="Nao usar";
@@ -208,6 +208,10 @@ private:
          else if(idx==25)
            {
             items[total++]=prefix+"bears power valor";
+           }
+         else if(idx==26)
+           {
+            items[total++]=prefix+"bulls power valor";
            }
         }
 
