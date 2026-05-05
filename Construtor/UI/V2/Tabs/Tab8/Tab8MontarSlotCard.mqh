@@ -162,6 +162,10 @@ private:
    CEF_CComboBox   m_chaikin_ma_type_combo;
    CEF_CTextLabel  m_chaikin_volume_label;
    CEF_CComboBox   m_chaikin_volume_combo;
+   CEF_CTextLabel  m_cci_period_label;
+   CEF_CTextEdit   m_cci_period_spin;
+   CEF_CTextLabel  m_cci_price_label;
+   CEF_CComboBox   m_cci_price_combo;
 
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
@@ -230,7 +234,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,30);
+      ArrayResize(items,31);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -261,6 +265,7 @@ private:
       items[27]="Chaikin Oscilador";
       items[28]="Accelerator Oscillator";
       items[29]="Awesome Oscillator";
+      items[30]="CCI (Commodity Channel Index)";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -426,6 +431,10 @@ private:
       HideCombo(m_chaikin_ma_type_combo);
       HideLabel(m_chaikin_volume_label);
       HideCombo(m_chaikin_volume_combo);
+      HideLabel(m_cci_period_label);
+      HideSpin(m_cci_period_spin);
+      HideLabel(m_cci_price_label);
+      HideCombo(m_cci_price_combo);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -771,6 +780,18 @@ private:
       ShowPlaceholderView("Awesome Oscillator","Sem parametros.");
      }
 
+   void ShowCCIView(void)
+     {
+      HideAllContent();
+      SetViewText("CCI (Commodity Channel Index)","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_cci_period_label);
+      ShowSpin(m_cci_period_spin);
+      ShowLabel(m_cci_price_label);
+      ShowCombo(m_cci_price_combo);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -963,6 +984,11 @@ private:
       if(safe_index==29)
         {
          ShowAwesomeOscillatorView();
+         return;
+        }
+      if(safe_index==30)
+        {
+         ShowCCIView();
          return;
         }
 
@@ -1459,6 +1485,19 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_cci_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_cci_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_cci_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_cci_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1523,7 +1562,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,29);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,30);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1549,7 +1588,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,29);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,30);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1562,8 +1601,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,29));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,29));
+         return(V2ClampIndex(m_last_selected_index,0,30));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,30));
     }
   };
 

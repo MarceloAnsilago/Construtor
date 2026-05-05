@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,88);
+      ArrayResize(items,89);
       int total=0;
 
       items[total++]="Nao usar";
@@ -224,6 +224,10 @@ private:
          else if(idx==29)
            {
             items[total++]=prefix+"awesome oscillator valor";
+           }
+         else if(idx==30)
+           {
+            items[total++]=prefix+"cci (commodity channel index) valor";
            }
         }
 
