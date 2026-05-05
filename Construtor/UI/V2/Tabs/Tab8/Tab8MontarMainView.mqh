@@ -70,7 +70,7 @@ private:
 
    void BuildLogicValueItems(string &items[])
      {
-      ArrayResize(items,85);
+      ArrayResize(items,86);
       int total=0;
 
       items[total++]="Nao usar";
@@ -212,6 +212,10 @@ private:
          else if(idx==26)
            {
             items[total++]=prefix+"bulls power valor";
+           }
+         else if(idx==27)
+           {
+            items[total++]=prefix+"chaikin oscilador valor";
            }
         }
 

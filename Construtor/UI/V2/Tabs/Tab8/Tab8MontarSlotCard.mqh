@@ -154,6 +154,14 @@ private:
    CEF_CTextEdit   m_bears_power_period_spin;
    CEF_CTextLabel  m_bulls_power_period_label;
    CEF_CTextEdit   m_bulls_power_period_spin;
+   CEF_CTextLabel  m_chaikin_fast_label;
+   CEF_CTextEdit   m_chaikin_fast_spin;
+   CEF_CTextLabel  m_chaikin_slow_label;
+   CEF_CTextEdit   m_chaikin_slow_spin;
+   CEF_CTextLabel  m_chaikin_ma_type_label;
+   CEF_CComboBox   m_chaikin_ma_type_combo;
+   CEF_CTextLabel  m_chaikin_volume_label;
+   CEF_CComboBox   m_chaikin_volume_combo;
 
    CEF_CTextLabel  m_obv_volume_label;
    CEF_CComboBox   m_obv_volume_combo;
@@ -222,7 +230,7 @@ private:
 
    void BuildIndicatorItems(string &items[])
      {
-      ArrayResize(items,27);
+      ArrayResize(items,28);
       items[0]="Nao usar";
       items[1]="Keltner";
       items[2]="Donchian";
@@ -250,6 +258,7 @@ private:
       items[24]="Trix";
       items[25]="Bears Power";
       items[26]="Bulls Power";
+      items[27]="Chaikin Oscilador";
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -407,6 +416,14 @@ private:
       HideSpin(m_bears_power_period_spin);
       HideLabel(m_bulls_power_period_label);
       HideSpin(m_bulls_power_period_spin);
+      HideLabel(m_chaikin_fast_label);
+      HideSpin(m_chaikin_fast_spin);
+      HideLabel(m_chaikin_slow_label);
+      HideSpin(m_chaikin_slow_spin);
+      HideLabel(m_chaikin_ma_type_label);
+      HideCombo(m_chaikin_ma_type_combo);
+      HideLabel(m_chaikin_volume_label);
+      HideCombo(m_chaikin_volume_combo);
 
       HideLabel(m_obv_volume_label);
       HideCombo(m_obv_volume_combo);
@@ -726,6 +743,22 @@ private:
       ShowSpin(m_bulls_power_period_spin);
      }
 
+   void ShowChaikinOsciladorView(void)
+     {
+      HideAllContent();
+      SetViewText("Chaikin Oscilador","");
+      ShowLabel(m_view_title);
+
+      ShowLabel(m_chaikin_fast_label);
+      ShowSpin(m_chaikin_fast_spin);
+      ShowLabel(m_chaikin_slow_label);
+      ShowSpin(m_chaikin_slow_spin);
+      ShowLabel(m_chaikin_ma_type_label);
+      ShowCombo(m_chaikin_ma_type_combo);
+      ShowLabel(m_chaikin_volume_label);
+      ShowCombo(m_chaikin_volume_combo);
+     }
+
    void ShowStdDevView(void)
      {
       HideAllContent();
@@ -903,6 +936,11 @@ private:
       if(safe_index==26)
         {
          ShowBullsPowerView();
+         return;
+        }
+      if(safe_index==27)
+        {
+         ShowChaikinOsciladorView();
          return;
         }
 
@@ -1374,6 +1412,31 @@ public:
          return(false);
 
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_chaikin_fast_label,"Media rapida",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_chaikin_fast_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"3",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_chaikin_slow_label,"Media lenta",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_chaikin_slow_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"10",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_chaikin_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_chaikin_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_chaikin_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_chaikin_volume_combo,m_body,content_x,y_cursor,inner_w,80,volume_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
       if(!CreateBodyLabel(m_obv_volume_label,"Volume",m_body,content_x,y_cursor,inner_w,16))
          return(false);
       y_cursor+=16;
@@ -1438,7 +1501,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,26);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,27);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -1464,7 +1527,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,26);
+      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,27);
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -1477,8 +1540,8 @@ public:
       if(!m_created)
          return(0);
       if(m_last_selected_index>=0)
-         return(V2ClampIndex(m_last_selected_index,0,26));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,26));
+         return(V2ClampIndex(m_last_selected_index,0,27));
+      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,27));
     }
   };
 
