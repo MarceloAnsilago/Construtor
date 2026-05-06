@@ -74,6 +74,7 @@ private:
       const int param_selected=m_param_tabs.SelectedTab();
 
       // Force nested signal controls back to a known state before re-showing tabs.
+      m_tab1.SetActive(false);
       m_tab8.SetActive(false);
 
       m_top_tabs.ShowTabElements();
@@ -82,6 +83,7 @@ private:
       else
          m_exec_tabs.ShowTabElements();
 
+      m_tab1.SetActive(top_selected==0 && param_selected==0);
       m_tab8.SetActive(top_selected==0 && param_selected==7);
       ChartRedraw();
      }
@@ -515,6 +517,8 @@ public:
       if(!m_created || !m_visible)
          return;
 
+      if(m_tab1.HandleEvent(id,lparam,dparam,sparam))
+         return;
       if(m_tab2.HandleEvent(id,lparam,dparam,sparam))
          return;
       if(m_tab3.HandleEvent(id,lparam,dparam,sparam))
