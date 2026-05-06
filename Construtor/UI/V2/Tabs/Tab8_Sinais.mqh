@@ -96,13 +96,12 @@ public:
       m_sinais_view.SetActive(false);
       m_montar_view.SetActive(false,false);
       m_inner_tabs.Hide();
-      m_inner_tabs.Update();
       m_last_selected_tab=0;
       m_created=true;
       return(true);
      }
 
-   void SetActive(const bool active)
+   void SetActive(const bool active,const bool redraw=true)
      {
       if(!m_created)
          return;
@@ -111,9 +110,10 @@ public:
       if(!active)
         {
          m_sinais_view.SetActive(false);
-         m_montar_view.SetActive(false,false);
+         m_montar_view.SetActive(false,redraw);
          m_inner_tabs.Hide();
-         m_inner_tabs.Update();
+         if(redraw)
+            m_inner_tabs.Update();
          return;
         }
 

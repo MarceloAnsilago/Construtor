@@ -440,7 +440,7 @@ public:
       m_param_tabs.SelectTab(0);
       m_exec_tabs.SelectTab(0);
       m_tab1.SetActive(false);
-      m_tab8.SetActive(false);
+      m_tab8.SetActive(false,false);
 
       CompletedGUI();
       m_top_tab_last=0;
