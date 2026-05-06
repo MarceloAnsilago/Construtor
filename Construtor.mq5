@@ -108,6 +108,7 @@ void LoadInputsToSettings(void)
   {
    // General
    g_settings.estrategia_nome    =InpEstrategiaNome;
+   g_settings.magic_number       =ConstrutorStringToMagic(InpEstrategiaNome);
    g_settings.mercado            =InpMercadoDesejado;
    g_settings.tipo_operacional    =InpTipoOperacional;
    g_settings.modo_processamento  =InpModoProcessamento;
@@ -205,6 +206,16 @@ void LoadInputsToSettings(void)
       g_settings.saida_parcial_valor[i]=0.0;
       g_settings.saida_parcial_distancia[i]=0.0;
      }
+
+   // Signal entry and filter defaults
+   g_settings.tipo_entrada_sinal=CONSTRUTOR_ENTRADA_MERCADO;
+   g_settings.usar_filtro_sinal=CONSTRUTOR_NAO;
+   g_settings.filtro_sinal_unidade=CONSTRUTOR_STOP_PONTOS;
+   g_settings.filtro_sinal_tempo_grafico=InpTempoGrafico;
+   g_settings.filtro_sinal_tamanho_vela_min=0.0;
+   g_settings.filtro_sinal_tamanho_vela_max=0.0;
+   g_settings.filtro_sinal_pavio_min=0.0;
+   g_settings.filtro_sinal_pavio_max=0.0;
   }
 
 int OnInit()

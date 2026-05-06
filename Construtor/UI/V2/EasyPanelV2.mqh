@@ -65,6 +65,27 @@ private:
    CTabExecucaoV2       m_execucao;
    CTabPainelV2         m_painel;
 
+   void RefreshActiveVisualState(void)
+     {
+      if(!m_created)
+         return;
+
+      const int top_selected=m_top_tabs.SelectedTab();
+      const int param_selected=m_param_tabs.SelectedTab();
+
+      // Force nested signal controls back to a known state before re-showing tabs.
+      m_tab8.SetActive(false);
+
+      m_top_tabs.ShowTabElements();
+      if(top_selected==0)
+         m_param_tabs.ShowTabElements();
+      else
+         m_exec_tabs.ShowTabElements();
+
+      m_tab8.SetActive(top_selected==0 && param_selected==7);
+      ChartRedraw();
+     }
+
    void StyleTabsButtons(CEF_CTabs &tabs,const int count,const bool vertical=false)
      {
       CEF_CButtonsGroup *group=tabs.GetButtonsGroupPointer();
@@ -265,6 +286,7 @@ public:
       if(!m_created || !m_visible)
          return;
 
+      m_tab1.OnTimerEvent();
       m_tab8.OnTimerEvent();
      }
 
@@ -451,13 +473,7 @@ public:
         }
 
       Show((uint)m_window_index);
-      m_top_tabs.ShowTabElements();
-      if(m_top_tabs.SelectedTab()==0)
-         m_param_tabs.ShowTabElements();
-      else
-         m_exec_tabs.ShowTabElements();
-      m_tab8.SetActive(m_top_tabs.SelectedTab()==0 && m_param_tabs.SelectedTab()==7);
-      ChartRedraw();
+      RefreshActiveVisualState();
       m_visible=true;
       return(true);
      }
@@ -522,19 +538,23 @@ public:
          return;
         }
 
+      if(id==CHARTEVENT_CUSTOM+ON_WINDOW_COLLAPSE
+         || id==CHARTEVENT_CUSTOM+ON_WINDOW_EXPAND
+         || id==CHARTEVENT_CUSTOM+ON_WINDOW_CHANGE_XSIZE
+         || id==CHARTEVENT_CUSTOM+ON_WINDOW_CHANGE_YSIZE
+         || id==CHARTEVENT_CHART_CHANGE)
+        {
+         RefreshActiveVisualState();
+        }
+
       const int top_selected=m_top_tabs.SelectedTab();
       if(top_selected!=m_top_tab_last)
         {
          m_busy_progress.Begin(top_selected==0 ? "Carregando Parametrizacao e montagem..." : "Carregando Execucao e painel...",3);
          m_busy_progress.Step(1,3);
          m_top_tab_last=top_selected;
-         m_top_tabs.ShowTabElements();
-         if(top_selected==0)
-            m_param_tabs.ShowTabElements();
-         else
-            m_exec_tabs.ShowTabElements();
+         RefreshActiveVisualState();
          m_busy_progress.Step(2,3);
-         m_tab8.SetActive(top_selected==0 && m_param_tabs.SelectedTab()==7);
          m_busy_progress.Step(3,3);
          m_busy_progress.Finish();
         }
@@ -547,9 +567,8 @@ public:
             m_busy_progress.Begin("Carregando aba lateral...",3);
             m_busy_progress.Step(1,3);
             m_param_tab_last=selected;
-            m_param_tabs.ShowTabElements();
+            RefreshActiveVisualState();
             m_busy_progress.Step(2,3);
-            m_tab8.SetActive(selected==7);
             m_busy_progress.Step(3,3);
             m_busy_progress.Finish();
            }
@@ -562,7 +581,7 @@ public:
             m_busy_progress.Begin("Carregando aba lateral...",3);
             m_busy_progress.Step(1,3);
             m_exec_tab_last=selected;
-            m_exec_tabs.ShowTabElements();
+            RefreshActiveVisualState();
             m_busy_progress.Step(2,3);
             m_busy_progress.Step(3,3);
             m_busy_progress.Finish();

@@ -25,6 +25,8 @@ private:
 
    CEF_CTextLabel    m_name_label;
    CEF_CTextEdit     m_name_edit;
+   CEF_CTextLabel    m_magic_label;
+   CEF_CTextLabel    m_magic_value_label;
    CEF_CTextLabel    m_market_label;
    CEF_CComboBox     m_market_combo;
    CEF_CTextLabel    m_oper_label;
@@ -60,9 +62,28 @@ private:
    CEF_CTextLabel    m_spread_label;
    CEF_CTextEdit     m_spread_edit;
    CEF_CTextLabel    m_debug_label;
+   string            m_last_magic_source;
+
+   void UpdateMagicDisplay(void)
+     {
+      if(!m_created)
+         return;
+
+      const string current_name=m_name_edit.GetValue();
+      if(current_name==m_last_magic_source)
+         return;
+
+      m_last_magic_source=current_name;
+      m_settings.estrategia_nome=current_name;
+      m_settings.magic_number=ConstrutorStringToMagic(current_name);
+      m_has_settings=true;
+      m_magic_value_label.LabelText(IntegerToString(m_settings.magic_number));
+      m_magic_value_label.Update(true);
+      ChartRedraw();
+     }
 
 public:
-                     CTab1InfIniciaisV2(void) : m_host(NULL), m_has_settings(false), m_created(false), m_window_index(-1), m_tab_index(-1) {}
+                     CTab1InfIniciaisV2(void) : m_host(NULL), m_has_settings(false), m_created(false), m_window_index(-1), m_tab_index(-1), m_last_magic_source("") {}
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int x,const int y,const int width,const int list_height,const string &items[],const int selected_index)
      {
@@ -137,7 +158,10 @@ public:
    void SetSettings(const SConstrutorSettings &settings)
      {
       m_settings=settings;
+      if(m_settings.magic_number<=0 && StringLen(m_settings.estrategia_nome)>0)
+         m_settings.magic_number=ConstrutorStringToMagic(m_settings.estrategia_nome);
       m_has_settings=true;
+      m_last_magic_source="";
      }
 
    void ExportSettings(SConstrutorSettings &settings)
@@ -212,6 +236,15 @@ public:
        if(!CreateTextInputControl(m_name_edit,m_card_basic,tabs,field_x,y,field_w,"Minha estratégia"))
           return(false);
       y+=control_h+v_gap;
+
+      if(!V2CreateFieldLabel(*m_host,m_magic_label,"Magic number",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
+         return(false);
+      y+=label_h+2;
+      if(!CreateTextLabel(m_magic_value_label,"0",m_card_basic,m_window_index,tabs,m_tab_index,field_x,y,field_w,18))
+         return(false);
+      m_magic_value_label.FontSize(11);
+      m_magic_value_label.LabelColor(V2_COLOR_TEXT_PRIMARY);
+      y+=18+v_gap;
 
        if(!V2CreateFieldLabel(*m_host,m_market_label,"Mercado desejado",m_card_basic,tabs,m_window_index,m_tab_index,field_x,y,field_w,label_h))
           return(false);
@@ -310,6 +343,7 @@ public:
           return(false);
 
       m_created=true;
+      UpdateMagicDisplay();
       return(true);
      }
 
@@ -319,6 +353,7 @@ public:
          return;
 
       m_name_edit.SetValue(m_settings.estrategia_nome);
+      m_magic_value_label.LabelText(IntegerToString(m_settings.magic_number));
       m_market_combo.SelectItem(V2ClampIndex((int)m_settings.mercado,0,1));
       m_oper_combo.SelectItem(V2ClampIndex((int)m_settings.tipo_operacional,0,1));
       m_mode_combo.SelectItem(V2ClampIndex((int)m_settings.modo_processamento,0,1));
@@ -338,6 +373,8 @@ public:
       m_tempo_combo.SelectItem(V2ClampIndex((int)m_settings.tempo_grafico,0,20));
       m_volume_edit.SetValue(DoubleToString(m_settings.volume_inicial,2));
       m_spread_edit.SetValue(IntegerToString(m_settings.spread_maximo));
+      m_last_magic_source="";
+      UpdateMagicDisplay();
      }
 
    void Save(void)
@@ -345,7 +382,9 @@ public:
       if(!m_has_settings || !m_created)
          return;
 
+      UpdateMagicDisplay();
       m_settings.estrategia_nome=m_name_edit.GetValue();
+      m_settings.magic_number=ConstrutorStringToMagic(m_settings.estrategia_nome);
       m_settings.mercado=(ENUM_CONSTRUTOR_MERCADO)V2ClampIndex(m_market_combo.GetListViewPointer().SelectedItemIndex(),0,1);
       m_settings.tipo_operacional=(ENUM_CONSTRUTOR_TIPO_OPERACIONAL)V2ClampIndex(m_oper_combo.GetListViewPointer().SelectedItemIndex(),0,1);
       m_settings.modo_processamento=(ENUM_CONSTRUTOR_MODO_PROCESSAMENTO)V2ClampIndex(m_mode_combo.GetListViewPointer().SelectedItemIndex(),0,1);
@@ -364,6 +403,13 @@ public:
       m_settings.tempo_grafico=(ENUM_CONSTRUTOR_TEMPO_GRAFICO)V2ClampIndex(m_tempo_combo.GetListViewPointer().SelectedItemIndex(),0,20);
       m_settings.volume_inicial=StringToDouble(m_volume_edit.GetValue());
       m_settings.spread_maximo=(int)StringToInteger(m_spread_edit.GetValue());
+     }
+
+   void OnTimerEvent(void)
+     {
+      if(!m_created)
+         return;
+      UpdateMagicDisplay();
      }
   };
 
