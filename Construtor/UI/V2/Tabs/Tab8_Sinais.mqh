@@ -94,7 +94,7 @@ public:
 
       m_inner_tabs.SelectTab(0);
       m_sinais_view.SetActive(false);
-      m_montar_view.SetActive(false);
+      m_montar_view.SetActive(false,false);
       m_inner_tabs.Hide();
       m_inner_tabs.Update();
       m_last_selected_tab=0;
@@ -111,7 +111,7 @@ public:
       if(!active)
         {
          m_sinais_view.SetActive(false);
-         m_montar_view.SetActive(false);
+         m_montar_view.SetActive(false,false);
          m_inner_tabs.Hide();
          m_inner_tabs.Update();
          return;

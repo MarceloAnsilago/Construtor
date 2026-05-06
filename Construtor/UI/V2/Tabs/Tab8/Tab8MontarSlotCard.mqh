@@ -10,6 +10,7 @@ private:
    CEF_CTabs      *m_tabs;
    bool            m_created;
    bool            m_is_active;
+   bool            m_silent_updates;
    int             m_window_index;
    int             m_tab_index;
    int             m_slot_index;
@@ -252,8 +253,8 @@ private:
    CEF_CTextLabel  m_sar_max_label;
    CEF_CTextEdit   m_sar_max_spin;
 
-   void HideFrame(CEF_CFrame &frame) { frame.Hide(); frame.Update(true); }
-   void ShowFrame(CEF_CFrame &frame) { frame.Show(); frame.Update(true); }
+   void HideFrame(CEF_CFrame &frame) { frame.Hide(); if(!m_silent_updates) frame.Update(true); }
+   void ShowFrame(CEF_CFrame &frame) { frame.Show(); if(!m_silent_updates) frame.Update(true); }
 
    bool CreateBodyLabel(CEF_CTextLabel &label,const string text,CElement &owner,const int x,const int y,const int width,const int height,const int font_size=10,const color text_color=clrNONE)
      {
@@ -355,12 +356,12 @@ private:
       body_text="Os parametros de "+indicator_name+" serao portados aqui no proprio card deste slot.";
      }
 
-   void HideLabel(CEF_CTextLabel &label) { label.Hide(); label.Update(true); }
-   void ShowLabel(CEF_CTextLabel &label) { label.Show(); label.Update(true); }
-   void HideCombo(CEF_CComboBox &combo) { combo.Hide(); combo.Update(true); }
-   void ShowCombo(CEF_CComboBox &combo) { combo.Show(); combo.Update(true); }
-   void HideSpin(CEF_CTextEdit &spin) { spin.Hide(); spin.Update(true); }
-   void ShowSpin(CEF_CTextEdit &spin) { spin.Show(); spin.Update(true); }
+   void HideLabel(CEF_CTextLabel &label) { label.Hide(); if(!m_silent_updates) label.Update(true); }
+   void ShowLabel(CEF_CTextLabel &label) { label.Show(); if(!m_silent_updates) label.Update(true); }
+   void HideCombo(CEF_CComboBox &combo) { combo.Hide(); if(!m_silent_updates) combo.Update(true); }
+   void ShowCombo(CEF_CComboBox &combo) { combo.Show(); if(!m_silent_updates) combo.Update(true); }
+   void HideSpin(CEF_CTextEdit &spin) { spin.Hide(); if(!m_silent_updates) spin.Update(true); }
+   void ShowSpin(CEF_CTextEdit &spin) { spin.Show(); if(!m_silent_updates) spin.Update(true); }
 
    void HideAllContent(void)
      {
@@ -1339,7 +1340,7 @@ private:
      }
 
 public:
-                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1) {}
+                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1) {}
 
    bool Create(CEF_CWndCreate &host,const int window_index,CEF_CTabs &tabs,const int tab_index,const int slot_index,
                const int x,const int y,const int w,const int h)
@@ -2038,7 +2039,9 @@ public:
          return(false);
 
       m_combo.SelectItem(0);
+      m_silent_updates=true;
       HideSlot();
+      m_silent_updates=false;
       m_last_selected_index=-1;
       m_created=true;
       return(true);
@@ -2054,20 +2057,26 @@ public:
       ApplySelectedIndicator(selected);
      }
 
-   void SetActive(const bool active)
+   void SetActive(const bool active,const bool redraw=true)
      {
       if(!m_created)
          return;
+
+      const bool previous_silent=m_silent_updates;
+      if(!redraw)
+         m_silent_updates=true;
 
       m_is_active=active;
       if(!active)
         {
          HideSlot();
+         m_silent_updates=previous_silent;
          return;
         }
 
       ShowSlot();
       RefreshView();
+      m_silent_updates=previous_silent;
      }
 
    void OnTimerEvent(void)

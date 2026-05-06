@@ -26,31 +26,34 @@ private:
    CEF_CComboBox          m_logic_compare_candle_combo[5];
    int                    m_logic_slot_last[4];
 
-   void SetLabelVisible(CEF_CTextLabel &label,const bool visible)
+   void SetLabelVisible(CEF_CTextLabel &label,const bool visible,const bool redraw=true)
      {
       if(visible)
          label.Show();
       else
          label.Hide();
-      label.Update(true);
+      if(redraw)
+         label.Update(true);
      }
 
-   void SetFrameVisible(CEF_CFrame &frame,const bool visible)
+   void SetFrameVisible(CEF_CFrame &frame,const bool visible,const bool redraw=true)
      {
       if(visible)
          frame.Show();
       else
          frame.Hide();
-      frame.Update(true);
+      if(redraw)
+         frame.Update(true);
      }
 
-   void SetComboVisible(CEF_CComboBox &combo,const bool visible)
+   void SetComboVisible(CEF_CComboBox &combo,const bool visible,const bool redraw=true)
      {
       if(visible)
          combo.Show();
       else
          combo.Hide();
-      combo.Update(true);
+      if(redraw)
+         combo.Update(true);
      }
 
    bool CreateComboControl(CEF_CComboBox &combo,CElement &owner,CEF_CTabs &tabs,const int x,const int y,const int width,const int list_height,string &items[],const int selected_index,const color border)
@@ -453,7 +456,7 @@ public:
         }
 
       m_created=true;
-      SetActive(false);
+      SetActive(false,false);
       return(true);
      }
 
@@ -493,28 +496,31 @@ public:
       RefreshLogicValueCombos();
      }
 
-   void SetActive(const bool active)
+   void SetActive(const bool active,const bool redraw=true)
      {
       if(!m_created)
          return;
 
       m_is_active=active;
-      for(int i=0;i<4;i++)
-         m_slots[i].SetActive(active);
+      if(active || redraw)
+        {
+         for(int i=0;i<4;i++)
+            m_slots[i].SetActive(active,redraw);
+        }
 
-      SetFrameVisible(m_logic_card,active);
-      SetLabelVisible(m_logic_title,active);
-      SetLabelVisible(m_logic_note,active);
+      SetFrameVisible(m_logic_card,active,redraw);
+      SetLabelVisible(m_logic_title,active,redraw);
+      SetLabelVisible(m_logic_note,active,redraw);
       for(int i=0;i<6;i++)
-         SetLabelVisible(m_logic_cols[i],active);
+         SetLabelVisible(m_logic_cols[i],active,redraw);
       for(int i=0;i<5;i++)
         {
-         SetComboVisible(m_logic_operator_combo[i],active);
-         SetComboVisible(m_logic_value_combo[i],active);
-         SetComboVisible(m_logic_candle_combo[i],active);
-         SetComboVisible(m_logic_compare_combo[i],active);
-         SetComboVisible(m_logic_compare_value_combo[i],active);
-         SetComboVisible(m_logic_compare_candle_combo[i],active);
+         SetComboVisible(m_logic_operator_combo[i],active,redraw);
+         SetComboVisible(m_logic_value_combo[i],active,redraw);
+         SetComboVisible(m_logic_candle_combo[i],active,redraw);
+         SetComboVisible(m_logic_compare_combo[i],active,redraw);
+         SetComboVisible(m_logic_compare_value_combo[i],active,redraw);
+         SetComboVisible(m_logic_compare_candle_combo[i],active,redraw);
         }
 
       if(active)
