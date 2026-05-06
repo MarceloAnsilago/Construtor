@@ -439,8 +439,7 @@ public:
       m_top_tabs.SelectTab(0);
       m_param_tabs.SelectTab(0);
       m_exec_tabs.SelectTab(0);
-      m_top_tabs.ShowTabElements();
-      m_param_tabs.ShowTabElements();
+      m_tab1.SetActive(false);
       m_tab8.SetActive(false);
 
       CompletedGUI();

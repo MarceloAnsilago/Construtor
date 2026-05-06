@@ -63,7 +63,7 @@ private:
    CEF_CTextEdit       m_spread_edit;
    CEF_CTextLabel      m_debug_label;
 
-   void GenerateMagicFromName(void)
+   void GenerateMagicFromName(const bool redraw=true)
      {
       if(!m_created)
          return;
@@ -73,12 +73,15 @@ private:
       m_settings.magic_number=ConstrutorStringToMagic(current_name);
       m_has_settings=true;
       m_magic_value_edit.SetValue(IntegerToString(m_settings.magic_number),false);
-      m_magic_value_edit.GetTextBoxPointer().Update(true);
-      m_magic_value_edit.Update(true);
-      ChartRedraw();
+      if(redraw)
+        {
+         m_magic_value_edit.GetTextBoxPointer().Update(true);
+         m_magic_value_edit.Update(true);
+         ChartRedraw();
+        }
      }
 
-   void SyncMagicFromName(void)
+   void SyncMagicFromName(const bool redraw=true)
      {
       if(!m_created)
          return;
@@ -86,7 +89,7 @@ private:
       const string current_name=m_name_edit.GetValue();
       if(current_name==m_settings.estrategia_nome && m_settings.magic_number>0)
          return;
-      GenerateMagicFromName();
+      GenerateMagicFromName(redraw);
      }
 
 public:
@@ -175,7 +178,7 @@ public:
       if(!m_has_settings)
          return;
       if(m_created)
-         SyncMagicFromName();
+         SyncMagicFromName(false);
       settings=m_settings;
      }
 
@@ -350,7 +353,7 @@ public:
          return(false);
 
       m_created=true;
-      GenerateMagicFromName();
+      GenerateMagicFromName(false);
       return(true);
      }
 
@@ -381,7 +384,7 @@ public:
       if(m_settings.magic_number<=0 && StringLen(m_settings.estrategia_nome)>0)
          m_settings.magic_number=ConstrutorStringToMagic(m_settings.estrategia_nome);
       m_magic_value_edit.SetValue(IntegerToString(m_settings.magic_number),false);
-      m_magic_value_edit.GetTextBoxPointer().Update(true);
+      m_magic_value_edit.GetTextBoxPointer().Update(false);
      }
 
    void Save(void)
@@ -389,7 +392,7 @@ public:
       if(!m_has_settings || !m_created)
          return;
 
-      GenerateMagicFromName();
+      GenerateMagicFromName(false);
       m_settings.estrategia_nome=m_name_edit.GetValue();
       m_settings.magic_number=ConstrutorStringToMagic(m_settings.estrategia_nome);
       m_settings.mercado=(ENUM_CONSTRUTOR_MERCADO)V2ClampIndex(m_market_combo.GetListViewPointer().SelectedItemIndex(),0,1);
@@ -423,12 +426,12 @@ public:
          return;
 
       if(active)
-         SyncMagicFromName();
+         SyncMagicFromName(true);
      }
 
    void OnTimerEvent(void)
      {
-      SyncMagicFromName();
+      SyncMagicFromName(true);
      }
   };
 
