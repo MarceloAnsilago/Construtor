@@ -3,6 +3,13 @@
 
 #include "Tab8Shared.mqh"
 
+struct STab8MontarSlotState
+  {
+   int               selected_indicator;
+   string            spin_values[];
+   int               combo_indices[];
+  };
+
 class CTab8MontarSlotCard : public CEF_CWndCreate
   {
 private:
@@ -252,6 +259,12 @@ private:
    CEF_CTextEdit   m_sar_step_spin;
    CEF_CTextLabel  m_sar_max_label;
    CEF_CTextEdit   m_sar_max_spin;
+
+   string GetSpinValue(CEF_CTextEdit &spin) { return(spin.GetValue()); }
+   void SetSpinValue(CEF_CTextEdit &spin,const string value) { spin.SetValue(value); if(!m_silent_updates) spin.Update(true); }
+   int GetComboIndex(CEF_CComboBox &combo) { const int index=combo.GetListViewPointer().SelectedItemIndex(); return(index>=0 ? index : 0); }
+   void SetComboIndex(CEF_CComboBox &combo,const int index) { combo.SelectItem(index>=0 ? index : 0); if(!m_silent_updates) combo.Update(true); }
+   void UpdateSlotTitle(void) { m_title.LabelText(StringFormat("Indicador %d",m_slot_index+1)); if(!m_silent_updates) m_title.Update(true); }
 
    void HideFrame(CEF_CFrame &frame) { frame.Hide(); if(!m_silent_updates) frame.Update(true); }
    void ShowFrame(CEF_CFrame &frame) { frame.Show(); if(!m_silent_updates) frame.Update(true); }
@@ -1361,25 +1374,25 @@ public:
       const int outer_pad=8;
       const int body_w=w-(outer_pad*2);
       const int body_x=x+outer_pad;
-      const int body_y=y+74;
-      const int body_h=h-82;
+      const int body_y=y+60;
+      const int body_h=h-68;
       const int content_x=12;
-      const int content_y=10;
+      const int content_y=8;
       const int inner_w=body_w-(content_x*2);
 
       if(!V2CreateCard(*m_host,m_card,tabs,m_window_index,m_tab_index,x,y,w,h,card_back,card_border))
          return(false);
 
-      const string title_text=StringFormat("Indicador %d",m_slot_index+1);
-      if(!V2CreateCardTitle(*m_host,m_title,title_text,m_card,tabs,m_window_index,m_tab_index,16,12,w-32))
+      if(!V2CreateCardTitle(*m_host,m_title,"",m_card,tabs,m_window_index,m_tab_index,16,8,w-32))
          return(false);
+      UpdateSlotTitle();
 
-      if(!V2CreateFieldLabel(*m_host,m_combo_label,"Indicador",m_card,tabs,m_window_index,m_tab_index,16,32,w-32,16))
+      if(!V2CreateFieldLabel(*m_host,m_combo_label,"Indicador",m_card,tabs,m_window_index,m_tab_index,16,24,w-32,16))
          return(false);
 
       string indicator_items[];
       BuildIndicatorItems(indicator_items);
-      if(!CreateComboControl(m_combo,m_card,16,46,w-32,220,indicator_items,0,field_border))
+      if(!CreateComboControl(m_combo,m_card,16,38,w-32,220,indicator_items,0,field_border))
          return(false);
 
       if(!V2CreateCard(*m_host,m_body,tabs,m_window_index,m_tab_index,body_x,body_y,body_w,body_h,sub_back,card_border))
@@ -2055,6 +2068,239 @@ public:
       const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,40);
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
+     }
+
+   void SetSlotIndex(const int slot_index)
+     {
+      m_slot_index=slot_index;
+      if(m_created)
+         UpdateSlotTitle();
+     }
+
+   void SaveState(STab8MontarSlotState &state)
+     {
+      state.selected_indicator=SelectedIndicatorIndex();
+      ArrayResize(state.spin_values,65);
+      ArrayResize(state.combo_indices,34);
+
+      state.spin_values[0]=GetSpinValue(m_adx_period_spin);
+      state.spin_values[1]=GetSpinValue(m_adx_wilder_period_spin);
+      state.spin_values[2]=GetSpinValue(m_afast_period_spin);
+      state.spin_values[3]=GetSpinValue(m_afast_shift_spin);
+      state.spin_values[4]=GetSpinValue(m_alligator_jaw_period_spin);
+      state.spin_values[5]=GetSpinValue(m_alligator_jaw_shift_spin);
+      state.spin_values[6]=GetSpinValue(m_alligator_lips_period_spin);
+      state.spin_values[7]=GetSpinValue(m_alligator_lips_shift_spin);
+      state.spin_values[8]=GetSpinValue(m_alligator_teeth_period_spin);
+      state.spin_values[9]=GetSpinValue(m_alligator_teeth_shift_spin);
+      state.spin_values[10]=GetSpinValue(m_atr_channel_deviation_spin);
+      state.spin_values[11]=GetSpinValue(m_atr_channel_period_spin);
+      state.spin_values[12]=GetSpinValue(m_atr_period_spin);
+      state.spin_values[13]=GetSpinValue(m_bbands_deviation_spin);
+      state.spin_values[14]=GetSpinValue(m_bbands_period_spin);
+      state.spin_values[15]=GetSpinValue(m_bbands_shift_spin);
+      state.spin_values[16]=GetSpinValue(m_bears_power_period_spin);
+      state.spin_values[17]=GetSpinValue(m_bulls_power_period_spin);
+      state.spin_values[18]=GetSpinValue(m_cci_period_spin);
+      state.spin_values[19]=GetSpinValue(m_chaikin_fast_spin);
+      state.spin_values[20]=GetSpinValue(m_chaikin_slow_spin);
+      state.spin_values[21]=GetSpinValue(m_demarker_period_spin);
+      state.spin_values[22]=GetSpinValue(m_desvio_period_spin);
+      state.spin_values[23]=GetSpinValue(m_donchian_period_spin);
+      state.spin_values[24]=GetSpinValue(m_env_deviation_spin);
+      state.spin_values[25]=GetSpinValue(m_env_period_spin);
+      state.spin_values[26]=GetSpinValue(m_env_shift_spin);
+      state.spin_values[27]=GetSpinValue(m_frama_period_spin);
+      state.spin_values[28]=GetSpinValue(m_frama_shift_spin);
+      state.spin_values[29]=GetSpinValue(m_gator_jaw_period_spin);
+      state.spin_values[30]=GetSpinValue(m_gator_jaw_shift_spin);
+      state.spin_values[31]=GetSpinValue(m_gator_lips_period_spin);
+      state.spin_values[32]=GetSpinValue(m_gator_lips_shift_spin);
+      state.spin_values[33]=GetSpinValue(m_gator_period_spin);
+      state.spin_values[34]=GetSpinValue(m_gator_teeth_period_spin);
+      state.spin_values[35]=GetSpinValue(m_gator_teeth_shift_spin);
+      state.spin_values[36]=GetSpinValue(m_ichimoku_kijun_spin);
+      state.spin_values[37]=GetSpinValue(m_ichimoku_senkou_b_spin);
+      state.spin_values[38]=GetSpinValue(m_ichimoku_tenkan_spin);
+      state.spin_values[39]=GetSpinValue(m_keltner_deviation_spin);
+      state.spin_values[40]=GetSpinValue(m_keltner_period_spin);
+      state.spin_values[41]=GetSpinValue(m_ma_period_spin);
+      state.spin_values[42]=GetSpinValue(m_ma_shift_spin);
+      state.spin_values[43]=GetSpinValue(m_macd_fast_spin);
+      state.spin_values[44]=GetSpinValue(m_macd_signal_spin);
+      state.spin_values[45]=GetSpinValue(m_macd_slow_spin);
+      state.spin_values[46]=GetSpinValue(m_mfi_period_spin);
+      state.spin_values[47]=GetSpinValue(m_momentum_period_spin);
+      state.spin_values[48]=GetSpinValue(m_reg_period_spin);
+      state.spin_values[49]=GetSpinValue(m_rsi_period_spin);
+      state.spin_values[50]=GetSpinValue(m_rvi_period_spin);
+      state.spin_values[51]=GetSpinValue(m_sar_max_spin);
+      state.spin_values[52]=GetSpinValue(m_sar_step_spin);
+      state.spin_values[53]=GetSpinValue(m_stddev_period_spin);
+      state.spin_values[54]=GetSpinValue(m_stoch_d_spin);
+      state.spin_values[55]=GetSpinValue(m_stoch_k_spin);
+      state.spin_values[56]=GetSpinValue(m_stoch_slow_spin);
+      state.spin_values[57]=GetSpinValue(m_tema_period_spin);
+      state.spin_values[58]=GetSpinValue(m_tema_shift_spin);
+      state.spin_values[59]=GetSpinValue(m_trix_period_spin);
+      state.spin_values[60]=GetSpinValue(m_vidya_cmo_period_spin);
+      state.spin_values[61]=GetSpinValue(m_vidya_ema_period_spin);
+      state.spin_values[62]=GetSpinValue(m_vidya_shift_spin);
+      state.spin_values[63]=GetSpinValue(m_wpr_deviation_spin);
+      state.spin_values[64]=GetSpinValue(m_wpr_period_spin);
+
+      state.combo_indices[0]=GetComboIndex(m_ad_volume_combo);
+      state.combo_indices[1]=GetComboIndex(m_afast_ma_type_combo);
+      state.combo_indices[2]=GetComboIndex(m_afast_price_combo);
+      state.combo_indices[3]=GetComboIndex(m_alligator_ma_type_combo);
+      state.combo_indices[4]=GetComboIndex(m_alligator_price_combo);
+      state.combo_indices[5]=GetComboIndex(m_bbands_price_combo);
+      state.combo_indices[6]=GetComboIndex(m_cci_price_combo);
+      state.combo_indices[7]=GetComboIndex(m_chaikin_ma_type_combo);
+      state.combo_indices[8]=GetComboIndex(m_chaikin_volume_combo);
+      state.combo_indices[9]=GetComboIndex(m_desvio_ma_type_combo);
+      state.combo_indices[10]=GetComboIndex(m_desvio_price_combo);
+      state.combo_indices[11]=GetComboIndex(m_env_ma_type_combo);
+      state.combo_indices[12]=GetComboIndex(m_frama_price_combo);
+      state.combo_indices[13]=GetComboIndex(m_gator_ma_type_combo);
+      state.combo_indices[14]=GetComboIndex(m_gator_price_combo);
+      state.combo_indices[15]=GetComboIndex(m_keltner_ma_type_combo);
+      state.combo_indices[16]=GetComboIndex(m_ma_price_combo);
+      state.combo_indices[17]=GetComboIndex(m_ma_type_combo);
+      state.combo_indices[18]=GetComboIndex(m_macd_price_combo);
+      state.combo_indices[19]=GetComboIndex(m_mfi_market_volume_combo);
+      state.combo_indices[20]=GetComboIndex(m_mfi_volume_combo);
+      state.combo_indices[21]=GetComboIndex(m_momentum_price_combo);
+      state.combo_indices[22]=GetComboIndex(m_obv_volume_combo);
+      state.combo_indices[23]=GetComboIndex(m_reg_ma_type_combo);
+      state.combo_indices[24]=GetComboIndex(m_reg_price_combo);
+      state.combo_indices[25]=GetComboIndex(m_rsi_price_combo);
+      state.combo_indices[26]=GetComboIndex(m_stddev_ma_type_combo);
+      state.combo_indices[27]=GetComboIndex(m_stddev_price_combo);
+      state.combo_indices[28]=GetComboIndex(m_stoch_ma_type_combo);
+      state.combo_indices[29]=GetComboIndex(m_stoch_price_type_combo);
+      state.combo_indices[30]=GetComboIndex(m_tema_price_combo);
+      state.combo_indices[31]=GetComboIndex(m_trix_price_combo);
+      state.combo_indices[32]=GetComboIndex(m_vidya_price_combo);
+      state.combo_indices[33]=GetComboIndex(m_volume_type_combo);
+     }
+
+   void LoadState(const STab8MontarSlotState &state)
+     {
+      if(!m_created)
+         return;
+
+      const bool previous_silent=m_silent_updates;
+      m_silent_updates=true;
+
+      SetSpinValue(m_adx_period_spin,(ArraySize(state.spin_values)>0 ? state.spin_values[0] : GetSpinValue(m_adx_period_spin)));
+      SetSpinValue(m_adx_wilder_period_spin,(ArraySize(state.spin_values)>1 ? state.spin_values[1] : GetSpinValue(m_adx_wilder_period_spin)));
+      SetSpinValue(m_afast_period_spin,(ArraySize(state.spin_values)>2 ? state.spin_values[2] : GetSpinValue(m_afast_period_spin)));
+      SetSpinValue(m_afast_shift_spin,(ArraySize(state.spin_values)>3 ? state.spin_values[3] : GetSpinValue(m_afast_shift_spin)));
+      SetSpinValue(m_alligator_jaw_period_spin,(ArraySize(state.spin_values)>4 ? state.spin_values[4] : GetSpinValue(m_alligator_jaw_period_spin)));
+      SetSpinValue(m_alligator_jaw_shift_spin,(ArraySize(state.spin_values)>5 ? state.spin_values[5] : GetSpinValue(m_alligator_jaw_shift_spin)));
+      SetSpinValue(m_alligator_lips_period_spin,(ArraySize(state.spin_values)>6 ? state.spin_values[6] : GetSpinValue(m_alligator_lips_period_spin)));
+      SetSpinValue(m_alligator_lips_shift_spin,(ArraySize(state.spin_values)>7 ? state.spin_values[7] : GetSpinValue(m_alligator_lips_shift_spin)));
+      SetSpinValue(m_alligator_teeth_period_spin,(ArraySize(state.spin_values)>8 ? state.spin_values[8] : GetSpinValue(m_alligator_teeth_period_spin)));
+      SetSpinValue(m_alligator_teeth_shift_spin,(ArraySize(state.spin_values)>9 ? state.spin_values[9] : GetSpinValue(m_alligator_teeth_shift_spin)));
+      SetSpinValue(m_atr_channel_deviation_spin,(ArraySize(state.spin_values)>10 ? state.spin_values[10] : GetSpinValue(m_atr_channel_deviation_spin)));
+      SetSpinValue(m_atr_channel_period_spin,(ArraySize(state.spin_values)>11 ? state.spin_values[11] : GetSpinValue(m_atr_channel_period_spin)));
+      SetSpinValue(m_atr_period_spin,(ArraySize(state.spin_values)>12 ? state.spin_values[12] : GetSpinValue(m_atr_period_spin)));
+      SetSpinValue(m_bbands_deviation_spin,(ArraySize(state.spin_values)>13 ? state.spin_values[13] : GetSpinValue(m_bbands_deviation_spin)));
+      SetSpinValue(m_bbands_period_spin,(ArraySize(state.spin_values)>14 ? state.spin_values[14] : GetSpinValue(m_bbands_period_spin)));
+      SetSpinValue(m_bbands_shift_spin,(ArraySize(state.spin_values)>15 ? state.spin_values[15] : GetSpinValue(m_bbands_shift_spin)));
+      SetSpinValue(m_bears_power_period_spin,(ArraySize(state.spin_values)>16 ? state.spin_values[16] : GetSpinValue(m_bears_power_period_spin)));
+      SetSpinValue(m_bulls_power_period_spin,(ArraySize(state.spin_values)>17 ? state.spin_values[17] : GetSpinValue(m_bulls_power_period_spin)));
+      SetSpinValue(m_cci_period_spin,(ArraySize(state.spin_values)>18 ? state.spin_values[18] : GetSpinValue(m_cci_period_spin)));
+      SetSpinValue(m_chaikin_fast_spin,(ArraySize(state.spin_values)>19 ? state.spin_values[19] : GetSpinValue(m_chaikin_fast_spin)));
+      SetSpinValue(m_chaikin_slow_spin,(ArraySize(state.spin_values)>20 ? state.spin_values[20] : GetSpinValue(m_chaikin_slow_spin)));
+      SetSpinValue(m_demarker_period_spin,(ArraySize(state.spin_values)>21 ? state.spin_values[21] : GetSpinValue(m_demarker_period_spin)));
+      SetSpinValue(m_desvio_period_spin,(ArraySize(state.spin_values)>22 ? state.spin_values[22] : GetSpinValue(m_desvio_period_spin)));
+      SetSpinValue(m_donchian_period_spin,(ArraySize(state.spin_values)>23 ? state.spin_values[23] : GetSpinValue(m_donchian_period_spin)));
+      SetSpinValue(m_env_deviation_spin,(ArraySize(state.spin_values)>24 ? state.spin_values[24] : GetSpinValue(m_env_deviation_spin)));
+      SetSpinValue(m_env_period_spin,(ArraySize(state.spin_values)>25 ? state.spin_values[25] : GetSpinValue(m_env_period_spin)));
+      SetSpinValue(m_env_shift_spin,(ArraySize(state.spin_values)>26 ? state.spin_values[26] : GetSpinValue(m_env_shift_spin)));
+      SetSpinValue(m_frama_period_spin,(ArraySize(state.spin_values)>27 ? state.spin_values[27] : GetSpinValue(m_frama_period_spin)));
+      SetSpinValue(m_frama_shift_spin,(ArraySize(state.spin_values)>28 ? state.spin_values[28] : GetSpinValue(m_frama_shift_spin)));
+      SetSpinValue(m_gator_jaw_period_spin,(ArraySize(state.spin_values)>29 ? state.spin_values[29] : GetSpinValue(m_gator_jaw_period_spin)));
+      SetSpinValue(m_gator_jaw_shift_spin,(ArraySize(state.spin_values)>30 ? state.spin_values[30] : GetSpinValue(m_gator_jaw_shift_spin)));
+      SetSpinValue(m_gator_lips_period_spin,(ArraySize(state.spin_values)>31 ? state.spin_values[31] : GetSpinValue(m_gator_lips_period_spin)));
+      SetSpinValue(m_gator_lips_shift_spin,(ArraySize(state.spin_values)>32 ? state.spin_values[32] : GetSpinValue(m_gator_lips_shift_spin)));
+      SetSpinValue(m_gator_period_spin,(ArraySize(state.spin_values)>33 ? state.spin_values[33] : GetSpinValue(m_gator_period_spin)));
+      SetSpinValue(m_gator_teeth_period_spin,(ArraySize(state.spin_values)>34 ? state.spin_values[34] : GetSpinValue(m_gator_teeth_period_spin)));
+      SetSpinValue(m_gator_teeth_shift_spin,(ArraySize(state.spin_values)>35 ? state.spin_values[35] : GetSpinValue(m_gator_teeth_shift_spin)));
+      SetSpinValue(m_ichimoku_kijun_spin,(ArraySize(state.spin_values)>36 ? state.spin_values[36] : GetSpinValue(m_ichimoku_kijun_spin)));
+      SetSpinValue(m_ichimoku_senkou_b_spin,(ArraySize(state.spin_values)>37 ? state.spin_values[37] : GetSpinValue(m_ichimoku_senkou_b_spin)));
+      SetSpinValue(m_ichimoku_tenkan_spin,(ArraySize(state.spin_values)>38 ? state.spin_values[38] : GetSpinValue(m_ichimoku_tenkan_spin)));
+      SetSpinValue(m_keltner_deviation_spin,(ArraySize(state.spin_values)>39 ? state.spin_values[39] : GetSpinValue(m_keltner_deviation_spin)));
+      SetSpinValue(m_keltner_period_spin,(ArraySize(state.spin_values)>40 ? state.spin_values[40] : GetSpinValue(m_keltner_period_spin)));
+      SetSpinValue(m_ma_period_spin,(ArraySize(state.spin_values)>41 ? state.spin_values[41] : GetSpinValue(m_ma_period_spin)));
+      SetSpinValue(m_ma_shift_spin,(ArraySize(state.spin_values)>42 ? state.spin_values[42] : GetSpinValue(m_ma_shift_spin)));
+      SetSpinValue(m_macd_fast_spin,(ArraySize(state.spin_values)>43 ? state.spin_values[43] : GetSpinValue(m_macd_fast_spin)));
+      SetSpinValue(m_macd_signal_spin,(ArraySize(state.spin_values)>44 ? state.spin_values[44] : GetSpinValue(m_macd_signal_spin)));
+      SetSpinValue(m_macd_slow_spin,(ArraySize(state.spin_values)>45 ? state.spin_values[45] : GetSpinValue(m_macd_slow_spin)));
+      SetSpinValue(m_mfi_period_spin,(ArraySize(state.spin_values)>46 ? state.spin_values[46] : GetSpinValue(m_mfi_period_spin)));
+      SetSpinValue(m_momentum_period_spin,(ArraySize(state.spin_values)>47 ? state.spin_values[47] : GetSpinValue(m_momentum_period_spin)));
+      SetSpinValue(m_reg_period_spin,(ArraySize(state.spin_values)>48 ? state.spin_values[48] : GetSpinValue(m_reg_period_spin)));
+      SetSpinValue(m_rsi_period_spin,(ArraySize(state.spin_values)>49 ? state.spin_values[49] : GetSpinValue(m_rsi_period_spin)));
+      SetSpinValue(m_rvi_period_spin,(ArraySize(state.spin_values)>50 ? state.spin_values[50] : GetSpinValue(m_rvi_period_spin)));
+      SetSpinValue(m_sar_max_spin,(ArraySize(state.spin_values)>51 ? state.spin_values[51] : GetSpinValue(m_sar_max_spin)));
+      SetSpinValue(m_sar_step_spin,(ArraySize(state.spin_values)>52 ? state.spin_values[52] : GetSpinValue(m_sar_step_spin)));
+      SetSpinValue(m_stddev_period_spin,(ArraySize(state.spin_values)>53 ? state.spin_values[53] : GetSpinValue(m_stddev_period_spin)));
+      SetSpinValue(m_stoch_d_spin,(ArraySize(state.spin_values)>54 ? state.spin_values[54] : GetSpinValue(m_stoch_d_spin)));
+      SetSpinValue(m_stoch_k_spin,(ArraySize(state.spin_values)>55 ? state.spin_values[55] : GetSpinValue(m_stoch_k_spin)));
+      SetSpinValue(m_stoch_slow_spin,(ArraySize(state.spin_values)>56 ? state.spin_values[56] : GetSpinValue(m_stoch_slow_spin)));
+      SetSpinValue(m_tema_period_spin,(ArraySize(state.spin_values)>57 ? state.spin_values[57] : GetSpinValue(m_tema_period_spin)));
+      SetSpinValue(m_tema_shift_spin,(ArraySize(state.spin_values)>58 ? state.spin_values[58] : GetSpinValue(m_tema_shift_spin)));
+      SetSpinValue(m_trix_period_spin,(ArraySize(state.spin_values)>59 ? state.spin_values[59] : GetSpinValue(m_trix_period_spin)));
+      SetSpinValue(m_vidya_cmo_period_spin,(ArraySize(state.spin_values)>60 ? state.spin_values[60] : GetSpinValue(m_vidya_cmo_period_spin)));
+      SetSpinValue(m_vidya_ema_period_spin,(ArraySize(state.spin_values)>61 ? state.spin_values[61] : GetSpinValue(m_vidya_ema_period_spin)));
+      SetSpinValue(m_vidya_shift_spin,(ArraySize(state.spin_values)>62 ? state.spin_values[62] : GetSpinValue(m_vidya_shift_spin)));
+      SetSpinValue(m_wpr_deviation_spin,(ArraySize(state.spin_values)>63 ? state.spin_values[63] : GetSpinValue(m_wpr_deviation_spin)));
+      SetSpinValue(m_wpr_period_spin,(ArraySize(state.spin_values)>64 ? state.spin_values[64] : GetSpinValue(m_wpr_period_spin)));
+
+      SetComboIndex(m_ad_volume_combo,(ArraySize(state.combo_indices)>0 ? state.combo_indices[0] : GetComboIndex(m_ad_volume_combo)));
+      SetComboIndex(m_afast_ma_type_combo,(ArraySize(state.combo_indices)>1 ? state.combo_indices[1] : GetComboIndex(m_afast_ma_type_combo)));
+      SetComboIndex(m_afast_price_combo,(ArraySize(state.combo_indices)>2 ? state.combo_indices[2] : GetComboIndex(m_afast_price_combo)));
+      SetComboIndex(m_alligator_ma_type_combo,(ArraySize(state.combo_indices)>3 ? state.combo_indices[3] : GetComboIndex(m_alligator_ma_type_combo)));
+      SetComboIndex(m_alligator_price_combo,(ArraySize(state.combo_indices)>4 ? state.combo_indices[4] : GetComboIndex(m_alligator_price_combo)));
+      SetComboIndex(m_bbands_price_combo,(ArraySize(state.combo_indices)>5 ? state.combo_indices[5] : GetComboIndex(m_bbands_price_combo)));
+      SetComboIndex(m_cci_price_combo,(ArraySize(state.combo_indices)>6 ? state.combo_indices[6] : GetComboIndex(m_cci_price_combo)));
+      SetComboIndex(m_chaikin_ma_type_combo,(ArraySize(state.combo_indices)>7 ? state.combo_indices[7] : GetComboIndex(m_chaikin_ma_type_combo)));
+      SetComboIndex(m_chaikin_volume_combo,(ArraySize(state.combo_indices)>8 ? state.combo_indices[8] : GetComboIndex(m_chaikin_volume_combo)));
+      SetComboIndex(m_desvio_ma_type_combo,(ArraySize(state.combo_indices)>9 ? state.combo_indices[9] : GetComboIndex(m_desvio_ma_type_combo)));
+      SetComboIndex(m_desvio_price_combo,(ArraySize(state.combo_indices)>10 ? state.combo_indices[10] : GetComboIndex(m_desvio_price_combo)));
+      SetComboIndex(m_env_ma_type_combo,(ArraySize(state.combo_indices)>11 ? state.combo_indices[11] : GetComboIndex(m_env_ma_type_combo)));
+      SetComboIndex(m_frama_price_combo,(ArraySize(state.combo_indices)>12 ? state.combo_indices[12] : GetComboIndex(m_frama_price_combo)));
+      SetComboIndex(m_gator_ma_type_combo,(ArraySize(state.combo_indices)>13 ? state.combo_indices[13] : GetComboIndex(m_gator_ma_type_combo)));
+      SetComboIndex(m_gator_price_combo,(ArraySize(state.combo_indices)>14 ? state.combo_indices[14] : GetComboIndex(m_gator_price_combo)));
+      SetComboIndex(m_keltner_ma_type_combo,(ArraySize(state.combo_indices)>15 ? state.combo_indices[15] : GetComboIndex(m_keltner_ma_type_combo)));
+      SetComboIndex(m_ma_price_combo,(ArraySize(state.combo_indices)>16 ? state.combo_indices[16] : GetComboIndex(m_ma_price_combo)));
+      SetComboIndex(m_ma_type_combo,(ArraySize(state.combo_indices)>17 ? state.combo_indices[17] : GetComboIndex(m_ma_type_combo)));
+      SetComboIndex(m_macd_price_combo,(ArraySize(state.combo_indices)>18 ? state.combo_indices[18] : GetComboIndex(m_macd_price_combo)));
+      SetComboIndex(m_mfi_market_volume_combo,(ArraySize(state.combo_indices)>19 ? state.combo_indices[19] : GetComboIndex(m_mfi_market_volume_combo)));
+      SetComboIndex(m_mfi_volume_combo,(ArraySize(state.combo_indices)>20 ? state.combo_indices[20] : GetComboIndex(m_mfi_volume_combo)));
+      SetComboIndex(m_momentum_price_combo,(ArraySize(state.combo_indices)>21 ? state.combo_indices[21] : GetComboIndex(m_momentum_price_combo)));
+      SetComboIndex(m_obv_volume_combo,(ArraySize(state.combo_indices)>22 ? state.combo_indices[22] : GetComboIndex(m_obv_volume_combo)));
+      SetComboIndex(m_reg_ma_type_combo,(ArraySize(state.combo_indices)>23 ? state.combo_indices[23] : GetComboIndex(m_reg_ma_type_combo)));
+      SetComboIndex(m_reg_price_combo,(ArraySize(state.combo_indices)>24 ? state.combo_indices[24] : GetComboIndex(m_reg_price_combo)));
+      SetComboIndex(m_rsi_price_combo,(ArraySize(state.combo_indices)>25 ? state.combo_indices[25] : GetComboIndex(m_rsi_price_combo)));
+      SetComboIndex(m_stddev_ma_type_combo,(ArraySize(state.combo_indices)>26 ? state.combo_indices[26] : GetComboIndex(m_stddev_ma_type_combo)));
+      SetComboIndex(m_stddev_price_combo,(ArraySize(state.combo_indices)>27 ? state.combo_indices[27] : GetComboIndex(m_stddev_price_combo)));
+      SetComboIndex(m_stoch_ma_type_combo,(ArraySize(state.combo_indices)>28 ? state.combo_indices[28] : GetComboIndex(m_stoch_ma_type_combo)));
+      SetComboIndex(m_stoch_price_type_combo,(ArraySize(state.combo_indices)>29 ? state.combo_indices[29] : GetComboIndex(m_stoch_price_type_combo)));
+      SetComboIndex(m_tema_price_combo,(ArraySize(state.combo_indices)>30 ? state.combo_indices[30] : GetComboIndex(m_tema_price_combo)));
+      SetComboIndex(m_trix_price_combo,(ArraySize(state.combo_indices)>31 ? state.combo_indices[31] : GetComboIndex(m_trix_price_combo)));
+      SetComboIndex(m_vidya_price_combo,(ArraySize(state.combo_indices)>32 ? state.combo_indices[32] : GetComboIndex(m_vidya_price_combo)));
+      SetComboIndex(m_volume_type_combo,(ArraySize(state.combo_indices)>33 ? state.combo_indices[33] : GetComboIndex(m_volume_type_combo)));
+
+      m_combo.SelectItem(V2ClampIndex(state.selected_indicator,0,40));
+      m_last_selected_index=-1;
+      ApplySelectedIndicator(V2ClampIndex(state.selected_indicator,0,40));
+
+      m_silent_updates=previous_silent;
+      if(m_is_active)
+         RefreshView();
      }
 
    void SetActive(const bool active,const bool redraw=true)
