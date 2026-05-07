@@ -526,6 +526,7 @@ public:
       if(active)
          RefreshSlots();
      }
+
   };
 
 #endif // __CONSTRUTOR_V2_TAB8_MONTAR_MAIN_VIEW_MQH__
