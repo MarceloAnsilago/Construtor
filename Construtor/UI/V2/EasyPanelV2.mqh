@@ -69,8 +69,6 @@ private:
      {
       if(!m_created)
          return;
-      if(m_window.IsMinimized())
-         return;
 
       const int top_selected=m_top_tabs.SelectedTab();
       const int param_selected=m_param_tabs.SelectedTab();
@@ -543,12 +541,8 @@ public:
          return;
         }
 
-      if(id==CHARTEVENT_CUSTOM+ON_WINDOW_COLLAPSE)
-        {
-         return;
-        }
-
-      if(id==CHARTEVENT_CUSTOM+ON_WINDOW_EXPAND
+      if(id==CHARTEVENT_CUSTOM+ON_WINDOW_COLLAPSE
+         || id==CHARTEVENT_CUSTOM+ON_WINDOW_EXPAND
          || id==CHARTEVENT_CUSTOM+ON_WINDOW_CHANGE_XSIZE
          || id==CHARTEVENT_CUSTOM+ON_WINDOW_CHANGE_YSIZE
          || id==CHARTEVENT_CHART_CHANGE)

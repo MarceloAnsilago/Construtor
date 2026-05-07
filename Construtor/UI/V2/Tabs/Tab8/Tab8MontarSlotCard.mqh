@@ -11,17 +11,10 @@ private:
    bool            m_created;
    bool            m_is_active;
    bool            m_silent_updates;
-   bool            m_keltner_created;
-   bool            m_donchian_created;
-   bool            m_reg_created;
-   bool            m_afast_created;
    int             m_window_index;
    int             m_tab_index;
    int             m_slot_index;
    int             m_last_selected_index;
-   int             m_content_x;
-   int             m_content_y;
-   int             m_inner_w;
 
    CEF_CFrame      m_card;
    CEF_CTextLabel  m_title;
@@ -288,9 +281,6 @@ private:
          return(false);
       m_host.RegisterElement(m_window_index,combo);
       combo.SelectItem(V2ClampIndex(selected_index,0,ArraySize(items)-1));
-      combo.Update(true);
-      combo.GetButtonPointer().Update(true);
-      combo.GetListViewPointer().Update(true);
       return(true);
      }
 
@@ -304,156 +294,6 @@ private:
       if(!spin.CreateTextEdit("",x,y))
          return(false);
       m_host.RegisterElement(m_window_index,spin);
-      return(true);
-     }
-
-   bool EnsureKeltnerControls(void)
-     {
-      if(m_keltner_created)
-         return(true);
-
-      string ma_type_items[];
-      ArrayResize(ma_type_items,5);
-      ma_type_items[0]="Simples";
-      ma_type_items[1]="Exponencial";
-      ma_type_items[2]="Suavizada";
-      ma_type_items[3]="Linear ponderada";
-      ma_type_items[4]="Smoothed";
-
-      int y_cursor=m_content_y+18;
-      if(!CreateBodyLabel(m_keltner_period_label,"Periodo",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_keltner_period_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,1.0,1.0,0,"20",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_keltner_deviation_label,"Desvio",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_keltner_deviation_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,0.0,0.1,1,"2.0",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_keltner_ma_type_label,"Tipo de media",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateComboControl(m_keltner_ma_type_combo,m_body,m_content_x,y_cursor,m_inner_w,140,ma_type_items,0,V2_COLOR_FIELD_BORDER))
-         return(false);
-
-      m_keltner_created=true;
-      return(true);
-     }
-
-   bool EnsureDonchianControls(void)
-     {
-      if(m_donchian_created)
-         return(true);
-
-      int y_cursor=m_content_y+18;
-      if(!CreateBodyLabel(m_donchian_period_label,"Periodo",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_donchian_period_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,1.0,1.0,0,"21",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
-         return(false);
-
-      m_donchian_created=true;
-      return(true);
-     }
-
-   bool EnsureRegressaoControls(void)
-     {
-      if(m_reg_created)
-         return(true);
-
-      string ma_type_items[];
-      ArrayResize(ma_type_items,5);
-      ma_type_items[0]="Simples";
-      ma_type_items[1]="Exponencial";
-      ma_type_items[2]="Suavizada";
-      ma_type_items[3]="Linear ponderada";
-      ma_type_items[4]="Smoothed";
-
-      string price_items[];
-      ArrayResize(price_items,7);
-      price_items[0]="Fechamento";
-      price_items[1]="Abertura";
-      price_items[2]="Maximo";
-      price_items[3]="Minimo";
-      price_items[4]="Mediano";
-      price_items[5]="Tipico";
-      price_items[6]="Medio";
-
-      int y_cursor=m_content_y+18;
-      if(!CreateBodyLabel(m_reg_period_label,"Periodo",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_reg_period_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,0.0,1.0,0,"20",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_reg_ma_type_label,"Tipo de regressao",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateComboControl(m_reg_ma_type_combo,m_body,m_content_x,y_cursor,m_inner_w,140,ma_type_items,0,V2_COLOR_FIELD_BORDER))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_reg_price_label,"Modo de fechamento",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateComboControl(m_reg_price_combo,m_body,m_content_x,y_cursor,m_inner_w,140,price_items,0,V2_COLOR_FIELD_BORDER))
-         return(false);
-
-      m_reg_created=true;
-      return(true);
-     }
-
-   bool EnsureAfastamentoControls(void)
-     {
-      if(m_afast_created)
-         return(true);
-
-      string ma_type_items[];
-      ArrayResize(ma_type_items,5);
-      ma_type_items[0]="Simples";
-      ma_type_items[1]="Exponencial";
-      ma_type_items[2]="Suavizada";
-      ma_type_items[3]="Linear ponderada";
-      ma_type_items[4]="Smoothed";
-
-      string price_items[];
-      ArrayResize(price_items,7);
-      price_items[0]="Fechamento";
-      price_items[1]="Abertura";
-      price_items[2]="Maximo";
-      price_items[3]="Minimo";
-      price_items[4]="Mediano";
-      price_items[5]="Tipico";
-      price_items[6]="Medio";
-
-      int y_cursor=m_content_y+18;
-      if(!CreateBodyLabel(m_afast_period_label,"Periodo",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_afast_period_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,1.0,1.0,0,"14",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_afast_shift_label,"Deslocamento",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_afast_shift_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,0.0,1.0,0,"0",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_afast_ma_type_label,"Tipo de media",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateComboControl(m_afast_ma_type_combo,m_body,m_content_x,y_cursor,m_inner_w,140,ma_type_items,0,V2_COLOR_FIELD_BORDER))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_afast_price_label,"Modo de preco",m_body,m_content_x,y_cursor,m_inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateComboControl(m_afast_price_combo,m_body,m_content_x,y_cursor,m_inner_w,160,price_items,0,V2_COLOR_FIELD_BORDER))
-         return(false);
-
-      m_afast_created=true;
       return(true);
      }
 
@@ -533,43 +373,31 @@ private:
       HideLabel(m_rsi_price_label);
       HideCombo(m_rsi_price_combo);
 
-      if(m_reg_created)
-        {
-         HideLabel(m_reg_period_label);
-         HideSpin(m_reg_period_spin);
-         HideLabel(m_reg_ma_type_label);
-         HideCombo(m_reg_ma_type_combo);
-         HideLabel(m_reg_price_label);
-         HideCombo(m_reg_price_combo);
-        }
+      HideLabel(m_reg_period_label);
+      HideSpin(m_reg_period_spin);
+      HideLabel(m_reg_ma_type_label);
+      HideCombo(m_reg_ma_type_combo);
+      HideLabel(m_reg_price_label);
+      HideCombo(m_reg_price_combo);
 
-      if(m_keltner_created)
-        {
-         HideLabel(m_keltner_period_label);
-         HideSpin(m_keltner_period_spin);
-         HideLabel(m_keltner_deviation_label);
-         HideSpin(m_keltner_deviation_spin);
-         HideLabel(m_keltner_ma_type_label);
-         HideCombo(m_keltner_ma_type_combo);
-        }
+      HideLabel(m_keltner_period_label);
+      HideSpin(m_keltner_period_spin);
+      HideLabel(m_keltner_deviation_label);
+      HideSpin(m_keltner_deviation_spin);
+      HideLabel(m_keltner_ma_type_label);
+      HideCombo(m_keltner_ma_type_combo);
 
-      if(m_donchian_created)
-        {
-         HideLabel(m_donchian_period_label);
-         HideSpin(m_donchian_period_spin);
-        }
+      HideLabel(m_donchian_period_label);
+      HideSpin(m_donchian_period_spin);
 
-      if(m_afast_created)
-        {
-         HideLabel(m_afast_period_label);
-         HideSpin(m_afast_period_spin);
-         HideLabel(m_afast_shift_label);
-         HideSpin(m_afast_shift_spin);
-         HideLabel(m_afast_ma_type_label);
-         HideCombo(m_afast_ma_type_combo);
-         HideLabel(m_afast_price_label);
-         HideCombo(m_afast_price_combo);
-        }
+      HideLabel(m_afast_period_label);
+      HideSpin(m_afast_period_spin);
+      HideLabel(m_afast_shift_label);
+      HideSpin(m_afast_shift_spin);
+      HideLabel(m_afast_ma_type_label);
+      HideCombo(m_afast_ma_type_combo);
+      HideLabel(m_afast_price_label);
+      HideCombo(m_afast_price_combo);
 
       HideLabel(m_desvio_period_label);
       HideSpin(m_desvio_period_spin);
@@ -820,8 +648,6 @@ private:
      {
       HideAllContent();
       SetViewText("Donchian","");
-      if(!EnsureDonchianControls())
-         return;
       ShowLabel(m_view_title);
       ShowLabel(m_donchian_period_label);
       ShowSpin(m_donchian_period_spin);
@@ -831,8 +657,6 @@ private:
      {
       HideAllContent();
       SetViewText("Afastamento da media","");
-      if(!EnsureAfastamentoControls())
-         return;
       ShowLabel(m_view_title);
       ShowLabel(m_afast_period_label);
       ShowSpin(m_afast_period_spin);
@@ -872,8 +696,6 @@ private:
      {
       HideAllContent();
       SetViewText("Regressao linear","");
-      if(!EnsureRegressaoControls())
-         return;
       ShowLabel(m_view_title);
 
       ShowLabel(m_reg_period_label);
@@ -889,8 +711,6 @@ private:
       HideAllContent();
       SetViewText("Keltner","");
       ShowLabel(m_view_title);
-      if(!EnsureKeltnerControls())
-         return;
 
       ShowLabel(m_keltner_period_label);
       ShowSpin(m_keltner_period_spin);
@@ -1520,7 +1340,7 @@ private:
      }
 
 public:
-                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_keltner_created(false), m_donchian_created(false), m_reg_created(false), m_afast_created(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1), m_content_x(0), m_content_y(0), m_inner_w(0) {}
+                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1) {}
 
    bool Create(CEF_CWndCreate &host,const int window_index,CEF_CTabs &tabs,const int tab_index,const int slot_index,
                const int x,const int y,const int w,const int h)
@@ -1546,9 +1366,6 @@ public:
       const int content_x=12;
       const int content_y=10;
       const int inner_w=body_w-(content_x*2);
-      m_content_x=content_x;
-      m_content_y=content_y;
-      m_inner_w=inner_w;
 
       if(!V2CreateCard(*m_host,m_card,tabs,m_window_index,m_tab_index,x,y,w,h,card_back,card_border))
          return(false);
@@ -1602,8 +1419,56 @@ public:
       stoch_type_items[1]="Fechamento/Fechamento";
 
       int y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_keltner_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_keltner_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"20",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_keltner_deviation_label,"Desvio",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_keltner_deviation_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.1,1,"2.0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_keltner_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_keltner_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_donchian_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_donchian_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"21",sub_back,field_border))
+         return(false);
+
       y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_afast_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_afast_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"14",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_afast_shift_label,"Deslocamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_afast_shift_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"0",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_afast_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_afast_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_afast_price_label,"Modo de preco",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_afast_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
       y_cursor=content_y+18;
       if(!CreateBodyLabel(m_desvio_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
@@ -1755,6 +1620,25 @@ public:
          return(false);
       y_cursor+=16;
       if(!CreateComboControl(m_rsi_price_combo,m_body,content_x,y_cursor,inner_w,160,price_items,0,field_border))
+         return(false);
+
+      y_cursor=content_y+18;
+      if(!CreateBodyLabel(m_reg_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_reg_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,1.0,0,"20",sub_back,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_reg_ma_type_label,"Tipo de regressao",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_reg_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_reg_price_label,"Modo de fechamento",m_body,content_x,y_cursor,inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_reg_price_combo,m_body,content_x,y_cursor,inner_w,140,price_items,0,field_border))
          return(false);
 
       y_cursor=content_y+18;
