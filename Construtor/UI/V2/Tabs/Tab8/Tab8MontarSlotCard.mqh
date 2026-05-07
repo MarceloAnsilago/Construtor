@@ -12,6 +12,7 @@ private:
    bool            m_is_active;
    bool            m_silent_updates;
    bool            m_keltner_created;
+   bool            m_donchian_created;
    int             m_window_index;
    int             m_tab_index;
    int             m_slot_index;
@@ -337,6 +338,22 @@ private:
       return(true);
      }
 
+   bool EnsureDonchianControls(void)
+     {
+      if(m_donchian_created)
+         return(true);
+
+      int y_cursor=m_content_y+18;
+      if(!CreateBodyLabel(m_donchian_period_label,"Periodo",m_body,m_content_x,y_cursor,m_inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_donchian_period_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,1.0,1.0,0,"21",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
+         return(false);
+
+      m_donchian_created=true;
+      return(true);
+     }
+
    void BuildIndicatorItems(string &items[])
      {
       ArrayResize(items,41);
@@ -430,8 +447,11 @@ private:
          HideCombo(m_keltner_ma_type_combo);
         }
 
-      HideLabel(m_donchian_period_label);
-      HideSpin(m_donchian_period_spin);
+      if(m_donchian_created)
+        {
+         HideLabel(m_donchian_period_label);
+         HideSpin(m_donchian_period_spin);
+        }
 
       HideLabel(m_afast_period_label);
       HideSpin(m_afast_period_spin);
@@ -691,6 +711,8 @@ private:
      {
       HideAllContent();
       SetViewText("Donchian","");
+      if(!EnsureDonchianControls())
+         return;
       ShowLabel(m_view_title);
       ShowLabel(m_donchian_period_label);
       ShowSpin(m_donchian_period_spin);
@@ -1385,7 +1407,7 @@ private:
      }
 
 public:
-                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_keltner_created(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1), m_content_x(0), m_content_y(0), m_inner_w(0) {}
+                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_keltner_created(false), m_donchian_created(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1), m_content_x(0), m_content_y(0), m_inner_w(0) {}
 
    bool Create(CEF_CWndCreate &host,const int window_index,CEF_CTabs &tabs,const int tab_index,const int slot_index,
                const int x,const int y,const int w,const int h)
@@ -1467,34 +1489,7 @@ public:
       stoch_type_items[1]="Fechamento/Fechamento";
 
       int y_cursor=content_y+18;
-      /*
-      Codigo antigo do Keltner: criava tudo no startup do slot.
-      if(!CreateBodyLabel(m_keltner_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_keltner_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"20",sub_back,field_border))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_keltner_deviation_label,"Desvio",m_body,content_x,y_cursor,inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_keltner_deviation_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.1,1,"2.0",sub_back,field_border))
-         return(false);
-      y_cursor+=22;
-      if(!CreateBodyLabel(m_keltner_ma_type_label,"Tipo de media",m_body,content_x,y_cursor,inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateComboControl(m_keltner_ma_type_combo,m_body,content_x,y_cursor,inner_w,140,ma_type_items,0,field_border))
-         return(false);
-      */
-
       y_cursor=content_y+18;
-      if(!CreateBodyLabel(m_donchian_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
-         return(false);
-      y_cursor+=16;
-      if(!CreateSpinControl(m_donchian_period_spin,m_body,content_x,y_cursor,inner_w,9999.0,1.0,1.0,0,"21",sub_back,field_border))
-         return(false);
-
       y_cursor=content_y+18;
       if(!CreateBodyLabel(m_afast_period_label,"Periodo",m_body,content_x,y_cursor,inner_w,16))
          return(false);
