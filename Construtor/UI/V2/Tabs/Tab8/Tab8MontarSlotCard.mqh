@@ -13,6 +13,7 @@ private:
    bool            m_silent_updates;
    bool            m_keltner_created;
    bool            m_donchian_created;
+   bool            m_reg_created;
    int             m_window_index;
    int             m_tab_index;
    int             m_slot_index;
@@ -354,6 +355,52 @@ private:
       return(true);
      }
 
+   bool EnsureRegressaoControls(void)
+     {
+      if(m_reg_created)
+         return(true);
+
+      string ma_type_items[];
+      ArrayResize(ma_type_items,5);
+      ma_type_items[0]="Simples";
+      ma_type_items[1]="Exponencial";
+      ma_type_items[2]="Suavizada";
+      ma_type_items[3]="Linear ponderada";
+      ma_type_items[4]="Smoothed";
+
+      string price_items[];
+      ArrayResize(price_items,7);
+      price_items[0]="Fechamento";
+      price_items[1]="Abertura";
+      price_items[2]="Maximo";
+      price_items[3]="Minimo";
+      price_items[4]="Mediano";
+      price_items[5]="Tipico";
+      price_items[6]="Medio";
+
+      int y_cursor=m_content_y+18;
+      if(!CreateBodyLabel(m_reg_period_label,"Periodo",m_body,m_content_x,y_cursor,m_inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateSpinControl(m_reg_period_spin,m_body,m_content_x,y_cursor,m_inner_w,9999.0,0.0,1.0,0,"20",V2_COLOR_SURFACE,V2_COLOR_FIELD_BORDER))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_reg_ma_type_label,"Tipo de regressao",m_body,m_content_x,y_cursor,m_inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_reg_ma_type_combo,m_body,m_content_x,y_cursor,m_inner_w,140,ma_type_items,0,V2_COLOR_FIELD_BORDER))
+         return(false);
+      y_cursor+=22;
+      if(!CreateBodyLabel(m_reg_price_label,"Modo de fechamento",m_body,m_content_x,y_cursor,m_inner_w,16))
+         return(false);
+      y_cursor+=16;
+      if(!CreateComboControl(m_reg_price_combo,m_body,m_content_x,y_cursor,m_inner_w,140,price_items,0,V2_COLOR_FIELD_BORDER))
+         return(false);
+
+      m_reg_created=true;
+      return(true);
+     }
+
    void BuildIndicatorItems(string &items[])
      {
       ArrayResize(items,41);
@@ -430,12 +477,15 @@ private:
       HideLabel(m_rsi_price_label);
       HideCombo(m_rsi_price_combo);
 
-      HideLabel(m_reg_period_label);
-      HideSpin(m_reg_period_spin);
-      HideLabel(m_reg_ma_type_label);
-      HideCombo(m_reg_ma_type_combo);
-      HideLabel(m_reg_price_label);
-      HideCombo(m_reg_price_combo);
+      if(m_reg_created)
+        {
+         HideLabel(m_reg_period_label);
+         HideSpin(m_reg_period_spin);
+         HideLabel(m_reg_ma_type_label);
+         HideCombo(m_reg_ma_type_combo);
+         HideLabel(m_reg_price_label);
+         HideCombo(m_reg_price_combo);
+        }
 
       if(m_keltner_created)
         {
@@ -761,6 +811,8 @@ private:
      {
       HideAllContent();
       SetViewText("Regressao linear","");
+      if(!EnsureRegressaoControls())
+         return;
       ShowLabel(m_view_title);
 
       ShowLabel(m_reg_period_label);
@@ -1407,7 +1459,7 @@ private:
      }
 
 public:
-                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_keltner_created(false), m_donchian_created(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1), m_content_x(0), m_content_y(0), m_inner_w(0) {}
+                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_keltner_created(false), m_donchian_created(false), m_reg_created(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1), m_content_x(0), m_content_y(0), m_inner_w(0) {}
 
    bool Create(CEF_CWndCreate &host,const int window_index,CEF_CTabs &tabs,const int tab_index,const int slot_index,
                const int x,const int y,const int w,const int h)
