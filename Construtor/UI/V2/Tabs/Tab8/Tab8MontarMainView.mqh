@@ -372,7 +372,7 @@ public:
       slot_y[1]=slot_grid_y;
       slot_y[2]=slot_grid_y;
       slot_y[3]=slot_grid_y;
-      const int logic_y=slot_grid_y+slot_h+72;
+      const int logic_y=slot_grid_y+slot_h+32;
       const int logic_h=tabs_h-logic_y-14;
       for(int i=0;i<4;i++)
         {
