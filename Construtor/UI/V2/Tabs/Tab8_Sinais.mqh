@@ -36,7 +36,7 @@ public:
       const int tabs_h=tabs.YSize();
       const int tab_h=28;
       const int top_tabs_y=118;
-      const int busy_x=18;
+      const int busy_x=2;
       const int busy_y=72;
       const int busy_w=tabs_w-(busy_x*2);
 

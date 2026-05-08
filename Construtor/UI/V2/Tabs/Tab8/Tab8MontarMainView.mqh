@@ -464,17 +464,17 @@ public:
       int row_y=table_y+22;
       for(int i=0;i<5;i++)
         {
-         if(!CreateComboControl(m_logic_operator_combo[i],m_logic_card,tabs,col_x[0],row_y,col_w[0],120,logic_items,0,V2_COLOR_CARD_BORDER))
+         if(!CreateComboControl(m_logic_operator_combo[i],m_logic_card,tabs,col_x[0],row_y,col_w[0],96,logic_items,0,V2_COLOR_CARD_BORDER))
             return(false);
-         if(!CreateComboControl(m_logic_value_combo[i],m_logic_card,tabs,col_x[1],row_y,col_w[1],220,value_items,0,V2_COLOR_CARD_BORDER))
+         if(!CreateComboControl(m_logic_value_combo[i],m_logic_card,tabs,col_x[1],row_y,col_w[1],132,value_items,0,V2_COLOR_CARD_BORDER))
             return(false);
-         if(!CreateComboControl(m_logic_candle_combo[i],m_logic_card,tabs,col_x[2],row_y,col_w[2],120,candle_items,0,V2_COLOR_CARD_BORDER))
+         if(!CreateComboControl(m_logic_candle_combo[i],m_logic_card,tabs,col_x[2],row_y,col_w[2],96,candle_items,0,V2_COLOR_CARD_BORDER))
             return(false);
-         if(!CreateComboControl(m_logic_compare_combo[i],m_logic_card,tabs,col_x[3],row_y,col_w[3],180,compare_items,0,V2_COLOR_CARD_BORDER))
+         if(!CreateComboControl(m_logic_compare_combo[i],m_logic_card,tabs,col_x[3],row_y,col_w[3],120,compare_items,0,V2_COLOR_CARD_BORDER))
             return(false);
-         if(!CreateComboControl(m_logic_compare_value_combo[i],m_logic_card,tabs,col_x[4],row_y,col_w[4],220,value_items,0,V2_COLOR_CARD_BORDER))
+         if(!CreateComboControl(m_logic_compare_value_combo[i],m_logic_card,tabs,col_x[4],row_y,col_w[4],132,value_items,0,V2_COLOR_CARD_BORDER))
             return(false);
-         if(!CreateComboControl(m_logic_compare_candle_combo[i],m_logic_card,tabs,col_x[5],row_y,col_w[5],120,candle_items,0,V2_COLOR_CARD_BORDER))
+         if(!CreateComboControl(m_logic_compare_candle_combo[i],m_logic_card,tabs,col_x[5],row_y,col_w[5],96,candle_items,0,V2_COLOR_CARD_BORDER))
             return(false);
          row_y+=34;
         }
