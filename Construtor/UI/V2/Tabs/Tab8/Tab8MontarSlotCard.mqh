@@ -25,7 +25,6 @@ private:
    int             m_last_selected_index;
 
    CEF_CFrame      m_card;
-   CEF_CTextLabel  m_title;
    CEF_CTextLabel  m_combo_label;
    CEF_CComboBox   m_combo;
    CEF_CFrame      m_body;
@@ -265,8 +264,6 @@ private:
    void SetSpinValue(CEF_CTextEdit &spin,const string value) { spin.SetValue(value); if(!m_silent_updates) spin.Update(true); }
    int GetComboIndex(CEF_CComboBox &combo) { const int index=combo.GetListViewPointer().SelectedItemIndex(); return(index>=0 ? index : 0); }
    void SetComboIndex(CEF_CComboBox &combo,const int index) { combo.SelectItem(index>=0 ? index : 0); if(!m_silent_updates) combo.Update(true); }
-   void UpdateSlotTitle(void) { m_title.LabelText(StringFormat("Indicador %d",m_slot_index+1)); if(!m_silent_updates) m_title.Update(true); }
-
    void HideFrame(CEF_CFrame &frame) { frame.Hide(); if(!m_silent_updates) frame.Update(true); }
    void ShowFrame(CEF_CFrame &frame) { frame.Show(); if(!m_silent_updates) frame.Update(true); }
 
@@ -1340,16 +1337,12 @@ private:
       HideFrame(m_body);
       HideCombo(m_combo);
       HideLabel(m_combo_label);
-      if(!m_embedded_mode)
-         HideLabel(m_title);
       HideFrame(m_card);
      }
 
    void ShowSlot(void)
      {
       ShowFrame(m_card);
-      if(!m_embedded_mode)
-         ShowLabel(m_title);
       ShowLabel(m_combo_label);
       ShowCombo(m_combo);
       ShowFrame(m_body);
@@ -1387,21 +1380,21 @@ public:
 
       if(!V2CreateCard(*m_host,m_card,tabs,m_window_index,m_tab_index,x,y,w,h,card_back,(m_embedded_mode ? card_back : card_border)))
          return(false);
-
-      if(!V2CreateCardTitle(*m_host,m_title,"",m_card,tabs,m_window_index,m_tab_index,frame_pad,(m_embedded_mode ? 2 : 8),w-(frame_pad*2)))
-         return(false);
-      UpdateSlotTitle();
+      HideFrame(m_card);
 
       if(!V2CreateFieldLabel(*m_host,m_combo_label,"Indicador",m_card,tabs,m_window_index,m_tab_index,frame_pad,(m_embedded_mode ? 2 : 24),w-(frame_pad*2),16))
          return(false);
+      HideLabel(m_combo_label);
 
       string indicator_items[];
       BuildIndicatorItems(indicator_items);
       if(!CreateComboControl(m_combo,m_card,frame_pad,(m_embedded_mode ? 16 : 38),w-(frame_pad*2),220,indicator_items,0,field_border))
          return(false);
+      HideCombo(m_combo);
 
       if(!V2CreateCard(*m_host,m_body,tabs,m_window_index,m_tab_index,body_x,body_y,body_w,body_h,sub_back,card_border))
          return(false);
+      HideFrame(m_body);
 
       if(!CreateBodyLabel(m_view_title,"Nao usar",m_body,content_x,content_y,inner_w,16,11,V2_COLOR_TEXT_PRIMARY))
          return(false);
@@ -2078,8 +2071,6 @@ public:
    void SetSlotIndex(const int slot_index)
      {
       m_slot_index=slot_index;
-      if(m_created)
-         UpdateSlotTitle();
      }
 
    void SaveState(STab8MontarSlotState &state)
