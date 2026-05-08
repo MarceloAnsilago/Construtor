@@ -18,6 +18,7 @@ private:
    bool            m_created;
    bool            m_is_active;
    bool            m_silent_updates;
+   bool            m_embedded_mode;
    int             m_window_index;
    int             m_tab_index;
    int             m_slot_index;
@@ -1339,24 +1340,26 @@ private:
       HideFrame(m_body);
       HideCombo(m_combo);
       HideLabel(m_combo_label);
-      HideLabel(m_title);
+      if(!m_embedded_mode)
+         HideLabel(m_title);
       HideFrame(m_card);
      }
 
    void ShowSlot(void)
      {
       ShowFrame(m_card);
-      ShowLabel(m_title);
+      if(!m_embedded_mode)
+         ShowLabel(m_title);
       ShowLabel(m_combo_label);
       ShowCombo(m_combo);
       ShowFrame(m_body);
      }
 
 public:
-                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1) {}
+                     CTab8MontarSlotCard(void) : m_host(NULL), m_tabs(NULL), m_created(false), m_is_active(false), m_silent_updates(false), m_embedded_mode(false), m_window_index(-1), m_tab_index(-1), m_slot_index(-1), m_last_selected_index(-1) {}
 
    bool Create(CEF_CWndCreate &host,const int window_index,CEF_CTabs &tabs,const int tab_index,const int slot_index,
-               const int x,const int y,const int w,const int h)
+               const int x,const int y,const int w,const int h,const bool embedded_mode=false)
      {
       if(m_created)
          return(true);
@@ -1366,33 +1369,35 @@ public:
       m_window_index=window_index;
       m_tab_index=tab_index;
       m_slot_index=slot_index;
+      m_embedded_mode=embedded_mode;
 
       const color card_back=V2_COLOR_CARD_BACK;
       const color card_border=V2_COLOR_CARD_BORDER;
       const color field_border=V2_COLOR_FIELD_BORDER;
       const color sub_back=V2_COLOR_SURFACE;
-      const int outer_pad=8;
-      const int body_w=w-(outer_pad*2);
-      const int body_x=x+outer_pad;
-      const int body_y=y+60;
-      const int body_h=h-68;
-      const int content_x=12;
+      const int frame_pad=(m_embedded_mode ? 8 : 16);
+      const int outer_pad=(m_embedded_mode ? 0 : 8);
+      const int body_w=(m_embedded_mode ? w-(frame_pad*2) : w-(outer_pad*2));
+      const int body_x=(m_embedded_mode ? x+frame_pad : x+outer_pad);
+      const int body_y=(m_embedded_mode ? y+50 : y+60);
+      const int body_h=(m_embedded_mode ? h-50 : h-68);
+      const int content_x=(m_embedded_mode ? 8 : 12);
       const int content_y=8;
       const int inner_w=body_w-(content_x*2);
 
-      if(!V2CreateCard(*m_host,m_card,tabs,m_window_index,m_tab_index,x,y,w,h,card_back,card_border))
+      if(!V2CreateCard(*m_host,m_card,tabs,m_window_index,m_tab_index,x,y,w,h,card_back,(m_embedded_mode ? card_back : card_border)))
          return(false);
 
-      if(!V2CreateCardTitle(*m_host,m_title,"",m_card,tabs,m_window_index,m_tab_index,16,8,w-32))
+      if(!V2CreateCardTitle(*m_host,m_title,"",m_card,tabs,m_window_index,m_tab_index,frame_pad,(m_embedded_mode ? 2 : 8),w-(frame_pad*2)))
          return(false);
       UpdateSlotTitle();
 
-      if(!V2CreateFieldLabel(*m_host,m_combo_label,"Indicador",m_card,tabs,m_window_index,m_tab_index,16,24,w-32,16))
+      if(!V2CreateFieldLabel(*m_host,m_combo_label,"Indicador",m_card,tabs,m_window_index,m_tab_index,frame_pad,(m_embedded_mode ? 2 : 24),w-(frame_pad*2),16))
          return(false);
 
       string indicator_items[];
       BuildIndicatorItems(indicator_items);
-      if(!CreateComboControl(m_combo,m_card,16,38,w-32,220,indicator_items,0,field_border))
+      if(!CreateComboControl(m_combo,m_card,frame_pad,(m_embedded_mode ? 16 : 38),w-(frame_pad*2),220,indicator_items,0,field_border))
          return(false);
 
       if(!V2CreateCard(*m_host,m_body,tabs,m_window_index,m_tab_index,body_x,body_y,body_w,body_h,sub_back,card_border))

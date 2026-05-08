@@ -12,12 +12,8 @@ private:
    bool                   m_is_active;
    int                    m_window_index;
    int                    m_tab_index;
-   int                    m_active_slot;
-
-   CTab8MontarSlotCard    m_editor_slot;
+   CTab8MontarSlotCard    m_slot_cards[4];
    STab8MontarSlotState   m_slot_states[4];
-   CEF_CTextLabel         m_slot_selector_label;
-   CEF_CComboBox          m_slot_selector_combo;
    CEF_CFrame             m_logic_card;
    CEF_CTextLabel         m_logic_title;
    CEF_CTextLabel         m_logic_note;
@@ -75,27 +71,15 @@ private:
       return(true);
      }
 
-   void CopySlotState(STab8MontarSlotState &target,const STab8MontarSlotState &source)
-     {
-      target.selected_indicator=source.selected_indicator;
-      ArrayCopy(target.spin_values,source.spin_values);
-      ArrayCopy(target.combo_indices,source.combo_indices);
-     }
-
    int SlotIndicatorIndex(const int slot) const
      {
       return(V2ClampIndex(m_slot_states[slot].selected_indicator,0,40));
      }
 
-   void SaveActiveSlotState(void)
+   void SaveAllSlotStates(void)
      {
-      m_editor_slot.SaveState(m_slot_states[m_active_slot]);
-     }
-
-   void LoadActiveSlotState(void)
-     {
-      m_editor_slot.SetSlotIndex(m_active_slot);
-      m_editor_slot.LoadState(m_slot_states[m_active_slot]);
+      for(int i=0;i<4;i++)
+         m_slot_cards[i].SaveState(m_slot_states[i]);
      }
 
    void BuildLogicValueItems(string &items[])
@@ -350,7 +334,7 @@ private:
      }
 
 public:
-                        CTab8MontarMainView(void) : m_host(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1), m_active_slot(0)
+                        CTab8MontarMainView(void) : m_host(NULL), m_created(false), m_is_active(false), m_window_index(-1), m_tab_index(-1)
                           {
                            for(int i=0;i<4;i++)
                              {
@@ -371,34 +355,31 @@ public:
       const int tabs_w=tabs.XSize();
       const int tabs_h=tabs.YSize();
       const int content_pad=18;
-      const int content_y=8;
+      const int content_y=18;
       const int content_w=tabs_w-(content_pad*2);
       const int gap=8;
-      const int selector_label_y=content_y;
-      const int selector_combo_y=selector_label_y+16;
-      const int selector_w=180;
-      const int editor_w=(content_w>380 ? 380 : content_w);
-      const int editor_x=content_pad+((content_w-editor_w)/2);
-      const int editor_y=selector_combo_y+24;
-      const int available_h=tabs_h-editor_y-10;
-      const int slot_h=(available_h-10)/2;
-      const int logic_y=editor_y+slot_h+gap;
-      const int logic_h=available_h-slot_h-gap;
-
-      string slot_items[];
-      ArrayResize(slot_items,4);
-      slot_items[0]="Indicador 1";
-      slot_items[1]="Indicador 2";
-      slot_items[2]="Indicador 3";
-      slot_items[3]="Indicador 4";
-
-      if(!V2CreateFieldLabel(*m_host,m_slot_selector_label,"Slot em edicao",tabs,tabs,m_window_index,m_tab_index,editor_x,selector_label_y,selector_w,16))
-         return(false);
-      if(!CreateComboControl(m_slot_selector_combo,tabs,tabs,editor_x,selector_combo_y,selector_w,120,slot_items,0,V2_COLOR_CARD_BORDER))
-         return(false);
-
-      if(!m_editor_slot.Create(*m_host,m_window_index,tabs,m_tab_index,0,editor_x,editor_y,editor_w,slot_h))
-         return(false);
+      const int top_h=(tabs_h-content_y-gap-14)/2;
+      const int slot_grid_y=content_y+22;
+      const int slot_w=(content_w-(gap*3))/4;
+      const int slot_h=top_h-30;
+      int slot_x[4];
+      int slot_y[4];
+      slot_x[0]=content_pad;
+      slot_x[1]=content_pad+slot_w+gap;
+      slot_x[2]=content_pad+(slot_w+gap)*2;
+      slot_x[3]=content_pad+(slot_w+gap)*3;
+      slot_y[0]=slot_grid_y;
+      slot_y[1]=slot_grid_y;
+      slot_y[2]=slot_grid_y;
+      slot_y[3]=slot_grid_y;
+      const int logic_y=content_y+top_h+gap;
+      const int logic_h=tabs_h-logic_y-14;
+      for(int i=0;i<4;i++)
+        {
+         if(!m_slot_cards[i].Create(*m_host,m_window_index,tabs,m_tab_index,i,slot_x[i],slot_y[i],slot_w,slot_h,true))
+            return(false);
+         m_slot_cards[i].SaveState(m_slot_states[i]);
+        }
 
       if(!V2CreateCard(*m_host,m_logic_card,tabs,m_window_index,m_tab_index,content_pad,logic_y,content_w,logic_h,V2_COLOR_CARD_BACK,V2_COLOR_CARD_BORDER))
          return(false);
@@ -498,10 +479,6 @@ public:
          row_y+=34;
         }
 
-      m_editor_slot.SaveState(m_slot_states[0]);
-      for(int i=1;i<4;i++)
-         CopySlotState(m_slot_states[i],m_slot_states[0]);
-
       m_created=true;
       SetActive(false,false);
       return(true);
@@ -512,16 +489,9 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected_slot=V2ClampIndex(m_slot_selector_combo.GetListViewPointer().SelectedItemIndex(),0,3);
-      if(selected_slot!=m_active_slot)
-        {
-         SaveActiveSlotState();
-         m_active_slot=selected_slot;
-         LoadActiveSlotState();
-        }
-
-      m_editor_slot.OnTimerEvent();
-      SaveActiveSlotState();
+      for(int i=0;i<4;i++)
+         m_slot_cards[i].OnTimerEvent();
+      SaveAllSlotStates();
 
       bool changed=false;
       for(int i=0;i<4;i++)
@@ -543,8 +513,9 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      m_editor_slot.RefreshView();
-      SaveActiveSlotState();
+      for(int i=0;i<4;i++)
+         m_slot_cards[i].RefreshView();
+      SaveAllSlotStates();
 
       for(int i=0;i<4;i++)
          m_logic_slot_last[i]=SlotIndicatorIndex(i);
@@ -557,15 +528,8 @@ public:
          return;
 
       m_is_active=active;
-      if(active)
-         m_active_slot=V2ClampIndex(m_slot_selector_combo.GetListViewPointer().SelectedItemIndex(),0,3);
-
-      if(active)
-         LoadActiveSlotState();
-      m_editor_slot.SetActive(active,redraw);
-
-      SetLabelVisible(m_slot_selector_label,active,redraw);
-      SetComboVisible(m_slot_selector_combo,active,redraw);
+      for(int i=0;i<4;i++)
+         m_slot_cards[i].SetActive(active,redraw);
       SetFrameVisible(m_logic_card,active,redraw);
       SetLabelVisible(m_logic_title,active,redraw);
       SetLabelVisible(m_logic_note,active,redraw);
