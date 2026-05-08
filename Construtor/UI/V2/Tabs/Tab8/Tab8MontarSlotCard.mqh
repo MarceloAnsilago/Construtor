@@ -267,6 +267,153 @@ private:
    void HideFrame(CEF_CFrame &frame) { frame.Hide(); if(!m_silent_updates) frame.Update(true); }
    void ShowFrame(CEF_CFrame &frame) { frame.Show(); if(!m_silent_updates) frame.Update(true); }
 
+   string IndicatorNameByCode(const int code) const
+     {
+      switch(code)
+        {
+         case 0: return("Nao usar");
+         case 1: return("Keltner");
+         case 2: return("Donchian");
+         case 3: return("Regressao");
+         case 4: return("Afastamento da media");
+         case 5: return("Desvio medio");
+         case 6: return("ATR com desvio");
+         case 7: return("Media movel");
+         case 8: return("Bandas de Bollinger");
+         case 9: return("Envelopes");
+         case 10: return("Estocastico");
+         case 11: return("RSI");
+         case 12: return("StdDev");
+         case 13: return("Volume");
+         case 14: return("ATR");
+         case 15: return("Parabolic SAR");
+         case 16: return("Fractal");
+         case 17: return("OBV");
+         case 18: return("MACD");
+         case 19: return("Acumulacao/Distribuicao (A/D)");
+         case 20: return("MFI (Money Flow Index)");
+         case 21: return("Vidya");
+         case 22: return("Tema");
+         case 23: return("FRAMA");
+         case 24: return("Trix");
+         case 25: return("Bears Power");
+         case 26: return("Bulls Power");
+         case 27: return("Chaikin Oscilador");
+         case 28: return("Accelerator Oscillator");
+         case 29: return("Awesome Oscillator");
+         case 30: return("CCI (Commodity Channel Index)");
+         case 31: return("DeMarker");
+         case 32: return("Alligator");
+         case 33: return("Nuvem de Ichimoku");
+         case 34: return("ADX (Average Direcional index)");
+         case 35: return("ADX Wilder");
+         case 36: return("Gator");
+         case 37: return("Williams Percentual Range");
+         case 38: return("Market Facilitation Index");
+         case 39: return("Momentum");
+         case 40: return("Relative Vigor Index");
+        }
+      return("Nao usar");
+     }
+
+   int DisplayIndexToIndicatorCode(const int display_index) const
+     {
+      switch(display_index)
+        {
+         case 0: return(0);
+         case 1: return(28);
+         case 2: return(19);
+         case 3: return(34);
+         case 4: return(35);
+         case 5: return(4);
+         case 6: return(32);
+         case 7: return(14);
+         case 8: return(6);
+         case 9: return(29);
+         case 10: return(8);
+         case 11: return(25);
+         case 12: return(26);
+         case 13: return(30);
+         case 14: return(27);
+         case 15: return(31);
+         case 16: return(2);
+         case 17: return(5);
+         case 18: return(9);
+         case 19: return(10);
+         case 20: return(23);
+         case 21: return(16);
+         case 22: return(36);
+         case 23: return(1);
+         case 24: return(18);
+         case 25: return(38);
+         case 26: return(7);
+         case 27: return(20);
+         case 28: return(39);
+         case 29: return(33);
+         case 30: return(17);
+         case 31: return(15);
+         case 32: return(3);
+         case 33: return(40);
+         case 34: return(11);
+         case 35: return(12);
+         case 36: return(22);
+         case 37: return(24);
+         case 38: return(21);
+         case 39: return(13);
+         case 40: return(37);
+        }
+      return(0);
+     }
+
+   int IndicatorCodeToDisplayIndex(const int indicator_code) const
+     {
+      switch(indicator_code)
+        {
+         case 0: return(0);
+         case 28: return(1);
+         case 19: return(2);
+         case 34: return(3);
+         case 35: return(4);
+         case 4: return(5);
+         case 32: return(6);
+         case 14: return(7);
+         case 6: return(8);
+         case 29: return(9);
+         case 8: return(10);
+         case 25: return(11);
+         case 26: return(12);
+         case 30: return(13);
+         case 27: return(14);
+         case 31: return(15);
+         case 2: return(16);
+         case 5: return(17);
+         case 9: return(18);
+         case 10: return(19);
+         case 23: return(20);
+         case 16: return(21);
+         case 36: return(22);
+         case 1: return(23);
+         case 18: return(24);
+         case 38: return(25);
+         case 7: return(26);
+         case 20: return(27);
+         case 39: return(28);
+         case 33: return(29);
+         case 17: return(30);
+         case 15: return(31);
+         case 3: return(32);
+         case 40: return(33);
+         case 11: return(34);
+         case 12: return(35);
+         case 22: return(36);
+         case 24: return(37);
+         case 21: return(38);
+         case 13: return(39);
+         case 37: return(40);
+        }
+      return(0);
+     }
+
    bool CreateBodyLabel(CEF_CTextLabel &label,const string text,CElement &owner,const int x,const int y,const int width,const int height,const int font_size=10,const color text_color=clrNONE)
      {
       if(m_tabs==NULL)
@@ -311,47 +458,8 @@ private:
    void BuildIndicatorItems(string &items[])
      {
       ArrayResize(items,41);
-      items[0]="Nao usar";
-      items[1]="Keltner";
-      items[2]="Donchian";
-      items[3]="Regressao";
-      items[4]="Afastamento da media";
-      items[5]="Desvio medio";
-      items[6]="ATR com desvio";
-      items[7]="Media movel";
-      items[8]="Bandas de Bollinger";
-      items[9]="Envelopes";
-      items[10]="Estocastico";
-      items[11]="RSI";
-      items[12]="StdDev";
-      items[13]="Volume";
-      items[14]="ATR";
-      items[15]="Parabolic SAR";
-      items[16]="Fractal";
-      items[17]="OBV";
-      items[18]="MACD";
-      items[19]="Acumulacao/Distribuicao (A/D)";
-      items[20]="MFI (Money Flow Index)";
-      items[21]="Vidya";
-      items[22]="Tema";
-      items[23]="FRAMA";
-      items[24]="Trix";
-      items[25]="Bears Power";
-      items[26]="Bulls Power";
-      items[27]="Chaikin Oscilador";
-      items[28]="Accelerator Oscillator";
-      items[29]="Awesome Oscillator";
-      items[30]="CCI (Commodity Channel Index)";
-      items[31]="DeMarker";
-      items[32]="Alligator";
-      items[33]="Nuvem de Ichimoku";
-      items[34]="ADX (Average Direcional index)";
-      items[35]="ADX Wilder";
-      items[36]="Gator";
-      items[37]="Williams Percentual Range";
-      items[38]="Market Facilitation Index";
-      items[39]="Momentum";
-      items[40]="Relative Vigor Index";
+      for(int i=0;i<41;i++)
+         items[i]=IndicatorNameByCode(DisplayIndexToIndicatorCode(i));
      }
 
    void BuildPlaceholderText(const string &indicator_name,string &title_text,string &body_text)
@@ -1116,205 +1224,205 @@ private:
    void ApplySelectedIndicator(const int selected)
      {
       string items[];
-      BuildIndicatorItems(items);
-      const int safe_index=V2ClampIndex(selected,0,ArraySize(items)-1);
+      const int indicator_code=V2ClampIndex(selected,0,40);
+      const string indicator_name=IndicatorNameByCode(indicator_code);
 
-      if(safe_index==1)
+      if(indicator_code==1)
         {
          ShowKeltnerView();
          return;
         }
-      if(safe_index==3)
+      if(indicator_code==3)
         {
          ShowRegressaoView();
          return;
         }
-      if(safe_index==2)
+      if(indicator_code==2)
         {
          ShowDonchianView();
          return;
         }
-      if(safe_index==4)
+      if(indicator_code==4)
         {
          ShowAfastamentoView();
          return;
         }
-      if(safe_index==5)
+      if(indicator_code==5)
         {
          ShowDesvioMedioView();
          return;
         }
-      if(safe_index==6)
+      if(indicator_code==6)
         {
          ShowAtrChannelView();
          return;
         }
-      if(safe_index==7)
+      if(indicator_code==7)
         {
          ShowMediaMovelView();
          return;
         }
-      if(safe_index==8)
+      if(indicator_code==8)
         {
          ShowBandasView();
          return;
         }
-      if(safe_index==9)
+      if(indicator_code==9)
         {
          ShowEnvelopesView();
          return;
         }
-      if(safe_index==10)
+      if(indicator_code==10)
         {
          ShowEstocasticoView();
          return;
         }
-      if(safe_index==11)
+      if(indicator_code==11)
         {
          ShowRSIView();
          return;
         }
-      if(safe_index==12)
+      if(indicator_code==12)
         {
          ShowStdDevView();
          return;
         }
-      if(safe_index==13)
+      if(indicator_code==13)
         {
          ShowVolumeView();
          return;
         }
-      if(safe_index==14)
+      if(indicator_code==14)
         {
          ShowATRView();
          return;
         }
-      if(safe_index==15)
+      if(indicator_code==15)
         {
          ShowParabolicSarView();
          return;
         }
-      if(safe_index==16)
+      if(indicator_code==16)
         {
          ShowFractalView();
          return;
         }
-      if(safe_index==17)
+      if(indicator_code==17)
         {
          ShowOBVView();
          return;
         }
-      if(safe_index==18)
+      if(indicator_code==18)
         {
          ShowMACDView();
          return;
         }
-      if(safe_index==19)
+      if(indicator_code==19)
         {
          ShowAccumDistView();
          return;
         }
-      if(safe_index==20)
+      if(indicator_code==20)
         {
          ShowMFIView();
          return;
         }
-      if(safe_index==21)
+      if(indicator_code==21)
         {
          ShowVidyaView();
          return;
         }
-      if(safe_index==22)
+      if(indicator_code==22)
         {
          ShowTemaView();
          return;
         }
-      if(safe_index==23)
+      if(indicator_code==23)
         {
          ShowFRAMAView();
          return;
         }
-      if(safe_index==24)
+      if(indicator_code==24)
         {
          ShowTrixView();
          return;
         }
-      if(safe_index==25)
+      if(indicator_code==25)
         {
          ShowBearsPowerView();
          return;
         }
-      if(safe_index==26)
+      if(indicator_code==26)
         {
          ShowBullsPowerView();
          return;
         }
-      if(safe_index==27)
+      if(indicator_code==27)
         {
          ShowChaikinOsciladorView();
          return;
         }
-      if(safe_index==28)
+      if(indicator_code==28)
         {
          ShowAcceleratorOscillatorView();
          return;
         }
-      if(safe_index==29)
+      if(indicator_code==29)
         {
          ShowAwesomeOscillatorView();
          return;
         }
-      if(safe_index==30)
+      if(indicator_code==30)
         {
          ShowCCIView();
          return;
         }
-      if(safe_index==31)
+      if(indicator_code==31)
         {
          ShowDeMarkerView();
          return;
         }
-      if(safe_index==32)
+      if(indicator_code==32)
         {
          ShowAlligatorView();
          return;
         }
-      if(safe_index==33)
+      if(indicator_code==33)
         {
          ShowIchimokuView();
          return;
         }
-      if(safe_index==34)
+      if(indicator_code==34)
         {
          ShowADXView();
          return;
         }
-      if(safe_index==35)
+      if(indicator_code==35)
         {
          ShowADXWilderView();
          return;
         }
-      if(safe_index==36)
+      if(indicator_code==36)
         {
          ShowGatorView();
          return;
         }
-      if(safe_index==37)
+      if(indicator_code==37)
         {
          ShowWPRView();
          return;
         }
-      if(safe_index==38)
+      if(indicator_code==38)
         {
          ShowMarketFacilitationIndexView();
          return;
         }
-      if(safe_index==39)
+      if(indicator_code==39)
         {
          ShowMomentumView();
          return;
         }
-      if(safe_index==40)
+      if(indicator_code==40)
         {
          ShowRVIView();
          return;
@@ -1322,7 +1430,7 @@ private:
 
       string placeholder_title;
       string placeholder_body;
-      BuildPlaceholderText(items[safe_index],placeholder_title,placeholder_body);
+      BuildPlaceholderText(indicator_name,placeholder_title,placeholder_body);
       ShowPlaceholderView(placeholder_title,placeholder_body);
      }
 
@@ -2049,7 +2157,7 @@ public:
       if(!CreateSpinControl(m_sar_max_spin,m_body,content_x,y_cursor,inner_w,9999.0,0.0,0.01,2,"0.20",sub_back,field_border))
          return(false);
 
-      m_combo.SelectItem(0);
+      m_combo.SelectItem(IndicatorCodeToDisplayIndex(0));
       m_silent_updates=true;
       HideSlot();
       m_silent_updates=false;
@@ -2063,7 +2171,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,40);
+      const int selected=DisplayIndexToIndicatorCode(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,40));
       m_last_selected_index=selected;
       ApplySelectedIndicator(selected);
      }
@@ -2290,7 +2398,7 @@ public:
       SetComboIndex(m_vidya_price_combo,(ArraySize(state.combo_indices)>32 ? state.combo_indices[32] : GetComboIndex(m_vidya_price_combo)));
       SetComboIndex(m_volume_type_combo,(ArraySize(state.combo_indices)>33 ? state.combo_indices[33] : GetComboIndex(m_volume_type_combo)));
 
-      m_combo.SelectItem(V2ClampIndex(state.selected_indicator,0,40));
+      m_combo.SelectItem(IndicatorCodeToDisplayIndex(V2ClampIndex(state.selected_indicator,0,40)));
       m_last_selected_index=-1;
       ApplySelectedIndicator(V2ClampIndex(state.selected_indicator,0,40));
 
@@ -2326,7 +2434,7 @@ public:
       if(!m_created || !m_is_active)
          return;
 
-      const int selected=V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,40);
+      const int selected=DisplayIndexToIndicatorCode(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,40));
       if(selected!=m_last_selected_index)
         {
          m_last_selected_index=selected;
@@ -2340,7 +2448,7 @@ public:
          return(0);
       if(m_last_selected_index>=0)
          return(V2ClampIndex(m_last_selected_index,0,40));
-      return(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,40));
+      return(DisplayIndexToIndicatorCode(V2ClampIndex(m_combo.GetListViewPointer().SelectedItemIndex(),0,40)));
     }
   };
 
