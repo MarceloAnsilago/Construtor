@@ -383,9 +383,9 @@ public:
 
       if(!V2CreateCard(*m_host,m_logic_card,tabs,m_window_index,m_tab_index,content_pad,logic_y,content_w,logic_h,V2_COLOR_CARD_BACK,V2_COLOR_CARD_BORDER))
          return(false);
-      if(!V2CreateCardTitle(*m_host,m_logic_title,"Composicao logica dos sinais",m_logic_card,tabs,m_window_index,m_tab_index,16,12,content_w-32))
+      if(!V2CreateCardTitle(*m_host,m_logic_title,"Composição lógica dos sinais",m_logic_card,tabs,m_window_index,m_tab_index,16,12,content_w-32))
          return(false);
-      if(!m_host.CreateTextLabel(m_logic_note,"Conectores logicos migrados do V1 para montar as comparacoes entre os 4 indicadores salvos no editor acima.",m_logic_card,m_window_index,tabs,m_tab_index,16,40,content_w-32,20))
+      if(!m_host.CreateTextLabel(m_logic_note,"Conectores lógicos migrados da V1 para montar as comparações entre os 4 indicadores salvos no editor acima.",m_logic_card,m_window_index,tabs,m_tab_index,16,40,content_w-32,20))
          return(false);
       m_logic_note.FontSize(10);
       m_logic_note.LabelColor(V2_COLOR_TEXT_SECONDARY);
@@ -395,7 +395,7 @@ public:
       col_titles[0]="Operador";
       col_titles[1]="Valor ref.";
       col_titles[2]="Velas";
-      col_titles[3]="Comparacao";
+      col_titles[3]="Comparação";
       col_titles[4]="Valor comp.";
       col_titles[5]="Velas comp.";
 
@@ -413,8 +413,8 @@ public:
       ArrayResize(candle_items,4);
       candle_items[0]="Vela atual";
       candle_items[1]="Vela anterior";
-      candle_items[2]="Penultima vela";
-      candle_items[3]="Anti Penultima";
+      candle_items[2]="Penúltima vela";
+      candle_items[3]="Antepenúltima";
 
       string compare_items[];
       ArrayResize(compare_items,10);

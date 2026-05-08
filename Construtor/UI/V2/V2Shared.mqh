@@ -275,7 +275,7 @@ private:
 public:
                      CV2BusyProgress(void) : m_created(false) {}
 
-   bool Create(CEF_CWndCreate &wnd,CElement &owner,const int window_index,const int x,const int y,const int width,const string text="Carregando interface")
+   bool Create(CEF_CWndCreate &wnd,CElement &owner,const int window_index,const int x,const int y,const int width,const string text="Organizando interface")
      {
       if(m_created)
          return(true);

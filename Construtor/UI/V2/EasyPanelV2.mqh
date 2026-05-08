@@ -559,7 +559,7 @@ public:
       const int top_selected=m_top_tabs.SelectedTab();
       if(top_selected!=m_top_tab_last)
         {
-         m_busy_progress.Begin(top_selected==0 ? "Carregando Parametrizacao e montagem..." : "Carregando Execucao e painel...",3);
+         m_busy_progress.Begin(top_selected==0 ? "Organizando Parametrizacao e montagem..." : "Organizando Execucao e painel...",3);
          m_busy_progress.Step(1,3);
          m_top_tab_last=top_selected;
          RefreshActiveVisualState();
@@ -573,7 +573,7 @@ public:
          const int selected=m_param_tabs.SelectedTab();
          if(selected!=m_param_tab_last)
            {
-            m_busy_progress.Begin("Carregando aba lateral...",3);
+            m_busy_progress.Begin("Organizando aba lateral...",3);
             m_busy_progress.Step(1,3);
             m_param_tab_last=selected;
             RefreshActiveVisualState();
@@ -587,7 +587,7 @@ public:
          const int selected=m_exec_tabs.SelectedTab();
          if(selected!=m_exec_tab_last)
            {
-            m_busy_progress.Begin("Carregando aba lateral...",3);
+            m_busy_progress.Begin("Organizando aba lateral...",3);
             m_busy_progress.Step(1,3);
             m_exec_tab_last=selected;
             RefreshActiveVisualState();

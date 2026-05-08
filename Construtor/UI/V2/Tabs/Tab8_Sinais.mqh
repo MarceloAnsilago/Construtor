@@ -135,7 +135,7 @@ public:
       const int selected=m_inner_tabs.SelectedTab();
       if(selected!=m_last_selected_tab)
         {
-         m_busy_progress.Begin(selected==0 ? "Carregando Sinais..." : "Carregando Montar sinais...",3);
+         m_busy_progress.Begin(selected==0 ? "Organizando Sinais..." : "Organizando Montar sinais...",3);
          m_busy_progress.Step(1,3);
          m_last_selected_tab=selected;
          m_inner_tabs.ShowTabElements();
