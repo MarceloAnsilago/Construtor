@@ -355,13 +355,13 @@ public:
       const int tabs_w=tabs.XSize();
       const int tabs_h=tabs.YSize();
       const int content_pad=18;
-      const int content_y=18;
+      const int content_y=8;
       const int content_w=tabs_w-(content_pad*2);
-      const int gap=8;
-      const int top_h=(tabs_h-content_y-gap-14)/2;
-      const int slot_grid_y=content_y+22;
+      const int gap=4;
+      const int top_h=(tabs_h-content_y-20)/3;
+      const int slot_grid_y=content_y+6;
       const int slot_w=(content_w-(gap*3))/4;
-      const int slot_h=top_h-30;
+      const int slot_h=top_h+56;
       int slot_x[4];
       int slot_y[4];
       slot_x[0]=content_pad;
@@ -372,7 +372,7 @@ public:
       slot_y[1]=slot_grid_y;
       slot_y[2]=slot_grid_y;
       slot_y[3]=slot_grid_y;
-      const int logic_y=content_y+top_h+gap;
+      const int logic_y=slot_grid_y+slot_h+72;
       const int logic_h=tabs_h-logic_y-14;
       for(int i=0;i<4;i++)
         {
@@ -433,7 +433,7 @@ public:
       BuildLogicValueItems(value_items);
 
       const int table_x=16;
-      const int table_y=78;
+      const int table_y=64;
       const int table_w=content_w-32;
       const int col_gap=6;
       const int logic_w=84;
@@ -461,7 +461,7 @@ public:
             return(false);
         }
 
-      int row_y=table_y+22;
+      int row_y=table_y+20;
       for(int i=0;i<5;i++)
         {
          if(!CreateComboControl(m_logic_operator_combo[i],m_logic_card,tabs,col_x[0],row_y,col_w[0],96,logic_items,0,V2_COLOR_CARD_BORDER))
@@ -476,7 +476,7 @@ public:
             return(false);
          if(!CreateComboControl(m_logic_compare_candle_combo[i],m_logic_card,tabs,col_x[5],row_y,col_w[5],96,candle_items,0,V2_COLOR_CARD_BORDER))
             return(false);
-         row_y+=34;
+         row_y+=30;
         }
 
       m_created=true;
