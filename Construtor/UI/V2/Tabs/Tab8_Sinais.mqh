@@ -35,8 +35,10 @@ public:
       const int tabs_w=tabs.XSize();
       const int tabs_h=tabs.YSize();
       const int tab_h=28;
-      const int top_tabs_y=96;
-      const int busy_w=240;
+      const int top_tabs_y=118;
+      const int busy_x=18;
+      const int busy_y=72;
+      const int busy_w=tabs_w-(busy_x*2);
 
       string inner_text[];
       int inner_widths[];
@@ -66,7 +68,7 @@ public:
          return(false);
       m_host.RegisterElement(m_window_index,m_inner_tabs);
 
-      if(!m_busy_progress.Create(*m_host,tabs,m_window_index,tabs_w-busy_w-20,top_tabs_y-22,busy_w))
+      if(!m_busy_progress.Create(*m_host,tabs,m_window_index,busy_x,busy_y,busy_w))
          return(false);
 
       CEF_CButtonsGroup *bg=m_inner_tabs.GetButtonsGroupPointer();
