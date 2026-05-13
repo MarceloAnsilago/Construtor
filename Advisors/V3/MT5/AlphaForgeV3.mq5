@@ -14,6 +14,8 @@
 int ShellExecuteW(int hwnd,string lpOperation,string lpFile,string lpParameters,string lpDirectory,int nShowCmd);
 #import
 
+input long InpMagicNumber = 100000;
+
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string BUTTON_OPTIMIZE_NAME = "AlphaForgeV3.BtnOptimize";
 string BUTTON_OPERATE_NAME  = "AlphaForgeV3.BtnOperate";
@@ -31,6 +33,14 @@ string g_bridge_updated_at = "-";
 ulong g_last_bridge_poll_ms = 0;
 CAlphaForgeOptimizeModal g_optimize_modal;
 CAlphaForgeChartTheme g_chart_theme;
+
+string ResolveMagicNumberText()
+  {
+   if(g_bridge_magic_number!="" && g_bridge_magic_number!="-")
+      return(g_bridge_magic_number);
+
+   return(StringFormat("%I64d",InpMagicNumber));
+  }
 
 string BuildFrontendPath(const string entry_name)
   {
@@ -88,7 +98,12 @@ void UpdateBridgeField(const string key,const string value)
          g_bridge_strategy_name=value;
       else
          if(key=="magic_number")
-            g_bridge_magic_number=value;
+           {
+            if(value=="")
+               g_bridge_magic_number="-";
+            else
+               g_bridge_magic_number=value;
+           }
          else
             if(key=="updated_at")
                g_bridge_updated_at=value;
@@ -149,7 +164,7 @@ void RefreshBridgeOverlay()
    ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3");
    ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Bridge: "+g_bridge_status);
    ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Strategy: "+g_bridge_strategy_name);
-   ObjectSetString(0,LOG_LABEL_PREFIX+"3",OBJPROP_TEXT,"Magic: "+g_bridge_magic_number);
+   ObjectSetString(0,LOG_LABEL_PREFIX+"3",OBJPROP_TEXT,"Magic: "+ResolveMagicNumberText());
    ChartRedraw();
   }
 
@@ -164,6 +179,7 @@ void SyncFrontendBridge()
    if(handle==INVALID_HANDLE)
      {
       g_bridge_status="Aguardando payload do frontend";
+      g_bridge_magic_number="-";
       RefreshBridgeOverlay();
       return;
      }
@@ -266,6 +282,7 @@ void DestroyControlPanel()
 int OnInit()
   {
    g_chart_theme.SetChartId(ChartID());
+   g_bridge_magic_number=StringFormat("%I64d",InpMagicNumber);
 
    if(!g_chart_theme.SaveCurrentTheme())
      {
