@@ -21,7 +21,7 @@ def build_navigation_items() -> list[NavigationItem]:
         NavigationItem("saidas_parciais", "Saidas Parciais", "07", "[P]", "Saidas fracionadas e gerenciamento parcial."),
         NavigationItem("sinais", "Sinais", "08", "[N]", "Gatilhos e filtros de sinal."),
         NavigationItem("ajustes_finais", "Ajustes Finais", "09", "[A]", "Acabamento final da estrategia."),
-        NavigationItem("montagem", "Montagem", "10", "[G]", "Espaco reservado para o fluxo de montagem da estrategia."),
+        NavigationItem("otimizacao", "Otimizar", "10", "[G]", "Parametros selecionados para otimizacao e preparacao do fluxo do tester."),
         NavigationItem("execucao", "Execucao", "11", "[E]", "Fluxo operacional da estrategia, disparo e integracoes."),
         NavigationItem("painel", "Painel", "12", "[L]", "Visualizacao consolidada do painel e controles finais."),
     ]

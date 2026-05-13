@@ -5,6 +5,7 @@ from themes.theme import UITheme
 from views.ajustes_finais_view import AjustesFinaisView
 from views.break_even_view import BreakEvenView
 from views.initial_settings_view import InitialSettingsView
+from views.optimization_view import OptimizationView
 from views.saidas_parciais_view import SaidasParciaisView
 from views.sinais_view import SinaisView
 from views.take_profit_view import TakeProfitView
@@ -101,6 +102,9 @@ class DashboardView(ctk.CTkFrame):
             body = self._build_view(item)
             self._view_cache[item.item_id] = body
 
+        if item.item_id == "otimizacao" and hasattr(body, "refresh_from_initial_config"):
+            body.refresh_from_initial_config(self._build_initial_config_snapshot())
+
         body.grid()
         self._current_body = body
 
@@ -132,6 +136,9 @@ class DashboardView(ctk.CTkFrame):
         if item.item_id == "ajustes_finais":
             return self._create_view(AjustesFinaisView)
 
+        if item.item_id == "otimizacao":
+            return self._create_view(OptimizationView)
+
         content = ctk.CTkFrame(self._placeholder, fg_color="transparent")
         content.grid(row=0, column=0, sticky="")
 
@@ -157,6 +164,12 @@ class DashboardView(ctk.CTkFrame):
         view.grid(row=0, column=0, sticky="nsew", padx=14, pady=14)
         view.grid_remove()
         return view
+
+    def _build_initial_config_snapshot(self) -> dict[str, str]:
+        initial_view = self._view_cache.get("inf_iniciais")
+        if initial_view is not None and hasattr(initial_view, "export_config"):
+            return initial_view.export_config()
+        return {}
 
     def _active_section_id(self) -> str:
         for item_id, body in self._view_cache.items():

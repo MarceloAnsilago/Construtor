@@ -12,6 +12,7 @@ class InitialSettingsView(ctk.CTkFrame):
         self._combo_refs: dict[str, ctk.CTkComboBox] = {}
         self._time_refs: dict[str, tuple[ctk.CTkComboBox, ctk.CTkComboBox]] = {}
         self._entry_refs: dict[str, ctk.StringVar] = {}
+        self._magic_manual_override = False
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -25,7 +26,8 @@ class InitialSettingsView(ctk.CTkFrame):
         self._scroll.grid_columnconfigure((0, 1, 2, 3), weight=1, uniform="card")
 
         self._name_var = ctk.StringVar(value="Minha estrategia")
-        self._magic_var = ctk.StringVar(value="100000")
+        self._magic_var = ctk.StringVar(value=self._build_magic_value(self._name_var.get()))
+        self._name_var.trace_add("write", self._on_name_change)
 
         self._build_cards()
 
@@ -38,7 +40,7 @@ class InitialSettingsView(ctk.CTkFrame):
     def _build_basic_card(self) -> None:
         card = self._create_card(0, "Informacoes basicas")
         self._add_entry(card, 0, "Nome da estrategia", self._name_var)
-        self._add_entry(card, 1, "Magic number", self._magic_var)
+        self._add_entry(card, 1, "Magic number", self._magic_var, on_change=self._on_magic_change)
         self._add_combo(card, 2, "Mercado desejado", self._form_options.mercados, "B3")
         self._add_combo(card, 3, "Tipo operacional", self._form_options.tipos_operacionais, "Day trade")
         self._add_combo(card, 4, "Modo de processamento", self._form_options.modos_processamento, "Cada tick")
@@ -93,6 +95,7 @@ class InitialSettingsView(ctk.CTkFrame):
         label: str,
         variable: ctk.StringVar,
         readonly: bool = False,
+        on_change=None,
     ) -> None:
         row = 1 + (index * 2)
         self._add_label(card, row, label)
@@ -109,6 +112,8 @@ class InitialSettingsView(ctk.CTkFrame):
             font=self._theme.font("body"),
         )
         entry.grid(row=row + 1, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
+        if on_change is not None:
+            entry.bind("<KeyRelease>", on_change)
         if readonly:
             entry.configure(state="readonly")
         self._entry_refs[label] = variable
@@ -222,6 +227,23 @@ class InitialSettingsView(ctk.CTkFrame):
             text_color=self._theme.colors.text_muted,
             font=self._theme.font("label"),
         ).grid(row=row, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
+
+    def _build_magic_value(self, name: str) -> str:
+        cleaned = "".join(char for char in name if char.isalnum())
+        if not cleaned:
+            return "100000"
+        total = sum(ord(char) for char in cleaned.upper())
+        return str(100000 + total)
+
+    def _on_name_change(self, *_args) -> None:
+        if self._magic_manual_override:
+            return
+        self._magic_var.set(self._build_magic_value(self._name_var.get()))
+
+    def _on_magic_change(self, _event=None) -> None:
+        generated_magic = self._build_magic_value(self._name_var.get())
+        current_magic = self._magic_var.get().strip()
+        self._magic_manual_override = current_magic not in {"", generated_magic}
 
     def export_config(self) -> dict[str, str]:
         start_hour, start_minute = self._time_refs["Inicio das operacoes"]

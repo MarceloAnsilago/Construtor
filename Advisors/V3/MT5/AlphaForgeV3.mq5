@@ -14,6 +14,7 @@
 int ShellExecuteW(int hwnd,string lpOperation,string lpFile,string lpParameters,string lpDirectory,int nShowCmd);
 #import
 
+input string InpStrategyName = "Minha estrategia";
 input long InpMagicNumber = 100000;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
@@ -40,6 +41,14 @@ string ResolveMagicNumberText()
       return(g_bridge_magic_number);
 
    return(StringFormat("%I64d",InpMagicNumber));
+  }
+
+string ResolveStrategyNameText()
+  {
+   if(g_bridge_strategy_name!="" && g_bridge_strategy_name!="-")
+      return(g_bridge_strategy_name);
+
+   return(InpStrategyName);
   }
 
 string BuildFrontendPath(const string entry_name)
@@ -163,25 +172,28 @@ void RefreshBridgeOverlay()
    CreateLogOverlay();
    ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3");
    ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Bridge: "+g_bridge_status);
-   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Strategy: "+g_bridge_strategy_name);
+   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Strategy: "+ResolveStrategyNameText());
    ObjectSetString(0,LOG_LABEL_PREFIX+"3",OBJPROP_TEXT,"Magic: "+ResolveMagicNumberText());
    ChartRedraw();
   }
 
-void SyncFrontendBridge()
+bool LoadFrontendBridge(const bool force_refresh=false)
   {
-   ulong now_ms=GetTickCount64();
-   if(now_ms-g_last_bridge_poll_ms<500)
-      return;
+   if(!force_refresh)
+     {
+      ulong now_ms=GetTickCount64();
+      if(now_ms-g_last_bridge_poll_ms<500)
+         return(false);
+      g_last_bridge_poll_ms=now_ms;
+     }
 
-   g_last_bridge_poll_ms=now_ms;
    int handle=FileOpen(BRIDGE_FILE_NAME,FILE_READ|FILE_TXT|FILE_COMMON|FILE_ANSI);
    if(handle==INVALID_HANDLE)
      {
       g_bridge_status="Aguardando payload do frontend";
+      g_bridge_strategy_name="-";
       g_bridge_magic_number="-";
-      RefreshBridgeOverlay();
-      return;
+      return(false);
      }
 
    while(!FileIsEnding(handle))
@@ -197,10 +209,16 @@ void SyncFrontendBridge()
       StringTrimRight(key);
       StringTrimLeft(value);
       StringTrimRight(value);
-      UpdateBridgeField(key,value);
+     UpdateBridgeField(key,value);
      }
 
    FileClose(handle);
+   return(true);
+  }
+
+void SyncFrontendBridge()
+  {
+   LoadFrontendBridge();
    RefreshBridgeOverlay();
   }
 
@@ -282,7 +300,14 @@ void DestroyControlPanel()
 int OnInit()
   {
    g_chart_theme.SetChartId(ChartID());
+   g_bridge_strategy_name=InpStrategyName;
    g_bridge_magic_number=StringFormat("%I64d",InpMagicNumber);
+   g_bridge_status="Inputs do EA";
+
+   if(LoadFrontendBridge(true))
+      Print("AlphaForge V3: configuracao carregada do frontend em Common\\Files.");
+   else
+      Print("AlphaForge V3: usando inputs locais; nenhum payload do frontend encontrado.");
 
    if(!g_chart_theme.SaveCurrentTheme())
      {
