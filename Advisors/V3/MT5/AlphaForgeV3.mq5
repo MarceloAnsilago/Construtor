@@ -37,27 +37,10 @@ string BUTTON_OPERATE_NAME  = "AlphaForgeV3.BtnOperate";
 string PANEL_NAME           = "AlphaForgeV3.Panel";
 string LOG_PANEL_NAME       = "AlphaForgeV3.LogPanel";
 string LOG_LABEL_PREFIX     = "AlphaForgeV3.LogLabel.";
-string BRIDGE_FILE_NAME     = "AlphaForgeV3_bridge_state.txt";
 int TIMER_INTERVAL_MS       = 100;
 
 bool g_operation_enabled = false;
-bool g_bridge_allow_buy = true;
-bool g_bridge_allow_sell = true;
-bool g_bridge_filter_enabled = false;
-string g_bridge_status = "Aguardando payload do frontend";
-string g_bridge_strategy_name = "-";
-string g_bridge_magic_number = "-";
-string g_bridge_updated_at = "-";
-string g_bridge_signal_order_mode = "Mercado";
-string g_bridge_filter_measure = "Pontos";
-string g_bridge_filter_timeframe = "Corrente";
-double g_bridge_initial_volume = 1.0;
-double g_bridge_max_spread = 10.0;
-double g_bridge_filter_candle_min = 0.0;
-double g_bridge_filter_candle_max = 0.0;
-double g_bridge_filter_wick_min = 0.0;
-double g_bridge_filter_wick_max = 0.0;
-ulong g_last_bridge_poll_ms = 0;
+string g_config_source = "Inputs/.set";
 datetime g_last_signal_bar_time = 0;
 CAlphaForgeOptimizeModal g_optimize_modal;
 CAlphaForgeChartTheme g_chart_theme;
@@ -130,18 +113,7 @@ string TimeframeToBridgeText(const ENUM_TIMEFRAMES timeframe)
 
 void ApplyInputFallbackConfig()
   {
-   g_bridge_allow_buy=InpOperarNaCompra;
-   g_bridge_allow_sell=InpOperarNaVenda;
-   g_bridge_initial_volume=InpVolumeInicial;
-   g_bridge_max_spread=InpSpreadMaximo;
-   g_bridge_filter_enabled=InpAtivarFiltro;
-   g_bridge_filter_measure=InpMedirEmPercentual ? "Percentual" : "Pontos";
-   g_bridge_filter_timeframe=TimeframeToBridgeText(InpTempoGraficoDoFiltro);
-   g_bridge_filter_candle_min=InpTamanhoMinimoDaVela;
-   g_bridge_filter_candle_max=InpTamanhoMaximoDaVela;
-   g_bridge_filter_wick_min=InpMinimoDePavios;
-   g_bridge_filter_wick_max=InpMaximoDePavios;
-   SyncRuntimeConfigFromLegacy();
+   SyncRuntimeConfigFromInputs();
   }
 
 string NormalizeText(const string value)
@@ -152,34 +124,11 @@ string NormalizeText(const string value)
    return(text);
   }
 
-bool ParseYesNo(const string value,const bool fallback)
-  {
-   string text=NormalizeText(value);
-   if(text=="Sim" || text=="sim" || text=="true" || text=="TRUE" || text=="1")
-      return(true);
-   if(text=="Nao" || text=="nao" || text=="false" || text=="FALSE" || text=="0")
-      return(false);
-   return(fallback);
-  }
-
-double ParseDoubleValue(const string value,const double fallback)
-  {
-   string text=NormalizeText(value);
-   if(text=="")
-      return(fallback);
-   return(StringToDouble(text));
-  }
-
 long ResolveMagicNumberValue()
   {
-   string bridge_magic=NormalizeText(g_bridge_magic_number);
-   if(bridge_magic=="" || bridge_magic=="-")
-      return(InpMagicNumber);
-
-   long parsed=(long)StringToInteger(bridge_magic);
-   if(parsed<=0)
-      return(InpMagicNumber);
-   return(parsed);
+   if(g_config.magic_number>0)
+      return(g_config.magic_number);
+   return(InpMagicNumber);
   }
 
 double ResolveInitialVolume()
@@ -198,15 +147,13 @@ double ResolveMaxSpreadPoints()
 
 string ResolveMagicNumberText()
   {
-   if(g_bridge_magic_number!="" && g_bridge_magic_number!="-")
-      return(g_bridge_magic_number);
-   return(StringFormat("%I64d",InpMagicNumber));
+   return(StringFormat("%I64d",ResolveMagicNumberValue()));
   }
 
 string ResolveStrategyNameText()
   {
-   if(g_bridge_strategy_name!="" && g_bridge_strategy_name!="-")
-      return(g_bridge_strategy_name);
+   if(g_config.strategy_name!="")
+      return(g_config.strategy_name);
    return(InpNomeDaEstrategia);
   }
 
@@ -442,13 +389,13 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
    if(direction>0 && !g_config.risk.allow_buy)
      {
-      Print("AlphaForge V3: compra bloqueada pela configuracao do frontend.");
+      Print("AlphaForge V3: compra bloqueada pela configuracao atual.");
       return(false);
      }
 
    if(direction<0 && !g_config.risk.allow_sell)
      {
-      Print("AlphaForge V3: venda bloqueada pela configuracao do frontend.");
+      Print("AlphaForge V3: venda bloqueada pela configuracao atual.");
       return(false);
      }
 
@@ -534,62 +481,6 @@ void EvaluateAndTrade()
    SubmitMarketOrder(direction,timeframe,signal_bar);
   }
 
-void UpdateBridgeField(const string key,const string value)
-  {
-   if(key=="bridge_status")
-      g_bridge_status=value;
-   else
-      if(key=="strategy_name")
-         g_bridge_strategy_name=value;
-      else
-         if(key=="magic_number")
-           {
-            if(value=="")
-               g_bridge_magic_number="-";
-            else
-               g_bridge_magic_number=value;
-           }
-         else
-            if(key=="updated_at")
-               g_bridge_updated_at=value;
-            else
-               if(key=="allow_buy")
-                  g_bridge_allow_buy=ParseYesNo(value,true);
-               else
-                  if(key=="allow_sell")
-                     g_bridge_allow_sell=ParseYesNo(value,true);
-                  else
-                     if(key=="initial_volume")
-                        g_bridge_initial_volume=ParseDoubleValue(value,1.0);
-                     else
-                        if(key=="max_spread")
-                           g_bridge_max_spread=ParseDoubleValue(value,10.0);
-                        else
-                           if(key=="signal_order_mode")
-                              g_bridge_signal_order_mode=NormalizeText(value);
-                           else
-                              if(key=="signal_filter_enabled")
-                                 g_bridge_filter_enabled=ParseYesNo(value,false);
-                              else
-                                 if(key=="signal_filter_measure")
-                                    g_bridge_filter_measure=NormalizeText(value);
-                                 else
-                                    if(key=="signal_filter_timeframe")
-                                       g_bridge_filter_timeframe=NormalizeText(value);
-                                    else
-                                       if(key=="signal_filter_candle_min")
-                                          g_bridge_filter_candle_min=ParseDoubleValue(value,0.0);
-                                       else
-                                          if(key=="signal_filter_candle_max")
-                                             g_bridge_filter_candle_max=ParseDoubleValue(value,0.0);
-                                          else
-                                             if(key=="signal_filter_wick_min")
-                                                g_bridge_filter_wick_min=ParseDoubleValue(value,0.0);
-                                             else
-                                                if(key=="signal_filter_wick_max")
-                                                   g_bridge_filter_wick_max=ParseDoubleValue(value,0.0);
-  }
-
 bool CreateLogOverlay()
   {
    if(ObjectFind(0,LOG_PANEL_NAME)<0)
@@ -645,58 +536,12 @@ void RefreshBridgeOverlay()
   {
    CreateLogOverlay();
    ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3");
-   ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Bridge: "+g_bridge_status);
+   ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Origem: "+g_config_source);
    ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Strategy: "+ResolveStrategyNameText());
    ObjectSetString(0,LOG_LABEL_PREFIX+"3",OBJPROP_TEXT,"Magic: "+ResolveMagicNumberText());
    ObjectSetString(0,LOG_LABEL_PREFIX+"4",OBJPROP_TEXT,"Ordem: "+g_config.signals.order_mode+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao"));
    ObjectSetString(0,LOG_LABEL_PREFIX+"5",OBJPROP_TEXT,"Filtro TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
    ChartRedraw();
-  }
-
-bool LoadFrontendBridge(const bool force_refresh=false)
-  {
-   if(!force_refresh)
-     {
-      ulong now_ms=GetTickCount64();
-      if(now_ms-g_last_bridge_poll_ms<500)
-         return(false);
-      g_last_bridge_poll_ms=now_ms;
-     }
-
-   int handle=FileOpen(BRIDGE_FILE_NAME,FILE_READ|FILE_TXT|FILE_COMMON|FILE_ANSI);
-   if(handle==INVALID_HANDLE)
-     {
-      g_bridge_status="Aguardando payload do frontend";
-      g_bridge_strategy_name="-";
-      g_bridge_magic_number="-";
-      return(false);
-     }
-
-   while(!FileIsEnding(handle))
-     {
-      string line=FileReadString(handle);
-      int delimiter=StringFind(line,"=");
-      if(delimiter<=0)
-         continue;
-
-      string key=StringSubstr(line,0,delimiter);
-      string value=StringSubstr(line,delimiter+1);
-      StringTrimLeft(key);
-      StringTrimRight(key);
-      StringTrimLeft(value);
-      StringTrimRight(value);
-      UpdateBridgeField(key,value);
-     }
-
-   FileClose(handle);
-   SyncRuntimeConfigFromLegacy();
-   return(true);
-  }
-
-void SyncFrontendBridge()
-  {
-   LoadFrontendBridge();
-   RefreshBridgeOverlay();
   }
 
 bool CreateButtonObject(const string name,const string text,const int x,const int y,const int width,const color back_color)
@@ -779,20 +624,8 @@ void DestroyControlPanel()
 int OnInit()
   {
    g_chart_theme.SetChartId(ChartID());
-   g_bridge_strategy_name=InpNomeDaEstrategia;
-   g_bridge_magic_number=StringFormat("%I64d",InpMagicNumber);
-   g_bridge_status="Inputs do EA";
    ApplyInputFallbackConfig();
-
-   if(!IsRunningInTester() && LoadFrontendBridge(true))
-      Print("AlphaForge V3: configuracao carregada do frontend em Common\\Files.");
-   else
-     {
-      if(IsRunningInTester())
-         Print("AlphaForge V3: tester detectado; usando inputs locais para executar o filtro.");
-      else
-         Print("AlphaForge V3: usando inputs locais; nenhum payload do frontend encontrado.");
-     }
+   Print("AlphaForge V3: configuracao carregada pelos inputs/.set do MT5.");
 
    if(IsRunningInTester() && InpOperarAutomaticamenteNoTester)
      {
@@ -871,8 +704,6 @@ void OnTimer()
   {
    if(!HasInteractiveChart())
       return;
-
-   SyncFrontendBridge();
 
    if(g_optimize_modal.IsCreated())
       g_optimize_modal.OnTimerEvent();

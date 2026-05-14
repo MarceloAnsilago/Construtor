@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
 from models.navigation import NavigationItem
-from schema.serializers import build_bridge_payload, build_runtime_snapshot
+from schema.serializers import build_runtime_snapshot
 from state.strategy_store import StrategyStore
 from themes.theme import UITheme
 from views.ajustes_finais_view import AjustesFinaisView
@@ -71,40 +71,6 @@ class DashboardView(ctk.CTkFrame):
         self._title.configure(text=item.label)
         self._description.configure(text=item.description)
         self._render_body(item)
-
-    def export_bridge_payload(self) -> dict[str, str]:
-        payload = {
-            "active_section": self._active_section_id(),
-        }
-
-        initial_view = self._view_cache.get("inf_iniciais")
-        if initial_view is not None and hasattr(initial_view, "export_config"):
-            config = initial_view.export_config()
-            for key, value in config.items():
-                payload[key] = str(value)
-            self._strategy_store.set("strategy.name", str(config.get("strategy_name", "Minha estrategia")))
-            self._strategy_store.set("strategy.magic_number", str(config.get("magic_number", "100000")))
-            self._strategy_store.set("risk.allow_buy", str(config.get("allow_buy", "Sim")))
-            self._strategy_store.set("risk.allow_sell", str(config.get("allow_sell", "Sim")))
-            self._strategy_store.set("risk.initial_volume", str(config.get("initial_volume", "1.00")))
-            self._strategy_store.set("risk.max_spread", str(config.get("max_spread", "10")))
-
-        ajustes_view = self._view_cache.get("ajustes_finais")
-        if ajustes_view is not None and hasattr(ajustes_view, "export_config"):
-            ajustes = ajustes_view.export_config()
-            payload["final_adjustments_count"] = str(len(ajustes))
-
-        sinais_view = self._view_cache.get("sinais")
-        if sinais_view is not None and hasattr(sinais_view, "export_montar_signals_dict"):
-            montar = sinais_view.export_montar_signals_dict()
-            payload["signal_groups_count"] = str(len(montar.get("groups", [])))
-            payload["signal_logic_rows_count"] = str(len(montar.get("logic_rows", [])))
-        if sinais_view is not None and hasattr(sinais_view, "export_runtime_config"):
-            sinais_view.export_runtime_config()
-        for key, value in build_bridge_payload(self._strategy_store).items():
-            payload[key] = str(value)
-
-        return payload
 
     def strategy_store(self) -> StrategyStore:
         self._sync_store_from_views()

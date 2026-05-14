@@ -1,0 +1,14 @@
+InpNomeDaEstrategia=Ciro
+InpMagicNumber=100301
+InpOperarAutomaticamenteNoTester=true
+InpOperarNaCompra=true
+InpOperarNaVenda=true
+InpVolumeInicial=100
+InpSpreadMaximo=3
+InpAtivarFiltro=false
+InpMedirEmPercentual=false
+InpTempoGraficoDoFiltro=current
+InpTamanhoMinimoDaVela=0
+InpTamanhoMaximoDaVela=0
+InpMinimoDePavios=0
+InpMaximoDePavios=0
