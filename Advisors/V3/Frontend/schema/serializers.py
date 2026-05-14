@@ -51,3 +51,10 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "signal_filter_wick_min": payload["signal_filter_wick_min"],
         "signal_filter_wick_max": payload["signal_filter_wick_max"],
     }
+
+
+def build_tester_set_lines(store: StrategyStore) -> list[str]:
+    return [
+        f"InpNomeDaEstrategia={store.get('strategy.name')}",
+        f"InpMagicNumber={store.get('strategy.magic_number')}",
+    ]

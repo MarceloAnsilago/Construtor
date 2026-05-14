@@ -4,7 +4,7 @@ from themes.theme import UITheme
 
 
 class TopHeader(ctk.CTkFrame):
-    def __init__(self, master, theme: UITheme, on_apply=None) -> None:
+    def __init__(self, master, theme: UITheme, on_apply=None, on_export_set=None) -> None:
         super().__init__(
             master,
             fg_color=theme.colors.surface,
@@ -16,6 +16,7 @@ class TopHeader(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=0)
+        self.grid_columnconfigure(3, weight=0)
         self.grid_propagate(False)
         self._theme = theme
 
@@ -45,6 +46,20 @@ class TopHeader(ctk.CTkFrame):
         )
         self._status.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(10, 6))
 
+        self._export_button = ctk.CTkButton(
+            self,
+            text="Exportar .set",
+            command=on_export_set,
+            height=32,
+            width=132,
+            corner_radius=0,
+            fg_color=theme.colors.header_dark,
+            hover_color=theme.colors.sidebar_item_hover,
+            text_color=theme.colors.header_text,
+            font=theme.font("label", weight="bold"),
+        )
+        self._export_button.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(10, 6))
+
         self._apply_button = ctk.CTkButton(
             self,
             text="Aplicar no EA",
@@ -57,7 +72,7 @@ class TopHeader(ctk.CTkFrame):
             text_color=theme.colors.header_text,
             font=theme.font("label", weight="bold"),
         )
-        self._apply_button.grid(row=1, column=2, sticky="e", padx=(0, 12), pady=(10, 6))
+        self._apply_button.grid(row=1, column=3, sticky="e", padx=(0, 12), pady=(10, 6))
 
     def set_status(self, text: str, success: bool = True) -> None:
         color = self._theme.colors.text if success else self._theme.colors.accent_soft

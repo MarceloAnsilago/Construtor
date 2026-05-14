@@ -1,9 +1,13 @@
+from pathlib import Path
+from tkinter import filedialog
+
 import customtkinter as ctk
 
 from components.sidebar import Sidebar
 from components.top_header import TopHeader
 from models.navigation import NavigationItem, build_navigation_items
 from services.bridge import write_bridge_state
+from services.set_export import get_default_set_dir, write_set_file
 from themes.theme import UITheme, configure_ctk
 from views.dashboard_view import DashboardView
 
@@ -49,7 +53,12 @@ class AlphaForgeApp(ctk.CTk):
         main_shell.grid_rowconfigure(1, weight=1)
         main_shell.grid_columnconfigure(0, weight=1)
 
-        header = TopHeader(main_shell, self._theme, on_apply=self._apply_to_ea)
+        header = TopHeader(
+            main_shell,
+            self._theme,
+            on_apply=self._apply_to_ea,
+            on_export_set=self._export_set,
+        )
         header.grid(row=0, column=0, sticky="ew")
         self._header = header
 
@@ -65,3 +74,22 @@ class AlphaForgeApp(ctk.CTk):
         payload = self._content.export_bridge_payload()
         bridge_path = write_bridge_state(payload)
         self._header.set_status(f"Bridge OK: {bridge_path.name}")
+
+    def _export_set(self) -> None:
+        strategy_name = self._content.current_strategy_name().strip() or "alpha_strategy"
+        safe_name = "".join(char if char.isalnum() or char in ("-", "_") else "_" for char in strategy_name).strip("_")
+        if not safe_name:
+            safe_name = "alpha_strategy"
+
+        destination = filedialog.asksaveasfilename(
+            title="Salvar arquivo .set",
+            defaultextension=".set",
+            initialdir=str(get_default_set_dir()),
+            initialfile=f"{safe_name}.set",
+            filetypes=[("MetaTrader set", "*.set"), ("Todos os arquivos", "*.*")],
+        )
+        if not destination:
+            return
+
+        exported = write_set_file(self._content.strategy_store(), Path(destination))
+        self._header.set_status(f".set OK: {exported.name}")

@@ -106,6 +106,14 @@ class DashboardView(ctk.CTkFrame):
 
         return payload
 
+    def strategy_store(self) -> StrategyStore:
+        self._sync_store_from_views()
+        return self._strategy_store
+
+    def current_strategy_name(self) -> str:
+        self._sync_store_from_views()
+        return str(self._strategy_store.get("strategy.name"))
+
     def _render_body(self, item: NavigationItem) -> None:
         if self._current_body is not None:
             self._current_body.grid_remove()
@@ -126,7 +134,7 @@ class DashboardView(ctk.CTkFrame):
 
     def _build_view(self, item: NavigationItem) -> ctk.CTkBaseClass:
         if item.item_id == "inf_iniciais":
-            return self._create_view(InitialSettingsView)
+            return self._create_view(InitialSettingsView, strategy_store=self._strategy_store)
 
         if item.item_id == "stop_loss":
             return self._create_view(StopLossView)
@@ -199,3 +207,18 @@ class DashboardView(ctk.CTkFrame):
             if body == self._current_body:
                 return item_id
         return ""
+
+    def _sync_store_from_views(self) -> None:
+        initial_view = self._view_cache.get("inf_iniciais")
+        if initial_view is not None and hasattr(initial_view, "export_config"):
+            config = initial_view.export_config()
+            self._strategy_store.set("strategy.name", str(config.get("strategy_name", "Minha estrategia")))
+            self._strategy_store.set("strategy.magic_number", str(config.get("magic_number", "100000")))
+            self._strategy_store.set("risk.allow_buy", str(config.get("allow_buy", "Sim")))
+            self._strategy_store.set("risk.allow_sell", str(config.get("allow_sell", "Sim")))
+            self._strategy_store.set("risk.initial_volume", str(config.get("initial_volume", "1.00")))
+            self._strategy_store.set("risk.max_spread", str(config.get("max_spread", "10")))
+
+        sinais_view = self._view_cache.get("sinais")
+        if sinais_view is not None and hasattr(sinais_view, "export_runtime_config"):
+            sinais_view.export_runtime_config()

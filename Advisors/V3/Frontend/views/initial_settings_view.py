@@ -1,15 +1,18 @@
 import customtkinter as ctk
 
 from models.initial_settings import build_initial_settings_options
+from state.strategy_store import StrategyStore
 from themes.theme import UITheme
 
 
 class InitialSettingsView(ctk.CTkFrame):
-    def __init__(self, master, theme: UITheme) -> None:
+    def __init__(self, master, theme: UITheme, strategy_store: StrategyStore | None = None) -> None:
         super().__init__(master, fg_color="transparent")
         self._theme = theme
         self._form_options = build_initial_settings_options()
+        self._strategy_store = strategy_store or StrategyStore()
         self._combo_refs: dict[str, ctk.CTkComboBox] = {}
+        self._combo_vars: dict[str, ctk.StringVar] = {}
         self._time_refs: dict[str, tuple[ctk.CTkComboBox, ctk.CTkComboBox]] = {}
         self._entry_refs: dict[str, ctk.StringVar] = {}
         self._magic_manual_override = False
@@ -25,9 +28,13 @@ class InitialSettingsView(ctk.CTkFrame):
         self._scroll.grid(row=0, column=0, sticky="nsew")
         self._scroll.grid_columnconfigure((0, 1, 2, 3), weight=1, uniform="card")
 
-        self._name_var = ctk.StringVar(value="Minha estrategia")
-        self._magic_var = ctk.StringVar(value=self._build_magic_value(self._name_var.get()))
+        self._name_var = ctk.StringVar(value=str(self._strategy_store.get("strategy.name")))
+        magic_default = str(self._strategy_store.get("strategy.magic_number"))
+        if not magic_default.strip():
+            magic_default = self._build_magic_value(self._name_var.get())
+        self._magic_var = ctk.StringVar(value=magic_default)
         self._name_var.trace_add("write", self._on_name_change)
+        self._magic_var.trace_add("write", self._on_magic_var_write)
 
         self._build_cards()
 
@@ -44,11 +51,15 @@ class InitialSettingsView(ctk.CTkFrame):
         self._add_combo(card, 2, "Mercado desejado", self._form_options.mercados, "B3")
         self._add_combo(card, 3, "Tipo operacional", self._form_options.tipos_operacionais, "Day trade")
         self._add_combo(card, 4, "Modo de processamento", self._form_options.modos_processamento, "Cada tick")
+        self._strategy_store.set("strategy.name", self._name_var.get())
+        self._strategy_store.set("strategy.magic_number", self._magic_var.get())
 
     def _build_direction_card(self) -> None:
         card = self._create_card(1, "Direcao operacional")
-        self._add_combo(card, 0, "Operar na compra", self._form_options.sim_nao, "Sim")
-        self._add_combo(card, 1, "Operar na venda", self._form_options.sim_nao, "Sim")
+        self._add_combo(card, 0, "Operar na compra", self._form_options.sim_nao, str(self._strategy_store.get("risk.allow_buy")))
+        self._add_combo(card, 1, "Operar na venda", self._form_options.sim_nao, str(self._strategy_store.get("risk.allow_sell")))
+        self._bind_combo_store("Operar na compra", "risk.allow_buy", "Sim")
+        self._bind_combo_store("Operar na venda", "risk.allow_sell", "Sim")
 
     def _build_schedule_card(self) -> None:
         card = self._create_card(2, "Horario e zeragem")
@@ -64,8 +75,12 @@ class InitialSettingsView(ctk.CTkFrame):
     def _build_config_card(self) -> None:
         card = self._create_card(3, "Configuracao inicial")
         self._add_combo(card, 0, "Tempo grafico", self._form_options.tempos_graficos, "Corrente")
-        self._add_entry(card, 1, "Volume inicial", ctk.StringVar(value="1.00"))
-        self._add_entry(card, 2, "Spread maximo", ctk.StringVar(value="10"))
+        volume_var = ctk.StringVar(value=str(self._strategy_store.get("risk.initial_volume")))
+        spread_var = ctk.StringVar(value=str(self._strategy_store.get("risk.max_spread")))
+        self._add_entry(card, 1, "Volume inicial", volume_var)
+        self._add_entry(card, 2, "Spread maximo", spread_var)
+        volume_var.trace_add("write", lambda *_args: self._strategy_store.set("risk.initial_volume", volume_var.get().strip() or "1.00"))
+        spread_var.trace_add("write", lambda *_args: self._strategy_store.set("risk.max_spread", spread_var.get().strip() or "10"))
 
     def _create_card(self, column: int, title: str) -> ctk.CTkFrame:
         card = ctk.CTkFrame(
@@ -129,9 +144,11 @@ class InitialSettingsView(ctk.CTkFrame):
         row = 1 + (index * 2)
         self._add_label(card, row, label)
 
+        variable = ctk.StringVar(value=default)
         combo = ctk.CTkComboBox(
             card,
             values=values,
+            variable=variable,
             height=32,
             corner_radius=0,
             border_width=1,
@@ -146,9 +163,9 @@ class InitialSettingsView(ctk.CTkFrame):
             font=self._theme.font("body"),
             state="readonly",
         )
-        combo.set(default)
         combo.grid(row=row + 1, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
         self._combo_refs[label] = combo
+        self._combo_vars[label] = variable
 
     def _add_time_row(
         self,
@@ -236,6 +253,7 @@ class InitialSettingsView(ctk.CTkFrame):
         return str(100000 + total)
 
     def _on_name_change(self, *_args) -> None:
+        self._strategy_store.set("strategy.name", self._name_var.get())
         if self._magic_manual_override:
             return
         self._magic_var.set(self._build_magic_value(self._name_var.get()))
@@ -244,6 +262,18 @@ class InitialSettingsView(ctk.CTkFrame):
         generated_magic = self._build_magic_value(self._name_var.get())
         current_magic = self._magic_var.get().strip()
         self._magic_manual_override = current_magic not in {"", generated_magic}
+
+    def _on_magic_var_write(self, *_args) -> None:
+        self._strategy_store.set("strategy.magic_number", self._magic_var.get())
+
+    def _bind_combo_store(self, label: str, store_key: str, fallback: str) -> None:
+        variable = self._combo_vars[label]
+
+        def _callback(*_args) -> None:
+            self._strategy_store.set(store_key, variable.get().strip() or fallback)
+
+        variable.trace_add("write", _callback)
+        self._strategy_store.set(store_key, variable.get().strip() or fallback)
 
     def export_config(self) -> dict[str, str]:
         start_hour, start_minute = self._time_refs["Inicio das operacoes"]
