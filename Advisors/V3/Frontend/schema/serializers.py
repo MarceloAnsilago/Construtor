@@ -52,7 +52,6 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
     return [
         f"InpNomeDaEstrategia={store.get('strategy.name')}",
         f"InpMagicNumber={store.get('strategy.magic_number')}",
-        "InpOperarAutomaticamenteNoTester=true",
         f"InpOperarNaCompra={_bool_to_set(str(store.get('risk.allow_buy')) == 'Sim')}",
         f"InpOperarNaVenda={_bool_to_set(str(store.get('risk.allow_sell')) == 'Sim')}",
         f"InpVolumeInicial={store.get('risk.initial_volume')}",

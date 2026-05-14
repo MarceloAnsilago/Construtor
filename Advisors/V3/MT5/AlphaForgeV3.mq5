@@ -7,7 +7,6 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 
-#include "AlphaForgeOptimizeModal.mqh"
 #include "Runtime/RuntimeConfig.mqh"
 #include "Theme/ChartTheme.mqh"
 #include <Trade/Trade.mqh>
@@ -18,7 +17,6 @@ int ShellExecuteW(int hwnd,string lpOperation,string lpFile,string lpParameters,
 
 input string InpNomeDaEstrategia = "Minha estrategia";
 input long InpMagicNumber = 100000;
-input bool InpOperarAutomaticamenteNoTester = true;
 input bool InpOperarNaCompra = true;
 input bool InpOperarNaVenda = true;
 input double InpVolumeInicial = 1.0;
@@ -32,17 +30,12 @@ input double InpMinimoDePavios = 0.0;
 input double InpMaximoDePavios = 0.0;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
-string BUTTON_OPTIMIZE_NAME = "AlphaForgeV3.BtnOptimize";
-string BUTTON_OPERATE_NAME  = "AlphaForgeV3.BtnOperate";
 string PANEL_NAME           = "AlphaForgeV3.Panel";
 string LOG_PANEL_NAME       = "AlphaForgeV3.LogPanel";
 string LOG_LABEL_PREFIX     = "AlphaForgeV3.LogLabel.";
-int TIMER_INTERVAL_MS       = 100;
 
-bool g_operation_enabled = false;
 string g_config_source = "Inputs/.set";
 datetime g_last_signal_bar_time = 0;
-CAlphaForgeOptimizeModal g_optimize_modal;
 CAlphaForgeChartTheme g_chart_theme;
 CTrade g_trade;
 SRuntimeConfig g_config;
@@ -454,9 +447,6 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
 void EvaluateAndTrade()
   {
-   if(!g_operation_enabled)
-      return;
-
    if(NormalizeText(g_config.signals.order_mode)!="Mercado")
       return;
 
@@ -492,8 +482,8 @@ bool CreateLogOverlay()
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_CORNER,CORNER_LEFT_UPPER);
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_XDISTANCE,18);
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_YDISTANCE,86);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_XSIZE,360);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_YSIZE,146);
+   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_XSIZE,458);
+   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_YSIZE,56);
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_BGCOLOR,C'18,27,42');
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_BORDER_COLOR,C'50,70,100');
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_COLOR,C'50,70,100');
@@ -501,18 +491,15 @@ bool CreateLogOverlay()
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_SELECTABLE,false);
    ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_HIDDEN,true);
 
-   string names[6]=
+   string names[3]=
      {
       LOG_LABEL_PREFIX+"0",
       LOG_LABEL_PREFIX+"1",
-      LOG_LABEL_PREFIX+"2",
-      LOG_LABEL_PREFIX+"3",
-      LOG_LABEL_PREFIX+"4",
-      LOG_LABEL_PREFIX+"5"
+      LOG_LABEL_PREFIX+"2"
      };
-   int y_positions[6]={96,114,132,150,168,186};
+   int y_positions[3]={94,110,126};
 
-   for(int i=0;i<6;i++)
+   for(int i=0;i<3;i++)
      {
       if(ObjectFind(0,names[i])<0)
         {
@@ -521,9 +508,9 @@ bool CreateLogOverlay()
         }
 
       ObjectSetInteger(0,names[i],OBJPROP_CORNER,CORNER_LEFT_UPPER);
-      ObjectSetInteger(0,names[i],OBJPROP_XDISTANCE,28);
+      ObjectSetInteger(0,names[i],OBJPROP_XDISTANCE,26);
       ObjectSetInteger(0,names[i],OBJPROP_YDISTANCE,y_positions[i]);
-      ObjectSetInteger(0,names[i],OBJPROP_FONTSIZE,9);
+      ObjectSetInteger(0,names[i],OBJPROP_FONTSIZE,8);
       ObjectSetInteger(0,names[i],OBJPROP_COLOR,C'210,220,235');
       ObjectSetInteger(0,names[i],OBJPROP_SELECTABLE,false);
       ObjectSetInteger(0,names[i],OBJPROP_HIDDEN,true);
@@ -535,12 +522,9 @@ bool CreateLogOverlay()
 void RefreshBridgeOverlay()
   {
    CreateLogOverlay();
-   ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3");
-   ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Origem: "+g_config_source);
-   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Strategy: "+ResolveStrategyNameText());
-   ObjectSetString(0,LOG_LABEL_PREFIX+"3",OBJPROP_TEXT,"Magic: "+ResolveMagicNumberText());
-   ObjectSetString(0,LOG_LABEL_PREFIX+"4",OBJPROP_TEXT,"Ordem: "+g_config.signals.order_mode+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao"));
-   ObjectSetString(0,LOG_LABEL_PREFIX+"5",OBJPROP_TEXT,"Filtro TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
+   ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3 | Origem: "+g_config_source);
+   ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Strategy: "+ResolveStrategyNameText()+" | Magic: "+ResolveMagicNumberText());
+   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Ordem: "+g_config.signals.order_mode+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao")+" | TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
    ChartRedraw();
   }
 
@@ -593,11 +577,7 @@ bool CreateControlPanel()
   {
    if(!CreateBackgroundPanel())
       return(false);
-   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Criar Estrategia",28,29,140,C'45,110,255'))
-      return(false);
-   if(!CreateButtonObject(BUTTON_OPTIMIZE_NAME,"Otimizar",176,29,128,C'0,150,170'))
-      return(false);
-   if(!CreateButtonObject(BUTTON_OPERATE_NAME,"Operar",312,29,148,C'220,130,35'))
+   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Criar Estrategia",28,29,432,C'45,110,255'))
       return(false);
 
    ChartRedraw();
@@ -607,16 +587,11 @@ bool CreateControlPanel()
 void DestroyControlPanel()
   {
    ObjectDelete(0,BUTTON_CREATE_NAME);
-   ObjectDelete(0,BUTTON_OPTIMIZE_NAME);
-   ObjectDelete(0,BUTTON_OPERATE_NAME);
    ObjectDelete(0,PANEL_NAME);
    ObjectDelete(0,LOG_PANEL_NAME);
    ObjectDelete(0,LOG_LABEL_PREFIX+"0");
    ObjectDelete(0,LOG_LABEL_PREFIX+"1");
    ObjectDelete(0,LOG_LABEL_PREFIX+"2");
-   ObjectDelete(0,LOG_LABEL_PREFIX+"3");
-   ObjectDelete(0,LOG_LABEL_PREFIX+"4");
-   ObjectDelete(0,LOG_LABEL_PREFIX+"5");
   }
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -626,12 +601,6 @@ int OnInit()
    g_chart_theme.SetChartId(ChartID());
    ApplyInputFallbackConfig();
    Print("AlphaForge V3: configuracao carregada pelos inputs/.set do MT5.");
-
-   if(IsRunningInTester() && InpOperarAutomaticamenteNoTester)
-     {
-      g_operation_enabled=true;
-      Print("AlphaForge V3: modo operacional ativado automaticamente para o Strategy Tester.");
-     }
 
    if(!HasInteractiveChart())
       return(INIT_SUCCEEDED);
@@ -666,14 +635,6 @@ int OnInit()
 
    RefreshBridgeOverlay();
 
-   if(!EventSetMillisecondTimer(TIMER_INTERVAL_MS))
-     {
-      Print("AlphaForge V3: falha ao iniciar o timer da interface.");
-      DestroyControlPanel();
-      g_chart_theme.RestoreTheme();
-      return(INIT_FAILED);
-     }
-
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
@@ -683,10 +644,8 @@ void OnDeinit(const int reason)
   {
    if(HasInteractiveChart())
      {
-      EventKillTimer();
       DestroyControlPanel();
      }
-   g_optimize_modal.Shutdown();
    if(HasInteractiveChart())
       g_chart_theme.RestoreTheme();
   }
@@ -698,26 +657,12 @@ void OnTick()
    EvaluateAndTrade();
   }
 //+------------------------------------------------------------------+
-//| Timer                                                            |
-//+------------------------------------------------------------------+
-void OnTimer()
-  {
-   if(!HasInteractiveChart())
-      return;
-
-   if(g_optimize_modal.IsCreated())
-      g_optimize_modal.OnTimerEvent();
-  }
-//+------------------------------------------------------------------+
 //| Chart event                                                      |
 //+------------------------------------------------------------------+
 void OnChartEvent(const int id,const long &lparam,const double &dparam,const string &sparam)
   {
    if(!HasInteractiveChart())
       return;
-
-   if(g_optimize_modal.IsCreated())
-      g_optimize_modal.ChartEvent(id,lparam,dparam,sparam);
 
    if(id==CHARTEVENT_CHART_CHANGE)
      {
@@ -734,19 +679,6 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
    if(sparam==BUTTON_CREATE_NAME)
      {
       NotifyFrontendPending();
-      return;
-     }
-
-   if(sparam==BUTTON_OPTIMIZE_NAME)
-     {
-      g_optimize_modal.ShowModal();
-      return;
-     }
-
-   if(sparam==BUTTON_OPERATE_NAME)
-     {
-      g_operation_enabled=!g_operation_enabled;
-      Print(g_operation_enabled ? "Modo operacional ativado" : "Modo operacional desativado");
       return;
      }
   }
