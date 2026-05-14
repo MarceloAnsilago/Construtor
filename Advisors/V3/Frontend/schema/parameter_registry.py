@@ -76,8 +76,8 @@ PARAMETERS: tuple[ParameterDefinition, ...] = (
     ),
     ParameterDefinition("risk.allow_buy", "Operar na compra", "string", "Sim", "risk", ("Sim", "Nao")),
     ParameterDefinition("risk.allow_sell", "Operar na venda", "string", "Sim", "risk", ("Sim", "Nao")),
-    ParameterDefinition("risk.initial_volume", "Volume inicial", "string", "1.00", "risk"),
-    ParameterDefinition("risk.max_spread", "Spread maximo", "string", "10", "risk"),
+    ParameterDefinition("risk.initial_volume", "Volume inicial", "string", "100", "risk"),
+    ParameterDefinition("risk.max_spread", "Spread maximo", "string", "100", "risk"),
 )
 
 PARAMETER_BY_KEY = {parameter.key: parameter for parameter in PARAMETERS}

@@ -79,8 +79,8 @@ class InitialSettingsView(ctk.CTkFrame):
         spread_var = ctk.StringVar(value=str(self._strategy_store.get("risk.max_spread")))
         self._add_entry(card, 1, "Volume inicial", volume_var)
         self._add_entry(card, 2, "Spread maximo", spread_var)
-        volume_var.trace_add("write", lambda *_args: self._strategy_store.set("risk.initial_volume", volume_var.get().strip() or "1.00"))
-        spread_var.trace_add("write", lambda *_args: self._strategy_store.set("risk.max_spread", spread_var.get().strip() or "10"))
+        volume_var.trace_add("write", lambda *_args: self._strategy_store.set("risk.initial_volume", volume_var.get().strip() or "100"))
+        spread_var.trace_add("write", lambda *_args: self._strategy_store.set("risk.max_spread", spread_var.get().strip() or "100"))
 
     def _create_card(self, column: int, title: str) -> ctk.CTkFrame:
         card = ctk.CTkFrame(

@@ -53,8 +53,8 @@ class OptimizationView(ctk.CTkFrame):
         basics = self._create_card(body, 0, "Obrigatorios")
         self._add_summary_row(basics, 0, "Nome do EA", "strategy_name", "Minha estrategia")
         self._add_summary_row(basics, 1, "Magic Number", "magic_number", "100000")
-        self._add_summary_row(basics, 2, "Volume inicial", "initial_volume", "1.00")
-        self._add_summary_row(basics, 3, "Spread maximo", "max_spread", "10")
+        self._add_summary_row(basics, 2, "Volume inicial", "initial_volume", "100")
+        self._add_summary_row(basics, 3, "Spread maximo", "max_spread", "100")
 
         signals = self._create_card(body, 1, "Sinais e Filtro")
         self._add_summary_row(signals, 0, "Modo de ordem", "signal_order_mode", "Mercado")
@@ -123,8 +123,8 @@ class OptimizationView(ctk.CTkFrame):
     def refresh_from_configs(self, initial_config: dict[str, str], signals_config: dict[str, str]) -> None:
         self._set_value("strategy_name", initial_config.get("strategy_name", "").strip() or "Minha estrategia")
         self._set_value("magic_number", initial_config.get("magic_number", "").strip() or "100000")
-        self._set_value("initial_volume", initial_config.get("initial_volume", "").strip() or "1.00")
-        self._set_value("max_spread", initial_config.get("max_spread", "").strip() or "10")
+        self._set_value("initial_volume", initial_config.get("initial_volume", "").strip() or "100")
+        self._set_value("max_spread", initial_config.get("max_spread", "").strip() or "100")
 
         self._set_value("signal_order_mode", signals_config.get("signal_order_mode", "").strip() or "Mercado")
         self._set_value("signal_filter_enabled", signals_config.get("signal_filter_enabled", "").strip() or "Nao")

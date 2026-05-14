@@ -182,8 +182,8 @@ class DashboardView(ctk.CTkFrame):
             self._strategy_store.set("strategy.magic_number", str(config.get("magic_number", "100000")))
             self._strategy_store.set("risk.allow_buy", str(config.get("allow_buy", "Sim")))
             self._strategy_store.set("risk.allow_sell", str(config.get("allow_sell", "Sim")))
-            self._strategy_store.set("risk.initial_volume", str(config.get("initial_volume", "1.00")))
-            self._strategy_store.set("risk.max_spread", str(config.get("max_spread", "10")))
+            self._strategy_store.set("risk.initial_volume", str(config.get("initial_volume", "100")))
+            self._strategy_store.set("risk.max_spread", str(config.get("max_spread", "100")))
 
         sinais_view = self._view_cache.get("sinais")
         if sinais_view is not None and hasattr(sinais_view, "export_runtime_config"):
