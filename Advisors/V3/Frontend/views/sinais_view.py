@@ -1556,6 +1556,14 @@ class SinaisView(ctk.CTkFrame):
         self._strategy_store.set("signals.order_mode", self._ordem_mode.get())
         return build_runtime_snapshot(self._strategy_store)
 
+    def load_from_store(self) -> None:
+        self._set_ordem_mode(str(self._strategy_store.get("signals.order_mode")))
+        self._filtro_enabled_var.set(1 if bool(self._strategy_store.get("signals.filter.enabled")) else 0)
+        self._filtro_measure_var.set(str(self._strategy_store.get("signals.filter.measure")))
+        self._filtro_timeframe_var.set(str(self._strategy_store.get("signals.filter.timeframe")))
+        for key, variable in self._filtro_entry_vars.items():
+            variable.set(str(self._strategy_store.get(key)))
+
     def _create_panel(self, title: str, description: str) -> ctk.CTkFrame:
         panel = ctk.CTkFrame(
             self._body,

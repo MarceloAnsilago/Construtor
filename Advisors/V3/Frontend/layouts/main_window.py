@@ -6,7 +6,7 @@ import customtkinter as ctk
 from components.sidebar import Sidebar
 from components.top_header import TopHeader
 from models.navigation import NavigationItem, build_navigation_items
-from services.set_export import get_default_set_dir, write_set_file
+from services.set_export import get_default_set_dir, read_set_file, write_set_file
 from themes.theme import UITheme, configure_ctk
 from views.dashboard_view import DashboardView
 
@@ -55,6 +55,7 @@ class AlphaForgeApp(ctk.CTk):
         header = TopHeader(
             main_shell,
             self._theme,
+            on_import_set=self._import_set,
             on_export_set=self._export_set,
         )
         header.grid(row=0, column=0, sticky="ew")
@@ -67,6 +68,19 @@ class AlphaForgeApp(ctk.CTk):
         self._active_item = item
         self._sidebar.set_active(item.item_id)
         self._content.set_section(item)
+
+    def _import_set(self) -> None:
+        source = filedialog.askopenfilename(
+            title="Abrir arquivo .set",
+            initialdir=str(get_default_set_dir()),
+            filetypes=[("MetaTrader set", "*.set"), ("Todos os arquivos", "*.*")],
+        )
+        if not source:
+            return
+
+        imported_values = read_set_file(Path(source))
+        self._content.load_strategy_values(imported_values)
+        self._header.set_status(f".set carregado: {Path(source).name}")
 
     def _export_set(self) -> None:
         strategy_name = self._content.current_strategy_name().strip() or "alpha_strategy"

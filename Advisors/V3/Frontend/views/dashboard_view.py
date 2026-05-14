@@ -80,6 +80,20 @@ class DashboardView(ctk.CTkFrame):
         self._sync_store_from_views()
         return str(self._strategy_store.get("strategy.name"))
 
+    def load_strategy_values(self, values: dict[str, str | bool]) -> None:
+        self._strategy_store.load_document(values)
+
+        for view in self._view_cache.values():
+            if hasattr(view, "load_from_store"):
+                view.load_from_store()
+
+        optimization_view = self._view_cache.get("otimizacao")
+        if optimization_view is not None and hasattr(optimization_view, "refresh_from_configs"):
+            optimization_view.refresh_from_configs(
+                self._build_initial_config_snapshot(),
+                self._build_signals_runtime_snapshot(),
+            )
+
     def _render_body(self, item: NavigationItem) -> None:
         if self._current_body is not None:
             self._current_body.grid_remove()

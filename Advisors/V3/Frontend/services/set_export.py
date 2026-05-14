@@ -6,6 +6,23 @@ from schema.serializers import build_tester_set_lines
 from state.strategy_store import StrategyStore
 
 
+INPUT_TO_STORE_KEY = {
+    "InpNomeDaEstrategia": "strategy.name",
+    "InpMagicNumber": "strategy.magic_number",
+    "InpOperarNaCompra": "risk.allow_buy",
+    "InpOperarNaVenda": "risk.allow_sell",
+    "InpVolumeInicial": "risk.initial_volume",
+    "InpSpreadMaximo": "risk.max_spread",
+    "InpAtivarFiltro": "signals.filter.enabled",
+    "InpMedirEmPercentual": "signals.filter.measure",
+    "InpTempoGraficoDoFiltro": "signals.filter.timeframe",
+    "InpTamanhoMinimoDaVela": "signals.filter.candle_min",
+    "InpTamanhoMaximoDaVela": "signals.filter.candle_max",
+    "InpMinimoDePavios": "signals.filter.wick_min",
+    "InpMaximoDePavios": "signals.filter.wick_max",
+}
+
+
 def get_default_set_dir() -> Path:
     root = Path(__file__).resolve().parents[2]
     target = root / "CONFIG" / "tester"
@@ -18,3 +35,37 @@ def write_set_file(store: StrategyStore, destination: Path) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(lines) + "\n", encoding="cp1252")
     return destination
+
+
+def _parse_bool(value: str) -> bool:
+    return value.strip().lower() in {"true", "1", "sim", "yes"}
+
+
+def _map_input_value(input_name: str, raw_value: str) -> str | bool:
+    value = raw_value.strip()
+    if input_name in {"InpOperarNaCompra", "InpOperarNaVenda"}:
+        return "Sim" if _parse_bool(value) else "Nao"
+    if input_name == "InpAtivarFiltro":
+        return _parse_bool(value)
+    if input_name == "InpMedirEmPercentual":
+        return "Percentual" if _parse_bool(value) else "Pontos"
+    if input_name == "InpTempoGraficoDoFiltro":
+        return "Corrente" if value.lower() == "current" else value
+    return value
+
+
+def read_set_file(source: Path) -> dict[str, str | bool]:
+    values: dict[str, str | bool] = {}
+    for line in source.read_text(encoding="cp1252").splitlines():
+        normalized = line.strip()
+        if not normalized or "=" not in normalized:
+            continue
+
+        input_name, raw_value = normalized.split("=", 1)
+        store_key = INPUT_TO_STORE_KEY.get(input_name.strip())
+        if not store_key:
+            continue
+
+        values[store_key] = _map_input_value(input_name.strip(), raw_value)
+
+    return values

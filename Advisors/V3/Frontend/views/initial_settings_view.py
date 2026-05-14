@@ -35,6 +35,7 @@ class InitialSettingsView(ctk.CTkFrame):
         self._magic_var = ctk.StringVar(value=magic_default)
         self._name_var.trace_add("write", self._on_name_change)
         self._magic_var.trace_add("write", self._on_magic_var_write)
+        self._loading_store = False
 
         self._build_cards()
 
@@ -254,7 +255,7 @@ class InitialSettingsView(ctk.CTkFrame):
 
     def _on_name_change(self, *_args) -> None:
         self._strategy_store.set("strategy.name", self._name_var.get())
-        if self._magic_manual_override:
+        if self._magic_manual_override or self._loading_store:
             return
         self._magic_var.set(self._build_magic_value(self._name_var.get()))
 
@@ -295,3 +296,22 @@ class InitialSettingsView(ctk.CTkFrame):
             "initial_volume": self._entry_refs["Volume inicial"].get(),
             "max_spread": self._entry_refs["Spread maximo"].get(),
         }
+
+    def load_from_store(self) -> None:
+        self._loading_store = True
+        try:
+            self._name_var.set(str(self._strategy_store.get("strategy.name")))
+            self._magic_var.set(str(self._strategy_store.get("strategy.magic_number")))
+            if "Operar na compra" in self._combo_vars:
+                self._combo_vars["Operar na compra"].set(str(self._strategy_store.get("risk.allow_buy")))
+            if "Operar na venda" in self._combo_vars:
+                self._combo_vars["Operar na venda"].set(str(self._strategy_store.get("risk.allow_sell")))
+            if "Volume inicial" in self._entry_refs:
+                self._entry_refs["Volume inicial"].set(str(self._strategy_store.get("risk.initial_volume")))
+            if "Spread maximo" in self._entry_refs:
+                self._entry_refs["Spread maximo"].set(str(self._strategy_store.get("risk.max_spread")))
+        finally:
+            generated_magic = self._build_magic_value(self._name_var.get())
+            current_magic = self._magic_var.get().strip()
+            self._magic_manual_override = current_magic not in {"", generated_magic}
+            self._loading_store = False
