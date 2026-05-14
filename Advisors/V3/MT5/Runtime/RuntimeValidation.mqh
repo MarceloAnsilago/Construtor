@@ -11,10 +11,18 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.signals.filter.candle_min=0.0;
    if(config.signals.filter.candle_max<0.0)
       config.signals.filter.candle_max=0.0;
-   if(config.signals.filter.wick_min<0.0)
-      config.signals.filter.wick_min=0.0;
-   if(config.signals.filter.wick_max<0.0)
-      config.signals.filter.wick_max=0.0;
+   if(config.signals.filter.body_min<0.0)
+      config.signals.filter.body_min=0.0;
+   if(config.signals.filter.body_max<0.0)
+      config.signals.filter.body_max=0.0;
+   if(config.signals.filter.upper_wick_min<0.0)
+      config.signals.filter.upper_wick_min=0.0;
+   if(config.signals.filter.upper_wick_max<0.0)
+      config.signals.filter.upper_wick_max=0.0;
+   if(config.signals.filter.lower_wick_min<0.0)
+      config.signals.filter.lower_wick_min=0.0;
+   if(config.signals.filter.lower_wick_max<0.0)
+      config.signals.filter.lower_wick_max=0.0;
   }
 
 #endif

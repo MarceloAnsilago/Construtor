@@ -9,8 +9,12 @@ struct SSignalFilterConfig
    ENUM_TIMEFRAMES  timeframe;
    double           candle_min;
    double           candle_max;
-   double           wick_min;
-   double           wick_max;
+   double           body_min;
+   double           body_max;
+   double           upper_wick_min;
+   double           upper_wick_max;
+   double           lower_wick_min;
+   double           lower_wick_max;
   };
 
 struct SSignalConfig

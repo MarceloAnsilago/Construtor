@@ -12,8 +12,12 @@ void SyncRuntimeConfigFromInputs()
    g_config.signals.filter.timeframe=ResolveTimeframe(g_config.signals.filter.timeframe_label);
    g_config.signals.filter.candle_min=InpTamanhoMinimoDaVela;
    g_config.signals.filter.candle_max=InpTamanhoMaximoDaVela;
-   g_config.signals.filter.wick_min=InpMinimoDePavios;
-   g_config.signals.filter.wick_max=InpMaximoDePavios;
+    g_config.signals.filter.body_min=InpTamanhoMinimoDoCorpoDaVela;
+    g_config.signals.filter.body_max=InpTamanhoMaximoDoCorpoDaVela;
+    g_config.signals.filter.upper_wick_min=InpTamanhoMinimoPavioSuperior;
+    g_config.signals.filter.upper_wick_max=InpTamanhoMaximoPavioSuperior;
+    g_config.signals.filter.lower_wick_min=InpTamanhoMinimoPavioInferior;
+    g_config.signals.filter.lower_wick_max=InpTamanhoMaximoPavioInferior;
    g_config.risk.allow_buy=InpOperarNaCompra;
    g_config.risk.allow_sell=InpOperarNaVenda;
    g_config.risk.initial_volume=InpVolumeInicial;

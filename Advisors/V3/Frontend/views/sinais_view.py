@@ -377,21 +377,44 @@ class SinaisView(ctk.CTkFrame):
         self._filtro_timeframe.grid(row=5, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
         self._filtro_timeframe_var.trace_add("write", self._on_filtro_timeframe_change)
 
-        filtro_fields = [
-            ("signals.filter.candle_min", "Tam. min da vela"),
-            ("signals.filter.candle_max", "Tam. max"),
-            ("signals.filter.wick_min", "Min. pavios"),
-            ("signals.filter.wick_max", "Max. pavios"),
+        filtro_rows = [
+            (
+                ("signals.filter.candle_min", "Vela min. (pavio a pavio)"),
+                ("signals.filter.candle_max", "Vela max. (pavio a pavio)"),
+            ),
+            (
+                ("signals.filter.body_min", "Corpo min. da vela"),
+                ("signals.filter.body_max", "Corpo max. da vela"),
+            ),
+            (
+                ("signals.filter.upper_wick_min", "Pavio sup. min."),
+                ("signals.filter.upper_wick_max", "Pavio sup. max."),
+            ),
+            (
+                ("signals.filter.lower_wick_min", "Pavio inf. min."),
+                ("signals.filter.lower_wick_max", "Pavio inf. max."),
+            ),
         ]
         self._filtro_entry_vars: dict[str, ctk.StringVar] = {}
         row = 6
-        for key, label in filtro_fields:
-            self._add_label(card, row, label)
-            variable = ctk.StringVar(value=str(self._strategy_store.get(key)))
-            entry = self._create_entry(card, str(self._strategy_store.get(key)), variable=variable)
-            entry.grid(row=row + 1, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
-            variable.trace_add("write", self._build_filtro_entry_callback(key))
-            self._filtro_entry_vars[key] = variable
+        for left_field, right_field in filtro_rows:
+            for column, (key, label) in enumerate((left_field, right_field)):
+                padx = (16, 8) if column == 0 else (8, 16)
+                ctk.CTkLabel(
+                    card,
+                    text=label,
+                    anchor="w",
+                    text_color=self._theme.colors.text_muted,
+                    font=self._theme.font("label"),
+                    wraplength=120,
+                    justify="left",
+                ).grid(row=row, column=column, sticky="ew", padx=padx, pady=(0, 4))
+
+                variable = ctk.StringVar(value=str(self._strategy_store.get(key)))
+                entry = self._create_entry(card, str(self._strategy_store.get(key)), variable=variable)
+                entry.grid(row=row + 1, column=column, sticky="ew", padx=padx, pady=(0, 12))
+                variable.trace_add("write", self._build_filtro_entry_callback(key))
+                self._filtro_entry_vars[key] = variable
             row += 2
 
     def _build_canais_card(self, panel: ctk.CTkFrame) -> None:

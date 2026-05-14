@@ -17,8 +17,12 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                 timeframe=str(store.get("signals.filter.timeframe")),
                 candle_min=str(store.get("signals.filter.candle_min")),
                 candle_max=str(store.get("signals.filter.candle_max")),
-                wick_min=str(store.get("signals.filter.wick_min")),
-                wick_max=str(store.get("signals.filter.wick_max")),
+                body_min=str(store.get("signals.filter.body_min")),
+                body_max=str(store.get("signals.filter.body_max")),
+                upper_wick_min=str(store.get("signals.filter.upper_wick_min")),
+                upper_wick_max=str(store.get("signals.filter.upper_wick_max")),
+                lower_wick_min=str(store.get("signals.filter.lower_wick_min")),
+                lower_wick_max=str(store.get("signals.filter.lower_wick_max")),
             ),
         ),
     )
@@ -32,8 +36,12 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "signal_filter_timeframe": str(store.get("signals.filter.timeframe")),
         "signal_filter_candle_min": str(store.get("signals.filter.candle_min")),
         "signal_filter_candle_max": str(store.get("signals.filter.candle_max")),
-        "signal_filter_wick_min": str(store.get("signals.filter.wick_min")),
-        "signal_filter_wick_max": str(store.get("signals.filter.wick_max")),
+        "signal_filter_body_min": str(store.get("signals.filter.body_min")),
+        "signal_filter_body_max": str(store.get("signals.filter.body_max")),
+        "signal_filter_upper_wick_min": str(store.get("signals.filter.upper_wick_min")),
+        "signal_filter_upper_wick_max": str(store.get("signals.filter.upper_wick_max")),
+        "signal_filter_lower_wick_min": str(store.get("signals.filter.lower_wick_min")),
+        "signal_filter_lower_wick_max": str(store.get("signals.filter.lower_wick_max")),
     }
 
 
@@ -61,6 +69,10 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpTempoGraficoDoFiltro={_timeframe_to_set(str(store.get('signals.filter.timeframe')))}",
         f"InpTamanhoMinimoDaVela={store.get('signals.filter.candle_min')}",
         f"InpTamanhoMaximoDaVela={store.get('signals.filter.candle_max')}",
-        f"InpMinimoDePavios={store.get('signals.filter.wick_min')}",
-        f"InpMaximoDePavios={store.get('signals.filter.wick_max')}",
+        f"InpTamanhoMinimoDoCorpoDaVela={store.get('signals.filter.body_min')}",
+        f"InpTamanhoMaximoDoCorpoDaVela={store.get('signals.filter.body_max')}",
+        f"InpTamanhoMinimoPavioSuperior={store.get('signals.filter.upper_wick_min')}",
+        f"InpTamanhoMaximoPavioSuperior={store.get('signals.filter.upper_wick_max')}",
+        f"InpTamanhoMinimoPavioInferior={store.get('signals.filter.lower_wick_min')}",
+        f"InpTamanhoMaximoPavioInferior={store.get('signals.filter.lower_wick_max')}",
     ]

@@ -61,8 +61,10 @@ class OptimizationView(ctk.CTkFrame):
         self._add_summary_row(signals, 1, "Filtro ativo", "signal_filter_enabled", "Nao")
         self._add_summary_row(signals, 2, "Medir em", "signal_filter_measure", "Pontos")
         self._add_summary_row(signals, 3, "Tempo grafico", "signal_filter_timeframe", "Corrente")
-        self._add_summary_row(signals, 4, "Tam. min / max vela", "signal_filter_candle_range", "0 / 0")
-        self._add_summary_row(signals, 5, "Min. / max pavios", "signal_filter_wick_range", "0 / 0")
+        self._add_summary_row(signals, 4, "Vela p-a-p min / max", "signal_filter_candle_range", "0 / 0")
+        self._add_summary_row(signals, 5, "Corpo min / max", "signal_filter_body_range", "0 / 0")
+        self._add_summary_row(signals, 6, "Pavio sup. min / max", "signal_filter_upper_wick_range", "0 / 0")
+        self._add_summary_row(signals, 7, "Pavio inf. min / max", "signal_filter_lower_wick_range", "0 / 0")
 
     def _create_card(self, master, column: int, title: str) -> ctk.CTkFrame:
         card = ctk.CTkFrame(
@@ -133,11 +135,17 @@ class OptimizationView(ctk.CTkFrame):
 
         candle_min = signals_config.get("signal_filter_candle_min", "").strip() or "0"
         candle_max = signals_config.get("signal_filter_candle_max", "").strip() or "0"
-        wick_min = signals_config.get("signal_filter_wick_min", "").strip() or "0"
-        wick_max = signals_config.get("signal_filter_wick_max", "").strip() or "0"
+        body_min = signals_config.get("signal_filter_body_min", "").strip() or "0"
+        body_max = signals_config.get("signal_filter_body_max", "").strip() or "0"
+        upper_wick_min = signals_config.get("signal_filter_upper_wick_min", "").strip() or "0"
+        upper_wick_max = signals_config.get("signal_filter_upper_wick_max", "").strip() or "0"
+        lower_wick_min = signals_config.get("signal_filter_lower_wick_min", "").strip() or "0"
+        lower_wick_max = signals_config.get("signal_filter_lower_wick_max", "").strip() or "0"
 
         self._set_value("signal_filter_candle_range", f"{candle_min} / {candle_max}")
-        self._set_value("signal_filter_wick_range", f"{wick_min} / {wick_max}")
+        self._set_value("signal_filter_body_range", f"{body_min} / {body_max}")
+        self._set_value("signal_filter_upper_wick_range", f"{upper_wick_min} / {upper_wick_max}")
+        self._set_value("signal_filter_lower_wick_range", f"{lower_wick_min} / {lower_wick_max}")
 
     def _set_value(self, key: str, value: str) -> None:
         label = self._value_refs.get(key)

@@ -1,0 +1,17 @@
+InpNomeDaEstrategia=mano lime
+InpMagicNumber=100594
+InpOperarNaCompra=true
+InpOperarNaVenda=true
+InpVolumeInicial=100
+InpSpreadMaximo=100
+InpAtivarFiltro=true
+InpMedirEmPercentual=false
+InpTempoGraficoDoFiltro=current
+InpTamanhoMinimoDaVela=60
+InpTamanhoMaximoDaVela=5
+InpTamanhoMinimoDoCorpoDaVela=10
+InpTamanhoMaximoDoCorpoDaVela=5
+InpTamanhoMinimoPavioSuperior=5
+InpTamanhoMaximoPavioSuperior=3
+InpTamanhoMinimoPavioInferior=1
+InpTamanhoMaximoPavioInferior=1

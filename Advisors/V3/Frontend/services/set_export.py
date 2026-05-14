@@ -6,20 +6,26 @@ from schema.serializers import build_tester_set_lines
 from state.strategy_store import StrategyStore
 
 
-INPUT_TO_STORE_KEY = {
-    "InpNomeDaEstrategia": "strategy.name",
-    "InpMagicNumber": "strategy.magic_number",
-    "InpOperarNaCompra": "risk.allow_buy",
-    "InpOperarNaVenda": "risk.allow_sell",
-    "InpVolumeInicial": "risk.initial_volume",
-    "InpSpreadMaximo": "risk.max_spread",
-    "InpAtivarFiltro": "signals.filter.enabled",
-    "InpMedirEmPercentual": "signals.filter.measure",
-    "InpTempoGraficoDoFiltro": "signals.filter.timeframe",
-    "InpTamanhoMinimoDaVela": "signals.filter.candle_min",
-    "InpTamanhoMaximoDaVela": "signals.filter.candle_max",
-    "InpMinimoDePavios": "signals.filter.wick_min",
-    "InpMaximoDePavios": "signals.filter.wick_max",
+INPUT_TO_STORE_KEYS = {
+    "InpNomeDaEstrategia": ("strategy.name",),
+    "InpMagicNumber": ("strategy.magic_number",),
+    "InpOperarNaCompra": ("risk.allow_buy",),
+    "InpOperarNaVenda": ("risk.allow_sell",),
+    "InpVolumeInicial": ("risk.initial_volume",),
+    "InpSpreadMaximo": ("risk.max_spread",),
+    "InpAtivarFiltro": ("signals.filter.enabled",),
+    "InpMedirEmPercentual": ("signals.filter.measure",),
+    "InpTempoGraficoDoFiltro": ("signals.filter.timeframe",),
+    "InpTamanhoMinimoDaVela": ("signals.filter.candle_min",),
+    "InpTamanhoMaximoDaVela": ("signals.filter.candle_max",),
+    "InpTamanhoMinimoDoCorpoDaVela": ("signals.filter.body_min",),
+    "InpTamanhoMaximoDoCorpoDaVela": ("signals.filter.body_max",),
+    "InpTamanhoMinimoPavioSuperior": ("signals.filter.upper_wick_min",),
+    "InpTamanhoMaximoPavioSuperior": ("signals.filter.upper_wick_max",),
+    "InpTamanhoMinimoPavioInferior": ("signals.filter.lower_wick_min",),
+    "InpTamanhoMaximoPavioInferior": ("signals.filter.lower_wick_max",),
+    "InpMinimoDePavios": ("signals.filter.upper_wick_min", "signals.filter.lower_wick_min"),
+    "InpMaximoDePavios": ("signals.filter.upper_wick_max", "signals.filter.lower_wick_max"),
 }
 
 
@@ -62,10 +68,12 @@ def read_set_file(source: Path) -> dict[str, str | bool]:
             continue
 
         input_name, raw_value = normalized.split("=", 1)
-        store_key = INPUT_TO_STORE_KEY.get(input_name.strip())
-        if not store_key:
+        store_keys = INPUT_TO_STORE_KEYS.get(input_name.strip())
+        if not store_keys:
             continue
 
-        values[store_key] = _map_input_value(input_name.strip(), raw_value)
+        mapped_value = _map_input_value(input_name.strip(), raw_value)
+        for store_key in store_keys:
+            values[store_key] = mapped_value
 
     return values

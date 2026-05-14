@@ -15,19 +15,36 @@
 int ShellExecuteW(int hwnd,string lpOperation,string lpFile,string lpParameters,string lpDirectory,int nShowCmd);
 #import
 
+input group "AlphaForge V3 | Estrategia"
 input string InpNomeDaEstrategia = "Minha estrategia";
 input long InpMagicNumber = 100000;
+
+input group "AlphaForge V3 | Risco e execucao"
 input bool InpOperarNaCompra = true;
 input bool InpOperarNaVenda = true;
 input double InpVolumeInicial = 1.0;
 input double InpSpreadMaximo = 10.0;
+
+input group "AlphaForge V3 | Filtro"
 input bool InpAtivarFiltro = false;
 input bool InpMedirEmPercentual = false;
 input ENUM_TIMEFRAMES InpTempoGraficoDoFiltro = PERIOD_CURRENT;
+
+input group "AlphaForge V3 | Filtro | Vela (pavio a pavio)"
 input double InpTamanhoMinimoDaVela = 0.0;
 input double InpTamanhoMaximoDaVela = 0.0;
-input double InpMinimoDePavios = 0.0;
-input double InpMaximoDePavios = 0.0;
+
+input group "AlphaForge V3 | Filtro | Corpo da vela"
+input double InpTamanhoMinimoDoCorpoDaVela = 0.0;
+input double InpTamanhoMaximoDoCorpoDaVela = 0.0;
+
+input group "AlphaForge V3 | Filtro | Pavio superior"
+input double InpTamanhoMinimoPavioSuperior = 0.0;
+input double InpTamanhoMaximoPavioSuperior = 0.0;
+
+input group "AlphaForge V3 | Filtro | Pavio inferior"
+input double InpTamanhoMinimoPavioInferior = 0.0;
+input double InpTamanhoMaximoPavioInferior = 0.0;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string PANEL_NAME           = "AlphaForgeV3.Panel";
@@ -342,9 +359,12 @@ bool EvaluateSignalFilter(const MqlRates &signal_bar)
   {
    double candle_size_price=signal_bar.high-signal_bar.low;
    double candle_body_price=MathAbs(signal_bar.close-signal_bar.open);
-   double wick_total_price=candle_size_price-candle_body_price;
-   if(wick_total_price<0.0)
-      wick_total_price=0.0;
+   double upper_wick_price=signal_bar.high-MathMax(signal_bar.open,signal_bar.close);
+   double lower_wick_price=MathMin(signal_bar.open,signal_bar.close)-signal_bar.low;
+   if(upper_wick_price<0.0)
+      upper_wick_price=0.0;
+   if(lower_wick_price<0.0)
+      lower_wick_price=0.0;
 
    double reference_price=signal_bar.open;
    if(reference_price<=0.0)
@@ -353,11 +373,17 @@ bool EvaluateSignalFilter(const MqlRates &signal_bar)
       return(false);
 
    double candle_metric=ConvertDistanceToMetric(candle_size_price,reference_price,g_config.signals.filter.measure);
-   double wick_metric=ConvertDistanceToMetric(wick_total_price,reference_price,g_config.signals.filter.measure);
+   double body_metric=ConvertDistanceToMetric(candle_body_price,reference_price,g_config.signals.filter.measure);
+   double upper_wick_metric=ConvertDistanceToMetric(upper_wick_price,reference_price,g_config.signals.filter.measure);
+   double lower_wick_metric=ConvertDistanceToMetric(lower_wick_price,reference_price,g_config.signals.filter.measure);
 
    if(!PassesNumericFilter(candle_metric,g_config.signals.filter.candle_min,g_config.signals.filter.candle_max))
       return(false);
-   if(!PassesNumericFilter(wick_metric,g_config.signals.filter.wick_min,g_config.signals.filter.wick_max))
+   if(!PassesNumericFilter(body_metric,g_config.signals.filter.body_min,g_config.signals.filter.body_max))
+      return(false);
+   if(!PassesNumericFilter(upper_wick_metric,g_config.signals.filter.upper_wick_min,g_config.signals.filter.upper_wick_max))
+      return(false);
+   if(!PassesNumericFilter(lower_wick_metric,g_config.signals.filter.lower_wick_min,g_config.signals.filter.lower_wick_max))
       return(false);
 
    return(true);

@@ -13,8 +13,12 @@ class SignalFilterDocument:
     timeframe: str
     candle_min: str
     candle_max: str
-    wick_min: str
-    wick_max: str
+    body_min: str
+    body_max: str
+    upper_wick_min: str
+    upper_wick_max: str
+    lower_wick_min: str
+    lower_wick_max: str
 
 
 @dataclass(frozen=True)
@@ -43,8 +47,12 @@ class StrategyDocument:
                     "timeframe": self.signals.filter.timeframe,
                     "candle_min": self.signals.filter.candle_min,
                     "candle_max": self.signals.filter.candle_max,
-                    "wick_min": self.signals.filter.wick_min,
-                    "wick_max": self.signals.filter.wick_max,
+                    "body_min": self.signals.filter.body_min,
+                    "body_max": self.signals.filter.body_max,
+                    "upper_wick_min": self.signals.filter.upper_wick_min,
+                    "upper_wick_max": self.signals.filter.upper_wick_max,
+                    "lower_wick_min": self.signals.filter.lower_wick_min,
+                    "lower_wick_max": self.signals.filter.lower_wick_max,
                 },
             },
         }
