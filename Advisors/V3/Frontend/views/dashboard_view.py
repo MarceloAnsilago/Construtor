@@ -1,6 +1,8 @@
 import customtkinter as ctk
 
 from models.navigation import NavigationItem
+from schema.serializers import build_bridge_payload, build_runtime_snapshot
+from state.strategy_store import StrategyStore
 from themes.theme import UITheme
 from views.ajustes_finais_view import AjustesFinaisView
 from views.break_even_view import BreakEvenView
@@ -19,6 +21,7 @@ class DashboardView(ctk.CTkFrame):
         super().__init__(master, fg_color="transparent")
         self._theme = theme
         self._view_cache: dict[str, ctk.CTkBaseClass] = {}
+        self._strategy_store = StrategyStore()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
@@ -79,6 +82,12 @@ class DashboardView(ctk.CTkFrame):
             config = initial_view.export_config()
             for key, value in config.items():
                 payload[key] = str(value)
+            self._strategy_store.set("strategy.name", str(config.get("strategy_name", "Minha estrategia")))
+            self._strategy_store.set("strategy.magic_number", str(config.get("magic_number", "100000")))
+            self._strategy_store.set("risk.allow_buy", str(config.get("allow_buy", "Sim")))
+            self._strategy_store.set("risk.allow_sell", str(config.get("allow_sell", "Sim")))
+            self._strategy_store.set("risk.initial_volume", str(config.get("initial_volume", "1.00")))
+            self._strategy_store.set("risk.max_spread", str(config.get("max_spread", "10")))
 
         ajustes_view = self._view_cache.get("ajustes_finais")
         if ajustes_view is not None and hasattr(ajustes_view, "export_config"):
@@ -90,6 +99,10 @@ class DashboardView(ctk.CTkFrame):
             montar = sinais_view.export_montar_signals_dict()
             payload["signal_groups_count"] = str(len(montar.get("groups", [])))
             payload["signal_logic_rows_count"] = str(len(montar.get("logic_rows", [])))
+        if sinais_view is not None and hasattr(sinais_view, "export_runtime_config"):
+            sinais_view.export_runtime_config()
+        for key, value in build_bridge_payload(self._strategy_store).items():
+            payload[key] = str(value)
 
         return payload
 
@@ -102,8 +115,11 @@ class DashboardView(ctk.CTkFrame):
             body = self._build_view(item)
             self._view_cache[item.item_id] = body
 
-        if item.item_id == "otimizacao" and hasattr(body, "refresh_from_initial_config"):
-            body.refresh_from_initial_config(self._build_initial_config_snapshot())
+        if item.item_id == "otimizacao" and hasattr(body, "refresh_from_configs"):
+            body.refresh_from_configs(
+                self._build_initial_config_snapshot(),
+                self._build_signals_runtime_snapshot(),
+            )
 
         body.grid()
         self._current_body = body
@@ -131,7 +147,7 @@ class DashboardView(ctk.CTkFrame):
             return self._create_view(SaidasParciaisView)
 
         if item.item_id == "sinais":
-            return self._create_view(SinaisView)
+            return self._create_view(SinaisView, strategy_store=self._strategy_store)
 
         if item.item_id == "ajustes_finais":
             return self._create_view(AjustesFinaisView)
@@ -159,8 +175,8 @@ class DashboardView(ctk.CTkFrame):
         ).pack(anchor="center", pady=(10, 0))
         return content
 
-    def _create_view(self, view_class):
-        view = view_class(self._placeholder, self._theme)
+    def _create_view(self, view_class, **kwargs):
+        view = view_class(self._placeholder, self._theme, **kwargs)
         view.grid(row=0, column=0, sticky="nsew", padx=14, pady=14)
         view.grid_remove()
         return view
@@ -169,6 +185,13 @@ class DashboardView(ctk.CTkFrame):
         initial_view = self._view_cache.get("inf_iniciais")
         if initial_view is not None and hasattr(initial_view, "export_config"):
             return initial_view.export_config()
+        return {}
+
+    def _build_signals_runtime_snapshot(self) -> dict[str, str]:
+        sinais_view = self._view_cache.get("sinais")
+        if sinais_view is not None and hasattr(sinais_view, "export_runtime_config"):
+            sinais_view.export_runtime_config()
+            return build_runtime_snapshot(self._strategy_store)
         return {}
 
     def _active_section_id(self) -> str:

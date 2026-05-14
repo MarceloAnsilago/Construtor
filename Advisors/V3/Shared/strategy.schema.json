@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "properties": {
+    "strategy.name": {
+      "type": "string",
+      "default": "Minha estrategia"
+    },
+    "strategy.magic_number": {
+      "type": "string",
+      "default": "100000"
+    },
+    "signals.order_mode": {
+      "type": "string",
+      "default": "Mercado",
+      "enum": ["Mercado", "Limite"]
+    },
+    "signals.filter.enabled": {
+      "type": "bool",
+      "default": false
+    },
+    "signals.filter.measure": {
+      "type": "string",
+      "default": "Pontos",
+      "enum": ["Pontos", "Percentual"]
+    },
+    "signals.filter.timeframe": {
+      "type": "string",
+      "default": "Corrente"
+    },
+    "signals.filter.candle_min": {
+      "type": "string",
+      "default": "0"
+    },
+    "signals.filter.candle_max": {
+      "type": "string",
+      "default": "0"
+    },
+    "signals.filter.wick_min": {
+      "type": "string",
+      "default": "0"
+    },
+    "signals.filter.wick_max": {
+      "type": "string",
+      "default": "0"
+    },
+    "risk.allow_buy": {
+      "type": "string",
+      "default": "Sim",
+      "enum": ["Sim", "Nao"]
+    },
+    "risk.allow_sell": {
+      "type": "string",
+      "default": "Sim",
+      "enum": ["Sim", "Nao"]
+    },
+    "risk.initial_volume": {
+      "type": "string",
+      "default": "1.00"
+    },
+    "risk.max_spread": {
+      "type": "string",
+      "default": "10"
+    }
+  }
+}

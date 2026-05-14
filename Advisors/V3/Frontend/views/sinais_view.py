@@ -3,6 +3,8 @@ from dataclasses import dataclass
 import customtkinter as ctk
 
 from models.initial_settings import build_initial_settings_options
+from schema.serializers import build_runtime_snapshot
+from state.strategy_store import StrategyStore
 from themes.theme import UITheme
 
 
@@ -75,10 +77,11 @@ class MontarSignalsConfig:
 
 
 class SinaisView(ctk.CTkFrame):
-    def __init__(self, master, theme: UITheme) -> None:
+    def __init__(self, master, theme: UITheme, strategy_store: StrategyStore | None = None) -> None:
         super().__init__(master, fg_color="transparent")
         self._theme = theme
         self._initial_options = build_initial_settings_options()
+        self._strategy_store = strategy_store or StrategyStore()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
@@ -216,7 +219,7 @@ class SinaisView(ctk.CTkFrame):
             anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
-        self._ordem_mode = ctk.StringVar(value="Mercado")
+        self._ordem_mode = ctk.StringVar(value=str(self._strategy_store.get("signals.order_mode")))
         self._ordem_market = self._create_checkbox(
             card,
             "Mercado",
@@ -345,34 +348,50 @@ class SinaisView(ctk.CTkFrame):
             anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
-        self._filtro_enabled = self._create_checkbox(card, "Ativar filtro", lambda: None)
+        self._filtro_enabled_var = ctk.IntVar(value=1 if bool(self._strategy_store.get("signals.filter.enabled")) else 0)
+        self._filtro_enabled = self._create_checkbox(
+            card,
+            "Ativar filtro",
+            self._on_filtro_enabled_change,
+            variable=self._filtro_enabled_var,
+        )
         self._filtro_enabled.grid(row=1, column=0, columnspan=2, sticky="w", padx=16, pady=(0, 16))
 
         self._add_label(card, 2, "Medir em")
+        self._filtro_measure_var = ctk.StringVar(value=str(self._strategy_store.get("signals.filter.measure")))
         self._filtro_measure = self._create_combo(
             card,
             ["Pontos", "Percentual"],
-            ctk.StringVar(value="Pontos"),
+            self._filtro_measure_var,
         )
         self._filtro_measure.grid(row=3, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
+        self._filtro_measure_var.trace_add("write", self._on_filtro_measure_change)
 
         self._add_label(card, 4, "Tempo grafico")
+        self._filtro_timeframe_var = ctk.StringVar(value=str(self._strategy_store.get("signals.filter.timeframe")))
         self._filtro_timeframe = self._create_combo(
             card,
             self._initial_options.tempos_graficos,
-            ctk.StringVar(value="Corrente"),
+            self._filtro_timeframe_var,
         )
         self._filtro_timeframe.grid(row=5, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
+        self._filtro_timeframe_var.trace_add("write", self._on_filtro_timeframe_change)
 
-        filtro_labels = ["Tam. min da vela", "Tam. max", "Min. pavios", "Max. pavios"]
-        filtro_defaults = ["0", "0", "0", "0"]
-        self._filtro_entries = []
+        filtro_fields = [
+            ("signals.filter.candle_min", "Tam. min da vela"),
+            ("signals.filter.candle_max", "Tam. max"),
+            ("signals.filter.wick_min", "Min. pavios"),
+            ("signals.filter.wick_max", "Max. pavios"),
+        ]
+        self._filtro_entry_vars: dict[str, ctk.StringVar] = {}
         row = 6
-        for label, default in zip(filtro_labels, filtro_defaults):
+        for key, label in filtro_fields:
             self._add_label(card, row, label)
-            entry = self._create_entry(card, default)
+            variable = ctk.StringVar(value=str(self._strategy_store.get(key)))
+            entry = self._create_entry(card, str(self._strategy_store.get(key)), variable=variable)
             entry.grid(row=row + 1, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
-            self._filtro_entries.append(entry)
+            variable.trace_add("write", self._build_filtro_entry_callback(key))
+            self._filtro_entry_vars[key] = variable
             row += 2
 
     def _build_canais_card(self, panel: ctk.CTkFrame) -> None:
@@ -1533,6 +1552,10 @@ class SinaisView(ctk.CTkFrame):
     def export_montar_signals_dict(self) -> dict[str, list[dict[str, object]]]:
         return self.export_montar_signals_config().to_dict()
 
+    def export_runtime_config(self) -> dict[str, str]:
+        self._strategy_store.set("signals.order_mode", self._ordem_mode.get())
+        return build_runtime_snapshot(self._strategy_store)
+
     def _create_panel(self, title: str, description: str) -> ctk.CTkFrame:
         panel = ctk.CTkFrame(
             self._body,
@@ -1592,7 +1615,7 @@ class SinaisView(ctk.CTkFrame):
             border_color=self._theme.colors.border,
         )
 
-    def _create_checkbox(self, master, text: str, command) -> ctk.CTkCheckBox:
+    def _create_checkbox(self, master, text: str, command, variable=None) -> ctk.CTkCheckBox:
         return ctk.CTkCheckBox(
             master,
             text=text,
@@ -1602,6 +1625,7 @@ class SinaisView(ctk.CTkFrame):
             text_color=self._theme.colors.text,
             font=self._theme.font("body"),
             command=command,
+            variable=variable,
         )
 
     def _create_combo(
@@ -1629,7 +1653,7 @@ class SinaisView(ctk.CTkFrame):
             state="readonly",
         )
 
-    def _create_entry(self, master, value: str) -> ctk.CTkEntry:
+    def _create_entry(self, master, value: str, variable: ctk.StringVar | None = None) -> ctk.CTkEntry:
         entry = ctk.CTkEntry(
             master,
             height=32,
@@ -1639,8 +1663,10 @@ class SinaisView(ctk.CTkFrame):
             border_color=self._theme.colors.border,
             text_color=self._theme.colors.text,
             font=self._theme.font("body"),
+            textvariable=variable,
         )
-        entry.insert(0, value)
+        if variable is None:
+            entry.insert(0, value)
         return entry
 
     def _add_label(self, master, row: int, text: str, padx: int = 16, pady: tuple[int, int] = (0, 4)) -> None:
@@ -1722,9 +1748,26 @@ class SinaisView(ctk.CTkFrame):
 
     def _set_ordem_mode(self, mode: str) -> None:
         self._ordem_mode.set(mode)
+        self._strategy_store.set("signals.order_mode", mode)
         self._ordem_market.select() if mode == "Mercado" else self._ordem_market.deselect()
         self._ordem_limit.select() if mode == "Limite" else self._ordem_limit.deselect()
         self._sync_ordem_controls()
+
+    def _on_filtro_enabled_change(self) -> None:
+        self._strategy_store.set("signals.filter.enabled", bool(self._filtro_enabled_var.get()))
+
+    def _on_filtro_measure_change(self, *_args) -> None:
+        self._strategy_store.set("signals.filter.measure", self._filtro_measure_var.get())
+
+    def _on_filtro_timeframe_change(self, *_args) -> None:
+        self._strategy_store.set("signals.filter.timeframe", self._filtro_timeframe_var.get())
+
+    def _build_filtro_entry_callback(self, key: str):
+        def _callback(*_args) -> None:
+            value = self._filtro_entry_vars[key].get().strip() or "0"
+            self._strategy_store.set(key, value)
+
+        return _callback
 
     def _set_ord_tab(self, tab_name: str) -> None:
         self._ord_tab_var.set(tab_name)

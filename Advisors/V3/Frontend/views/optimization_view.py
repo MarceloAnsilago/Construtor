@@ -8,14 +8,12 @@ class OptimizationView(ctk.CTkFrame):
         super().__init__(master, fg_color="transparent")
         self._theme = theme
         self._value_refs: dict[str, ctk.CTkLabel] = {}
-        self._status_refs: dict[str, ctk.CTkLabel] = {}
-
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
         self._build_header()
         self._build_body()
-        self.refresh_from_initial_config({})
+        self.refresh_from_configs({}, {})
 
     def _build_header(self) -> None:
         header = ctk.CTkFrame(
@@ -38,7 +36,7 @@ class OptimizationView(ctk.CTkFrame):
 
         ctk.CTkLabel(
             header,
-            text="A tela de otimizacao agora mostra os inputs obrigatorios que ja vieram da etapa Inf. Iniciais. O proximo passo sera expandir isso para faixas de inicio, fim e passo.",
+            text="Esta tela consolida o que ja foi configurado nas etapas anteriores para preparar a otimizacao e a execucao.",
             justify="left",
             anchor="w",
             wraplength=920,
@@ -49,31 +47,22 @@ class OptimizationView(ctk.CTkFrame):
     def _build_body(self) -> None:
         body = ctk.CTkFrame(self, fg_color="transparent")
         body.grid(row=1, column=0, sticky="nsew")
-        body.grid_columnconfigure(0, weight=1)
-        body.grid_columnconfigure(1, weight=1)
+        body.grid_columnconfigure((0, 1), weight=1, uniform="opt-cards")
+        body.grid_rowconfigure(0, weight=1)
 
-        summary = self._create_card(body, 0, "Resumo da Configuracao")
-        self._add_summary_row(
-            summary,
-            row=0,
-            title="Nome do EA",
-            key="strategy_name",
-            status="Fixo",
-            note="Texto herdado da etapa inicial.",
-        )
-        self._add_summary_row(
-            summary,
-            row=1,
-            title="Magic Number",
-            key="magic_number",
-            status="Selecionado",
-            note="Valor base pronto para entrar no fluxo de otimizacao.",
-        )
+        basics = self._create_card(body, 0, "Obrigatorios")
+        self._add_summary_row(basics, 0, "Nome do EA", "strategy_name", "Minha estrategia")
+        self._add_summary_row(basics, 1, "Magic Number", "magic_number", "100000")
+        self._add_summary_row(basics, 2, "Volume inicial", "initial_volume", "1.00")
+        self._add_summary_row(basics, 3, "Spread maximo", "max_spread", "10")
 
-        next_steps = self._create_card(body, 1, "Proximas Etapas")
-        self._add_step(next_steps, 0, "Adicionar faixas de inicio, fim e passo para inputs numericos.")
-        self._add_step(next_steps, 1, "Gerar configuracao consumivel pelo Strategy Tester do MT5.")
-        self._add_step(next_steps, 2, "Permitir iniciar a otimizacao direto da interface.")
+        signals = self._create_card(body, 1, "Sinais e Filtro")
+        self._add_summary_row(signals, 0, "Modo de ordem", "signal_order_mode", "Mercado")
+        self._add_summary_row(signals, 1, "Filtro ativo", "signal_filter_enabled", "Nao")
+        self._add_summary_row(signals, 2, "Medir em", "signal_filter_measure", "Pontos")
+        self._add_summary_row(signals, 3, "Tempo grafico", "signal_filter_timeframe", "Corrente")
+        self._add_summary_row(signals, 4, "Tam. min / max vela", "signal_filter_candle_range", "0 / 0")
+        self._add_summary_row(signals, 5, "Min. / max pavios", "signal_filter_wick_range", "0 / 0")
 
     def _create_card(self, master, column: int, title: str) -> ctk.CTkFrame:
         card = ctk.CTkFrame(
@@ -101,8 +90,7 @@ class OptimizationView(ctk.CTkFrame):
         row: int,
         title: str,
         key: str,
-        status: str,
-        note: str,
+        default_value: str,
     ) -> None:
         container = ctk.CTkFrame(
             card,
@@ -113,64 +101,45 @@ class OptimizationView(ctk.CTkFrame):
         )
         container.grid(row=row + 1, column=0, sticky="ew", padx=16, pady=(0, 12))
         container.grid_columnconfigure(0, weight=1)
-        container.grid_columnconfigure(1, weight=0)
 
         ctk.CTkLabel(
             container,
             text=title,
             anchor="w",
-            text_color=self._theme.colors.text,
-            font=self._theme.font("label", weight="bold"),
-        ).grid(row=0, column=0, sticky="w", padx=12, pady=(12, 2))
-
-        status_label = ctk.CTkLabel(
-            container,
-            text=status,
-            anchor="e",
-            text_color=self._theme.colors.accent,
+            text_color=self._theme.colors.text_muted,
             font=self._theme.font("label"),
-        )
-        status_label.grid(row=0, column=1, sticky="e", padx=12, pady=(12, 2))
+        ).grid(row=0, column=0, sticky="ew", padx=12, pady=(10, 2))
 
         value_label = ctk.CTkLabel(
             container,
-            text="-",
+            text=default_value,
             anchor="w",
             text_color=self._theme.colors.text,
             font=self._theme.font("body"),
         )
-        value_label.grid(row=1, column=0, columnspan=2, sticky="ew", padx=12, pady=(0, 4))
-
-        ctk.CTkLabel(
-            container,
-            text=note,
-            anchor="w",
-            justify="left",
-            wraplength=400,
-            text_color=self._theme.colors.text_subtle,
-            font=self._theme.font("label"),
-        ).grid(row=2, column=0, columnspan=2, sticky="ew", padx=12, pady=(0, 12))
-
+        value_label.grid(row=1, column=0, sticky="ew", padx=12, pady=(0, 10))
         self._value_refs[key] = value_label
-        self._status_refs[key] = status_label
 
-    def _add_step(self, card: ctk.CTkFrame, row: int, text: str) -> None:
-        ctk.CTkLabel(
-            card,
-            text=f"{row + 1:02d}. {text}",
-            anchor="w",
-            justify="left",
-            wraplength=400,
-            text_color=self._theme.colors.text_muted,
-            font=self._theme.font("body"),
-        ).grid(row=row + 1, column=0, sticky="ew", padx=16, pady=(0, 12))
+    def refresh_from_configs(self, initial_config: dict[str, str], signals_config: dict[str, str]) -> None:
+        self._set_value("strategy_name", initial_config.get("strategy_name", "").strip() or "Minha estrategia")
+        self._set_value("magic_number", initial_config.get("magic_number", "").strip() or "100000")
+        self._set_value("initial_volume", initial_config.get("initial_volume", "").strip() or "1.00")
+        self._set_value("max_spread", initial_config.get("max_spread", "").strip() or "10")
 
-    def refresh_from_initial_config(self, config: dict[str, str]) -> None:
-        strategy_name = config.get("strategy_name", "").strip() or "Minha estrategia"
-        magic_number = config.get("magic_number", "").strip() or "100000"
+        self._set_value("signal_order_mode", signals_config.get("signal_order_mode", "").strip() or "Mercado")
+        self._set_value("signal_filter_enabled", signals_config.get("signal_filter_enabled", "").strip() or "Nao")
+        self._set_value("signal_filter_measure", signals_config.get("signal_filter_measure", "").strip() or "Pontos")
+        self._set_value("signal_filter_timeframe", signals_config.get("signal_filter_timeframe", "").strip() or "Corrente")
 
-        self._value_refs["strategy_name"].configure(text=strategy_name)
-        self._value_refs["magic_number"].configure(text=magic_number)
+        candle_min = signals_config.get("signal_filter_candle_min", "").strip() or "0"
+        candle_max = signals_config.get("signal_filter_candle_max", "").strip() or "0"
+        wick_min = signals_config.get("signal_filter_wick_min", "").strip() or "0"
+        wick_max = signals_config.get("signal_filter_wick_max", "").strip() or "0"
 
-        self._status_refs["strategy_name"].configure(text="Fixo")
-        self._status_refs["magic_number"].configure(text="Selecionado")
+        self._set_value("signal_filter_candle_range", f"{candle_min} / {candle_max}")
+        self._set_value("signal_filter_wick_range", f"{wick_min} / {wick_max}")
+
+    def _set_value(self, key: str, value: str) -> None:
+        label = self._value_refs.get(key)
+        if label is not None:
+            label.configure(text=value)

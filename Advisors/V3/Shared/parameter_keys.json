@@ -1,0 +1,16 @@
+{
+  "strategy.name": "strategy_name",
+  "strategy.magic_number": "magic_number",
+  "signals.order_mode": "signal_order_mode",
+  "signals.filter.enabled": "signal_filter_enabled",
+  "signals.filter.measure": "signal_filter_measure",
+  "signals.filter.timeframe": "signal_filter_timeframe",
+  "signals.filter.candle_min": "signal_filter_candle_min",
+  "signals.filter.candle_max": "signal_filter_candle_max",
+  "signals.filter.wick_min": "signal_filter_wick_min",
+  "signals.filter.wick_max": "signal_filter_wick_max",
+  "risk.allow_buy": "allow_buy",
+  "risk.allow_sell": "allow_sell",
+  "risk.initial_volume": "initial_volume",
+  "risk.max_spread": "max_spread"
+}
