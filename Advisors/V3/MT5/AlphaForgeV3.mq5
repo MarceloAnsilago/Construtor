@@ -15,34 +15,26 @@
 int ShellExecuteW(int hwnd,string lpOperation,string lpFile,string lpParameters,string lpDirectory,int nShowCmd);
 #import
 
-input group "AlphaForge V3 | Estrategia"
+input group "1.Estrategia"
 input string InpNomeDaEstrategia = "Minha estrategia";
 input long InpMagicNumber = 100000;
 
-input group "AlphaForge V3 | Risco e execucao"
+input group "2.Risco e execucao"
 input bool InpOperarNaCompra = true;
 input bool InpOperarNaVenda = true;
 input double InpVolumeInicial = 1.0;
 input double InpSpreadMaximo = 10.0;
 
-input group "AlphaForge V3 | Filtro"
+input group "3.Filtro"
 input bool InpAtivarFiltro = false;
 input bool InpMedirEmPercentual = false;
 input ENUM_TIMEFRAMES InpTempoGraficoDoFiltro = PERIOD_CURRENT;
-
-input group "AlphaForge V3 | Filtro | Vela (pavio a pavio)"
 input double InpTamanhoMinimoDaVela = 0.0;
 input double InpTamanhoMaximoDaVela = 0.0;
-
-input group "AlphaForge V3 | Filtro | Corpo da vela"
 input double InpTamanhoMinimoDoCorpoDaVela = 0.0;
 input double InpTamanhoMaximoDoCorpoDaVela = 0.0;
-
-input group "AlphaForge V3 | Filtro | Pavio superior"
 input double InpTamanhoMinimoPavioSuperior = 0.0;
 input double InpTamanhoMaximoPavioSuperior = 0.0;
-
-input group "AlphaForge V3 | Filtro | Pavio inferior"
 input double InpTamanhoMinimoPavioInferior = 0.0;
 input double InpTamanhoMaximoPavioInferior = 0.0;
 

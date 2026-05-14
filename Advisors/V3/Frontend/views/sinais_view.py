@@ -396,6 +396,7 @@ class SinaisView(ctk.CTkFrame):
             ),
         ]
         self._filtro_entry_vars: dict[str, ctk.StringVar] = {}
+        self._filtro_entry_controls: dict[str, ctk.CTkEntry] = {}
         row = 6
         for left_field, right_field in filtro_rows:
             for column, (key, label) in enumerate((left_field, right_field)):
@@ -415,7 +416,10 @@ class SinaisView(ctk.CTkFrame):
                 entry.grid(row=row + 1, column=column, sticky="ew", padx=padx, pady=(0, 12))
                 variable.trace_add("write", self._build_filtro_entry_callback(key))
                 self._filtro_entry_vars[key] = variable
+                self._filtro_entry_controls[key] = entry
             row += 2
+
+        self._sync_filtro_controls()
 
     def _build_canais_card(self, panel: ctk.CTkFrame) -> None:
         card = ctk.CTkFrame(
@@ -1586,6 +1590,7 @@ class SinaisView(ctk.CTkFrame):
         self._filtro_timeframe_var.set(str(self._strategy_store.get("signals.filter.timeframe")))
         for key, variable in self._filtro_entry_vars.items():
             variable.set(str(self._strategy_store.get(key)))
+        self._sync_filtro_controls()
 
     def _create_panel(self, title: str, description: str) -> ctk.CTkFrame:
         panel = ctk.CTkFrame(
@@ -1786,6 +1791,7 @@ class SinaisView(ctk.CTkFrame):
 
     def _on_filtro_enabled_change(self) -> None:
         self._strategy_store.set("signals.filter.enabled", bool(self._filtro_enabled_var.get()))
+        self._sync_filtro_controls()
 
     def _on_filtro_measure_change(self, *_args) -> None:
         self._strategy_store.set("signals.filter.measure", self._filtro_measure_var.get())
@@ -1799,6 +1805,13 @@ class SinaisView(ctk.CTkFrame):
             self._strategy_store.set(key, value)
 
         return _callback
+
+    def _sync_filtro_controls(self) -> None:
+        enabled = bool(self._filtro_enabled_var.get())
+        self._filtro_measure.configure(state="readonly" if enabled else "disabled")
+        self._filtro_timeframe.configure(state="readonly" if enabled else "disabled")
+        for entry in self._filtro_entry_controls.values():
+            entry.configure(state="normal" if enabled else "disabled")
 
     def _set_ord_tab(self, tab_name: str) -> None:
         self._ord_tab_var.set(tab_name)
