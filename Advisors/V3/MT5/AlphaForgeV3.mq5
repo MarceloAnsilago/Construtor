@@ -21,6 +21,11 @@ input long InpMagicNumber = 100000;
 
 input group "2.Sinais"
 input string InpModoDeOrdem = "Mercado";
+input string InpModoDaOrdemLimite = "Referencia";
+input string InpReferenciaDaOrdemLimite = "Maxima";
+input string InpCandleDaReferenciaDaOrdemLimite = "Atual";
+input double InpDistanciaDaOrdemLimite = 0.0;
+input string InpExpiracaoDaOrdemLimite = "Nao expirar";
 
 input group "3.Risco e execucao"
 input bool InpOperarNaCompra = true;
@@ -302,6 +307,29 @@ bool HasOpenPositionForSymbol()
    return(PositionSelect(_Symbol));
   }
 
+bool HasPendingOrderForSymbol()
+  {
+   long magic_number=ResolveMagicNumberValue();
+   int total=OrdersTotal();
+   for(int index=0;index<total;index++)
+     {
+      ulong ticket=OrderGetTicket(index);
+      if(ticket==0 || !OrderSelect(ticket))
+         continue;
+
+      if(OrderGetString(ORDER_SYMBOL)!=_Symbol)
+         continue;
+      if((long)OrderGetInteger(ORDER_MAGIC)!=magic_number)
+         continue;
+
+      ENUM_ORDER_TYPE type=(ENUM_ORDER_TYPE)OrderGetInteger(ORDER_TYPE);
+      if(type==ORDER_TYPE_BUY_LIMIT || type==ORDER_TYPE_SELL_LIMIT)
+         return(true);
+     }
+
+   return(false);
+  }
+
 bool IsCurrentSpreadAllowed()
   {
    double max_spread=ResolveMaxSpreadPoints();
@@ -338,6 +366,21 @@ bool ReadClosedSignalBar(const ENUM_TIMEFRAMES timeframe,MqlRates &signal_bar)
       return(false);
 
    signal_bar=rates[1];
+  return(true);
+  }
+
+bool ReadSignalBarAtShift(const ENUM_TIMEFRAMES timeframe,const int shift,MqlRates &signal_bar)
+  {
+   if(shift<0)
+      return(false);
+
+   MqlRates rates[];
+   ArraySetAsSeries(rates,true);
+   int copied=CopyRates(_Symbol,timeframe,shift,1,rates);
+   if(copied<1)
+      return(false);
+
+   signal_bar=rates[0];
    return(true);
   }
 
@@ -390,7 +433,58 @@ int ResolveSignalDirection(const MqlRates &signal_bar)
       return(1);
    if(signal_bar.close<signal_bar.open)
       return(-1);
+  return(0);
+  }
+
+int ResolveReferenceBarShift(const string candle_name)
+  {
+   string value=NormalizeText(candle_name);
+   if(value=="Ultimo")
+      return(1);
+   if(value=="Penultimo")
+      return(2);
+   if(value=="Antepenultimo")
+      return(3);
    return(0);
+  }
+
+double ResolveReferencePrice(const MqlRates &reference_bar,const string reference_name)
+  {
+   string value=NormalizeText(reference_name);
+   if(value=="Minima")
+      return(reference_bar.low);
+   if(value=="Abertura")
+      return(reference_bar.open);
+   if(value=="Fechamento")
+      return(reference_bar.close);
+   return(reference_bar.high);
+  }
+
+int ResolveExpirationCandles(const string expire_name)
+  {
+   string value=NormalizeText(expire_name);
+   if(value=="1 candle")
+      return(1);
+   if(value=="2 candles")
+      return(2);
+   if(value=="3 candles")
+      return(3);
+   if(value=="4 candles")
+      return(4);
+   return(0);
+  }
+
+datetime ResolvePendingExpiration(const ENUM_TIMEFRAMES timeframe,const string expire_name)
+  {
+   int candles=ResolveExpirationCandles(expire_name);
+   if(candles<=0)
+      return(0);
+
+   int seconds=PeriodSeconds(timeframe);
+   if(seconds<=0)
+      return(0);
+
+   return(TimeCurrent()+(datetime)(candles*seconds));
   }
 
 bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const MqlRates &signal_bar)
@@ -462,15 +556,139 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
       return(false);
      }
 
-   Print("AlphaForge V3: ordem a mercado enviada com sucesso. Ticket=",g_trade.ResultOrder()," Volume=",DoubleToString(volume,2));
+  Print("AlphaForge V3: ordem a mercado enviada com sucesso. Ticket=",g_trade.ResultOrder()," Volume=",DoubleToString(volume,2));
+  return(true);
+  }
+
+bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const MqlRates &signal_bar)
+  {
+   if(direction==0)
+     {
+      Print("AlphaForge V3: vela neutra; nenhuma ordem limite enviada.");
+      return(false);
+     }
+
+   if(NormalizeText(g_config.signals.limit.mode)!="Referencia")
+     {
+      Print("AlphaForge V3: modo de ordem limite ainda nao suportado: ",g_config.signals.limit.mode);
+      return(false);
+     }
+
+   if(direction>0 && !g_config.risk.allow_buy)
+     {
+      Print("AlphaForge V3: compra limite bloqueada pela configuracao atual.");
+      return(false);
+     }
+
+   if(direction<0 && !g_config.risk.allow_sell)
+     {
+      Print("AlphaForge V3: venda limite bloqueada pela configuracao atual.");
+      return(false);
+     }
+
+   if(HasOpenPositionForSymbol())
+     {
+      Print("AlphaForge V3: existe posicao aberta no simbolo; ordem limite ignorada.");
+      return(false);
+     }
+
+   if(HasPendingOrderForSymbol())
+     {
+      Print("AlphaForge V3: ja existe ordem pendente no simbolo para este magic number.");
+      return(false);
+     }
+
+   if(!IsCurrentSpreadAllowed())
+     {
+      Print("AlphaForge V3: spread atual acima do maximo configurado.");
+      return(false);
+     }
+
+   MqlTick tick;
+   if(!SymbolInfoTick(_Symbol,tick))
+     {
+      Print("AlphaForge V3: falha ao capturar tick para ordem limite.");
+      return(false);
+     }
+
+   MqlRates reference_bar;
+   int reference_shift=ResolveReferenceBarShift(g_config.signals.limit.reference.candle);
+   if(!ReadSignalBarAtShift(timeframe,reference_shift,reference_bar))
+     {
+      Print("AlphaForge V3: nao foi possivel ler a vela de referencia da ordem limite.");
+      return(false);
+     }
+
+   double reference_price=ResolveReferencePrice(reference_bar,g_config.signals.limit.reference.base);
+   double price_offset=g_config.signals.limit.reference.distance*_Point;
+   double pending_price=direction>0 ? reference_price-price_offset : reference_price+price_offset;
+   pending_price=NormalizeDouble(pending_price,_Digits);
+
+   if(pending_price<=0.0)
+     {
+      Print("AlphaForge V3: preco calculado para ordem limite e invalido.");
+      return(false);
+     }
+
+   if(direction>0 && pending_price>=tick.ask)
+     {
+      Print("AlphaForge V3: preco de Buy Limit precisa ficar abaixo do ask atual. Preco=",DoubleToString(pending_price,_Digits)," Ask=",DoubleToString(tick.ask,_Digits));
+      return(false);
+     }
+
+   if(direction<0 && pending_price<=tick.bid)
+     {
+      Print("AlphaForge V3: preco de Sell Limit precisa ficar acima do bid atual. Preco=",DoubleToString(pending_price,_Digits)," Bid=",DoubleToString(tick.bid,_Digits));
+      return(false);
+     }
+
+   double volume=NormalizeVolume(ResolveInitialVolume());
+   if(volume<=0.0)
+     {
+      Print("AlphaForge V3: volume invalido para ordem limite.");
+      return(false);
+     }
+
+   g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
+   g_trade.SetTypeFillingBySymbol(_Symbol);
+   g_trade.SetDeviationInPoints(20);
+
+   ENUM_ORDER_TYPE_TIME order_time=ORDER_TIME_GTC;
+   datetime expiration=ResolvePendingExpiration(timeframe,g_config.signals.limit.reference.expire);
+   if(expiration>0)
+      order_time=ORDER_TIME_SPECIFIED;
+
+   string comment=StringFormat(
+      "AlphaForgeV3 LIMIT %s tf=%d candle=%s",
+      direction>0 ? "BUY" : "SELL",
+      (int)timeframe,
+      TimeToString(signal_bar.time,TIME_DATE|TIME_MINUTES)
+   );
+
+   bool sent=false;
+   if(direction>0)
+      sent=g_trade.BuyLimit(volume,pending_price,_Symbol,0.0,0.0,order_time,expiration,comment);
+   else
+      sent=g_trade.SellLimit(volume,pending_price,_Symbol,0.0,0.0,order_time,expiration,comment);
+
+   if(!sent)
+     {
+      Print("AlphaForge V3: falha ao enviar ordem limite. Retcode=",g_trade.ResultRetcode()," Desc=",g_trade.ResultRetcodeDescription());
+      return(false);
+     }
+
+   Print(
+      "AlphaForge V3: ordem limite por referencia enviada. Ticket=",g_trade.ResultOrder(),
+      " Preco=",DoubleToString(pending_price,_Digits),
+      " Base=",g_config.signals.limit.reference.base,
+      " Candle=",g_config.signals.limit.reference.candle,
+      " Dist=",DoubleToString(g_config.signals.limit.reference.distance,2)
+   );
    return(true);
   }
 
 void EvaluateAndTrade()
   {
-   if(NormalizeText(g_config.signals.order_mode)!="Mercado")
-      return;
-
    if(!g_config.signals.filter.enabled)
       return;
 
@@ -489,7 +707,18 @@ void EvaluateAndTrade()
       return;
 
    int direction=ResolveSignalDirection(signal_bar);
-   SubmitMarketOrder(direction,timeframe,signal_bar);
+   string order_mode=NormalizeText(g_config.signals.order_mode);
+   if(order_mode=="Mercado")
+     {
+      SubmitMarketOrder(direction,timeframe,signal_bar);
+      return;
+     }
+
+   if(order_mode=="Limite")
+     {
+      SubmitLimitReferenceOrder(direction,timeframe,signal_bar);
+      return;
+     }
   }
 
 bool CreateLogOverlay()
@@ -545,7 +774,7 @@ void RefreshBridgeOverlay()
    CreateLogOverlay();
    ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3 | Origem: "+g_config_source);
    ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Strategy: "+ResolveStrategyNameText()+" | Magic: "+ResolveMagicNumberText());
-   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Ordem: "+g_config.signals.order_mode+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao")+" | TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
+   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Ordem: "+g_config.signals.order_mode+" / "+g_config.signals.limit.mode+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao")+" | TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
    ChartRedraw();
   }
 

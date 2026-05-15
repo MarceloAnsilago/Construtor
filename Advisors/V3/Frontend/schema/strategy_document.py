@@ -22,8 +22,23 @@ class SignalFilterDocument:
 
 
 @dataclass(frozen=True)
+class SignalLimitReferenceDocument:
+    base: str
+    candle: str
+    distance: str
+    expire: str
+
+
+@dataclass(frozen=True)
+class SignalLimitDocument:
+    mode: str
+    reference: SignalLimitReferenceDocument
+
+
+@dataclass(frozen=True)
 class SignalsDocument:
     order_mode: str
+    limit: SignalLimitDocument
     filter: SignalFilterDocument
 
 
@@ -41,6 +56,15 @@ class StrategyDocument:
             "magic_number": self.magic_number,
             "signals": {
                 "order_mode": self.signals.order_mode,
+                "limit": {
+                    "mode": self.signals.limit.mode,
+                    "reference": {
+                        "base": self.signals.limit.reference.base,
+                        "candle": self.signals.limit.reference.candle,
+                        "distance": self.signals.limit.reference.distance,
+                        "expire": self.signals.limit.reference.expire,
+                    },
+                },
                 "filter": {
                     "enabled": self.signals.filter.enabled,
                     "measure": self.signals.filter.measure,

@@ -9,6 +9,12 @@ from state.strategy_store import StrategyStore
 INPUT_TO_STORE_KEYS = {
     "InpNomeDaEstrategia": ("strategy.name",),
     "InpMagicNumber": ("strategy.magic_number",),
+    "InpModoDeOrdem": ("signals.order_mode",),
+    "InpModoDaOrdemLimite": ("signals.limit_mode",),
+    "InpReferenciaDaOrdemLimite": ("signals.limit_reference.base",),
+    "InpCandleDaReferenciaDaOrdemLimite": ("signals.limit_reference.candle",),
+    "InpDistanciaDaOrdemLimite": ("signals.limit_reference.distance",),
+    "InpExpiracaoDaOrdemLimite": ("signals.limit_reference.expire",),
     "InpOperarNaCompra": ("risk.allow_buy",),
     "InpOperarNaVenda": ("risk.allow_sell",),
     "InpVolumeInicial": ("risk.initial_volume",),

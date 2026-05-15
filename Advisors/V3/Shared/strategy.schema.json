@@ -14,6 +14,30 @@
       "default": "Mercado",
       "enum": ["Mercado", "Limite"]
     },
+    "signals.limit_mode": {
+      "type": "string",
+      "default": "Referencia",
+      "enum": ["Referencia", "Media"]
+    },
+    "signals.limit_reference.base": {
+      "type": "string",
+      "default": "Maxima",
+      "enum": ["Maxima", "Minima", "Abertura", "Fechamento"]
+    },
+    "signals.limit_reference.candle": {
+      "type": "string",
+      "default": "Atual",
+      "enum": ["Atual", "Ultimo", "Penultimo", "Antepenultimo"]
+    },
+    "signals.limit_reference.distance": {
+      "type": "string",
+      "default": "0"
+    },
+    "signals.limit_reference.expire": {
+      "type": "string",
+      "default": "Nao expirar",
+      "enum": ["Nao expirar", "1 candle", "2 candles", "3 candles", "4 candles"]
+    },
     "signals.filter.enabled": {
       "type": "bool",
       "default": false

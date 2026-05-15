@@ -58,13 +58,14 @@ class OptimizationView(ctk.CTkFrame):
 
         signals = self._create_card(body, 1, "Sinais e Filtro")
         self._add_summary_row(signals, 0, "Modo de ordem", "signal_order_mode", "Mercado")
-        self._add_summary_row(signals, 1, "Filtro ativo", "signal_filter_enabled", "Nao")
-        self._add_summary_row(signals, 2, "Medir em", "signal_filter_measure", "Pontos")
-        self._add_summary_row(signals, 3, "Tempo grafico", "signal_filter_timeframe", "Corrente")
-        self._add_summary_row(signals, 4, "Vela p-a-p min / max", "signal_filter_candle_range", "0 / 0")
-        self._add_summary_row(signals, 5, "Corpo min / max", "signal_filter_body_range", "0 / 0")
-        self._add_summary_row(signals, 6, "Pavio sup. min / max", "signal_filter_upper_wick_range", "0 / 0")
-        self._add_summary_row(signals, 7, "Pavio inf. min / max", "signal_filter_lower_wick_range", "0 / 0")
+        self._add_summary_row(signals, 1, "Limite", "signal_limit_summary", "Referencia | Maxima | Atual | 0 | Nao expirar")
+        self._add_summary_row(signals, 2, "Filtro ativo", "signal_filter_enabled", "Nao")
+        self._add_summary_row(signals, 3, "Medir em", "signal_filter_measure", "Pontos")
+        self._add_summary_row(signals, 4, "Tempo grafico", "signal_filter_timeframe", "Corrente")
+        self._add_summary_row(signals, 5, "Vela p-a-p min / max", "signal_filter_candle_range", "0 / 0")
+        self._add_summary_row(signals, 6, "Corpo min / max", "signal_filter_body_range", "0 / 0")
+        self._add_summary_row(signals, 7, "Pavio sup. min / max", "signal_filter_upper_wick_range", "0 / 0")
+        self._add_summary_row(signals, 8, "Pavio inf. min / max", "signal_filter_lower_wick_range", "0 / 0")
 
     def _create_card(self, master, column: int, title: str) -> ctk.CTkFrame:
         card = ctk.CTkFrame(
@@ -129,6 +130,12 @@ class OptimizationView(ctk.CTkFrame):
         self._set_value("max_spread", initial_config.get("max_spread", "").strip() or "100")
 
         self._set_value("signal_order_mode", signals_config.get("signal_order_mode", "").strip() or "Mercado")
+        limit_mode = signals_config.get("signal_limit_mode", "").strip() or "Referencia"
+        limit_base = signals_config.get("signal_limit_reference_base", "").strip() or "Maxima"
+        limit_candle = signals_config.get("signal_limit_reference_candle", "").strip() or "Atual"
+        limit_distance = signals_config.get("signal_limit_reference_distance", "").strip() or "0"
+        limit_expire = signals_config.get("signal_limit_reference_expire", "").strip() or "Nao expirar"
+        self._set_value("signal_limit_summary", f"{limit_mode} | {limit_base} | {limit_candle} | {limit_distance} | {limit_expire}")
         self._set_value("signal_filter_enabled", signals_config.get("signal_filter_enabled", "").strip() or "Nao")
         self._set_value("signal_filter_measure", signals_config.get("signal_filter_measure", "").strip() or "Pontos")
         self._set_value("signal_filter_timeframe", signals_config.get("signal_filter_timeframe", "").strip() or "Corrente")

@@ -17,9 +17,24 @@ struct SSignalFilterConfig
    double           lower_wick_max;
   };
 
+struct SSignalLimitReferenceConfig
+  {
+   string  base;
+   string  candle;
+   double  distance;
+   string  expire;
+  };
+
+struct SSignalLimitConfig
+  {
+   string                      mode;
+   SSignalLimitReferenceConfig reference;
+  };
+
 struct SSignalConfig
   {
    string              order_mode;
+   SSignalLimitConfig  limit;
    SSignalFilterConfig filter;
   };
 

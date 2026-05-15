@@ -1,7 +1,14 @@
 from __future__ import annotations
 
 from state.strategy_store import StrategyStore
-from schema.strategy_document import SCHEMA_VERSION, SignalFilterDocument, SignalsDocument, StrategyDocument
+from schema.strategy_document import (
+    SCHEMA_VERSION,
+    SignalFilterDocument,
+    SignalLimitDocument,
+    SignalLimitReferenceDocument,
+    SignalsDocument,
+    StrategyDocument,
+)
 
 
 def build_strategy_document(store: StrategyStore) -> StrategyDocument:
@@ -11,6 +18,15 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
         magic_number=str(store.get("strategy.magic_number")),
         signals=SignalsDocument(
             order_mode=str(store.get("signals.order_mode")),
+            limit=SignalLimitDocument(
+                mode=str(store.get("signals.limit_mode")),
+                reference=SignalLimitReferenceDocument(
+                    base=str(store.get("signals.limit_reference.base")),
+                    candle=str(store.get("signals.limit_reference.candle")),
+                    distance=str(store.get("signals.limit_reference.distance")),
+                    expire=str(store.get("signals.limit_reference.expire")),
+                ),
+            ),
             filter=SignalFilterDocument(
                 enabled=bool(store.get("signals.filter.enabled")),
                 measure=str(store.get("signals.filter.measure")),
@@ -31,6 +47,11 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
 def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
     return {
         "signal_order_mode": str(store.get("signals.order_mode")),
+        "signal_limit_mode": str(store.get("signals.limit_mode")),
+        "signal_limit_reference_base": str(store.get("signals.limit_reference.base")),
+        "signal_limit_reference_candle": str(store.get("signals.limit_reference.candle")),
+        "signal_limit_reference_distance": str(store.get("signals.limit_reference.distance")),
+        "signal_limit_reference_expire": str(store.get("signals.limit_reference.expire")),
         "signal_filter_enabled": "Sim" if bool(store.get("signals.filter.enabled")) else "Nao",
         "signal_filter_measure": str(store.get("signals.filter.measure")),
         "signal_filter_timeframe": str(store.get("signals.filter.timeframe")),
@@ -61,6 +82,11 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpNomeDaEstrategia={store.get('strategy.name')}",
         f"InpMagicNumber={store.get('strategy.magic_number')}",
         f"InpModoDeOrdem={store.get('signals.order_mode')}",
+        f"InpModoDaOrdemLimite={store.get('signals.limit_mode')}",
+        f"InpReferenciaDaOrdemLimite={store.get('signals.limit_reference.base')}",
+        f"InpCandleDaReferenciaDaOrdemLimite={store.get('signals.limit_reference.candle')}",
+        f"InpDistanciaDaOrdemLimite={store.get('signals.limit_reference.distance')}",
+        f"InpExpiracaoDaOrdemLimite={store.get('signals.limit_reference.expire')}",
         f"InpOperarNaCompra={_bool_to_set(str(store.get('risk.allow_buy')) == 'Sim')}",
         f"InpOperarNaVenda={_bool_to_set(str(store.get('risk.allow_sell')) == 'Sim')}",
         f"InpVolumeInicial={store.get('risk.initial_volume')}",

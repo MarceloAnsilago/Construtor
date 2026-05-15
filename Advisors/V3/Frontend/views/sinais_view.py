@@ -234,7 +234,7 @@ class SinaisView(ctk.CTkFrame):
         )
         self._ordem_limit.grid(row=1, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
 
-        self._ord_tab_var = ctk.StringVar(value="Referencia")
+        self._ord_tab_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_mode")))
         self._ord_tabs = ctk.CTkSegmentedButton(
             card,
             values=["Referencia", "Media"],
@@ -272,29 +272,42 @@ class SinaisView(ctk.CTkFrame):
         )
         self._ord_ref_check.grid(row=0, column=0, sticky="w", padx=12, pady=(12, 10))
         self._add_label(self._ord_ref_panel, 1, "Referencia:", padx=12)
+        self._ord_ref_base_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_reference.base")))
         self._ord_ref_base = self._create_combo(
             self._ord_ref_panel,
             ["Maxima", "Minima", "Abertura", "Fechamento"],
-            ctk.StringVar(value="Maxima"),
+            self._ord_ref_base_var,
         )
         self._ord_ref_base.grid(row=2, column=0, sticky="ew", padx=12, pady=(0, 10))
         self._add_label(self._ord_ref_panel, 3, "Candle:", padx=12)
+        self._ord_ref_candle_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_reference.candle")))
         self._ord_ref_candle = self._create_combo(
             self._ord_ref_panel,
             ["Atual", "Ultimo", "Penultimo", "Antepenultimo"],
-            ctk.StringVar(value="Atual"),
+            self._ord_ref_candle_var,
         )
         self._ord_ref_candle.grid(row=4, column=0, sticky="ew", padx=12, pady=(0, 10))
         self._add_label(self._ord_ref_panel, 5, "Distancia", padx=12)
-        self._ord_ref_distance = self._create_entry(self._ord_ref_panel, "0")
+        self._ord_ref_distance_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_reference.distance")))
+        self._ord_ref_distance = self._create_entry(
+            self._ord_ref_panel,
+            str(self._strategy_store.get("signals.limit_reference.distance")),
+            variable=self._ord_ref_distance_var,
+        )
         self._ord_ref_distance.grid(row=6, column=0, sticky="ew", padx=12, pady=(0, 10))
         self._add_label(self._ord_ref_panel, 7, "Expirar:", padx=12)
+        self._ord_ref_expire_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_reference.expire")))
         self._ord_ref_expire = self._create_combo(
             self._ord_ref_panel,
             ["Nao expirar", "1 candle", "2 candles", "3 candles", "4 candles"],
-            ctk.StringVar(value="Nao expirar"),
+            self._ord_ref_expire_var,
         )
         self._ord_ref_expire.grid(row=8, column=0, sticky="ew", padx=12, pady=(0, 12))
+
+        self._ord_ref_base_var.trace_add("write", self._build_ord_combo_callback("signals.limit_reference.base", self._ord_ref_base_var))
+        self._ord_ref_candle_var.trace_add("write", self._build_ord_combo_callback("signals.limit_reference.candle", self._ord_ref_candle_var))
+        self._ord_ref_distance_var.trace_add("write", self._build_ord_entry_callback("signals.limit_reference.distance", self._ord_ref_distance_var))
+        self._ord_ref_expire_var.trace_add("write", self._build_ord_combo_callback("signals.limit_reference.expire", self._ord_ref_expire_var))
 
         self._ord_media_panel = self._create_subpanel(self._ord_panel_shell)
         self._ord_media_panel.grid_columnconfigure(0, weight=1)
@@ -1581,10 +1594,16 @@ class SinaisView(ctk.CTkFrame):
 
     def export_runtime_config(self) -> dict[str, str]:
         self._strategy_store.set("signals.order_mode", self._ordem_mode.get())
+        self._strategy_store.set("signals.limit_mode", self._ord_tab_var.get())
         return build_runtime_snapshot(self._strategy_store)
 
     def load_from_store(self) -> None:
         self._set_ordem_mode(str(self._strategy_store.get("signals.order_mode")))
+        self._set_ord_tab(str(self._strategy_store.get("signals.limit_mode")))
+        self._ord_ref_base_var.set(str(self._strategy_store.get("signals.limit_reference.base")))
+        self._ord_ref_candle_var.set(str(self._strategy_store.get("signals.limit_reference.candle")))
+        self._ord_ref_distance_var.set(str(self._strategy_store.get("signals.limit_reference.distance")))
+        self._ord_ref_expire_var.set(str(self._strategy_store.get("signals.limit_reference.expire")))
         self._filtro_enabled_var.set(1 if bool(self._strategy_store.get("signals.filter.enabled")) else 0)
         self._filtro_measure_var.set(str(self._strategy_store.get("signals.filter.measure")))
         self._filtro_timeframe_var.set(str(self._strategy_store.get("signals.filter.timeframe")))
@@ -1806,6 +1825,18 @@ class SinaisView(ctk.CTkFrame):
 
         return _callback
 
+    def _build_ord_combo_callback(self, key: str, variable: ctk.StringVar):
+        def _callback(*_args) -> None:
+            self._strategy_store.set(key, variable.get())
+
+        return _callback
+
+    def _build_ord_entry_callback(self, key: str, variable: ctk.StringVar):
+        def _callback(*_args) -> None:
+            self._strategy_store.set(key, variable.get().strip() or "0")
+
+        return _callback
+
     def _sync_filtro_controls(self) -> None:
         enabled = bool(self._filtro_enabled_var.get())
         self._filtro_measure.configure(state="readonly" if enabled else "disabled")
@@ -1815,6 +1846,7 @@ class SinaisView(ctk.CTkFrame):
 
     def _set_ord_tab(self, tab_name: str) -> None:
         self._ord_tab_var.set(tab_name)
+        self._strategy_store.set("signals.limit_mode", tab_name)
 
         self._ord_ref_check.select() if tab_name == "Referencia" else self._ord_ref_check.deselect()
         self._ord_media_check.select() if tab_name == "Media" else self._ord_media_check.deselect()

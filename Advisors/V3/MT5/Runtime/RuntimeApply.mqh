@@ -6,6 +6,11 @@ void SyncRuntimeConfigFromInputs()
    g_config.strategy_name=InpNomeDaEstrategia;
    g_config.magic_number=InpMagicNumber;
    g_config.signals.order_mode=InpModoDeOrdem;
+   g_config.signals.limit.mode=InpModoDaOrdemLimite;
+   g_config.signals.limit.reference.base=InpReferenciaDaOrdemLimite;
+   g_config.signals.limit.reference.candle=InpCandleDaReferenciaDaOrdemLimite;
+   g_config.signals.limit.reference.distance=InpDistanciaDaOrdemLimite;
+   g_config.signals.limit.reference.expire=InpExpiracaoDaOrdemLimite;
    g_config.signals.filter.enabled=InpAtivarFiltro;
    g_config.signals.filter.measure=InpMedirEmPercentual ? "Percentual" : "Pontos";
    g_config.signals.filter.timeframe_label=TimeframeToBridgeText(InpTempoGraficoDoFiltro);
