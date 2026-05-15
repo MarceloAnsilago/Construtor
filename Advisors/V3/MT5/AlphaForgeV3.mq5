@@ -50,6 +50,7 @@ string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string PANEL_NAME           = "AlphaForgeV3.Panel";
 string LOG_PANEL_NAME       = "AlphaForgeV3.LogPanel";
 string LOG_LABEL_PREFIX     = "AlphaForgeV3.LogLabel.";
+string SIGNAL_MARKER_PREFIX = "AlphaForgeV3.SignalMarker.";
 
 string g_config_source = "Inputs/.set";
 datetime g_last_signal_bar_time = 0;
@@ -68,6 +69,11 @@ bool IsRunningInTester()
 bool HasInteractiveChart()
   {
    return(!IsRunningInTester());
+  }
+
+bool CanDrawChartObjects()
+  {
+   return(ChartID()>0);
   }
 
 string TimeframeToBridgeText(const ENUM_TIMEFRAMES timeframe)
@@ -382,6 +388,43 @@ bool ReadSignalBarAtShift(const ENUM_TIMEFRAMES timeframe,const int shift,MqlRat
 
    signal_bar=rates[0];
    return(true);
+  }
+
+void DrawSignalMarker(const int direction,const ENUM_TIMEFRAMES timeframe,const MqlRates &signal_bar)
+  {
+   if(direction==0 || !CanDrawChartObjects())
+      return;
+
+   string marker_name=SIGNAL_MARKER_PREFIX+IntegerToString((int)timeframe)+"."+IntegerToString((int)signal_bar.time)+"."+(direction>0 ? "BUY" : "SELL");
+   if(ObjectFind(0,marker_name)>=0)
+      return;
+
+   double anchor_price=direction>0 ? signal_bar.low-(12.0*_Point) : signal_bar.high+(12.0*_Point);
+
+   if(!ObjectCreate(0,marker_name,OBJ_TEXT,0,signal_bar.time,anchor_price))
+      return;
+
+   uchar marker_code=(uchar)(direction>0 ? 233 : 234);
+   ObjectSetString(0,marker_name,OBJPROP_FONT,"Wingdings");
+   ObjectSetString(0,marker_name,OBJPROP_TEXT,CharToString(marker_code));
+   ObjectSetInteger(0,marker_name,OBJPROP_FONTSIZE,16);
+   ObjectSetInteger(0,marker_name,OBJPROP_ANCHOR,ANCHOR_CENTER);
+   ObjectSetInteger(0,marker_name,OBJPROP_COLOR,clrYellow);
+   ObjectSetInteger(0,marker_name,OBJPROP_BACK,false);
+   ObjectSetInteger(0,marker_name,OBJPROP_SELECTABLE,false);
+   ObjectSetInteger(0,marker_name,OBJPROP_HIDDEN,false);
+   ChartRedraw();
+  }
+
+void DestroySignalMarkers()
+  {
+   int total=ObjectsTotal(0);
+   for(int index=total-1;index>=0;index--)
+     {
+      string name=ObjectName(0,index);
+      if(StringFind(name,SIGNAL_MARKER_PREFIX)==0)
+         ObjectDelete(0,name);
+     }
   }
 
 bool PassesNumericFilter(const double metric_value,const double min_value,const double max_value)
@@ -707,6 +750,7 @@ void EvaluateAndTrade()
       return;
 
    int direction=ResolveSignalDirection(signal_bar);
+   DrawSignalMarker(direction,timeframe,signal_bar);
    string order_mode=NormalizeText(g_config.signals.order_mode);
    if(order_mode=="Mercado")
      {
@@ -842,6 +886,7 @@ void DestroyControlPanel()
    ObjectDelete(0,LOG_LABEL_PREFIX+"0");
    ObjectDelete(0,LOG_LABEL_PREFIX+"1");
    ObjectDelete(0,LOG_LABEL_PREFIX+"2");
+   DestroySignalMarkers();
   }
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
