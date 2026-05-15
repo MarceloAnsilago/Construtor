@@ -19,13 +19,16 @@ input group "1.Estrategia"
 input string InpNomeDaEstrategia = "Minha estrategia";
 input long InpMagicNumber = 100000;
 
-input group "2.Risco e execucao"
+input group "2.Sinais"
+input string InpModoDeOrdem = "Mercado";
+
+input group "3.Risco e execucao"
 input bool InpOperarNaCompra = true;
 input bool InpOperarNaVenda = true;
 input double InpVolumeInicial = 1.0;
 input double InpSpreadMaximo = 10.0;
 
-input group "3.Filtro"
+input group "4.Filtro"
 input bool InpAtivarFiltro = false;
 input bool InpMedirEmPercentual = false;
 input ENUM_TIMEFRAMES InpTempoGraficoDoFiltro = PERIOD_CURRENT;

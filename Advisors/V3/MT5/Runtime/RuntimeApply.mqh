@@ -5,7 +5,7 @@ void SyncRuntimeConfigFromInputs()
   {
    g_config.strategy_name=InpNomeDaEstrategia;
    g_config.magic_number=InpMagicNumber;
-   g_config.signals.order_mode="Mercado";
+   g_config.signals.order_mode=InpModoDeOrdem;
    g_config.signals.filter.enabled=InpAtivarFiltro;
    g_config.signals.filter.measure=InpMedirEmPercentual ? "Percentual" : "Pontos";
    g_config.signals.filter.timeframe_label=TimeframeToBridgeText(InpTempoGraficoDoFiltro);
