@@ -169,8 +169,8 @@ class SinaisView(ctk.CTkFrame):
             border_width=1,
             border_color=self._theme.colors.border,
         )
-        panel.grid_columnconfigure((0, 1, 2, 3, 4), weight=1, uniform="sinais-grid")
         panel.grid_rowconfigure(2, weight=1)
+        panel.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
             panel,
@@ -178,7 +178,7 @@ class SinaisView(ctk.CTkFrame):
             text_color=self._theme.colors.text,
             font=self._theme.font("subtitle"),
             anchor="w",
-        ).grid(row=0, column=0, columnspan=5, sticky="ew", padx=18, pady=(18, 6))
+        ).grid(row=0, column=0, sticky="ew", padx=18, pady=(18, 6))
 
         ctk.CTkLabel(
             panel,
@@ -188,13 +188,33 @@ class SinaisView(ctk.CTkFrame):
             justify="left",
             anchor="w",
             wraplength=980,
-        ).grid(row=1, column=0, columnspan=5, sticky="ew", padx=18, pady=(0, 18))
+        ).grid(row=1, column=0, sticky="ew", padx=18, pady=(0, 18))
 
-        self._build_tipo_ordens_card(panel)
-        self._build_filtro_card(panel)
-        self._build_canais_card(panel)
-        self._build_cruzamentos_card(panel)
-        self._build_sobre_card(panel)
+        body = ctk.CTkScrollableFrame(
+            panel,
+            fg_color="transparent",
+            corner_radius=0,
+            border_width=0,
+            scrollbar_button_color=self._theme.colors.accent,
+            scrollbar_button_hover_color=self._theme.colors.accent_hover,
+        )
+        body.grid(row=2, column=0, sticky="nsew", padx=18, pady=(0, 18))
+        body.grid_columnconfigure(0, weight=1)
+
+        cards_frame = ctk.CTkFrame(
+            body,
+            fg_color="transparent",
+            corner_radius=0,
+            border_width=0,
+        )
+        cards_frame.grid(row=0, column=0, sticky="ew")
+        cards_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1, uniform="sinais-grid")
+
+        self._build_tipo_ordens_card(cards_frame)
+        self._build_filtro_card(cards_frame)
+        self._build_canais_card(cards_frame)
+        self._build_cruzamentos_card(cards_frame)
+        self._build_sobre_card(cards_frame)
 
         return panel
 
