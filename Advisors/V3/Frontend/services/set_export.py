@@ -13,6 +13,7 @@ INPUT_TO_STORE_KEYS = {
     "InpModoDaOrdemLimite": ("signals.limit_mode",),
     "InpReferenciaDaOrdemLimite": ("signals.limit_reference.base",),
     "InpCandleDaReferenciaDaOrdemLimite": ("signals.limit_reference.candle",),
+    "InpMoverParaOProximoCandle": ("signals.limit_reference.move_next_candle",),
     "InpDistanciaDaOrdemLimite": ("signals.limit_reference.distance",),
     "InpExpiracaoDaOrdemLimite": ("signals.limit_reference.expire",),
     "InpOperarNaCompra": ("risk.allow_buy",),
@@ -57,6 +58,8 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
     value = raw_value.strip()
     if input_name in {"InpOperarNaCompra", "InpOperarNaVenda"}:
         return "Sim" if _parse_bool(value) else "Nao"
+    if input_name == "InpMoverParaOProximoCandle":
+        return _parse_bool(value)
     if input_name == "InpAtivarFiltro":
         return _parse_bool(value)
     if input_name == "InpMedirEmPercentual":

@@ -23,6 +23,7 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                 reference=SignalLimitReferenceDocument(
                     base=str(store.get("signals.limit_reference.base")),
                     candle=str(store.get("signals.limit_reference.candle")),
+                    move_next_candle=bool(store.get("signals.limit_reference.move_next_candle")),
                     distance=str(store.get("signals.limit_reference.distance")),
                     expire=str(store.get("signals.limit_reference.expire")),
                 ),
@@ -50,6 +51,7 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "signal_limit_mode": str(store.get("signals.limit_mode")),
         "signal_limit_reference_base": str(store.get("signals.limit_reference.base")),
         "signal_limit_reference_candle": str(store.get("signals.limit_reference.candle")),
+        "signal_limit_reference_move_next_candle": "Sim" if bool(store.get("signals.limit_reference.move_next_candle")) else "Nao",
         "signal_limit_reference_distance": str(store.get("signals.limit_reference.distance")),
         "signal_limit_reference_expire": str(store.get("signals.limit_reference.expire")),
         "signal_filter_enabled": "Sim" if bool(store.get("signals.filter.enabled")) else "Nao",
@@ -85,6 +87,7 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpModoDaOrdemLimite={store.get('signals.limit_mode')}",
         f"InpReferenciaDaOrdemLimite={store.get('signals.limit_reference.base')}",
         f"InpCandleDaReferenciaDaOrdemLimite={store.get('signals.limit_reference.candle')}",
+        f"InpMoverParaOProximoCandle={_bool_to_set(store.get('signals.limit_reference.move_next_candle'))}",
         f"InpDistanciaDaOrdemLimite={store.get('signals.limit_reference.distance')}",
         f"InpExpiracaoDaOrdemLimite={store.get('signals.limit_reference.expire')}",
         f"InpOperarNaCompra={_bool_to_set(str(store.get('risk.allow_buy')) == 'Sim')}",

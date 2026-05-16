@@ -24,6 +24,7 @@ input string InpModoDeOrdem = "Mercado";
 input string InpModoDaOrdemLimite = "Referencia";
 input string InpReferenciaDaOrdemLimite = "Maxima";
 input string InpCandleDaReferenciaDaOrdemLimite = "Atual";
+input bool InpMoverParaOProximoCandle = false;
 input double InpDistanciaDaOrdemLimite = 0.0;
 input string InpExpiracaoDaOrdemLimite = "Nao expirar";
 
@@ -336,6 +337,42 @@ bool HasPendingOrderForSymbol()
    return(false);
   }
 
+bool FindPendingLimitOrderForSymbol(
+   ulong &ticket,
+   ENUM_ORDER_TYPE &type,
+   datetime &expiration,
+   ENUM_ORDER_TYPE_TIME &order_time,
+   double &price
+)
+  {
+   long magic_number=ResolveMagicNumberValue();
+   int total=OrdersTotal();
+   for(int index=0;index<total;index++)
+     {
+      ulong current_ticket=OrderGetTicket(index);
+      if(current_ticket==0 || !OrderSelect(current_ticket))
+         continue;
+
+      if(OrderGetString(ORDER_SYMBOL)!=_Symbol)
+         continue;
+      if((long)OrderGetInteger(ORDER_MAGIC)!=magic_number)
+         continue;
+
+      ENUM_ORDER_TYPE current_type=(ENUM_ORDER_TYPE)OrderGetInteger(ORDER_TYPE);
+      if(current_type!=ORDER_TYPE_BUY_LIMIT && current_type!=ORDER_TYPE_SELL_LIMIT)
+         continue;
+
+      ticket=current_ticket;
+      type=current_type;
+      expiration=(datetime)OrderGetInteger(ORDER_TIME_EXPIRATION);
+      order_time=(ENUM_ORDER_TYPE_TIME)OrderGetInteger(ORDER_TYPE_TIME);
+      price=OrderGetDouble(ORDER_PRICE_OPEN);
+      return(true);
+     }
+
+   return(false);
+  }
+
 bool IsCurrentSpreadAllowed()
   {
    double max_spread=ResolveMaxSpreadPoints();
@@ -528,6 +565,93 @@ datetime ResolvePendingExpiration(const ENUM_TIMEFRAMES timeframe,const string e
       return(0);
 
    return(TimeCurrent()+(datetime)(candles*seconds));
+  }
+
+int ResolvePendingMoveReferenceBarShift(const string candle_name)
+  {
+   int shift=ResolveReferenceBarShift(candle_name);
+   if(shift<=0)
+      return(1);
+   return(shift);
+  }
+
+void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
+  {
+   if(NormalizeText(g_config.signals.order_mode)!="Limite")
+      return;
+   if(NormalizeText(g_config.signals.limit.mode)!="Referencia")
+      return;
+   if(!g_config.signals.limit.reference.move_next_candle)
+      return;
+   if(HasOpenPositionForSymbol())
+      return;
+
+   ulong ticket=0;
+   ENUM_ORDER_TYPE order_type=WRONG_VALUE;
+   datetime expiration=0;
+   ENUM_ORDER_TYPE_TIME order_time=ORDER_TIME_GTC;
+   double current_price=0.0;
+   if(!FindPendingLimitOrderForSymbol(ticket,order_type,expiration,order_time,current_price))
+      return;
+
+   MqlTick tick;
+   if(!SymbolInfoTick(_Symbol,tick))
+     {
+      Print("AlphaForge V3: falha ao capturar tick para mover ordem limite.");
+      return;
+     }
+
+   MqlRates reference_bar;
+   int reference_shift=ResolvePendingMoveReferenceBarShift(g_config.signals.limit.reference.candle);
+   if(!ReadSignalBarAtShift(timeframe,reference_shift,reference_bar))
+     {
+      Print("AlphaForge V3: nao foi possivel ler a vela para mover a ordem limite por referencia.");
+      return;
+     }
+
+   double reference_price=ResolveReferencePrice(reference_bar,g_config.signals.limit.reference.base);
+   double price_offset=g_config.signals.limit.reference.distance*_Point;
+   double updated_price=(order_type==ORDER_TYPE_BUY_LIMIT) ? reference_price-price_offset : reference_price+price_offset;
+   updated_price=NormalizeDouble(updated_price,_Digits);
+
+   if(updated_price<=0.0)
+      return;
+
+   if(MathAbs(updated_price-current_price)<=(_Point/2.0))
+      return;
+
+   if(order_type==ORDER_TYPE_BUY_LIMIT && updated_price>=tick.ask)
+     {
+      Print("AlphaForge V3: mover Buy Limit ignorado; preco recalculado ficou acima/igual ao ask. Ticket=",ticket);
+      return;
+     }
+
+   if(order_type==ORDER_TYPE_SELL_LIMIT && updated_price<=tick.bid)
+     {
+      Print("AlphaForge V3: mover Sell Limit ignorado; preco recalculado ficou abaixo/igual ao bid. Ticket=",ticket);
+      return;
+     }
+
+   g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
+   g_trade.SetTypeFillingBySymbol(_Symbol);
+   g_trade.SetDeviationInPoints(20);
+
+   if(!g_trade.OrderModify(ticket,updated_price,0.0,0.0,order_time,expiration))
+     {
+      Print(
+         "AlphaForge V3: falha ao mover ordem limite por referencia. Ticket=",ticket,
+         " Retcode=",g_trade.ResultRetcode(),
+         " Desc=",g_trade.ResultRetcodeDescription()
+      );
+      return;
+     }
+
+   Print(
+      "AlphaForge V3: ordem limite movida para o proximo candle. Ticket=",ticket,
+      " NovoPreco=",DoubleToString(updated_price,_Digits),
+      " Base=",g_config.signals.limit.reference.base,
+      " Candle=",g_config.signals.limit.reference.candle
+   );
   }
 
 bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const MqlRates &signal_bar)
@@ -738,6 +862,8 @@ void EvaluateAndTrade()
    ENUM_TIMEFRAMES timeframe=g_config.signals.filter.timeframe;
    if(!IsNewSignalBar(timeframe))
       return;
+
+   UpdateLimitReferencePendingOrder(timeframe);
 
    MqlRates signal_bar;
    if(!ReadClosedSignalBar(timeframe,signal_bar))

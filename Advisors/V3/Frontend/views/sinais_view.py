@@ -287,22 +287,32 @@ class SinaisView(ctk.CTkFrame):
             self._ord_ref_candle_var,
         )
         self._ord_ref_candle.grid(row=4, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._ord_ref_panel, 5, "Distancia", padx=12)
+        self._ord_ref_move_next_candle_var = ctk.IntVar(
+            value=1 if bool(self._strategy_store.get("signals.limit_reference.move_next_candle")) else 0
+        )
+        self._ord_ref_move_next_candle = self._create_checkbox(
+            self._ord_ref_panel,
+            "Mover para o proximo candle",
+            self._on_ord_ref_move_next_candle_change,
+            variable=self._ord_ref_move_next_candle_var,
+        )
+        self._ord_ref_move_next_candle.grid(row=5, column=0, sticky="w", padx=12, pady=(0, 10))
+        self._add_label(self._ord_ref_panel, 6, "Distancia", padx=12)
         self._ord_ref_distance_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_reference.distance")))
         self._ord_ref_distance = self._create_entry(
             self._ord_ref_panel,
             str(self._strategy_store.get("signals.limit_reference.distance")),
             variable=self._ord_ref_distance_var,
         )
-        self._ord_ref_distance.grid(row=6, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._ord_ref_panel, 7, "Expirar:", padx=12)
+        self._ord_ref_distance.grid(row=7, column=0, sticky="ew", padx=12, pady=(0, 10))
+        self._add_label(self._ord_ref_panel, 8, "Expirar:", padx=12)
         self._ord_ref_expire_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_reference.expire")))
         self._ord_ref_expire = self._create_combo(
             self._ord_ref_panel,
             ["Nao expirar", "1 candle", "2 candles", "3 candles", "4 candles"],
             self._ord_ref_expire_var,
         )
-        self._ord_ref_expire.grid(row=8, column=0, sticky="ew", padx=12, pady=(0, 12))
+        self._ord_ref_expire.grid(row=9, column=0, sticky="ew", padx=12, pady=(0, 12))
 
         self._ord_ref_base_var.trace_add("write", self._build_ord_combo_callback("signals.limit_reference.base", self._ord_ref_base_var))
         self._ord_ref_candle_var.trace_add("write", self._build_ord_combo_callback("signals.limit_reference.candle", self._ord_ref_candle_var))
@@ -1602,6 +1612,7 @@ class SinaisView(ctk.CTkFrame):
         self._set_ord_tab(str(self._strategy_store.get("signals.limit_mode")))
         self._ord_ref_base_var.set(str(self._strategy_store.get("signals.limit_reference.base")))
         self._ord_ref_candle_var.set(str(self._strategy_store.get("signals.limit_reference.candle")))
+        self._ord_ref_move_next_candle_var.set(1 if bool(self._strategy_store.get("signals.limit_reference.move_next_candle")) else 0)
         self._ord_ref_distance_var.set(str(self._strategy_store.get("signals.limit_reference.distance")))
         self._ord_ref_expire_var.set(str(self._strategy_store.get("signals.limit_reference.expire")))
         self._filtro_enabled_var.set(1 if bool(self._strategy_store.get("signals.filter.enabled")) else 0)
@@ -1818,6 +1829,12 @@ class SinaisView(ctk.CTkFrame):
     def _on_filtro_timeframe_change(self, *_args) -> None:
         self._strategy_store.set("signals.filter.timeframe", self._filtro_timeframe_var.get())
 
+    def _on_ord_ref_move_next_candle_change(self) -> None:
+        self._strategy_store.set(
+            "signals.limit_reference.move_next_candle",
+            bool(self._ord_ref_move_next_candle_var.get()),
+        )
+
     def _build_filtro_entry_callback(self, key: str):
         def _callback(*_args) -> None:
             value = self._filtro_entry_vars[key].get().strip() or "0"
@@ -1975,6 +1992,7 @@ class SinaisView(ctk.CTkFrame):
 
         self._ord_ref_base.configure(state="readonly" if ref_enabled else "disabled")
         self._ord_ref_candle.configure(state="readonly" if ref_enabled else "disabled")
+        self._ord_ref_move_next_candle.configure(state="normal" if ref_enabled else "disabled")
         self._ord_ref_distance.configure(state="normal" if ref_enabled else "disabled")
         self._ord_ref_expire.configure(state="readonly" if ref_enabled else "disabled")
 

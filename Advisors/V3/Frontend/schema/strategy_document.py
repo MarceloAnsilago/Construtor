@@ -25,6 +25,7 @@ class SignalFilterDocument:
 class SignalLimitReferenceDocument:
     base: str
     candle: str
+    move_next_candle: bool
     distance: str
     expire: str
 
@@ -61,6 +62,7 @@ class StrategyDocument:
                     "reference": {
                         "base": self.signals.limit.reference.base,
                         "candle": self.signals.limit.reference.candle,
+                        "move_next_candle": self.signals.limit.reference.move_next_candle,
                         "distance": self.signals.limit.reference.distance,
                         "expire": self.signals.limit.reference.expire,
                     },

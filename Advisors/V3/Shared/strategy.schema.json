@@ -29,6 +29,10 @@
       "default": "Atual",
       "enum": ["Atual", "Ultimo", "Penultimo", "Antepenultimo"]
     },
+    "signals.limit_reference.move_next_candle": {
+      "type": "bool",
+      "default": false
+    },
     "signals.limit_reference.distance": {
       "type": "string",
       "default": "0"

@@ -9,6 +9,7 @@ void SyncRuntimeConfigFromInputs()
    g_config.signals.limit.mode=InpModoDaOrdemLimite;
    g_config.signals.limit.reference.base=InpReferenciaDaOrdemLimite;
    g_config.signals.limit.reference.candle=InpCandleDaReferenciaDaOrdemLimite;
+   g_config.signals.limit.reference.move_next_candle=InpMoverParaOProximoCandle;
    g_config.signals.limit.reference.distance=InpDistanciaDaOrdemLimite;
    g_config.signals.limit.reference.expire=InpExpiracaoDaOrdemLimite;
    g_config.signals.filter.enabled=InpAtivarFiltro;

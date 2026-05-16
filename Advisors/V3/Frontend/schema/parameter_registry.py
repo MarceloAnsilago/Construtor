@@ -49,6 +49,13 @@ PARAMETERS: tuple[ParameterDefinition, ...] = (
         ("Atual", "Ultimo", "Penultimo", "Antepenultimo"),
     ),
     ParameterDefinition(
+        "signals.limit_reference.move_next_candle",
+        "Mover para o proximo candle",
+        "bool",
+        False,
+        "signals.limit.reference",
+    ),
+    ParameterDefinition(
         "signals.limit_reference.distance",
         "Distancia da referencia",
         "string",

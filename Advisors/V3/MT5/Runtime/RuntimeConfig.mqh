@@ -21,6 +21,7 @@ struct SSignalLimitReferenceConfig
   {
    string  base;
    string  candle;
+   bool    move_next_candle;
    double  distance;
    string  expire;
   };
