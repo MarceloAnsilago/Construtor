@@ -3,22 +3,22 @@
 
 enum ESignalOrderMode
   {
-   SinalOrdemMercado=0,
-   SinalOrdemLimite=1
+   ModoOrdemMercado=0,
+   ModoOrdemLimite=1
   };
 
 enum ESignalLimitMode
   {
-   SinalLimiteReferencia=0,
-   SinalLimiteMedia=1
+   ModoLimiteReferencia=0,
+   ModoLimiteMedia=1
   };
 
 enum ESignalLimitReferenceBase
   {
-   ReferenciaMaxima=0,
-   ReferenciaMinima=1,
-   ReferenciaAbertura=2,
-   ReferenciaFechamento=3
+   BaseMaxima=0,
+   BaseMinima=1,
+   BaseAbertura=2,
+   BaseFechamento=3
   };
 
 enum ESignalLimitReferenceCandle
@@ -31,11 +31,11 @@ enum ESignalLimitReferenceCandle
 
 enum ESignalLimitExpiration
   {
-   ExpiracaoNaoExpirar=0,
-   Expiracao1Candle=1,
-   Expiracao2Candles=2,
-   Expiracao3Candles=3,
-   Expiracao4Candles=4
+   NaoExpirar=0,
+   Expirar1Candle=1,
+   Expirar2Candles=2,
+   Expirar3Candles=3,
+   Expirar4Candles=4
   };
 
 struct SSignalFilterConfig

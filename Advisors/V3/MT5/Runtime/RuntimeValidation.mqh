@@ -3,26 +3,26 @@
 
 void NormalizeRuntimeConfig(SRuntimeConfig &config)
   {
-   if(config.signals.order_mode!=SinalOrdemMercado && config.signals.order_mode!=SinalOrdemLimite)
-      config.signals.order_mode=SinalOrdemMercado;
-   if(config.signals.limit.mode!=SinalLimiteReferencia && config.signals.limit.mode!=SinalLimiteMedia)
-      config.signals.limit.mode=SinalLimiteReferencia;
-   if(config.signals.limit.reference.base!=ReferenciaMaxima
-      && config.signals.limit.reference.base!=ReferenciaMinima
-      && config.signals.limit.reference.base!=ReferenciaAbertura
-      && config.signals.limit.reference.base!=ReferenciaFechamento)
-      config.signals.limit.reference.base=ReferenciaMaxima;
+   if(config.signals.order_mode!=ModoOrdemMercado && config.signals.order_mode!=ModoOrdemLimite)
+      config.signals.order_mode=ModoOrdemMercado;
+   if(config.signals.limit.mode!=ModoLimiteReferencia && config.signals.limit.mode!=ModoLimiteMedia)
+      config.signals.limit.mode=ModoLimiteReferencia;
+   if(config.signals.limit.reference.base!=BaseMaxima
+      && config.signals.limit.reference.base!=BaseMinima
+      && config.signals.limit.reference.base!=BaseAbertura
+      && config.signals.limit.reference.base!=BaseFechamento)
+      config.signals.limit.reference.base=BaseMaxima;
    if(config.signals.limit.reference.candle!=CandleAtual
       && config.signals.limit.reference.candle!=CandleUltimo
       && config.signals.limit.reference.candle!=CandlePenultimo
       && config.signals.limit.reference.candle!=CandleAntepenultimo)
       config.signals.limit.reference.candle=CandleAtual;
-   if(config.signals.limit.reference.expire!=ExpiracaoNaoExpirar
-      && config.signals.limit.reference.expire!=Expiracao1Candle
-      && config.signals.limit.reference.expire!=Expiracao2Candles
-      && config.signals.limit.reference.expire!=Expiracao3Candles
-      && config.signals.limit.reference.expire!=Expiracao4Candles)
-      config.signals.limit.reference.expire=ExpiracaoNaoExpirar;
+   if(config.signals.limit.reference.expire!=NaoExpirar
+      && config.signals.limit.reference.expire!=Expirar1Candle
+      && config.signals.limit.reference.expire!=Expirar2Candles
+      && config.signals.limit.reference.expire!=Expirar3Candles
+      && config.signals.limit.reference.expire!=Expirar4Candles)
+      config.signals.limit.reference.expire=NaoExpirar;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;

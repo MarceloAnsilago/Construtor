@@ -129,14 +129,18 @@ class OptimizationView(ctk.CTkFrame):
         self._set_value("initial_volume", initial_config.get("initial_volume", "").strip() or "100")
         self._set_value("max_spread", initial_config.get("max_spread", "").strip() or "100")
 
-        self._set_value("signal_order_mode", signals_config.get("signal_order_mode", "").strip() or "Mercado")
+        order_mode = signals_config.get("signal_order_mode", "").strip() or "Mercado"
+        self._set_value("signal_order_mode", order_mode)
         limit_mode = signals_config.get("signal_limit_mode", "").strip() or "Referencia"
         limit_base = signals_config.get("signal_limit_reference_base", "").strip() or "Maxima"
         limit_candle = signals_config.get("signal_limit_reference_candle", "").strip() or "Atual"
         limit_move = signals_config.get("signal_limit_reference_move_next_candle", "").strip() or "Nao"
         limit_distance = signals_config.get("signal_limit_reference_distance", "").strip() or "0"
         limit_expire = signals_config.get("signal_limit_reference_expire", "").strip() or "Nao expirar"
-        self._set_value("signal_limit_summary", f"{limit_mode} | {limit_base} | {limit_candle} | {limit_move} | {limit_distance} | {limit_expire}")
+        if order_mode == "Limite":
+            self._set_value("signal_limit_summary", f"{limit_mode} | {limit_base} | {limit_candle} | {limit_move} | {limit_distance} | {limit_expire}")
+        else:
+            self._set_value("signal_limit_summary", "Nao se aplica no modo Mercado")
         self._set_value("signal_filter_enabled", signals_config.get("signal_filter_enabled", "").strip() or "Nao")
         self._set_value("signal_filter_measure", signals_config.get("signal_filter_measure", "").strip() or "Pontos")
         self._set_value("signal_filter_timeframe", signals_config.get("signal_filter_timeframe", "").strip() or "Corrente")
