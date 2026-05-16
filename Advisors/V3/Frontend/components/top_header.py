@@ -27,7 +27,7 @@ class TopHeader(ctk.CTkFrame):
             height=3,
             border_width=0,
         )
-        stripe.grid(row=2, column=0, sticky="ew", padx=12, pady=(0, 8))
+        stripe.grid(row=2, column=0, columnspan=4, sticky="ew", padx=12, pady=(2, 8))
 
         ctk.CTkLabel(
             self,
