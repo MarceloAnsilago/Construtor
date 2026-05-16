@@ -86,11 +86,11 @@ class SinaisView(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
-        self._tab_var = ctk.StringVar(value="Sinais")
+        self._tab_var = ctk.StringVar(value="Sinais prontos")
 
         self._tabs = ctk.CTkSegmentedButton(
             self,
-            values=["Sinais", "Montar sinais"],
+            values=["Sinais prontos", "Montar sinais"],
             variable=self._tab_var,
             command=self._on_tab_change,
             height=34,
@@ -159,7 +159,7 @@ class SinaisView(ctk.CTkFrame):
         self._sinais_panel = self._create_sinais_panel()
         self._montar_panel = self._create_montar_panel()
 
-        self._set_tab("Sinais")
+        self._set_tab("Sinais prontos")
 
     def _create_sinais_panel(self) -> ctk.CTkFrame:
         panel = ctk.CTkFrame(
@@ -1804,7 +1804,7 @@ class SinaisView(ctk.CTkFrame):
     def _set_tab(self, name: str) -> None:
         self._tab_var.set(name)
 
-        if name == "Sinais":
+        if name == "Sinais prontos":
             self._montar_panel.grid_forget()
             self._sinais_panel.grid(row=0, column=0, sticky="nsew")
             return
