@@ -10,6 +10,38 @@ from schema.strategy_document import (
     StrategyDocument,
 )
 
+ORDER_MODE_TO_SET = {
+    "Mercado": "0",
+    "Limite": "1",
+}
+
+LIMIT_MODE_TO_SET = {
+    "Referencia": "0",
+    "Media": "1",
+}
+
+REFERENCE_BASE_TO_SET = {
+    "Maxima": "0",
+    "Minima": "1",
+    "Abertura": "2",
+    "Fechamento": "3",
+}
+
+REFERENCE_CANDLE_TO_SET = {
+    "Atual": "0",
+    "Ultimo": "1",
+    "Penultimo": "2",
+    "Antepenultimo": "3",
+}
+
+EXPIRATION_TO_SET = {
+    "Nao expirar": "0",
+    "1 candle": "1",
+    "2 candles": "2",
+    "3 candles": "3",
+    "4 candles": "4",
+}
+
 
 def build_strategy_document(store: StrategyStore) -> StrategyDocument:
     return StrategyDocument(
@@ -79,17 +111,22 @@ def _timeframe_to_set(value: str) -> str:
     return normalized
 
 
+def _enum_to_set(mapping: dict[str, str], value: object, default: str) -> str:
+    normalized = str(value).strip()
+    return mapping.get(normalized, default)
+
+
 def build_tester_set_lines(store: StrategyStore) -> list[str]:
     return [
         f"InpNomeDaEstrategia={store.get('strategy.name')}",
         f"InpMagicNumber={store.get('strategy.magic_number')}",
-        f"InpModoDeOrdem={store.get('signals.order_mode')}",
-        f"InpModoDaOrdemLimite={store.get('signals.limit_mode')}",
-        f"InpReferenciaDaOrdemLimite={store.get('signals.limit_reference.base')}",
-        f"InpCandleDaReferenciaDaOrdemLimite={store.get('signals.limit_reference.candle')}",
+        f"InpModoDeOrdem={_enum_to_set(ORDER_MODE_TO_SET, store.get('signals.order_mode'), '0')}",
+        f"InpModoDaOrdemLimite={_enum_to_set(LIMIT_MODE_TO_SET, store.get('signals.limit_mode'), '0')}",
+        f"InpReferenciaDaOrdemLimite={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('signals.limit_reference.base'), '0')}",
+        f"InpCandleDaReferenciaDaOrdemLimite={_enum_to_set(REFERENCE_CANDLE_TO_SET, store.get('signals.limit_reference.candle'), '0')}",
         f"InpMoverParaOProximoCandle={_bool_to_set(store.get('signals.limit_reference.move_next_candle'))}",
         f"InpDistanciaDaOrdemLimite={store.get('signals.limit_reference.distance')}",
-        f"InpExpiracaoDaOrdemLimite={store.get('signals.limit_reference.expire')}",
+        f"InpExpiracaoDaOrdemLimite={_enum_to_set(EXPIRATION_TO_SET, store.get('signals.limit_reference.expire'), '0')}",
         f"InpOperarNaCompra={_bool_to_set(str(store.get('risk.allow_buy')) == 'Sim')}",
         f"InpOperarNaVenda={_bool_to_set(str(store.get('risk.allow_sell')) == 'Sim')}",
         f"InpVolumeInicial={store.get('risk.initial_volume')}",

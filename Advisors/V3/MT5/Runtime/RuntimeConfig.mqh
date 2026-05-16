@@ -1,6 +1,43 @@
 #ifndef __ALPHAFORGE_V3_RUNTIME_CONFIG_MQH__
 #define __ALPHAFORGE_V3_RUNTIME_CONFIG_MQH__
 
+enum ESignalOrderMode
+  {
+   SinalOrdemMercado=0,
+   SinalOrdemLimite=1
+  };
+
+enum ESignalLimitMode
+  {
+   SinalLimiteReferencia=0,
+   SinalLimiteMedia=1
+  };
+
+enum ESignalLimitReferenceBase
+  {
+   ReferenciaMaxima=0,
+   ReferenciaMinima=1,
+   ReferenciaAbertura=2,
+   ReferenciaFechamento=3
+  };
+
+enum ESignalLimitReferenceCandle
+  {
+   CandleAtual=0,
+   CandleUltimo=1,
+   CandlePenultimo=2,
+   CandleAntepenultimo=3
+  };
+
+enum ESignalLimitExpiration
+  {
+   ExpiracaoNaoExpirar=0,
+   Expiracao1Candle=1,
+   Expiracao2Candles=2,
+   Expiracao3Candles=3,
+   Expiracao4Candles=4
+  };
+
 struct SSignalFilterConfig
   {
    bool             enabled;
@@ -19,22 +56,22 @@ struct SSignalFilterConfig
 
 struct SSignalLimitReferenceConfig
   {
-   string  base;
-   string  candle;
-   bool    move_next_candle;
-   double  distance;
-   string  expire;
+   ESignalLimitReferenceBase    base;
+   ESignalLimitReferenceCandle  candle;
+   bool                         move_next_candle;
+   double                       distance;
+   ESignalLimitExpiration       expire;
   };
 
 struct SSignalLimitConfig
   {
-   string                      mode;
+   ESignalLimitMode            mode;
    SSignalLimitReferenceConfig reference;
   };
 
 struct SSignalConfig
   {
-   string              order_mode;
+   ESignalOrderMode    order_mode;
    SSignalLimitConfig  limit;
    SSignalFilterConfig filter;
   };

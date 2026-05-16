@@ -20,13 +20,13 @@ input string InpNomeDaEstrategia = "Minha estrategia";
 input long InpMagicNumber = 100000;
 
 input group "2.Sinais"
-input string InpModoDeOrdem = "Mercado";
-input string InpModoDaOrdemLimite = "Referencia";
-input string InpReferenciaDaOrdemLimite = "Maxima";
-input string InpCandleDaReferenciaDaOrdemLimite = "Atual";
+input ESignalOrderMode InpModoDeOrdem = SinalOrdemMercado;
+input ESignalLimitMode InpModoDaOrdemLimite = SinalLimiteReferencia;
+input ESignalLimitReferenceBase InpReferenciaDaOrdemLimite = ReferenciaMaxima;
+input ESignalLimitReferenceCandle InpCandleDaReferenciaDaOrdemLimite = CandleAtual;
 input bool InpMoverParaOProximoCandle = false;
 input double InpDistanciaDaOrdemLimite = 0.0;
-input string InpExpiracaoDaOrdemLimite = "Nao expirar";
+input ESignalLimitExpiration InpExpiracaoDaOrdemLimite = ExpiracaoNaoExpirar;
 
 input group "3.Risco e execucao"
 input bool InpOperarNaCompra = true;
@@ -139,6 +139,55 @@ string NormalizeText(const string value)
    StringTrimLeft(text);
    StringTrimRight(text);
    return(text);
+  }
+
+string OrderModeToText(const ESignalOrderMode mode)
+  {
+   if(mode==SinalOrdemLimite)
+      return("Limite");
+   return("Mercado");
+  }
+
+string LimitModeToText(const ESignalLimitMode mode)
+  {
+   if(mode==SinalLimiteMedia)
+      return("Media");
+   return("Referencia");
+  }
+
+string ReferenceBaseToText(const ESignalLimitReferenceBase reference_base)
+  {
+   if(reference_base==ReferenciaMinima)
+      return("Minima");
+   if(reference_base==ReferenciaAbertura)
+      return("Abertura");
+   if(reference_base==ReferenciaFechamento)
+      return("Fechamento");
+   return("Maxima");
+  }
+
+string ReferenceCandleToText(const ESignalLimitReferenceCandle candle)
+  {
+   if(candle==CandleUltimo)
+      return("Ultimo");
+   if(candle==CandlePenultimo)
+      return("Penultimo");
+   if(candle==CandleAntepenultimo)
+      return("Antepenultimo");
+   return("Atual");
+  }
+
+string ExpirationToText(const ESignalLimitExpiration expiration)
+  {
+   if(expiration==Expiracao1Candle)
+      return("1 candle");
+   if(expiration==Expiracao2Candles)
+      return("2 candles");
+   if(expiration==Expiracao3Candles)
+      return("3 candles");
+   if(expiration==Expiracao4Candles)
+      return("4 candles");
+   return("Nao expirar");
   }
 
 long ResolveMagicNumberValue()
@@ -518,45 +567,42 @@ int ResolveSignalDirection(const MqlRates &signal_bar)
   return(0);
   }
 
-int ResolveReferenceBarShift(const string candle_name)
+int ResolveReferenceBarShift(const ESignalLimitReferenceCandle candle_name)
   {
-   string value=NormalizeText(candle_name);
-   if(value=="Ultimo")
+   if(candle_name==CandleUltimo)
       return(1);
-   if(value=="Penultimo")
+   if(candle_name==CandlePenultimo)
       return(2);
-   if(value=="Antepenultimo")
+   if(candle_name==CandleAntepenultimo)
       return(3);
    return(0);
   }
 
-double ResolveReferencePrice(const MqlRates &reference_bar,const string reference_name)
+double ResolveReferencePrice(const MqlRates &reference_bar,const ESignalLimitReferenceBase reference_name)
   {
-   string value=NormalizeText(reference_name);
-   if(value=="Minima")
+   if(reference_name==ReferenciaMinima)
       return(reference_bar.low);
-   if(value=="Abertura")
+   if(reference_name==ReferenciaAbertura)
       return(reference_bar.open);
-   if(value=="Fechamento")
+   if(reference_name==ReferenciaFechamento)
       return(reference_bar.close);
    return(reference_bar.high);
   }
 
-int ResolveExpirationCandles(const string expire_name)
+int ResolveExpirationCandles(const ESignalLimitExpiration expire_name)
   {
-   string value=NormalizeText(expire_name);
-   if(value=="1 candle")
+   if(expire_name==Expiracao1Candle)
       return(1);
-   if(value=="2 candles")
+   if(expire_name==Expiracao2Candles)
       return(2);
-   if(value=="3 candles")
+   if(expire_name==Expiracao3Candles)
       return(3);
-   if(value=="4 candles")
+   if(expire_name==Expiracao4Candles)
       return(4);
    return(0);
   }
 
-int ResolvePendingMoveReferenceBarShift(const string candle_name)
+int ResolvePendingMoveReferenceBarShift(const ESignalLimitReferenceCandle candle_name)
   {
    int shift=ResolveReferenceBarShift(candle_name);
    if(shift<=0)
@@ -605,9 +651,9 @@ void LogPendingExpirationProgress(const ENUM_TIMEFRAMES timeframe,const ulong ti
 
 void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
   {
-   if(NormalizeText(g_config.signals.order_mode)!="Limite")
+   if(g_config.signals.order_mode!=SinalOrdemLimite)
       return;
-   if(NormalizeText(g_config.signals.limit.mode)!="Referencia")
+   if(g_config.signals.limit.mode!=SinalLimiteReferencia)
       return;
    if(HasOpenPositionForSymbol())
       return;
@@ -685,8 +731,8 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    Print(
       "AlphaForge V3: ordem limite movida para o proximo candle. Ticket=",ticket,
       " NovoPreco=",DoubleToString(updated_price,_Digits),
-      " Base=",g_config.signals.limit.reference.base,
-      " Candle=",g_config.signals.limit.reference.candle
+      " Base=",ReferenceBaseToText(g_config.signals.limit.reference.base),
+      " Candle=",ReferenceCandleToText(g_config.signals.limit.reference.candle)
    );
   }
 
@@ -771,9 +817,9 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
       return(false);
      }
 
-   if(NormalizeText(g_config.signals.limit.mode)!="Referencia")
+   if(g_config.signals.limit.mode!=SinalLimiteReferencia)
      {
-      Print("AlphaForge V3: modo de ordem limite ainda nao suportado: ",g_config.signals.limit.mode);
+      Print("AlphaForge V3: modo de ordem limite ainda nao suportado: ",LimitModeToText(g_config.signals.limit.mode));
       return(false);
      }
 
@@ -856,8 +902,8 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
    Print(
       "AlphaForge V3: ordem limite por referencia enviada. Ticket=",g_trade.ResultOrder(),
       " Preco=",DoubleToString(pending_price,_Digits),
-      " Base=",g_config.signals.limit.reference.base,
-      " Candle=",g_config.signals.limit.reference.candle,
+      " Base=",ReferenceBaseToText(g_config.signals.limit.reference.base),
+      " Candle=",ReferenceCandleToText(g_config.signals.limit.reference.candle),
       " Dist=",DoubleToString(g_config.signals.limit.reference.distance,2)
    );
 
@@ -908,14 +954,14 @@ void EvaluateAndTrade()
 
    int direction=ResolveSignalDirection(signal_bar);
    DrawSignalMarker(direction,timeframe,signal_bar);
-   string order_mode=NormalizeText(g_config.signals.order_mode);
-   if(order_mode=="Mercado")
+   ESignalOrderMode order_mode=g_config.signals.order_mode;
+   if(order_mode==SinalOrdemMercado)
      {
       SubmitMarketOrder(direction,timeframe,signal_bar);
       return;
      }
 
-   if(order_mode=="Limite")
+   if(order_mode==SinalOrdemLimite)
      {
       SubmitLimitReferenceOrder(direction,timeframe,signal_bar);
       return;
@@ -975,7 +1021,7 @@ void RefreshBridgeOverlay()
    CreateLogOverlay();
    ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3 | Origem: "+g_config_source);
    ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Strategy: "+ResolveStrategyNameText()+" | Magic: "+ResolveMagicNumberText());
-   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Ordem: "+g_config.signals.order_mode+" / "+g_config.signals.limit.mode+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao")+" | TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
+   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,"Ordem: "+OrderModeToText(g_config.signals.order_mode)+" / "+LimitModeToText(g_config.signals.limit.mode)+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao")+" | TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
    ChartRedraw();
   }
 

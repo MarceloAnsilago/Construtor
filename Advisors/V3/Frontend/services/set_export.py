@@ -35,6 +35,55 @@ INPUT_TO_STORE_KEYS = {
     "InpMaximoDePavios": ("signals.filter.upper_wick_max", "signals.filter.lower_wick_max"),
 }
 
+ORDER_MODE_FROM_SET = {
+    "0": "Mercado",
+    "1": "Limite",
+    "Mercado": "Mercado",
+    "Limite": "Limite",
+}
+
+LIMIT_MODE_FROM_SET = {
+    "0": "Referencia",
+    "1": "Media",
+    "Referencia": "Referencia",
+    "Media": "Media",
+}
+
+REFERENCE_BASE_FROM_SET = {
+    "0": "Maxima",
+    "1": "Minima",
+    "2": "Abertura",
+    "3": "Fechamento",
+    "Maxima": "Maxima",
+    "Minima": "Minima",
+    "Abertura": "Abertura",
+    "Fechamento": "Fechamento",
+}
+
+REFERENCE_CANDLE_FROM_SET = {
+    "0": "Atual",
+    "1": "Ultimo",
+    "2": "Penultimo",
+    "3": "Antepenultimo",
+    "Atual": "Atual",
+    "Ultimo": "Ultimo",
+    "Penultimo": "Penultimo",
+    "Antepenultimo": "Antepenultimo",
+}
+
+EXPIRATION_FROM_SET = {
+    "0": "Nao expirar",
+    "1": "1 candle",
+    "2": "2 candles",
+    "3": "3 candles",
+    "4": "4 candles",
+    "Nao expirar": "Nao expirar",
+    "1 candle": "1 candle",
+    "2 candles": "2 candles",
+    "3 candles": "3 candles",
+    "4 candles": "4 candles",
+}
+
 
 def get_default_set_dir() -> Path:
     root = Path(__file__).resolve().parents[2]
@@ -56,6 +105,16 @@ def _parse_bool(value: str) -> bool:
 
 def _map_input_value(input_name: str, raw_value: str) -> str | bool:
     value = raw_value.strip()
+    if input_name == "InpModoDeOrdem":
+        return ORDER_MODE_FROM_SET.get(value, "Mercado")
+    if input_name == "InpModoDaOrdemLimite":
+        return LIMIT_MODE_FROM_SET.get(value, "Referencia")
+    if input_name == "InpReferenciaDaOrdemLimite":
+        return REFERENCE_BASE_FROM_SET.get(value, "Maxima")
+    if input_name == "InpCandleDaReferenciaDaOrdemLimite":
+        return REFERENCE_CANDLE_FROM_SET.get(value, "Atual")
+    if input_name == "InpExpiracaoDaOrdemLimite":
+        return EXPIRATION_FROM_SET.get(value, "Nao expirar")
     if input_name in {"InpOperarNaCompra", "InpOperarNaVenda"}:
         return "Sim" if _parse_bool(value) else "Nao"
     if input_name == "InpMoverParaOProximoCandle":
