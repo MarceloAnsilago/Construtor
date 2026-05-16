@@ -239,20 +239,39 @@ class SinaisView(ctk.CTkFrame):
             anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
+        self._add_label(card, 1, "Direcao do sinal", padx=16, pady=(0, 6))
+        self._signal_buy_var = ctk.IntVar(value=1 if str(self._strategy_store.get("risk.allow_buy")) == "Sim" else 0)
+        self._signal_buy_check = self._create_checkbox(
+            card,
+            "Criar sinal de compra",
+            self._on_signal_direction_change,
+            variable=self._signal_buy_var,
+        )
+        self._signal_buy_check.grid(row=2, column=0, sticky="w", padx=16, pady=(0, 12))
+
+        self._signal_sell_var = ctk.IntVar(value=1 if str(self._strategy_store.get("risk.allow_sell")) == "Sim" else 0)
+        self._signal_sell_check = self._create_checkbox(
+            card,
+            "Criar sinal de venda",
+            self._on_signal_direction_change,
+            variable=self._signal_sell_var,
+        )
+        self._signal_sell_check.grid(row=2, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
+
         self._ordem_mode = ctk.StringVar(value=str(self._strategy_store.get("signals.order_mode")))
         self._ordem_market = self._create_checkbox(
             card,
             "Mercado",
             lambda: self._set_ordem_mode("Mercado"),
         )
-        self._ordem_market.grid(row=1, column=0, sticky="w", padx=16, pady=(0, 12))
+        self._ordem_market.grid(row=3, column=0, sticky="w", padx=16, pady=(0, 12))
 
         self._ordem_limit = self._create_checkbox(
             card,
             "Limite",
             lambda: self._set_ordem_mode("Limite"),
         )
-        self._ordem_limit.grid(row=1, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
+        self._ordem_limit.grid(row=3, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
 
         self._ord_tab_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_mode")))
         self._ord_tabs = ctk.CTkSegmentedButton(
@@ -271,7 +290,7 @@ class SinaisView(ctk.CTkFrame):
             text_color_disabled=self._theme.colors.card_soft,
             font=self._theme.font("label", weight="bold"),
         )
-        self._ord_tabs.grid(row=2, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
+        self._ord_tabs.grid(row=4, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
         self._ord_panel_shell = ctk.CTkFrame(
             card,
@@ -279,7 +298,7 @@ class SinaisView(ctk.CTkFrame):
             corner_radius=0,
             border_width=0,
         )
-        self._ord_panel_shell.grid(row=3, column=0, columnspan=2, sticky="nsew", padx=16, pady=(0, 16))
+        self._ord_panel_shell.grid(row=5, column=0, columnspan=2, sticky="nsew", padx=16, pady=(0, 16))
         self._ord_panel_shell.grid_columnconfigure(0, weight=1)
         self._ord_panel_shell.grid_rowconfigure(0, weight=1)
 
@@ -839,6 +858,7 @@ class SinaisView(ctk.CTkFrame):
         ).grid(row=0, column=0, sticky="ew", padx=12, pady=(12, 12))
 
         self._sobre_param_groups: dict[str, list[ctk.CTkBaseClass]] = {}
+        self._sobre_param_controls: dict[str, list[tuple[str, ctk.CTkBaseClass]]] = {}
         self._sobre_param_fields: dict[str, list[tuple[str, str, list[str] | None]]] = {
             "MACD": [
                 ("EMA rapida", "12", None),
@@ -1623,11 +1643,131 @@ class SinaisView(ctk.CTkFrame):
         return self.export_montar_signals_config().to_dict()
 
     def export_runtime_config(self) -> dict[str, str]:
+        self._strategy_store.set("risk.allow_buy", "Sim" if bool(self._signal_buy_var.get()) else "Nao")
+        self._strategy_store.set("risk.allow_sell", "Sim" if bool(self._signal_sell_var.get()) else "Nao")
         self._strategy_store.set("signals.order_mode", self._ordem_mode.get())
         self._strategy_store.set("signals.limit_mode", self._ord_tab_var.get())
         return build_runtime_snapshot(self._strategy_store)
 
+    def export_active_panel_sections(self) -> list[dict[str, object]]:
+        sections: list[dict[str, object]] = []
+
+        order_items: list[dict[str, str]] = [
+            {"label": "Modo", "value": self._ordem_mode.get()},
+        ]
+        if self._ordem_mode.get() == "Limite":
+            order_items.append({"label": "Tipo", "value": self._ord_tab_var.get()})
+            if self._ord_tab_var.get() == "Referencia":
+                order_items.extend(
+                    [
+                        {"label": "Base", "value": self._ord_ref_base_var.get()},
+                        {"label": "Candle", "value": self._ord_ref_candle_var.get()},
+                        {
+                            "label": "Mover para o proximo",
+                            "value": "Sim" if bool(self._ord_ref_move_next_candle_var.get()) else "Nao",
+                        },
+                        {"label": "Distancia", "value": self._ord_ref_distance_var.get().strip() or "0"},
+                        {"label": "Expirar", "value": self._ord_ref_expire_var.get()},
+                    ]
+                )
+            else:
+                order_items.extend(
+                    [
+                        {"label": "Cand. media", "value": self._ord_media_candles.get().strip() or "0"},
+                        {"label": "Base", "value": self._ord_media_base.get()},
+                        {"label": "Distancia", "value": self._ord_media_distance.get().strip() or "0"},
+                        {"label": "Expirar", "value": self._ord_media_expire.get()},
+                    ]
+                )
+        sections.append({"title": "Tipo de ordens", "items": order_items})
+
+        if bool(self._filtro_enabled_var.get()):
+            sections.append(
+                {
+                    "title": "Filtro",
+                    "items": [
+                        {"label": "Medir em", "value": self._filtro_measure_var.get()},
+                        {"label": "Tempo grafico", "value": self._filtro_timeframe_var.get()},
+                        {"label": "Vela min / max", "value": f"{self._filtro_entry_vars['signals.filter.candle_min'].get().strip() or '0'} / {self._filtro_entry_vars['signals.filter.candle_max'].get().strip() or '0'}"},
+                        {"label": "Corpo min / max", "value": f"{self._filtro_entry_vars['signals.filter.body_min'].get().strip() or '0'} / {self._filtro_entry_vars['signals.filter.body_max'].get().strip() or '0'}"},
+                        {"label": "Pavio sup. min / max", "value": f"{self._filtro_entry_vars['signals.filter.upper_wick_min'].get().strip() or '0'} / {self._filtro_entry_vars['signals.filter.upper_wick_max'].get().strip() or '0'}"},
+                        {"label": "Pavio inf. min / max", "value": f"{self._filtro_entry_vars['signals.filter.lower_wick_min'].get().strip() or '0'} / {self._filtro_entry_vars['signals.filter.lower_wick_max'].get().strip() or '0'}"},
+                    ],
+                }
+            )
+
+        if self._canais_mode.get() == "Sim":
+            sections.append(
+                {
+                    "title": "Canais de bandas",
+                    "items": [
+                        {"label": "Indicador", "value": self._canais_indicador.get()},
+                        {"label": "Sinal", "value": self._canais_sinal.get()},
+                        {"label": "Periodo", "value": self._canais_periodo.get().strip() or "0"},
+                        {"label": "Desvio", "value": self._canais_desvio.get().strip() or "0"},
+                        {"label": "Deslocamento", "value": self._canais_deslocamento.get().strip() or "0"},
+                        {"label": "Modo de preco", "value": self._canais_preco.get()},
+                    ],
+                }
+            )
+
+        if self._cruz_mode.get() == "Sim":
+            cross_items: list[dict[str, str]] = [{"label": "Aba ativa", "value": self._cruz_tab_var.get()}]
+            if self._cruz_tab_var.get() == "Geral":
+                cross_items.extend(
+                    [
+                        {"label": "Linha rapida", "value": self._cruz_fast_combo.get()},
+                        {"label": "Sinal", "value": self._cruz_signal_combo.get()},
+                        {"label": "Linha lenta", "value": self._cruz_slow_combo.get()},
+                    ]
+                )
+            elif self._cruz_tab_var.get() == "Rapida":
+                cross_items.extend(
+                    [
+                        {"label": "Indicador rapido", "value": self._cruz_fast_indicator.get()},
+                        {"label": "Periodo", "value": self._cruz_fast_period.get().strip() or "0"},
+                        {"label": "Deslocamento", "value": self._cruz_fast_shift.get().strip() or "0"},
+                        {"label": "Tipo de media", "value": self._cruz_fast_ma_type.get()},
+                        {"label": "Modo de preco", "value": self._cruz_fast_price.get()},
+                    ]
+                )
+            else:
+                cross_items.extend(
+                    [
+                        {"label": "Indicador lento", "value": self._cruz_slow_indicator.get()},
+                        {"label": "Periodo", "value": self._cruz_slow_period.get().strip() or "0"},
+                        {"label": "Deslocamento", "value": self._cruz_slow_shift.get().strip() or "0"},
+                        {"label": "Tipo de media", "value": self._cruz_slow_ma_type.get()},
+                        {"label": "Modo de preco", "value": self._cruz_slow_price.get()},
+                    ]
+                )
+            sections.append({"title": "Cruzamentos", "items": cross_items})
+
+        if self._sobre_enabled.get() == 1:
+            sobre_items: list[dict[str, str]] = [{"label": "Aba ativa", "value": self._sobre_tab_var.get()}]
+            if self._sobre_tab_var.get() == "Indicador":
+                sobre_items.extend(
+                    [
+                        {"label": "Indicador", "value": self._sobre_indicator_combo.get()},
+                        {"label": "Entrada", "value": self._sobre_entry_combo.get()},
+                        {"label": "Sobrecompra", "value": self._sobre_overbought.get().strip() or "0"},
+                        {"label": "Sobrevenda", "value": self._sobre_oversold.get().strip() or "0"},
+                        {"label": "Sentido", "value": self._sobre_direction_combo.get()},
+                    ]
+                )
+            else:
+                current_indicator = self._sobre_indicator_combo.get()
+                sobre_items.append({"label": "Indicador", "value": current_indicator})
+                for field_label, control in self._sobre_param_controls.get(current_indicator, []):
+                    value = str(control.get()).strip() if hasattr(control, "get") else ""
+                    sobre_items.append({"label": field_label, "value": value or "0"})
+            sections.append({"title": "Sobrecomprado / sobrevendido", "items": sobre_items})
+
+        return sections
+
     def load_from_store(self) -> None:
+        self._signal_buy_var.set(1 if str(self._strategy_store.get("risk.allow_buy")) == "Sim" else 0)
+        self._signal_sell_var.set(1 if str(self._strategy_store.get("risk.allow_sell")) == "Sim" else 0)
         self._set_ordem_mode(str(self._strategy_store.get("signals.order_mode")))
         self._set_ord_tab(str(self._strategy_store.get("signals.limit_mode")))
         self._ord_ref_base_var.set(str(self._strategy_store.get("signals.limit_reference.base")))
@@ -1767,6 +1907,7 @@ class SinaisView(ctk.CTkFrame):
     def _build_sobre_param_forms(self) -> None:
         for indicator_name, fields in self._sobre_param_fields.items():
             widgets: list[ctk.CTkBaseClass] = []
+            controls: list[tuple[str, ctk.CTkBaseClass]] = []
             row = 1
             title = ctk.CTkLabel(
                 self._sobre_params_panel,
@@ -1801,9 +1942,11 @@ class SinaisView(ctk.CTkFrame):
                     )
                 control.grid(row=row, column=0, sticky="ew", padx=12, pady=(0, 10))
                 widgets.append(control)
+                controls.append((label_text, control))
                 row += 1
 
             self._sobre_param_groups[indicator_name] = widgets
+            self._sobre_param_controls[indicator_name] = controls
 
     def _on_tab_change(self, selected: str) -> None:
         self._set_tab(selected)
@@ -1842,6 +1985,10 @@ class SinaisView(ctk.CTkFrame):
     def _on_filtro_enabled_change(self) -> None:
         self._strategy_store.set("signals.filter.enabled", bool(self._filtro_enabled_var.get()))
         self._sync_filtro_controls()
+
+    def _on_signal_direction_change(self) -> None:
+        self._strategy_store.set("risk.allow_buy", "Sim" if bool(self._signal_buy_var.get()) else "Nao")
+        self._strategy_store.set("risk.allow_sell", "Sim" if bool(self._signal_sell_var.get()) else "Nao")
 
     def _on_filtro_measure_change(self, *_args) -> None:
         self._strategy_store.set("signals.filter.measure", self._filtro_measure_var.get())

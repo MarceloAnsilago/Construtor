@@ -11,7 +11,6 @@ class StopMovelView(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self._signal_var = ctk.StringVar(value="Compra")
         self._type_var = ctk.StringVar(value="Pontos")
         self._mode = "padrao"
 
@@ -28,7 +27,6 @@ class StopMovelView(ctk.CTkFrame):
         self._build_candles_card()
         self._build_indicador_card()
 
-        self._set_signal("Compra")
         self._set_mode("padrao")
 
     def _build_header(self) -> None:
@@ -41,46 +39,16 @@ class StopMovelView(ctk.CTkFrame):
         )
         header.grid(row=0, column=0, columnspan=3, sticky="ew", padx=6, pady=(4, 10))
         header.grid_columnconfigure(0, weight=0)
-        header.grid_columnconfigure(1, weight=0)
-        header.grid_columnconfigure(2, weight=1)
+        header.grid_columnconfigure(1, weight=1)
 
-        self._add_label(header, 0, "Direcao do sinal", padx=16, pady=(16, 4))
-
-        buy_check = self._create_checkbox(
-            header,
-            "Criar sinal de compra",
-            lambda: self._set_signal("Compra"),
-        )
-        buy_check.grid(row=1, column=0, sticky="w", padx=16, pady=(0, 8))
-        self._buy_check = buy_check
-
-        sell_check = self._create_checkbox(
-            header,
-            "Criar sinal de venda",
-            lambda: self._set_signal("Venda"),
-        )
-        sell_check.grid(row=1, column=1, sticky="w", padx=(0, 16), pady=(0, 8))
-        self._sell_check = sell_check
-
-        self._signal_info = ctk.CTkLabel(
-            header,
-            text="Configurando regras de stop movel para sinais de compra.",
-            justify="left",
-            anchor="w",
-            wraplength=760,
-            text_color=self._theme.colors.text_muted,
-            font=self._theme.font("body"),
-        )
-        self._signal_info.grid(row=2, column=0, columnspan=3, sticky="ew", padx=16, pady=(0, 12))
-
-        self._add_label(header, 3, "Tipo de stop", padx=16)
+        self._add_label(header, 0, "Tipo de stop", padx=16, pady=(16, 4))
 
         stop_type = self._create_combo(
             header,
             ["Pontos", "Percentual"],
             self._type_var,
         )
-        stop_type.grid(row=4, column=0, sticky="w", padx=16, pady=(0, 16))
+        stop_type.grid(row=1, column=0, sticky="w", padx=16, pady=(0, 16))
 
         ctk.CTkLabel(
             header,
@@ -90,7 +58,7 @@ class StopMovelView(ctk.CTkFrame):
             wraplength=680,
             text_color=self._theme.colors.text_muted,
             font=self._theme.font("body"),
-        ).grid(row=4, column=1, columnspan=2, sticky="ew", padx=(8, 16), pady=(0, 16))
+        ).grid(row=1, column=1, sticky="ew", padx=(8, 16), pady=(0, 16))
 
     def _build_padrao_card(self) -> None:
         card = self._create_card(1, 0, "Stop movel (padrao)")
@@ -241,19 +209,6 @@ class StopMovelView(ctk.CTkFrame):
             text_color=self._theme.colors.text_muted,
             font=self._theme.font("label"),
         ).grid(row=row, column=0, columnspan=2, sticky="ew", padx=padx, pady=pady)
-
-    def _set_signal(self, signal: str) -> None:
-        self._signal_var.set(signal)
-        is_buy = signal == "Compra"
-        if is_buy:
-            self._buy_check.select()
-            self._sell_check.deselect()
-            text = "Configurando regras de stop movel para sinais de compra."
-        else:
-            self._buy_check.deselect()
-            self._sell_check.select()
-            text = "Configurando regras de stop movel para sinais de venda."
-        self._signal_info.configure(text=text)
 
     def _set_mode(self, mode: str) -> None:
         self._mode = mode
