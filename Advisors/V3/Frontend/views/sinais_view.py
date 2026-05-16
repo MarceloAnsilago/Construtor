@@ -159,6 +159,7 @@ class SinaisView(ctk.CTkFrame):
         self._sinais_panel = self._create_sinais_panel()
         self._montar_panel = self._create_montar_panel()
 
+        self._select_signal_direction("Compra" if str(self._strategy_store.get("risk.allow_buy")) == "Sim" else "Venda")
         self._set_tab("Sinais prontos")
 
     def _create_sinais_panel(self) -> ctk.CTkFrame:
@@ -169,7 +170,7 @@ class SinaisView(ctk.CTkFrame):
             border_width=1,
             border_color=self._theme.colors.border,
         )
-        panel.grid_rowconfigure(2, weight=1)
+        panel.grid_rowconfigure(1, weight=1)
         panel.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
@@ -180,16 +181,6 @@ class SinaisView(ctk.CTkFrame):
             anchor="w",
         ).grid(row=0, column=0, sticky="ew", padx=18, pady=(18, 6))
 
-        ctk.CTkLabel(
-            panel,
-            text="Primeira etapa da construcao dos sinais. O card de tipo de ordens foi migrado do V2.",
-            text_color=self._theme.colors.text_muted,
-            font=self._theme.font("body"),
-            justify="left",
-            anchor="w",
-            wraplength=980,
-        ).grid(row=1, column=0, sticky="ew", padx=18, pady=(0, 18))
-
         body = ctk.CTkScrollableFrame(
             panel,
             fg_color="transparent",
@@ -198,8 +189,58 @@ class SinaisView(ctk.CTkFrame):
             scrollbar_button_color=self._theme.colors.accent,
             scrollbar_button_hover_color=self._theme.colors.accent_hover,
         )
-        body.grid(row=2, column=0, sticky="nsew", padx=18, pady=(0, 18))
+        body.grid(row=1, column=0, sticky="nsew", padx=18, pady=(0, 18))
         body.grid_columnconfigure(0, weight=1)
+
+        signal_direction_frame = ctk.CTkFrame(
+            body,
+            fg_color=self._theme.colors.card,
+            corner_radius=0,
+            border_width=1,
+            border_color=self._theme.colors.border,
+        )
+        signal_direction_frame.grid(row=0, column=0, sticky="ew", padx=18, pady=(0, 18))
+        signal_direction_frame.grid_columnconfigure(0, weight=1)
+        signal_direction_frame.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(
+            signal_direction_frame,
+            text="Direcao do sinal",
+            text_color=self._theme.colors.text,
+            font=self._theme.font("subtitle"),
+            anchor="w",
+        ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 12))
+
+        self._signal_info_labels: list[ctk.CTkLabel] = []
+        self._signal_buy_var = ctk.IntVar(value=1 if str(self._strategy_store.get("risk.allow_buy")) == "Sim" else 0)
+        self._signal_buy_check = self._create_checkbox(
+            signal_direction_frame,
+            "Criar sinal de compra",
+            lambda: self._select_signal_direction("Compra"),
+            variable=self._signal_buy_var,
+        )
+        self._signal_buy_check.grid(row=1, column=0, sticky="w", padx=16, pady=(0, 16))
+
+        self._signal_sell_var = ctk.IntVar(value=1 if str(self._strategy_store.get("risk.allow_sell")) == "Sim" else 0)
+        self._signal_sell_check = self._create_checkbox(
+            signal_direction_frame,
+            "Criar sinal de venda",
+            lambda: self._select_signal_direction("Venda"),
+            variable=self._signal_sell_var,
+        )
+        self._signal_sell_check.grid(row=1, column=1, sticky="w", padx=(0, 16), pady=(0, 16))
+
+        signal_info_label = ctk.CTkLabel(
+            signal_direction_frame,
+            text="",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("body"),
+            justify="left",
+            anchor="w",
+            wraplength=980,
+        )
+        signal_info_label.grid(row=2, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 16))
+        self._signal_info_labels.append(signal_info_label)
 
         cards_frame = ctk.CTkFrame(
             body,
@@ -207,7 +248,7 @@ class SinaisView(ctk.CTkFrame):
             corner_radius=0,
             border_width=0,
         )
-        cards_frame.grid(row=0, column=0, sticky="ew")
+        cards_frame.grid(row=1, column=0, sticky="ew")
         cards_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1, uniform="sinais-grid")
 
         self._build_tipo_ordens_card(cards_frame)
@@ -239,39 +280,20 @@ class SinaisView(ctk.CTkFrame):
             anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
-        self._add_label(card, 1, "Direcao do sinal", padx=16, pady=(0, 6))
-        self._signal_buy_var = ctk.IntVar(value=1 if str(self._strategy_store.get("risk.allow_buy")) == "Sim" else 0)
-        self._signal_buy_check = self._create_checkbox(
-            card,
-            "Criar sinal de compra",
-            self._on_signal_direction_change,
-            variable=self._signal_buy_var,
-        )
-        self._signal_buy_check.grid(row=2, column=0, sticky="w", padx=16, pady=(0, 12))
-
-        self._signal_sell_var = ctk.IntVar(value=1 if str(self._strategy_store.get("risk.allow_sell")) == "Sim" else 0)
-        self._signal_sell_check = self._create_checkbox(
-            card,
-            "Criar sinal de venda",
-            self._on_signal_direction_change,
-            variable=self._signal_sell_var,
-        )
-        self._signal_sell_check.grid(row=2, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
-
         self._ordem_mode = ctk.StringVar(value=str(self._strategy_store.get("signals.order_mode")))
         self._ordem_market = self._create_checkbox(
             card,
             "Mercado",
             lambda: self._set_ordem_mode("Mercado"),
         )
-        self._ordem_market.grid(row=3, column=0, sticky="w", padx=16, pady=(0, 12))
+        self._ordem_market.grid(row=1, column=0, sticky="w", padx=16, pady=(0, 12))
 
         self._ordem_limit = self._create_checkbox(
             card,
             "Limite",
             lambda: self._set_ordem_mode("Limite"),
         )
-        self._ordem_limit.grid(row=3, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
+        self._ordem_limit.grid(row=1, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
 
         self._ord_tab_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_mode")))
         self._ord_tabs = ctk.CTkSegmentedButton(
@@ -290,7 +312,7 @@ class SinaisView(ctk.CTkFrame):
             text_color_disabled=self._theme.colors.card_soft,
             font=self._theme.font("label", weight="bold"),
         )
-        self._ord_tabs.grid(row=4, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
+        self._ord_tabs.grid(row=2, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
         self._ord_panel_shell = ctk.CTkFrame(
             card,
@@ -298,7 +320,7 @@ class SinaisView(ctk.CTkFrame):
             corner_radius=0,
             border_width=0,
         )
-        self._ord_panel_shell.grid(row=5, column=0, columnspan=2, sticky="nsew", padx=16, pady=(0, 16))
+        self._ord_panel_shell.grid(row=3, column=0, columnspan=2, sticky="nsew", padx=16, pady=(0, 16))
         self._ord_panel_shell.grid_columnconfigure(0, weight=1)
         self._ord_panel_shell.grid_rowconfigure(0, weight=1)
 
@@ -997,7 +1019,7 @@ class SinaisView(ctk.CTkFrame):
             border_color=self._theme.colors.border,
         )
         panel.grid_columnconfigure(0, weight=1)
-        panel.grid_rowconfigure(2, weight=1)
+        panel.grid_rowconfigure(1, weight=1)
 
         ctk.CTkLabel(
             panel,
@@ -1007,16 +1029,6 @@ class SinaisView(ctk.CTkFrame):
             anchor="w",
         ).grid(row=0, column=0, sticky="ew", padx=18, pady=(18, 6))
 
-        ctk.CTkLabel(
-            panel,
-            text="Etapa 1 migrada do V2: 4 grupos de origem e composicao logica ligada as saidas de cada grupo.",
-            text_color=self._theme.colors.text_muted,
-            font=self._theme.font("body"),
-            justify="left",
-            anchor="w",
-            wraplength=980,
-        ).grid(row=1, column=0, sticky="ew", padx=18, pady=(0, 18))
-
         body = ctk.CTkScrollableFrame(
             panel,
             fg_color="transparent",
@@ -1025,8 +1037,55 @@ class SinaisView(ctk.CTkFrame):
             scrollbar_button_color=self._theme.colors.accent,
             scrollbar_button_hover_color=self._theme.colors.accent_hover,
         )
-        body.grid(row=2, column=0, sticky="nsew", padx=18, pady=(0, 18))
+        body.grid(row=1, column=0, sticky="nsew", padx=18, pady=(0, 18))
         body.grid_columnconfigure(0, weight=1)
+
+        montar_info = ctk.CTkFrame(
+            body,
+            fg_color=self._theme.colors.card,
+            corner_radius=0,
+            border_width=1,
+            border_color=self._theme.colors.border,
+        )
+        montar_info.grid(row=0, column=0, sticky="ew", pady=(0, 14))
+        montar_info.grid_columnconfigure(0, weight=1)
+        montar_info.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(
+            montar_info,
+            text="Direcao do sinal",
+            text_color=self._theme.colors.text,
+            font=self._theme.font("subtitle"),
+            anchor="w",
+        ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 12))
+
+        self._montar_signal_buy_check = self._create_checkbox(
+            montar_info,
+            "Criar sinal de compra",
+            lambda: self._select_signal_direction("Compra"),
+            variable=self._signal_buy_var,
+        )
+        self._montar_signal_buy_check.grid(row=1, column=0, sticky="w", padx=16, pady=(0, 16))
+
+        self._montar_signal_sell_check = self._create_checkbox(
+            montar_info,
+            "Criar sinal de venda",
+            lambda: self._select_signal_direction("Venda"),
+            variable=self._signal_sell_var,
+        )
+        self._montar_signal_sell_check.grid(row=1, column=1, sticky="w", padx=(0, 16), pady=(0, 16))
+
+        montar_signal_info_label = ctk.CTkLabel(
+            montar_info,
+            text="",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("body"),
+            justify="left",
+            anchor="w",
+            wraplength=980,
+        )
+        montar_signal_info_label.grid(row=2, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 16))
+        self._signal_info_labels.append(montar_signal_info_label)
 
         slots_frame = ctk.CTkFrame(
             body,
@@ -1034,7 +1093,7 @@ class SinaisView(ctk.CTkFrame):
             corner_radius=0,
             border_width=0,
         )
-        slots_frame.grid(row=0, column=0, sticky="ew", pady=(0, 14))
+        slots_frame.grid(row=1, column=0, sticky="ew", pady=(0, 14))
         slots_frame.grid_columnconfigure((0, 1, 2, 3), weight=1, uniform="montar-slots")
 
         logic_frame = ctk.CTkFrame(
@@ -1044,7 +1103,7 @@ class SinaisView(ctk.CTkFrame):
             border_width=1,
             border_color=self._theme.colors.border,
         )
-        logic_frame.grid(row=1, column=0, sticky="nsew")
+        logic_frame.grid(row=2, column=0, sticky="nsew")
         logic_frame.grid_columnconfigure(0, weight=1)
 
         for index in range(4):
@@ -1766,8 +1825,7 @@ class SinaisView(ctk.CTkFrame):
         return sections
 
     def load_from_store(self) -> None:
-        self._signal_buy_var.set(1 if str(self._strategy_store.get("risk.allow_buy")) == "Sim" else 0)
-        self._signal_sell_var.set(1 if str(self._strategy_store.get("risk.allow_sell")) == "Sim" else 0)
+        self._select_signal_direction("Compra" if str(self._strategy_store.get("risk.allow_buy")) == "Sim" else "Venda")
         self._set_ordem_mode(str(self._strategy_store.get("signals.order_mode")))
         self._set_ord_tab(str(self._strategy_store.get("signals.limit_mode")))
         self._ord_ref_base_var.set(str(self._strategy_store.get("signals.limit_reference.base")))
@@ -1986,9 +2044,20 @@ class SinaisView(ctk.CTkFrame):
         self._strategy_store.set("signals.filter.enabled", bool(self._filtro_enabled_var.get()))
         self._sync_filtro_controls()
 
-    def _on_signal_direction_change(self) -> None:
-        self._strategy_store.set("risk.allow_buy", "Sim" if bool(self._signal_buy_var.get()) else "Nao")
-        self._strategy_store.set("risk.allow_sell", "Sim" if bool(self._signal_sell_var.get()) else "Nao")
+    def _select_signal_direction(self, direction: str) -> None:
+        is_buy = direction == "Compra"
+        self._signal_buy_var.set(1 if is_buy else 0)
+        self._signal_sell_var.set(0 if is_buy else 1)
+        self._strategy_store.set("risk.allow_buy", "Sim" if is_buy else "Nao")
+        self._strategy_store.set("risk.allow_sell", "Nao" if is_buy else "Sim")
+
+        opposite_text = (
+            "O sinal de venda sera criado automaticamente."
+            if is_buy
+            else "O sinal de compra sera criado automaticamente."
+        )
+        for label in self._signal_info_labels:
+            label.configure(text=opposite_text)
 
     def _on_filtro_measure_change(self, *_args) -> None:
         self._strategy_store.set("signals.filter.measure", self._filtro_measure_var.get())
