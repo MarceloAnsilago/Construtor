@@ -594,13 +594,6 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    if(!FindPendingLimitOrderForSymbol(ticket,order_type,expiration,order_time,current_price))
       return;
 
-   MqlTick tick;
-   if(!SymbolInfoTick(_Symbol,tick))
-     {
-      Print("AlphaForge V3: falha ao capturar tick para mover ordem limite.");
-      return;
-     }
-
    MqlRates reference_bar;
    int reference_shift=ResolvePendingMoveReferenceBarShift(g_config.signals.limit.reference.candle);
    if(!ReadSignalBarAtShift(timeframe,reference_shift,reference_bar))
@@ -619,18 +612,6 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
 
    if(MathAbs(updated_price-current_price)<=(_Point/2.0))
       return;
-
-   if(order_type==ORDER_TYPE_BUY_LIMIT && updated_price>=tick.ask)
-     {
-      Print("AlphaForge V3: mover Buy Limit ignorado; preco recalculado ficou acima/igual ao ask. Ticket=",ticket);
-      return;
-     }
-
-   if(order_type==ORDER_TYPE_SELL_LIMIT && updated_price<=tick.bid)
-     {
-      Print("AlphaForge V3: mover Sell Limit ignorado; preco recalculado ficou abaixo/igual ao bid. Ticket=",ticket);
-      return;
-     }
 
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
@@ -765,19 +746,6 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
       return(false);
      }
 
-   if(!IsCurrentSpreadAllowed())
-     {
-      Print("AlphaForge V3: spread atual acima do maximo configurado.");
-      return(false);
-     }
-
-   MqlTick tick;
-   if(!SymbolInfoTick(_Symbol,tick))
-     {
-      Print("AlphaForge V3: falha ao capturar tick para ordem limite.");
-      return(false);
-     }
-
    MqlRates reference_bar;
    int reference_shift=ResolveReferenceBarShift(g_config.signals.limit.reference.candle);
    if(!ReadSignalBarAtShift(timeframe,reference_shift,reference_bar))
@@ -794,18 +762,6 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
    if(pending_price<=0.0)
      {
       Print("AlphaForge V3: preco calculado para ordem limite e invalido.");
-      return(false);
-     }
-
-   if(direction>0 && pending_price>=tick.ask)
-     {
-      Print("AlphaForge V3: preco de Buy Limit precisa ficar abaixo do ask atual. Preco=",DoubleToString(pending_price,_Digits)," Ask=",DoubleToString(tick.ask,_Digits));
-      return(false);
-     }
-
-   if(direction<0 && pending_price<=tick.bid)
-     {
-      Print("AlphaForge V3: preco de Sell Limit precisa ficar acima do bid atual. Preco=",DoubleToString(pending_price,_Digits)," Bid=",DoubleToString(tick.bid,_Digits));
       return(false);
      }
 
