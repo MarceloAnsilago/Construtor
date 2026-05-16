@@ -205,7 +205,7 @@ class SinaisView(ctk.CTkFrame):
 
         ctk.CTkLabel(
             signal_direction_frame,
-            text="Direcao do sinal",
+            text="Direção do sinal",
             text_color=self._theme.colors.text,
             font=self._theme.font("subtitle"),
             anchor="w",
@@ -332,7 +332,7 @@ class SinaisView(ctk.CTkFrame):
             lambda: self._set_ord_tab("Referencia"),
         )
         self._ord_ref_check.grid(row=0, column=0, sticky="w", padx=12, pady=(12, 10))
-        self._add_label(self._ord_ref_panel, 1, "Referencia:", padx=12)
+        self._add_label(self._ord_ref_panel, 1, "Referência:", padx=12)
         self._ord_ref_base_var = ctk.StringVar(value=str(self._strategy_store.get("signals.limit_reference.base")))
         self._ord_ref_base = self._create_combo(
             self._ord_ref_panel,
@@ -391,7 +391,7 @@ class SinaisView(ctk.CTkFrame):
         self._add_label(self._ord_media_panel, 1, "Cand. media", padx=12)
         self._ord_media_candles = self._create_entry(self._ord_media_panel, "0")
         self._ord_media_candles.grid(row=2, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._ord_media_panel, 3, "Referencia:", padx=12)
+        self._add_label(self._ord_media_panel, 3, "Referência:", padx=12)
         self._ord_media_base = self._create_combo(
             self._ord_media_panel,
             ["Maxima", "Minima", "Abertura", "Fechamento"],
@@ -451,7 +451,7 @@ class SinaisView(ctk.CTkFrame):
         self._filtro_measure.grid(row=3, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
         self._filtro_measure_var.trace_add("write", self._on_filtro_measure_change)
 
-        self._add_label(card, 4, "Tempo grafico")
+        self._add_label(card, 4, "Tempo gráfico")
         self._filtro_timeframe_var = ctk.StringVar(value=str(self._strategy_store.get("signals.filter.timeframe")))
         self._filtro_timeframe = self._create_combo(
             card,
@@ -525,7 +525,7 @@ class SinaisView(ctk.CTkFrame):
             anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
-        self._add_label(card, 1, "Usar canais de bandas?", pady=(0, 6))
+        self._add_label(card, 1, "Usar canais de bandas", pady=(0, 6))
         self._canais_mode = ctk.StringVar(value="Nao")
         self._canais_yes = self._create_checkbox(
             card,
@@ -576,7 +576,7 @@ class SinaisView(ctk.CTkFrame):
         self._canais_deslocamento = self._create_entry(card, "0")
         self._canais_deslocamento.grid(row=12, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
-        self._add_label(card, 13, "Modo de preco")
+        self._add_label(card, 13, "Modo de preço")
         self._canais_preco = self._create_combo(
             card,
             ["Fechamento", "Abertura", "Maximo", "Minimo", "Mediano", "Tipico", "Medio"],
@@ -665,7 +665,7 @@ class SinaisView(ctk.CTkFrame):
 
         self._cruz_geral_panel = self._create_subpanel(self._cruz_shell)
         self._cruz_geral_panel.grid_columnconfigure(0, weight=1)
-        self._add_label(self._cruz_geral_panel, 0, "Linha rapida", padx=12, pady=(12, 4))
+        self._add_label(self._cruz_geral_panel, 0, "Linha rápida", padx=12, pady=(12, 4))
         self._cruz_fast_combo = self._create_combo(
             self._cruz_geral_panel,
             cruz_indic_items,
@@ -688,7 +688,7 @@ class SinaisView(ctk.CTkFrame):
         self._cruz_slow_combo.grid(row=5, column=0, sticky="ew", padx=12, pady=(0, 10))
         ctk.CTkLabel(
             self._cruz_geral_panel,
-            text="As abas Rapida e Lenta acompanham o indicador escolhido aqui.",
+            text="As abas Rápida e Lenta acompanham o indicador escolhido aqui.",
             text_color=self._theme.colors.text_subtle,
             font=self._theme.font("label"),
             justify="left",
@@ -698,7 +698,7 @@ class SinaisView(ctk.CTkFrame):
 
         self._cruz_rapida_panel = self._create_subpanel(self._cruz_shell)
         self._cruz_rapida_panel.grid_columnconfigure(0, weight=1)
-        self._add_label(self._cruz_rapida_panel, 0, "Indicador rapido", padx=12, pady=(12, 4))
+        self._add_label(self._cruz_rapida_panel, 0, "Indicador rápido", padx=12, pady=(12, 4))
         self._cruz_fast_indicator = self._create_combo(
             self._cruz_rapida_panel,
             cruz_indic_items,
@@ -714,14 +714,14 @@ class SinaisView(ctk.CTkFrame):
         self._add_label(self._cruz_fast_params, 2, "Deslocamento", padx=12)
         self._cruz_fast_shift = self._create_entry(self._cruz_fast_params, "0")
         self._cruz_fast_shift.grid(row=3, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._cruz_fast_params, 4, "Tipo de media", padx=12)
+        self._add_label(self._cruz_fast_params, 4, "Tipo de média", padx=12)
         self._cruz_fast_ma_type = self._create_combo(
             self._cruz_fast_params,
             cruz_ma_items,
             ctk.StringVar(value="Simples"),
         )
         self._cruz_fast_ma_type.grid(row=5, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._cruz_fast_params, 6, "Modo de preco", padx=12)
+        self._add_label(self._cruz_fast_params, 6, "Modo de preço", padx=12)
         self._cruz_fast_price = self._create_combo(
             self._cruz_fast_params,
             cruz_price_items,
@@ -747,14 +747,14 @@ class SinaisView(ctk.CTkFrame):
         self._add_label(self._cruz_slow_params, 2, "Deslocamento", padx=12)
         self._cruz_slow_shift = self._create_entry(self._cruz_slow_params, "0")
         self._cruz_slow_shift.grid(row=3, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._cruz_slow_params, 4, "Tipo de media", padx=12)
+        self._add_label(self._cruz_slow_params, 4, "Tipo de média", padx=12)
         self._cruz_slow_ma_type = self._create_combo(
             self._cruz_slow_params,
             cruz_ma_items,
             ctk.StringVar(value="Simples"),
         )
         self._cruz_slow_ma_type.grid(row=5, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._cruz_slow_params, 6, "Modo de preco", padx=12)
+        self._add_label(self._cruz_slow_params, 6, "Modo de preço", padx=12)
         self._cruz_slow_price = self._create_combo(
             self._cruz_slow_params,
             cruz_price_items,
@@ -780,19 +780,19 @@ class SinaisView(ctk.CTkFrame):
 
         ctk.CTkLabel(
             card,
-            text="Sobrecomprado / sobrevendido",
+            text="Sobrecompra / sobrevenda",
             text_color=self._theme.colors.text,
             font=self._theme.font("subtitle"),
             anchor="w",
         ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
-        self._sobre_enabled = self._create_checkbox(card, "Usar sobrecomprado / sobrevenda", lambda: self._toggle_sobre())
+        self._sobre_enabled = self._create_checkbox(card, "Usar sobrecompra / sobrevenda", lambda: self._toggle_sobre())
         self._sobre_enabled.grid(row=1, column=0, columnspan=2, sticky="w", padx=16, pady=(0, 12))
 
         self._sobre_tab_var = ctk.StringVar(value="Indicador")
         self._sobre_tabs = ctk.CTkSegmentedButton(
             card,
-            values=["Indicador", "Parametros"],
+            values=["Indicador", "Parâmetros"],
             variable=self._sobre_tab_var,
             command=self._on_sobre_tab_change,
             height=32,
@@ -871,7 +871,7 @@ class SinaisView(ctk.CTkFrame):
         self._sobre_params_panel.grid_columnconfigure(0, weight=1)
         ctk.CTkLabel(
             self._sobre_params_panel,
-            text="Os parametros acompanham o indicador selecionado na aba ao lado.",
+            text="Os parâmetros acompanham o indicador selecionado na aba ao lado.",
             text_color=self._theme.colors.text_subtle,
             font=self._theme.font("label"),
             justify="left",
@@ -883,10 +883,10 @@ class SinaisView(ctk.CTkFrame):
         self._sobre_param_controls: dict[str, list[tuple[str, ctk.CTkBaseClass]]] = {}
         self._sobre_param_fields: dict[str, list[tuple[str, str, list[str] | None]]] = {
             "MACD": [
-                ("EMA rapida", "12", None),
+                ("EMA rápida", "12", None),
                 ("EMA lenta", "16", None),
                 ("Sinal", "9", None),
-                ("Modo de preco", "Fechamento", sobre_price_items),
+                ("Modo de preço", "Fechamento", sobre_price_items),
             ],
             "Estocastico": [
                 ("K", "5", None),
@@ -897,7 +897,7 @@ class SinaisView(ctk.CTkFrame):
             ],
             "RSI": [
                 ("Periodo", "14", None),
-                ("Modo de preco", "Fechamento", sobre_price_items),
+                ("Modo de preço", "Fechamento", sobre_price_items),
             ],
             "DeMarker": [
                 ("Periodo", "14", None),
@@ -924,7 +924,7 @@ class SinaisView(ctk.CTkFrame):
             ],
             "CCI": [
                 ("Periodo", "14", None),
-                ("Modo de preco", "Fechamento", sobre_price_items),
+                ("Modo de preço", "Fechamento", sobre_price_items),
             ],
             "Ichimoku Tenkan-sen": [
                 ("Tenkan-sen", "9", None),
@@ -1053,7 +1053,7 @@ class SinaisView(ctk.CTkFrame):
 
         ctk.CTkLabel(
             montar_info,
-            text="Direcao do sinal",
+            text="Direção do sinal",
             text_color=self._theme.colors.text,
             font=self._theme.font("subtitle"),
             anchor="w",
@@ -1118,33 +1118,33 @@ class SinaisView(ctk.CTkFrame):
         default_behavior = {
             "source_enabled": False,
             "timeframe_enabled": True,
-            "note": "Grupo pronto para alimentar a composicao logica com as saidas do indicador.",
+            "note": "Grupo pronto para alimentar a composição lógica com as saídas do indicador.",
         }
         behavior = {name: dict(default_behavior) for name in self._montar_indicator_outputs}
         behavior["Nao usar"] = {
             "source_enabled": False,
             "timeframe_enabled": False,
-            "note": "Grupo desligado. Nenhuma saida entra na composicao logica enquanto o indicador estiver em 'Nao usar'.",
+            "note": "Grupo desligado. Nenhuma saída entra na composição lógica enquanto o indicador estiver em 'Nao usar'.",
         }
         behavior["Fractal"] = {
             "source_enabled": False,
             "timeframe_enabled": True,
-            "note": "Fractal expoe apenas os extremos superior e inferior no timeframe selecionado.",
+            "note": "Fractal expõe apenas os extremos superior e inferior no timeframe selecionado.",
         }
         behavior["Volume"] = {
             "source_enabled": False,
             "timeframe_enabled": True,
-            "note": "Volume gera uma saida unica e usa o tipo de volume como parametro principal.",
+            "note": "Volume gera uma saída única e usa o tipo de volume como parâmetro principal.",
         }
         behavior["OBV"] = {
             "source_enabled": False,
             "timeframe_enabled": True,
-            "note": "OBV usa o volume do ativo e nao depende de origem de preco separada neste grupo.",
+            "note": "OBV usa o volume do ativo e nao depende de origem de preço separada neste grupo.",
         }
         behavior["Nuvem de Ichimoku"] = {
             "source_enabled": False,
             "timeframe_enabled": True,
-            "note": "Ichimoku gera cinco linhas e trabalha com parametros proprios de Tenkan, Kijun e Senkou Span B.",
+            "note": "Ichimoku gera cinco linhas e trabalha com parâmetros próprios de Tenkan, Kijun e Senkou Span B.",
         }
         return behavior
 
@@ -1158,7 +1158,7 @@ class SinaisView(ctk.CTkFrame):
             "Keltner": [
                 ("Periodo", "20", None),
                 ("Desvio", "1.5", None),
-                ("Tipo de media", "Exponencial", ma_items),
+                ("Tipo de média", "Exponencial", ma_items),
             ],
             "Donchian": [
                 ("Periodo", "20", None),
@@ -1166,18 +1166,18 @@ class SinaisView(ctk.CTkFrame):
             "Regressao": [
                 ("Periodo", "20", None),
                 ("Tipo de regressao", "Simples", ma_items),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Afastamento da media": [
                 ("Periodo", "20", None),
                 ("Shift", "0", None),
-                ("Tipo de media", "Exponencial", ma_items),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Tipo de média", "Exponencial", ma_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Desvio medio": [
                 ("Periodo", "20", None),
-                ("Tipo de media", "Simples", ma_items),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Tipo de média", "Simples", ma_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "ATR com desvio": [
                 ("Periodo", "14", None),
@@ -1186,7 +1186,7 @@ class SinaisView(ctk.CTkFrame):
             "Envelopes": [
                 ("Periodo", "20", None),
                 ("Shift", "0", None),
-                ("Tipo de media", "Exponencial", ma_items),
+                ("Tipo de média", "Exponencial", ma_items),
                 ("Desvio", "0.2", None),
             ],
             "Fractal": [],
@@ -1212,19 +1212,19 @@ class SinaisView(ctk.CTkFrame):
             ],
             "RSI": [
                 ("Periodo", "14", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Media movel": [
                 ("Periodo", "20", None),
                 ("Shift", "0", None),
-                ("Tipo de media", "Exponencial", ma_items),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Tipo de média", "Exponencial", ma_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Bandas de Bollinger": [
                 ("Periodo", "20", None),
                 ("Desvio", "2.0", None),
                 ("Shift", "0", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Estocastico": [
                 ("K", "5", None),
@@ -1234,35 +1234,35 @@ class SinaisView(ctk.CTkFrame):
                 ("Tipo", "Minimo/Maximo", stoch_type_items),
             ],
             "MACD": [
-                ("EMA rapida", "12", None),
+                ("EMA rápida", "12", None),
                 ("EMA lenta", "26", None),
                 ("Sinal", "9", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "StdDev": [
                 ("Periodo", "20", None),
-                ("Tipo de media", "Simples", ma_items),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Tipo de média", "Simples", ma_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Vidya": [
                 ("CMO periodo", "9", None),
                 ("EMA periodo", "12", None),
                 ("Shift", "0", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Tema": [
                 ("Periodo", "14", None),
                 ("Shift", "0", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "FRAMA": [
                 ("Periodo", "14", None),
                 ("Shift", "0", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Trix": [
                 ("Periodo", "14", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Bears Power": [
                 ("Periodo", "14", None),
@@ -1271,16 +1271,16 @@ class SinaisView(ctk.CTkFrame):
                 ("Periodo", "14", None),
             ],
             "Chaikin Oscilador": [
-                ("EMA rapida", "3", None),
+                ("EMA rápida", "3", None),
                 ("EMA lenta", "10", None),
-                ("Tipo de media", "Exponencial", ma_items),
+                ("Tipo de média", "Exponencial", ma_items),
                 ("Volume", "Tick", volume_items),
             ],
             "Accelerator Oscillator": [],
             "Awesome Oscillator": [],
             "CCI (Commodity Channel Index)": [
                 ("Periodo", "14", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "DeMarker": [
                 ("Periodo", "14", None),
@@ -1292,8 +1292,8 @@ class SinaisView(ctk.CTkFrame):
                 ("Dente shift", "5", None),
                 ("Boca periodo", "5", None),
                 ("Boca shift", "3", None),
-                ("Tipo de media", "Suavizada", ma_items),
-                ("Modo de preco", "Mediano", price_items),
+                ("Tipo de média", "Suavizada", ma_items),
+                ("Modo de preço", "Mediano", price_items),
             ],
             "Nuvem de Ichimoku": [
                 ("Tenkan-sen", "9", None),
@@ -1313,12 +1313,12 @@ class SinaisView(ctk.CTkFrame):
                 ("Dente shift", "5", None),
                 ("Boca periodo", "5", None),
                 ("Boca shift", "3", None),
-                ("Tipo de media", "Suavizada", ma_items),
-                ("Modo de preco", "Mediano", price_items),
+                ("Tipo de média", "Suavizada", ma_items),
+                ("Modo de preço", "Mediano", price_items),
             ],
             "Momentum": [
                 ("Periodo", "14", None),
-                ("Modo de preco", "Fechamento", price_items),
+                ("Modo de preço", "Fechamento", price_items),
             ],
             "Williams Percentual Range": [
                 ("Periodo", "14", None),
@@ -1353,7 +1353,7 @@ class SinaisView(ctk.CTkFrame):
 
         ctk.CTkLabel(
             card,
-            text="Cada grupo origina sinais e saidas que depois entram na composicao logica abaixo.",
+            text="Cada grupo gera sinais e saídas que depois entram na composição lógica abaixo.",
             text_color=self._theme.colors.text_subtle,
             font=self._theme.font("label"),
             anchor="w",
@@ -1366,12 +1366,12 @@ class SinaisView(ctk.CTkFrame):
         indicator_combo = self._create_combo(card, indicator_names, indicator_var)
         indicator_combo.grid(row=3, column=0, sticky="ew", padx=12, pady=(0, 10))
 
-        self._add_label(card, 4, "Tempo grafico", padx=12)
+        self._add_label(card, 4, "Tempo gráfico", padx=12)
         timeframe_var = ctk.StringVar(value="Corrente")
         timeframe_combo = self._create_combo(card, self._initial_options.tempos_graficos, timeframe_var)
         timeframe_combo.grid(row=5, column=0, sticky="ew", padx=12, pady=(0, 10))
 
-        self._add_label(card, 6, "Origem de preco", padx=12)
+        self._add_label(card, 6, "Origem de preço", padx=12)
         source_var = ctk.StringVar(value="Fechamento")
         source_combo = self._create_combo(
             card,
@@ -1393,7 +1393,7 @@ class SinaisView(ctk.CTkFrame):
 
         summary_label = ctk.CTkLabel(
             card,
-            text="Sem saidas expostas para a logica.",
+            text="Sem saídas disponíveis para a lógica.",
             text_color=self._theme.colors.text_subtle,
             font=self._theme.font("label"),
             anchor="w",
@@ -1426,7 +1426,7 @@ class SinaisView(ctk.CTkFrame):
     def _build_montar_logic_card(self, logic_frame: ctk.CTkFrame) -> None:
         ctk.CTkLabel(
             logic_frame,
-            text="Composicao logica dos sinais",
+            text="Composição lógica dos sinais",
             text_color=self._theme.colors.text,
             font=self._theme.font("subtitle"),
             anchor="w",
@@ -1434,7 +1434,7 @@ class SinaisView(ctk.CTkFrame):
 
         ctk.CTkLabel(
             logic_frame,
-            text="As opcoes de valor ref. e valor comp. sao reconstruidas a partir das saidas dos grupos 1 a 4.",
+            text="As opções de valor ref. e valor comp. são reconstruídas a partir das saídas dos grupos 1 a 4.",
             text_color=self._theme.colors.text_muted,
             font=self._theme.font("body"),
             anchor="w",
@@ -1451,7 +1451,7 @@ class SinaisView(ctk.CTkFrame):
         header_frame.grid(row=2, column=0, sticky="ew", padx=16)
         header_frame.grid_columnconfigure((0, 1, 2, 3, 4, 5), weight=1, uniform="montar-logic")
 
-        titles = ["Operador", "Valor ref.", "Velas", "Comparacao", "Valor comp.", "Velas comp."]
+        titles = ["Operador", "Valor ref.", "Velas", "Comparação", "Valor comp.", "Velas comp."]
         for column, title in enumerate(titles):
             ctk.CTkLabel(
                 header_frame,
@@ -1563,7 +1563,7 @@ class SinaisView(ctk.CTkFrame):
         if not fields:
             label = ctk.CTkLabel(
                 state.params_frame,
-                text="Sem parametros para este grupo enquanto o indicador estiver em 'Nao usar'.",
+                text="Sem parâmetros para este grupo enquanto o indicador estiver em 'Nao usar'.",
                 anchor="w",
                 justify="left",
                 wraplength=220,
@@ -1641,7 +1641,7 @@ class SinaisView(ctk.CTkFrame):
 
         output_text = ", ".join(f"{state.group_id} {name}" for name in outputs)
         state.summary_label.configure(
-            text=f"Grupo {state.group_id}: {len(outputs)} saida(s) exposta(s) -> {output_text}. {note}"
+            text=f"Grupo {state.group_id}: {len(outputs)} saída(s) exposta(s) -> {output_text}. {note}"
         )
 
     def _build_montar_logic_dynamic_values(self) -> list[str]:
@@ -1746,7 +1746,7 @@ class SinaisView(ctk.CTkFrame):
                     "title": "Filtro",
                     "items": [
                         {"label": "Medir em", "value": self._filtro_measure_var.get()},
-                        {"label": "Tempo grafico", "value": self._filtro_timeframe_var.get()},
+                        {"label": "Tempo gráfico", "value": self._filtro_timeframe_var.get()},
                         {"label": "Vela min / max", "value": f"{self._filtro_entry_vars['signals.filter.candle_min'].get().strip() or '0'} / {self._filtro_entry_vars['signals.filter.candle_max'].get().strip() or '0'}"},
                         {"label": "Corpo min / max", "value": f"{self._filtro_entry_vars['signals.filter.body_min'].get().strip() or '0'} / {self._filtro_entry_vars['signals.filter.body_max'].get().strip() or '0'}"},
                         {"label": "Pavio sup. min / max", "value": f"{self._filtro_entry_vars['signals.filter.upper_wick_min'].get().strip() or '0'} / {self._filtro_entry_vars['signals.filter.upper_wick_max'].get().strip() or '0'}"},
@@ -1765,7 +1765,7 @@ class SinaisView(ctk.CTkFrame):
                         {"label": "Periodo", "value": self._canais_periodo.get().strip() or "0"},
                         {"label": "Desvio", "value": self._canais_desvio.get().strip() or "0"},
                         {"label": "Deslocamento", "value": self._canais_deslocamento.get().strip() or "0"},
-                        {"label": "Modo de preco", "value": self._canais_preco.get()},
+                        {"label": "Modo de preço", "value": self._canais_preco.get()},
                     ],
                 }
             )
@@ -1775,7 +1775,7 @@ class SinaisView(ctk.CTkFrame):
             if self._cruz_tab_var.get() == "Geral":
                 cross_items.extend(
                     [
-                        {"label": "Linha rapida", "value": self._cruz_fast_combo.get()},
+                        {"label": "Linha rápida", "value": self._cruz_fast_combo.get()},
                         {"label": "Sinal", "value": self._cruz_signal_combo.get()},
                         {"label": "Linha lenta", "value": self._cruz_slow_combo.get()},
                     ]
@@ -1783,11 +1783,11 @@ class SinaisView(ctk.CTkFrame):
             elif self._cruz_tab_var.get() == "Rapida":
                 cross_items.extend(
                     [
-                        {"label": "Indicador rapido", "value": self._cruz_fast_indicator.get()},
+                        {"label": "Indicador rápido", "value": self._cruz_fast_indicator.get()},
                         {"label": "Periodo", "value": self._cruz_fast_period.get().strip() or "0"},
                         {"label": "Deslocamento", "value": self._cruz_fast_shift.get().strip() or "0"},
-                        {"label": "Tipo de media", "value": self._cruz_fast_ma_type.get()},
-                        {"label": "Modo de preco", "value": self._cruz_fast_price.get()},
+                        {"label": "Tipo de média", "value": self._cruz_fast_ma_type.get()},
+                        {"label": "Modo de preço", "value": self._cruz_fast_price.get()},
                     ]
                 )
             else:
@@ -1796,8 +1796,8 @@ class SinaisView(ctk.CTkFrame):
                         {"label": "Indicador lento", "value": self._cruz_slow_indicator.get()},
                         {"label": "Periodo", "value": self._cruz_slow_period.get().strip() or "0"},
                         {"label": "Deslocamento", "value": self._cruz_slow_shift.get().strip() or "0"},
-                        {"label": "Tipo de media", "value": self._cruz_slow_ma_type.get()},
-                        {"label": "Modo de preco", "value": self._cruz_slow_price.get()},
+                        {"label": "Tipo de média", "value": self._cruz_slow_ma_type.get()},
+                        {"label": "Modo de preço", "value": self._cruz_slow_price.get()},
                     ]
                 )
             sections.append({"title": "Cruzamentos", "items": cross_items})
@@ -1820,7 +1820,7 @@ class SinaisView(ctk.CTkFrame):
                 for field_label, control in self._sobre_param_controls.get(current_indicator, []):
                     value = str(control.get()).strip() if hasattr(control, "get") else ""
                     sobre_items.append({"label": field_label, "value": value or "0"})
-            sections.append({"title": "Sobrecomprado / sobrevendido", "items": sobre_items})
+            sections.append({"title": "Sobrecompra / sobrevenda", "items": sobre_items})
 
         return sections
 
@@ -2052,9 +2052,9 @@ class SinaisView(ctk.CTkFrame):
         self._strategy_store.set("risk.allow_sell", "Nao" if is_buy else "Sim")
 
         opposite_text = (
-            "O sinal de venda sera criado automaticamente."
+            "O sinal de venda será criado automaticamente."
             if is_buy
-            else "O sinal de compra sera criado automaticamente."
+            else "O sinal de compra será criado automaticamente."
         )
         for label in self._signal_info_labels:
             label.configure(text=opposite_text)
@@ -2199,7 +2199,7 @@ class SinaisView(ctk.CTkFrame):
     def _sync_sobre_controls(self) -> None:
         enabled = self._sobre_enabled.get() == 1
         indicador_tab = self._sobre_tab_var.get() == "Indicador"
-        parametros_tab = self._sobre_tab_var.get() == "Parametros"
+        parametros_tab = self._sobre_tab_var.get() == "Parâmetros"
 
         self._sobre_tabs.configure(state="normal" if enabled else "disabled")
         self._sobre_indicator_combo.configure(state="readonly" if enabled and indicador_tab else "disabled")
