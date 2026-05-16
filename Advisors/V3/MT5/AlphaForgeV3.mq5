@@ -342,7 +342,8 @@ bool FindPendingLimitOrderForSymbol(
    ENUM_ORDER_TYPE &type,
    datetime &expiration,
    ENUM_ORDER_TYPE_TIME &order_time,
-   double &price
+   double &price,
+   datetime &setup_time
 )
   {
    long magic_number=ResolveMagicNumberValue();
@@ -367,6 +368,7 @@ bool FindPendingLimitOrderForSymbol(
       expiration=(datetime)OrderGetInteger(ORDER_TIME_EXPIRATION);
       order_time=(ENUM_ORDER_TYPE_TIME)OrderGetInteger(ORDER_TYPE_TIME);
       price=OrderGetDouble(ORDER_PRICE_OPEN);
+      setup_time=(datetime)OrderGetInteger(ORDER_TIME_SETUP);
       return(true);
      }
 
@@ -554,19 +556,6 @@ int ResolveExpirationCandles(const string expire_name)
    return(0);
   }
 
-datetime ResolvePendingExpiration(const ENUM_TIMEFRAMES timeframe,const string expire_name)
-  {
-   int candles=ResolveExpirationCandles(expire_name);
-   if(candles<=0)
-      return(0);
-
-   int seconds=PeriodSeconds(timeframe);
-   if(seconds<=0)
-      return(0);
-
-   return(TimeCurrent()+(datetime)(candles*seconds));
-  }
-
 int ResolvePendingMoveReferenceBarShift(const string candle_name)
   {
    int shift=ResolveReferenceBarShift(candle_name);
@@ -575,13 +564,50 @@ int ResolvePendingMoveReferenceBarShift(const string candle_name)
    return(shift);
   }
 
+int ResolvePendingElapsedClosedCandles(const ENUM_TIMEFRAMES timeframe,const datetime setup_time)
+  {
+   if(setup_time<=0)
+      return(0);
+
+   int shift=iBarShift(_Symbol,timeframe,setup_time,false);
+   if(shift<0)
+      return(0);
+
+   return(shift);
+  }
+
+void LogPendingExpirationProgress(const ENUM_TIMEFRAMES timeframe,const ulong ticket,const datetime setup_time)
+  {
+   int total_candles=ResolveExpirationCandles(g_config.signals.limit.reference.expire);
+   if(total_candles<=0)
+      return;
+
+   datetime current_bar_time=iTime(_Symbol,timeframe,0);
+   if(current_bar_time<=0)
+      return;
+
+   int setup_shift=ResolvePendingElapsedClosedCandles(timeframe,setup_time);
+   if(setup_shift<=0)
+      return;
+
+   datetime count_start_bar_time=iTime(_Symbol,timeframe,setup_shift);
+   int elapsed_candles=setup_shift;
+   if(elapsed_candles>total_candles)
+      elapsed_candles=total_candles;
+
+   Print(
+      "AlphaForge V3: contagem da expiracao da pendente. Ticket=",ticket,
+      " Fechados=",IntegerToString(elapsed_candles),"/",IntegerToString(total_candles),
+      " InicioContagem=",TimeToString(count_start_bar_time,TIME_DATE|TIME_MINUTES),
+      " CandleAtual=",TimeToString(current_bar_time,TIME_DATE|TIME_MINUTES)
+   );
+  }
+
 void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
   {
    if(NormalizeText(g_config.signals.order_mode)!="Limite")
       return;
    if(NormalizeText(g_config.signals.limit.mode)!="Referencia")
-      return;
-   if(!g_config.signals.limit.reference.move_next_candle)
       return;
    if(HasOpenPositionForSymbol())
       return;
@@ -591,7 +617,36 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    datetime expiration=0;
    ENUM_ORDER_TYPE_TIME order_time=ORDER_TIME_GTC;
    double current_price=0.0;
-   if(!FindPendingLimitOrderForSymbol(ticket,order_type,expiration,order_time,current_price))
+   datetime setup_time=0;
+   if(!FindPendingLimitOrderForSymbol(ticket,order_type,expiration,order_time,current_price,setup_time))
+      return;
+
+   int expiration_candles=ResolveExpirationCandles(g_config.signals.limit.reference.expire);
+   int elapsed_candles=ResolvePendingElapsedClosedCandles(timeframe,setup_time);
+   LogPendingExpirationProgress(timeframe,ticket,setup_time);
+
+   if(expiration_candles>0 && elapsed_candles>=expiration_candles)
+     {
+      g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
+      if(!g_trade.OrderDelete(ticket))
+        {
+         Print(
+            "AlphaForge V3: falha ao cancelar pendente expirada. Ticket=",ticket,
+            " Retcode=",g_trade.ResultRetcode(),
+            " Desc=",g_trade.ResultRetcodeDescription()
+         );
+        }
+      else
+        {
+         Print(
+            "AlphaForge V3: pendente cancelada por expiracao em candles. Ticket=",ticket,
+            " Fechados=",IntegerToString(elapsed_candles),"/",IntegerToString(expiration_candles)
+         );
+        }
+      return;
+     }
+
+   if(!g_config.signals.limit.reference.move_next_candle)
       return;
 
    MqlRates reference_bar;
@@ -776,10 +831,8 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
    g_trade.SetTypeFillingBySymbol(_Symbol);
    g_trade.SetDeviationInPoints(20);
 
-   ENUM_ORDER_TYPE_TIME order_time=ORDER_TIME_GTC;
-   datetime expiration=ResolvePendingExpiration(timeframe,g_config.signals.limit.reference.expire);
-   if(expiration>0)
-      order_time=ORDER_TIME_SPECIFIED;
+   int expiration_candles=ResolveExpirationCandles(g_config.signals.limit.reference.expire);
+   datetime expiration_count_start=iTime(_Symbol,timeframe,0);
 
    string comment=StringFormat(
       "AlphaForgeV3 LIMIT %s tf=%d candle=%s",
@@ -790,9 +843,9 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
 
    bool sent=false;
    if(direction>0)
-      sent=g_trade.BuyLimit(volume,pending_price,_Symbol,0.0,0.0,order_time,expiration,comment);
+      sent=g_trade.BuyLimit(volume,pending_price,_Symbol,0.0,0.0,ORDER_TIME_GTC,0,comment);
    else
-      sent=g_trade.SellLimit(volume,pending_price,_Symbol,0.0,0.0,order_time,expiration,comment);
+      sent=g_trade.SellLimit(volume,pending_price,_Symbol,0.0,0.0,ORDER_TIME_GTC,0,comment);
 
    if(!sent)
      {
@@ -807,6 +860,28 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
       " Candle=",g_config.signals.limit.reference.candle,
       " Dist=",DoubleToString(g_config.signals.limit.reference.distance,2)
    );
+
+   if(expiration_count_start>0 && expiration_candles>0)
+     {
+      Print(
+         "AlphaForge V3: expiracao manual da ordem pendente. Sinal=",
+         TimeToString(signal_bar.time,TIME_DATE|TIME_MINUTES),
+         " InicioContagem=",
+         TimeToString(expiration_count_start,TIME_DATE|TIME_MINUTES),
+         " Candles=",
+         IntegerToString(expiration_candles),
+         " Regra=cancelar quando fechar o candle ",
+         IntegerToString(expiration_candles),
+         " apos o sinal, se a pendente nao executar"
+      );
+     }
+   else
+     {
+      Print(
+         "AlphaForge V3: expiracao da ordem pendente desabilitada. Sinal=",
+         TimeToString(signal_bar.time,TIME_DATE|TIME_MINUTES)
+      );
+     }
    return(true);
   }
 
