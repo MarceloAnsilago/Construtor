@@ -1158,7 +1158,6 @@ class SinaisView(ctk.CTkFrame):
             "Regressao",
             "Media movel",
             "MACD",
-            "Nuvem de Ichimoku",
             "Parabolic SAR",
             "Alligator",
             "Envelopes",
@@ -1202,6 +1201,10 @@ class SinaisView(ctk.CTkFrame):
             "Nao usar",
             "Donchian",
         ]
+        hybrid_indicators = [
+            "Nao usar",
+            "Nuvem de Ichimoku",
+        ]
         all_indicators = list(self._montar_indicator_outputs.keys())
         categorized_indicators = (
             set(trend_indicators)
@@ -1211,6 +1214,7 @@ class SinaisView(ctk.CTkFrame):
             | set(oscillator_indicators)
             | set(trend_strength_indicators)
             | set(support_resistance_indicators)
+            | set(hybrid_indicators)
         )
         return {
             "Tendência": [name for name in trend_indicators if name in self._montar_indicator_outputs],
@@ -1220,6 +1224,7 @@ class SinaisView(ctk.CTkFrame):
             "Osciladores": [name for name in oscillator_indicators if name in self._montar_indicator_outputs],
             "Força de Tendência": [name for name in trend_strength_indicators if name in self._montar_indicator_outputs],
             "Suporte e Resistência": [name for name in support_resistance_indicators if name in self._montar_indicator_outputs],
+            "Indicadores Compostos/Híbridos": [name for name in hybrid_indicators if name in self._montar_indicator_outputs],
             "Outros": [name for name in all_indicators if name not in categorized_indicators],
         }
 
