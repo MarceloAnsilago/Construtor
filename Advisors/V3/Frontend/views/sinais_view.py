@@ -1166,21 +1166,12 @@ class SinaisView(ctk.CTkFrame):
         ]
         momentum_indicators = [
             "Nao usar",
-            "Estocastico",
             "RSI",
-            "MACD",
             "CCI (Commodity Channel Index)",
-            "DeMarker",
             "Momentum",
             "Trix",
-            "Bears Power",
-            "Bulls Power",
-            "Accelerator Oscillator",
-            "Awesome Oscillator",
             "Williams Percentual Range",
             "Relative Vigor Index",
-            "MFI (Money Flow Index)",
-            "Chaikin Oscilador",
         ]
         all_indicators = list(self._montar_indicator_outputs.keys())
         return {
