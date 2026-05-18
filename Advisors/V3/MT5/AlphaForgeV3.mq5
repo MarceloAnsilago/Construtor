@@ -207,18 +207,6 @@ string BuildStopLossSummaryText()
    return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.distance));
   }
 
-void LogStopLossRuntimeConfig()
-  {
-   Print(
-      "AlphaForge V3: stop loss carregado. Enabled=",
-      (g_config.stop_loss.enabled ? "true" : "false"),
-      " Measure=",
-      g_config.stop_loss.measure,
-      " Distance=",
-      DoubleToString(g_config.stop_loss.distance,2)
-   );
-  }
-
 int ResolveConfiguredSignalDirection()
   {
    if(g_config.risk.allow_buy && !g_config.risk.allow_sell)
@@ -1008,15 +996,6 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
    double entry_price=direction>0 ? tick.ask : tick.bid;
    double stop_loss_price=ResolveStopLossPrice(direction,entry_price);
-   Print(
-      "AlphaForge V3: preparando ordem a mercado. Tipo=",
-      (direction>0 ? "BUY" : "SELL"),
-      " EntryRef=",DoubleToString(entry_price,_Digits),
-      " SLEnabled=",(g_config.stop_loss.enabled ? "true" : "false"),
-      " SLMeasure=",g_config.stop_loss.measure,
-      " SLDistance=",DoubleToString(g_config.stop_loss.distance,2),
-      " SLPrice=",DoubleToString(stop_loss_price,_Digits)
-   );
 
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
@@ -1116,15 +1095,6 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
      }
 
    double stop_loss_price=ResolveStopLossPrice(direction,pending_price);
-   Print(
-      "AlphaForge V3: preparando ordem limite. Tipo=",
-      (direction>0 ? "BUY_LIMIT" : "SELL_LIMIT"),
-      " EntryRef=",DoubleToString(pending_price,_Digits),
-      " SLEnabled=",(g_config.stop_loss.enabled ? "true" : "false"),
-      " SLMeasure=",g_config.stop_loss.measure,
-      " SLDistance=",DoubleToString(g_config.stop_loss.distance,2),
-      " SLPrice=",DoubleToString(stop_loss_price,_Digits)
-   );
 
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
@@ -1269,7 +1239,6 @@ int OnInit()
    g_chart_theme.SetChartId(ChartID());
    ApplyInputFallbackConfig();
    Print("AlphaForge V3: configuracao carregada pelos inputs/.set do MT5.");
-   LogStopLossRuntimeConfig();
 
    if(!HasInteractiveChart())
       return(INIT_SUCCEEDED);
