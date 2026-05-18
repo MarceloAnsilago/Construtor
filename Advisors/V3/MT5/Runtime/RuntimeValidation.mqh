@@ -23,6 +23,22 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       && config.signals.limit.reference.expire!=Expirar3Candles
       && config.signals.limit.reference.expire!=Expirar4Candles)
       config.signals.limit.reference.expire=NaoExpirar;
+   if(config.stop_loss.reference.base!=BaseMaxima
+      && config.stop_loss.reference.base!=BaseMinima
+      && config.stop_loss.reference.base!=BaseAbertura
+      && config.stop_loss.reference.base!=BaseFechamento)
+      config.stop_loss.reference.base=BaseMaxima;
+   if(config.stop_loss.reference.candle!=CandleAtual
+      && config.stop_loss.reference.candle!=CandleUltimo
+      && config.stop_loss.reference.candle!=CandlePenultimo
+      && config.stop_loss.reference.candle!=CandleAntepenultimo)
+      config.stop_loss.reference.candle=CandleAtual;
+   if(config.stop_loss.reference.expire!=NaoExpirar
+      && config.stop_loss.reference.expire!=Expirar1Candle
+      && config.stop_loss.reference.expire!=Expirar2Candles
+      && config.stop_loss.reference.expire!=Expirar3Candles
+      && config.stop_loss.reference.expire!=Expirar4Candles)
+      config.stop_loss.reference.expire=NaoExpirar;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;
@@ -46,8 +62,10 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.signals.filter.lower_wick_min=0.0;
    if(config.signals.filter.lower_wick_max<0.0)
       config.signals.filter.lower_wick_max=0.0;
-   if(config.stop_loss.distance<0.0)
-      config.stop_loss.distance=0.0;
+   if(config.stop_loss.fixed.distance<0.0)
+      config.stop_loss.fixed.distance=0.0;
+   if(config.stop_loss.reference.distance<0.0)
+      config.stop_loss.reference.distance=0.0;
   }
 
 #endif

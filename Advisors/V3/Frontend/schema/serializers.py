@@ -7,6 +7,8 @@ from schema.strategy_document import (
     SignalLimitDocument,
     SignalLimitReferenceDocument,
     SignalsDocument,
+    StopLossCalcDocument,
+    StopLossCalcReferenceDocument,
     StopLossDocument,
     StopLossFixedDocument,
     StrategyDocument,
@@ -83,6 +85,15 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                 enabled=bool(store.get("stop_loss.fixed.enabled")),
                 distance=str(store.get("stop_loss.fixed.distance")),
             ),
+            calc=StopLossCalcDocument(
+                method=str(store.get("stop_loss.calc_method")),
+                reference=StopLossCalcReferenceDocument(
+                    base=str(store.get("stop_loss.calc.reference.base")),
+                    candle=str(store.get("stop_loss.calc.reference.candle")),
+                    distance=str(store.get("stop_loss.calc.reference.distance")),
+                    expire=str(store.get("stop_loss.calc.reference.expire")),
+                ),
+            ),
         ),
     )
 
@@ -111,6 +122,11 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "stop_loss_measure": str(store.get("stop_loss.measure")),
         "stop_loss_fixed_enabled": "Sim" if bool(store.get("stop_loss.fixed.enabled")) else "Nao",
         "stop_loss_fixed_distance": str(store.get("stop_loss.fixed.distance")),
+        "stop_loss_calc_method": str(store.get("stop_loss.calc_method")),
+        "stop_loss_calc_reference_base": str(store.get("stop_loss.calc.reference.base")),
+        "stop_loss_calc_reference_candle": str(store.get("stop_loss.calc.reference.candle")),
+        "stop_loss_calc_reference_distance": str(store.get("stop_loss.calc.reference.distance")),
+        "stop_loss_calc_reference_expire": str(store.get("stop_loss.calc.reference.expire")),
     }
 
 
@@ -157,6 +173,11 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpTamanhoMinimoPavioInferior={store.get('signals.filter.lower_wick_min')}",
         f"InpTamanhoMaximoPavioInferior={store.get('signals.filter.lower_wick_max')}",
         f"InpUsarStopLossFixo={_bool_to_set(store.get('stop_loss.fixed.enabled'))}",
+        f"InpUsarStopLossPorReferencia={_bool_to_set(str(store.get('stop_loss.mode')) == 'calc' and str(store.get('stop_loss.calc_method')) == 'ref')}",
         f"InpTipoDeStopLossPercentual={_bool_to_set(str(store.get('stop_loss.measure')) == 'Percentual')}",
         f"InpDistanciaDoStopLossFixo={store.get('stop_loss.fixed.distance')}",
+        f"InpReferenciaDoStopLoss={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.reference.base'), '0')}",
+        f"InpCandleDaReferenciaDoStopLoss={_enum_to_set(REFERENCE_CANDLE_TO_SET, store.get('stop_loss.calc.reference.candle'), '0')}",
+        f"InpDistanciaDoStopLossPorReferencia={store.get('stop_loss.calc.reference.distance')}",
+        f"InpExpiracaoDoStopLossPorReferencia={_enum_to_set(EXPIRATION_TO_SET, store.get('stop_loss.calc.reference.expire'), '0')}",
     ]

@@ -79,8 +79,24 @@ struct SSignalConfig
 struct SStopLossFixedConfig
   {
    bool    enabled;
-   string  measure;
    double  distance;
+  };
+
+struct SStopLossReferenceConfig
+  {
+   bool                         enabled;
+   ESignalLimitReferenceBase    base;
+   ESignalLimitReferenceCandle  candle;
+   double                       distance;
+   ESignalLimitExpiration       expire;
+  };
+
+struct SStopLossConfig
+  {
+   string                     mode;
+   string                     measure;
+   SStopLossFixedConfig       fixed;
+   SStopLossReferenceConfig   reference;
   };
 
 struct SRiskConfig
@@ -96,7 +112,7 @@ struct SRuntimeConfig
    string        strategy_name;
    long          magic_number;
    SSignalConfig signals;
-   SStopLossFixedConfig stop_loss;
+   SStopLossConfig stop_loss;
    SRiskConfig   risk;
   };
 

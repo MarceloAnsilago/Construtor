@@ -43,10 +43,24 @@ class StopLossFixedDocument:
 
 
 @dataclass(frozen=True)
+class StopLossCalcReferenceDocument:
+    base: str
+    candle: str
+    distance: str
+
+
+@dataclass(frozen=True)
+class StopLossCalcDocument:
+    method: str
+    reference: StopLossCalcReferenceDocument
+
+
+@dataclass(frozen=True)
 class StopLossDocument:
     mode: str
     measure: str
     fixed: StopLossFixedDocument
+    calc: StopLossCalcDocument
 
 
 @dataclass(frozen=True)
@@ -101,6 +115,14 @@ class StrategyDocument:
                 "fixed": {
                     "enabled": self.stop_loss.fixed.enabled,
                     "distance": self.stop_loss.fixed.distance,
+                },
+                "calc": {
+                    "method": self.stop_loss.calc.method,
+                    "reference": {
+                        "base": self.stop_loss.calc.reference.base,
+                        "candle": self.stop_loss.calc.reference.candle,
+                        "distance": self.stop_loss.calc.reference.distance,
+                    },
                 },
             },
         }

@@ -24,9 +24,15 @@ void SyncRuntimeConfigFromInputs()
    g_config.signals.filter.upper_wick_max=InpTamanhoMaximoPavioSuperior;
    g_config.signals.filter.lower_wick_min=InpTamanhoMinimoPavioInferior;
    g_config.signals.filter.lower_wick_max=InpTamanhoMaximoPavioInferior;
-   g_config.stop_loss.enabled=InpUsarStopLossFixo;
+   g_config.stop_loss.mode=InpUsarStopLossFixo ? "fixed" : (InpUsarStopLossPorReferencia ? "calc_ref" : "none");
    g_config.stop_loss.measure=InpTipoDeStopLossPercentual ? "Percentual" : "Pontos";
-   g_config.stop_loss.distance=InpDistanciaDoStopLossFixo;
+   g_config.stop_loss.fixed.enabled=InpUsarStopLossFixo;
+   g_config.stop_loss.fixed.distance=InpDistanciaDoStopLossFixo;
+   g_config.stop_loss.reference.enabled=InpUsarStopLossPorReferencia;
+   g_config.stop_loss.reference.base=InpReferenciaDoStopLoss;
+   g_config.stop_loss.reference.candle=InpCandleDaReferenciaDoStopLoss;
+   g_config.stop_loss.reference.distance=InpDistanciaDoStopLossPorReferencia;
+   g_config.stop_loss.reference.expire=InpExpiracaoDoStopLossPorReferencia;
    g_config.risk.allow_buy=InpOperarNaCompra;
    g_config.risk.allow_sell=InpOperarNaVenda;
    g_config.risk.initial_volume=InpVolumeInicial;

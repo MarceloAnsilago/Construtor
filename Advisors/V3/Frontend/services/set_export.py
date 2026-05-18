@@ -34,8 +34,13 @@ INPUT_TO_STORE_KEYS = {
     "InpMinimoDePavios": ("signals.filter.upper_wick_min", "signals.filter.lower_wick_min"),
     "InpMaximoDePavios": ("signals.filter.upper_wick_max", "signals.filter.lower_wick_max"),
     "InpUsarStopLossFixo": ("stop_loss.fixed.enabled",),
+    "InpUsarStopLossPorReferencia": ("stop_loss.mode", "stop_loss.calc_method"),
     "InpTipoDeStopLossPercentual": ("stop_loss.measure",),
     "InpDistanciaDoStopLossFixo": ("stop_loss.fixed.distance",),
+    "InpReferenciaDoStopLoss": ("stop_loss.calc.reference.base",),
+    "InpCandleDaReferenciaDoStopLoss": ("stop_loss.calc.reference.candle",),
+    "InpDistanciaDoStopLossPorReferencia": ("stop_loss.calc.reference.distance",),
+    "InpExpiracaoDoStopLossPorReferencia": ("stop_loss.calc.reference.expire",),
 }
 
 ORDER_MODE_FROM_SET = {
@@ -128,8 +133,16 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
         return "Percentual" if _parse_bool(value) else "Pontos"
     if input_name == "InpUsarStopLossFixo":
         return _parse_bool(value)
+    if input_name == "InpUsarStopLossPorReferencia":
+        return "calc" if _parse_bool(value) else "ref"
     if input_name == "InpTipoDeStopLossPercentual":
         return "Percentual" if _parse_bool(value) else "Pontos"
+    if input_name == "InpReferenciaDoStopLoss":
+        return REFERENCE_BASE_FROM_SET.get(value, "Maxima")
+    if input_name == "InpCandleDaReferenciaDoStopLoss":
+        return REFERENCE_CANDLE_FROM_SET.get(value, "Atual")
+    if input_name == "InpExpiracaoDoStopLossPorReferencia":
+        return EXPIRATION_FROM_SET.get(value, "Nao expirar")
     if input_name == "InpTempoGraficoDoFiltro":
         return "Corrente" if value.lower() == "current" else value
     return value
@@ -148,6 +161,13 @@ def read_set_file(source: Path) -> dict[str, str | bool]:
             continue
 
         mapped_value = _map_input_value(input_name.strip(), raw_value)
+        if input_name.strip() == "InpUsarStopLossPorReferencia":
+            if _parse_bool(raw_value):
+                values["stop_loss.mode"] = "calc"
+                values["stop_loss.calc_method"] = "ref"
+                values["stop_loss.fixed.enabled"] = False
+            continue
+
         for store_key in store_keys:
             values[store_key] = mapped_value
 

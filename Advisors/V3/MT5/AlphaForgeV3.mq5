@@ -49,8 +49,13 @@ input double InpTamanhoMaximoPavioInferior = 0.0;
 
 input group "5.Stop loss"
 input bool InpUsarStopLossFixo = false;
+input bool InpUsarStopLossPorReferencia = false;
 input bool InpTipoDeStopLossPercentual = false;
 input double InpDistanciaDoStopLossFixo = 100.0;
+input ESignalLimitReferenceBase InpReferenciaDoStopLoss = BaseMaxima;
+input ESignalLimitReferenceCandle InpCandleDaReferenciaDoStopLoss = CandleAtual;
+input double InpDistanciaDoStopLossPorReferencia = 0.0;
+input ESignalLimitExpiration InpExpiracaoDoStopLossPorReferencia = NaoExpirar;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string BUTTON_CARD_NAME     = "AlphaForgeV3.BtnCard";
@@ -203,9 +208,39 @@ string BuildOrderSummaryText()
 
 string BuildStopLossSummaryText()
   {
-   if(!g_config.stop_loss.enabled)
+   if(g_config.stop_loss.mode=="fixed" && g_config.stop_loss.fixed.enabled)
+      return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.fixed.distance));
+
+   if(g_config.stop_loss.mode=="calc_ref" && g_config.stop_loss.reference.enabled)
+     {
+      return(
+         "Stop loss: ref / "+g_config.stop_loss.measure
+         +" / Base="+ReferenceBaseToText(g_config.stop_loss.reference.base)
+         +" / Candle="+ReferenceCandleToText(g_config.stop_loss.reference.candle)
+         +" / Dist="+FormatRuntimeDouble(g_config.stop_loss.reference.distance)
+      );
+     }
+
+   if(g_config.stop_loss.reference.enabled)
+     {
+      return(
+         "Stop loss: ref / "+g_config.stop_loss.measure
+         +" / Base="+ReferenceBaseToText(g_config.stop_loss.reference.base)
+         +" / Candle="+ReferenceCandleToText(g_config.stop_loss.reference.candle)
+         +" / Dist="+FormatRuntimeDouble(g_config.stop_loss.reference.distance)
+      );
+     }
+
+   if(!g_config.stop_loss.fixed.enabled)
       return("Stop loss: desativado");
-   return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.distance));
+   return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.fixed.distance));
+  }
+
+double ResolveConfiguredStopLossDistance()
+  {
+   if(g_config.stop_loss.mode=="calc_ref" || g_config.stop_loss.reference.enabled)
+      return(g_config.stop_loss.reference.distance);
+   return(g_config.stop_loss.fixed.distance);
   }
 
 int ResolveConfiguredSignalDirection()
@@ -418,10 +453,10 @@ double ConvertDistanceToMetric(const double distance_price,const double referenc
 
 double ResolveStopLossDistancePrice(const double reference_price)
   {
-   if(!g_config.stop_loss.enabled)
+   if(!g_config.stop_loss.fixed.enabled)
       return(0.0);
 
-   double distance=g_config.stop_loss.distance;
+   double distance=g_config.stop_loss.fixed.distance;
    if(distance<=0.0)
       return(0.0);
 
@@ -435,8 +470,108 @@ double ResolveStopLossDistancePrice(const double reference_price)
    return(distance*_Point);
   }
 
+double ResolveMetricDistancePrice(const double distance,const double reference_price,const string measure)
+  {
+   if(distance<=0.0)
+      return(0.0);
+
+   if(NormalizeText(measure)=="Percentual")
+     {
+      if(reference_price<=0.0)
+         return(0.0);
+      return(reference_price*(distance/100.0));
+     }
+
+   return(distance*_Point);
+  }
+
+bool TryLoadStopLossReferenceBar(MqlRates &reference_bar)
+  {
+   int reference_shift=ResolveReferenceBarShift(g_config.stop_loss.reference.candle);
+   MqlRates bars[];
+   ArraySetAsSeries(bars,true);
+   int copied=CopyRates(_Symbol,(ENUM_TIMEFRAMES)Period(),reference_shift,1,bars);
+   if(copied<1)
+      return(false);
+
+   reference_bar=bars[0];
+   return(true);
+  }
+
+void LogRejectedReferenceStopLoss(
+   const string reason,
+   const int direction,
+   const double entry_price,
+   const double reference_price,
+   const double distance_price,
+   const double stop_loss_price
+)
+  {
+   Print(
+      "AlphaForge V3: stop loss por referencia rejeitado. Motivo=",reason,
+      " Direcao=",IntegerToString(direction),
+      " Entry=",DoubleToString(entry_price,_Digits),
+      " Ref=",DoubleToString(reference_price,_Digits),
+      " DistCalc=",DoubleToString(distance_price,_Digits),
+      " SL=",DoubleToString(stop_loss_price,_Digits),
+      " Base=",ReferenceBaseToText(g_config.stop_loss.reference.base),
+      " Candle=",ReferenceCandleToText(g_config.stop_loss.reference.candle),
+      " DistCfg=",DoubleToString(g_config.stop_loss.reference.distance,2),
+      " Medida=",g_config.stop_loss.measure
+   );
+  }
+
+double ResolveReferenceStopLossPrice(const int direction,const double entry_price)
+  {
+   if(!g_config.stop_loss.reference.enabled)
+      return(0.0);
+
+   MqlRates reference_bar;
+   if(!TryLoadStopLossReferenceBar(reference_bar))
+     {
+      LogRejectedReferenceStopLoss("vela_referencia_indisponivel",direction,entry_price,0.0,0.0,0.0);
+      return(0.0);
+     }
+
+   double reference_price=ResolveReferencePrice(reference_bar,g_config.stop_loss.reference.base);
+   double distance_price=ResolveMetricDistancePrice(
+      g_config.stop_loss.reference.distance,
+      reference_price,
+      g_config.stop_loss.measure
+   );
+   if(reference_price<=0.0 || distance_price<0.0 || entry_price<=0.0)
+     {
+      LogRejectedReferenceStopLoss("preco_ou_distancia_invalido",direction,entry_price,reference_price,distance_price,0.0);
+      return(0.0);
+     }
+
+   double stop_loss_price=(direction>0) ? reference_price-distance_price : reference_price+distance_price;
+   stop_loss_price=NormalizeDouble(stop_loss_price,_Digits);
+   if(stop_loss_price<=0.0)
+     {
+      LogRejectedReferenceStopLoss("stop_loss_menor_ou_igual_zero",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+
+   if(direction>0 && stop_loss_price>=entry_price)
+     {
+      LogRejectedReferenceStopLoss("compra_com_sl_acima_ou_igual_entrada",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+   if(direction<0 && stop_loss_price<=entry_price)
+     {
+      LogRejectedReferenceStopLoss("venda_com_sl_abaixo_ou_igual_entrada",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+
+   return(stop_loss_price);
+  }
+
 double ResolveStopLossPrice(const int direction,const double entry_price)
   {
+   if(g_config.stop_loss.mode=="calc_ref" || g_config.stop_loss.reference.enabled)
+      return(ResolveReferenceStopLossPrice(direction,entry_price));
+
    double distance_price=ResolveStopLossDistancePrice(entry_price);
    if(distance_price<=0.0 || entry_price<=0.0)
       return(0.0);
@@ -1026,7 +1161,7 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
      " Volume=",DoubleToString(volume,2),
      " SL=",DoubleToString(stop_loss_price,_Digits),
      " TipoSL=",g_config.stop_loss.measure,
-     " DistSL=",DoubleToString(g_config.stop_loss.distance,2)
+     " DistSL=",DoubleToString(ResolveConfiguredStopLossDistance(),2)
   );
   return(true);
   }
@@ -1128,7 +1263,9 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
       " Preco=",DoubleToString(pending_price,_Digits),
       " SL=",DoubleToString(stop_loss_price,_Digits),
       " TipoSL=",g_config.stop_loss.measure,
-      " DistSL=",DoubleToString(g_config.stop_loss.distance,2),
+      " DistSL=",DoubleToString(ResolveConfiguredStopLossDistance(),2),
+      " BaseSL=",ReferenceBaseToText(g_config.stop_loss.reference.base),
+      " CandleSL=",ReferenceCandleToText(g_config.stop_loss.reference.candle),
       " Base=",ReferenceBaseToText(g_config.signals.limit.reference.base),
       " Candle=",ReferenceCandleToText(g_config.signals.limit.reference.candle),
       " Dist=",DoubleToString(g_config.signals.limit.reference.distance,2)
