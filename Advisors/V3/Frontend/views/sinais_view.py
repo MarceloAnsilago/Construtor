@@ -1177,6 +1177,7 @@ class SinaisView(ctk.CTkFrame):
             "Bandas de Bollinger",
             "Keltner",
             "StdDev",
+            "Afastamento da media",
         ]
         volume_indicators = [
             "Nao usar",
