@@ -1158,7 +1158,6 @@ class SinaisView(ctk.CTkFrame):
             "Regressao",
             "Media movel",
             "MACD",
-            "ADX (Average Direcional index)",
             "Nuvem de Ichimoku",
             "Parabolic SAR",
             "Alligator",
@@ -1195,6 +1194,11 @@ class SinaisView(ctk.CTkFrame):
             "Williams Percentual Range",
             "CCI (Commodity Channel Index)",
         ]
+        trend_strength_indicators = [
+            "Nao usar",
+            "ADX (Average Direcional index)",
+            "ADX Wilder",
+        ]
         all_indicators = list(self._montar_indicator_outputs.keys())
         categorized_indicators = (
             set(trend_indicators)
@@ -1202,6 +1206,7 @@ class SinaisView(ctk.CTkFrame):
             | set(volatility_indicators)
             | set(volume_indicators)
             | set(oscillator_indicators)
+            | set(trend_strength_indicators)
         )
         return {
             "Tendência": [name for name in trend_indicators if name in self._montar_indicator_outputs],
@@ -1209,6 +1214,7 @@ class SinaisView(ctk.CTkFrame):
             "Volatilidade": [name for name in volatility_indicators if name in self._montar_indicator_outputs],
             "Volume": [name for name in volume_indicators if name in self._montar_indicator_outputs],
             "Osciladores": [name for name in oscillator_indicators if name in self._montar_indicator_outputs],
+            "Força de Tendência": [name for name in trend_strength_indicators if name in self._montar_indicator_outputs],
             "Outros": [name for name in all_indicators if name not in categorized_indicators],
         }
 
