@@ -1181,12 +1181,25 @@ class SinaisView(ctk.CTkFrame):
             "Donchian",
             "StdDev",
         ]
+        volume_indicators = [
+            "Nao usar",
+            "OBV",
+            "MFI (Money Flow Index)",
+            "Volume",
+            "Acumulacao/Distribuicao (A/D)",
+        ]
         all_indicators = list(self._montar_indicator_outputs.keys())
-        categorized_indicators = set(trend_indicators) | set(momentum_indicators) | set(volatility_indicators)
+        categorized_indicators = (
+            set(trend_indicators)
+            | set(momentum_indicators)
+            | set(volatility_indicators)
+            | set(volume_indicators)
+        )
         return {
             "Tendência": [name for name in trend_indicators if name in self._montar_indicator_outputs],
             "Momentum": [name for name in momentum_indicators if name in self._montar_indicator_outputs],
             "Volatilidade": [name for name in volatility_indicators if name in self._montar_indicator_outputs],
+            "Volume": [name for name in volume_indicators if name in self._montar_indicator_outputs],
             "Outros": [name for name in all_indicators if name not in categorized_indicators],
         }
 
