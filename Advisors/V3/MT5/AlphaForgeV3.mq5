@@ -207,6 +207,18 @@ string BuildStopLossSummaryText()
    return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.distance));
   }
 
+void LogStopLossRuntimeConfig()
+  {
+   Print(
+      "AlphaForge V3: stop loss carregado. Enabled=",
+      (g_config.stop_loss.enabled ? "true" : "false"),
+      " Measure=",
+      g_config.stop_loss.measure,
+      " Distance=",
+      DoubleToString(g_config.stop_loss.distance,2)
+   );
+  }
+
 int ResolveConfiguredSignalDirection()
   {
    if(g_config.risk.allow_buy && !g_config.risk.allow_sell)
@@ -476,6 +488,23 @@ bool HasOpenPositionForSymbol()
    return(PositionSelect(_Symbol));
   }
 
+bool GetOpenPositionData(
+   ENUM_POSITION_TYPE &position_type,
+   double &stop_loss,
+   ulong &ticket,
+   datetime &open_time
+)
+  {
+   if(!PositionSelect(_Symbol))
+      return(false);
+
+   ticket=(ulong)PositionGetInteger(POSITION_TICKET);
+   position_type=(ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
+   stop_loss=PositionGetDouble(POSITION_SL);
+   open_time=(datetime)PositionGetInteger(POSITION_TIME);
+   return(true);
+  }
+
 bool HasPendingOrderForSymbol()
   {
    long magic_number=ResolveMagicNumberValue();
@@ -589,6 +618,79 @@ bool ReadSignalBarAtShift(const ENUM_TIMEFRAMES timeframe,const int shift,MqlRat
 
    signal_bar=rates[0];
    return(true);
+  }
+
+void EnforceManualStopLoss(void)
+  {
+   ENUM_POSITION_TYPE position_type=WRONG_VALUE;
+   double stop_loss=0.0;
+   ulong ticket=0;
+   datetime open_time=0;
+   if(!GetOpenPositionData(position_type,stop_loss,ticket,open_time))
+      return;
+   if(stop_loss<=0.0)
+      return;
+
+   MqlTick tick;
+   if(!SymbolInfoTick(_Symbol,tick))
+      return;
+
+   bool should_close=false;
+   string reason="";
+   if(position_type==POSITION_TYPE_BUY && tick.bid<=stop_loss)
+     {
+      should_close=true;
+      reason="bid<=sl";
+     }
+   else if(position_type==POSITION_TYPE_SELL && tick.ask>=stop_loss)
+     {
+      should_close=true;
+      reason="ask>=sl";
+     }
+
+   if(!should_close)
+     {
+      datetime current_bar_open=iTime(_Symbol,PERIOD_CURRENT,0);
+      if(current_bar_open>0 && open_time<=current_bar_open)
+        {
+         MqlRates current_bar;
+         if(ReadSignalBarAtShift(PERIOD_CURRENT,0,current_bar))
+           {
+            if(position_type==POSITION_TYPE_BUY && current_bar.low<=stop_loss)
+              {
+               should_close=true;
+               reason="bar.low<=sl";
+              }
+            else if(position_type==POSITION_TYPE_SELL && current_bar.high>=stop_loss)
+              {
+               should_close=true;
+               reason="bar.high>=sl";
+              }
+           }
+        }
+     }
+
+   if(!should_close)
+      return;
+
+   g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
+   if(!g_trade.PositionClose(_Symbol))
+     {
+      Print(
+         "AlphaForge V3: falha ao encerrar posicao por stop manual. Ticket=",ticket,
+         " SL=",DoubleToString(stop_loss,_Digits),
+         " Reason=",reason,
+         " Retcode=",g_trade.ResultRetcode(),
+         " Desc=",g_trade.ResultRetcodeDescription()
+      );
+      return;
+     }
+
+   Print(
+      "AlphaForge V3: posicao encerrada por stop manual. Ticket=",ticket,
+      " SL=",DoubleToString(stop_loss,_Digits),
+      " Reason=",reason
+   );
   }
 
 void DrawSignalMarker(const int direction,const ENUM_TIMEFRAMES timeframe,const MqlRates &signal_bar)
@@ -906,6 +1008,15 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
    double entry_price=direction>0 ? tick.ask : tick.bid;
    double stop_loss_price=ResolveStopLossPrice(direction,entry_price);
+   Print(
+      "AlphaForge V3: preparando ordem a mercado. Tipo=",
+      (direction>0 ? "BUY" : "SELL"),
+      " EntryRef=",DoubleToString(entry_price,_Digits),
+      " SLEnabled=",(g_config.stop_loss.enabled ? "true" : "false"),
+      " SLMeasure=",g_config.stop_loss.measure,
+      " SLDistance=",DoubleToString(g_config.stop_loss.distance,2),
+      " SLPrice=",DoubleToString(stop_loss_price,_Digits)
+   );
 
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
@@ -1005,6 +1116,15 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
      }
 
    double stop_loss_price=ResolveStopLossPrice(direction,pending_price);
+   Print(
+      "AlphaForge V3: preparando ordem limite. Tipo=",
+      (direction>0 ? "BUY_LIMIT" : "SELL_LIMIT"),
+      " EntryRef=",DoubleToString(pending_price,_Digits),
+      " SLEnabled=",(g_config.stop_loss.enabled ? "true" : "false"),
+      " SLMeasure=",g_config.stop_loss.measure,
+      " SLDistance=",DoubleToString(g_config.stop_loss.distance,2),
+      " SLPrice=",DoubleToString(stop_loss_price,_Digits)
+   );
 
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
@@ -1149,6 +1269,7 @@ int OnInit()
    g_chart_theme.SetChartId(ChartID());
    ApplyInputFallbackConfig();
    Print("AlphaForge V3: configuracao carregada pelos inputs/.set do MT5.");
+   LogStopLossRuntimeConfig();
 
    if(!HasInteractiveChart())
       return(INIT_SUCCEEDED);
@@ -1194,6 +1315,7 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
   {
+   EnforceManualStopLoss();
    EvaluateAndTrade();
    if(HasInteractiveChart())
       RefreshRuntimeComment();
