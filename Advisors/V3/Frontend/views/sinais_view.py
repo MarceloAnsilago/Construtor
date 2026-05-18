@@ -1174,10 +1174,11 @@ class SinaisView(ctk.CTkFrame):
             "Relative Vigor Index",
         ]
         all_indicators = list(self._montar_indicator_outputs.keys())
+        categorized_indicators = set(trend_indicators) | set(momentum_indicators)
         return {
             "Tendência": [name for name in trend_indicators if name in self._montar_indicator_outputs],
             "Momentum": [name for name in momentum_indicators if name in self._montar_indicator_outputs],
-            "Outros": all_indicators,
+            "Outros": [name for name in all_indicators if name not in categorized_indicators],
         }
 
     def _get_montar_indicator_names_for_category(self, category_name: str) -> list[str]:
