@@ -11,7 +11,10 @@ from themes.theme import UITheme
 @dataclass
 class MontarSlotState:
     group_id: int
+    category_var: ctk.StringVar
     indicator_var: ctk.StringVar
+    category_combo: ctk.CTkComboBox
+    indicator_combo: ctk.CTkComboBox
     timeframe_var: ctk.StringVar
     source_var: ctk.StringVar
     timeframe_combo: ctk.CTkComboBox
@@ -119,6 +122,7 @@ class SinaisView(ctk.CTkFrame):
         self._montar_indicator_outputs = self._build_montar_indicator_outputs()
         self._montar_indicator_fields = self._build_montar_indicator_fields()
         self._montar_indicator_behavior = self._build_montar_indicator_behavior()
+        self._montar_indicator_categories = self._build_montar_indicator_categories()
         self._montar_slot_states: list[MontarSlotState] = []
         self._montar_logic_rows: list[dict[str, ctk.CTkComboBox]] = []
         self._montar_logic_saved_values: list[dict[str, str]] = []
@@ -1148,6 +1152,56 @@ class SinaisView(ctk.CTkFrame):
         }
         return behavior
 
+    def _build_montar_indicator_categories(self) -> dict[str, list[str]]:
+        trend_indicators = [
+            "Nao usar",
+            "Keltner",
+            "Donchian",
+            "Regressao",
+            "Afastamento da media",
+            "Desvio medio",
+            "ATR com desvio",
+            "Media movel",
+            "Bandas de Bollinger",
+            "Envelopes",
+            "Parabolic SAR",
+            "Alligator",
+            "Nuvem de Ichimoku",
+            "ADX (Average Direcional index)",
+            "ADX Wilder",
+            "Gator",
+            "FRAMA",
+            "Vidya",
+            "Tema",
+        ]
+        momentum_indicators = [
+            "Nao usar",
+            "Estocastico",
+            "RSI",
+            "MACD",
+            "CCI (Commodity Channel Index)",
+            "DeMarker",
+            "Momentum",
+            "Trix",
+            "Bears Power",
+            "Bulls Power",
+            "Accelerator Oscillator",
+            "Awesome Oscillator",
+            "Williams Percentual Range",
+            "Relative Vigor Index",
+            "MFI (Money Flow Index)",
+            "Chaikin Oscilador",
+        ]
+        all_indicators = list(self._montar_indicator_outputs.keys())
+        return {
+            "Tendência": [name for name in trend_indicators if name in self._montar_indicator_outputs],
+            "Momentum": [name for name in momentum_indicators if name in self._montar_indicator_outputs],
+            "Outros": all_indicators,
+        }
+
+    def _get_montar_indicator_names_for_category(self, category_name: str) -> list[str]:
+        return list(self._montar_indicator_categories.get(category_name, self._montar_indicator_categories["Outros"]))
+
     def _build_montar_indicator_fields(self) -> dict[str, list[tuple[str, str, list[str] | None]]]:
         price_items = ["Fechamento", "Abertura", "Maxima", "Minima", "Mediano", "Tipico", "Medio"]
         ma_items = ["Simples", "Exponencial", "Suavizada", "Linear ponderada"]
@@ -1423,6 +1477,107 @@ class SinaisView(ctk.CTkFrame):
         self._sync_montar_slot_controls(state)
         return card
 
+    def _create_montar_slot_card(self, master, group_id: int) -> ctk.CTkFrame:
+        card = ctk.CTkFrame(
+            master,
+            fg_color=self._theme.colors.card,
+            corner_radius=0,
+            border_width=1,
+            border_color=self._theme.colors.border,
+        )
+        card.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            card,
+            text=f"Grupo {group_id}",
+            text_color=self._theme.colors.text,
+            font=self._theme.font("body", weight="bold"),
+            anchor="w",
+        ).grid(row=0, column=0, sticky="ew", padx=12, pady=(12, 6))
+
+        ctk.CTkLabel(
+            card,
+            text="Cada grupo gera sinais e saídas que depois entram na composição lógica abaixo.",
+            text_color=self._theme.colors.text_subtle,
+            font=self._theme.font("label"),
+            anchor="w",
+            justify="left",
+            wraplength=220,
+        ).grid(row=1, column=0, sticky="ew", padx=12, pady=(0, 10))
+
+        self._add_label(card, 2, "Categoria", padx=12)
+        category_var = ctk.StringVar(value="Outros")
+        category_combo = self._create_combo(card, list(self._montar_indicator_categories.keys()), category_var)
+        category_combo.grid(row=3, column=0, sticky="ew", padx=12, pady=(0, 10))
+
+        indicator_names = self._get_montar_indicator_names_for_category(category_var.get())
+
+        self._add_label(card, 4, "Indicador", padx=12)
+        indicator_var = ctk.StringVar(value="Nao usar")
+        indicator_combo = self._create_combo(card, indicator_names, indicator_var)
+        indicator_combo.grid(row=5, column=0, sticky="ew", padx=12, pady=(0, 10))
+
+        self._add_label(card, 6, "Tempo gráfico", padx=12)
+        timeframe_var = ctk.StringVar(value="Corrente")
+        timeframe_combo = self._create_combo(card, self._initial_options.tempos_graficos, timeframe_var)
+        timeframe_combo.grid(row=7, column=0, sticky="ew", padx=12, pady=(0, 10))
+
+        self._add_label(card, 8, "Origem de preço", padx=12)
+        source_var = ctk.StringVar(value="Fechamento")
+        source_combo = self._create_combo(
+            card,
+            ["Fechamento", "Abertura", "Maxima", "Minima", "Tipico", "Mediano"],
+            source_var,
+        )
+        source_combo.grid(row=9, column=0, sticky="ew", padx=12, pady=(0, 10))
+
+        params_frame = ctk.CTkFrame(
+            card,
+            fg_color=self._theme.colors.surface,
+            corner_radius=0,
+            border_width=1,
+            border_color=self._theme.colors.border,
+        )
+        params_frame.grid(row=10, column=0, sticky="ew", padx=12, pady=(0, 10))
+        params_frame.grid_columnconfigure(0, weight=1)
+        params_frame.grid_columnconfigure(1, weight=1)
+
+        summary_label = ctk.CTkLabel(
+            card,
+            text="Sem saídas disponíveis para a lógica.",
+            text_color=self._theme.colors.text_subtle,
+            font=self._theme.font("label"),
+            anchor="w",
+            justify="left",
+            wraplength=220,
+        )
+        summary_label.grid(row=11, column=0, sticky="ew", padx=12, pady=(0, 12))
+
+        state = MontarSlotState(
+            group_id=group_id,
+            category_var=category_var,
+            indicator_var=indicator_var,
+            category_combo=category_combo,
+            indicator_combo=indicator_combo,
+            timeframe_var=timeframe_var,
+            source_var=source_var,
+            timeframe_combo=timeframe_combo,
+            source_combo=source_combo,
+            params_frame=params_frame,
+            param_widgets=[],
+            param_controls={},
+            saved_param_values={},
+            active_indicator=indicator_var.get(),
+            summary_label=summary_label,
+        )
+        self._montar_slot_states.append(state)
+        category_combo.configure(command=lambda _value, slot_state=state: self._on_montar_category_change(slot_state))
+        indicator_combo.configure(command=lambda _value, slot_state=state: self._on_montar_slot_change(slot_state))
+        self._render_montar_slot_fields(state)
+        self._update_montar_slot_summary(state)
+        self._sync_montar_slot_controls(state)
+        return card
+
     def _build_montar_logic_card(self, logic_frame: ctk.CTkFrame) -> None:
         ctk.CTkLabel(
             logic_frame,
@@ -1540,6 +1695,18 @@ class SinaisView(ctk.CTkFrame):
         self._update_montar_slot_summary(state)
         self._sync_montar_slot_controls(state)
         self._refresh_montar_logic_values()
+
+    def _on_montar_category_change(self, state: MontarSlotState) -> None:
+        indicator_names = self._get_montar_indicator_names_for_category(state.category_var.get())
+        current_indicator = state.indicator_var.get()
+
+        state.indicator_combo.configure(values=indicator_names)
+        if current_indicator in indicator_names:
+            state.indicator_combo.set(current_indicator)
+        else:
+            state.indicator_combo.set("Nao usar" if "Nao usar" in indicator_names else indicator_names[0])
+
+        self._on_montar_slot_change(state)
 
     def _sync_montar_slot_controls(self, state: MontarSlotState) -> None:
         behavior = self._montar_indicator_behavior.get(
