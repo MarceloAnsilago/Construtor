@@ -1155,24 +1155,14 @@ class SinaisView(ctk.CTkFrame):
     def _build_montar_indicator_categories(self) -> dict[str, list[str]]:
         trend_indicators = [
             "Nao usar",
-            "Keltner",
-            "Donchian",
             "Regressao",
-            "Afastamento da media",
-            "Desvio medio",
-            "ATR com desvio",
             "Media movel",
-            "Bandas de Bollinger",
-            "Envelopes",
+            "MACD",
+            "ADX (Average Direcional index)",
+            "Nuvem de Ichimoku",
             "Parabolic SAR",
             "Alligator",
-            "Nuvem de Ichimoku",
-            "ADX (Average Direcional index)",
-            "ADX Wilder",
-            "Gator",
-            "FRAMA",
-            "Vidya",
-            "Tema",
+            "Envelopes",
         ]
         momentum_indicators = [
             "Nao usar",
