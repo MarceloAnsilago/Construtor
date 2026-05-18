@@ -1177,7 +1177,6 @@ class SinaisView(ctk.CTkFrame):
             "ATR",
             "Bandas de Bollinger",
             "Keltner",
-            "Donchian",
             "StdDev",
         ]
         volume_indicators = [
@@ -1199,6 +1198,10 @@ class SinaisView(ctk.CTkFrame):
             "ADX (Average Direcional index)",
             "ADX Wilder",
         ]
+        support_resistance_indicators = [
+            "Nao usar",
+            "Donchian",
+        ]
         all_indicators = list(self._montar_indicator_outputs.keys())
         categorized_indicators = (
             set(trend_indicators)
@@ -1207,6 +1210,7 @@ class SinaisView(ctk.CTkFrame):
             | set(volume_indicators)
             | set(oscillator_indicators)
             | set(trend_strength_indicators)
+            | set(support_resistance_indicators)
         )
         return {
             "Tendência": [name for name in trend_indicators if name in self._montar_indicator_outputs],
@@ -1215,6 +1219,7 @@ class SinaisView(ctk.CTkFrame):
             "Volume": [name for name in volume_indicators if name in self._montar_indicator_outputs],
             "Osciladores": [name for name in oscillator_indicators if name in self._montar_indicator_outputs],
             "Força de Tendência": [name for name in trend_strength_indicators if name in self._montar_indicator_outputs],
+            "Suporte e Resistência": [name for name in support_resistance_indicators if name in self._montar_indicator_outputs],
             "Outros": [name for name in all_indicators if name not in categorized_indicators],
         }
 
