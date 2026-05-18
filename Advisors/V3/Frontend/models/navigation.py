@@ -23,5 +23,4 @@ def build_navigation_items() -> list[NavigationItem]:
         NavigationItem("ajustes_finais", "Ajustes Finais", "09", "[A]", "Acabamento final da estrategia."),
         NavigationItem("otimizacao", "Otimizar", "10", "[G]", "Parametros selecionados para otimizacao e preparacao do fluxo do tester."),
         NavigationItem("execucao", "Execucao", "11", "[E]", "Fluxo operacional da estrategia, disparo e integracoes."),
-        NavigationItem("painel", "Painel", "12", "[L]", "Visualizacao consolidada do painel e controles finais."),
     ]

@@ -48,9 +48,6 @@ input double InpTamanhoMinimoPavioInferior = 0.0;
 input double InpTamanhoMaximoPavioInferior = 0.0;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
-string PANEL_NAME           = "AlphaForgeV3.Panel";
-string LOG_PANEL_NAME       = "AlphaForgeV3.LogPanel";
-string LOG_LABEL_PREFIX     = "AlphaForgeV3.LogLabel.";
 string SIGNAL_MARKER_PREFIX = "AlphaForgeV3.SignalMarker.";
 
 string g_config_source = "Inputs/.set";
@@ -196,6 +193,58 @@ string BuildOrderSummaryText()
    if(g_config.signals.order_mode==ModoOrdemLimite)
       order_text+=" / "+LimitModeToText(g_config.signals.limit.mode);
    return(order_text);
+  }
+
+string FormatRuntimeDouble(const double value)
+  {
+   return(DoubleToString(value,2));
+  }
+
+string BuildRuntimeCommentText()
+  {
+   string text="AlphaForge V3";
+   text+="\nOrigem: "+g_config_source;
+   text+="\nStrategy: "+ResolveStrategyNameText()+" | Magic: "+ResolveMagicNumberText();
+   text+="\nCompra: "+(g_config.risk.allow_buy ? "Sim" : "Nao")+" | Venda: "+(g_config.risk.allow_sell ? "Sim" : "Nao");
+   text+="\nVolume inicial: "+FormatRuntimeDouble(ResolveInitialVolume())+" | Spread max: "+FormatRuntimeDouble(ResolveMaxSpreadPoints());
+   text+="\n"+BuildOrderSummaryText();
+
+   if(g_config.signals.order_mode==ModoOrdemLimite)
+     {
+      text+="\nTipo: "+LimitModeToText(g_config.signals.limit.mode);
+      if(g_config.signals.limit.mode==ModoLimiteReferencia)
+        {
+         text+="\nBase: "+ReferenceBaseToText(g_config.signals.limit.reference.base)+" | Candle: "+ReferenceCandleToText(g_config.signals.limit.reference.candle);
+         text+="\nMover prox. candle: "+(g_config.signals.limit.reference.move_next_candle ? "Sim" : "Nao");
+         text+=" | Distancia: "+FormatRuntimeDouble(g_config.signals.limit.reference.distance);
+         text+="\nExpiracao: "+ExpirationToText(g_config.signals.limit.reference.expire);
+        }
+      else
+        {
+         text+="\nModo media ativo.";
+        }
+     }
+
+   if(g_config.signals.filter.enabled)
+     {
+      text+="\n\nFiltro";
+      text+="\nMedir em: "+g_config.signals.filter.measure+" | TF: "+g_config.signals.filter.timeframe_label;
+      text+="\nVela min/max: "+FormatRuntimeDouble(g_config.signals.filter.candle_min)+" / "+FormatRuntimeDouble(g_config.signals.filter.candle_max);
+      text+="\nCorpo min/max: "+FormatRuntimeDouble(g_config.signals.filter.body_min)+" / "+FormatRuntimeDouble(g_config.signals.filter.body_max);
+      text+="\nPavio sup. min/max: "+FormatRuntimeDouble(g_config.signals.filter.upper_wick_min)+" / "+FormatRuntimeDouble(g_config.signals.filter.upper_wick_max);
+      text+="\nPavio inf. min/max: "+FormatRuntimeDouble(g_config.signals.filter.lower_wick_min)+" / "+FormatRuntimeDouble(g_config.signals.filter.lower_wick_max);
+     }
+   else
+     {
+      text+="\n\nFiltro: desativado";
+     }
+
+   return(text);
+  }
+
+void RefreshRuntimeComment()
+  {
+   Comment(BuildRuntimeCommentText());
   }
 
 long ResolveMagicNumberValue()
@@ -976,63 +1025,6 @@ void EvaluateAndTrade()
      }
   }
 
-bool CreateLogOverlay()
-  {
-   if(ObjectFind(0,LOG_PANEL_NAME)<0)
-     {
-      if(!ObjectCreate(0,LOG_PANEL_NAME,OBJ_RECTANGLE_LABEL,0,0,0))
-         return(false);
-     }
-
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_CORNER,CORNER_LEFT_UPPER);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_XDISTANCE,18);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_YDISTANCE,86);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_XSIZE,458);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_YSIZE,56);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_BGCOLOR,C'18,27,42');
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_BORDER_COLOR,C'50,70,100');
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_COLOR,C'50,70,100');
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_BACK,false);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_SELECTABLE,false);
-   ObjectSetInteger(0,LOG_PANEL_NAME,OBJPROP_HIDDEN,true);
-
-   string names[3]=
-     {
-      LOG_LABEL_PREFIX+"0",
-      LOG_LABEL_PREFIX+"1",
-      LOG_LABEL_PREFIX+"2"
-     };
-   int y_positions[3]={94,110,126};
-
-   for(int i=0;i<3;i++)
-     {
-      if(ObjectFind(0,names[i])<0)
-        {
-         if(!ObjectCreate(0,names[i],OBJ_LABEL,0,0,0))
-            return(false);
-        }
-
-      ObjectSetInteger(0,names[i],OBJPROP_CORNER,CORNER_LEFT_UPPER);
-      ObjectSetInteger(0,names[i],OBJPROP_XDISTANCE,26);
-      ObjectSetInteger(0,names[i],OBJPROP_YDISTANCE,y_positions[i]);
-      ObjectSetInteger(0,names[i],OBJPROP_FONTSIZE,8);
-      ObjectSetInteger(0,names[i],OBJPROP_COLOR,C'210,220,235');
-      ObjectSetInteger(0,names[i],OBJPROP_SELECTABLE,false);
-      ObjectSetInteger(0,names[i],OBJPROP_HIDDEN,true);
-      ObjectSetString(0,names[i],OBJPROP_FONT,"Consolas");
-     }
-   return(true);
-  }
-
-void RefreshBridgeOverlay()
-  {
-   CreateLogOverlay();
-   ObjectSetString(0,LOG_LABEL_PREFIX+"0",OBJPROP_TEXT,"AlphaForge V3 | Origem: "+g_config_source);
-   ObjectSetString(0,LOG_LABEL_PREFIX+"1",OBJPROP_TEXT,"Strategy: "+ResolveStrategyNameText()+" | Magic: "+ResolveMagicNumberText());
-   ObjectSetString(0,LOG_LABEL_PREFIX+"2",OBJPROP_TEXT,BuildOrderSummaryText()+" | Filtro: "+(g_config.signals.filter.enabled ? "Sim" : "Nao")+" | TF: "+g_config.signals.filter.timeframe_label+" | Medida: "+g_config.signals.filter.measure);
-   ChartRedraw();
-  }
-
 bool CreateButtonObject(const string name,const string text,const int x,const int y,const int width,const color back_color)
   {
    if(ObjectFind(0,name)<0)
@@ -1056,33 +1048,9 @@ bool CreateButtonObject(const string name,const string text,const int x,const in
    return(true);
   }
 
-bool CreateBackgroundPanel()
-  {
-   if(ObjectFind(0,PANEL_NAME)<0)
-     {
-      if(!ObjectCreate(0,PANEL_NAME,OBJ_RECTANGLE_LABEL,0,0,0))
-         return(false);
-     }
-
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_CORNER,CORNER_LEFT_UPPER);
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_XDISTANCE,18);
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_YDISTANCE,18);
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_XSIZE,458);
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_YSIZE,56);
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_BGCOLOR,C'24,36,58');
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_BORDER_COLOR,C'50,70,100');
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_COLOR,C'50,70,100');
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_BACK,false);
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_SELECTABLE,false);
-   ObjectSetInteger(0,PANEL_NAME,OBJPROP_HIDDEN,true);
-   return(true);
-  }
-
 bool CreateControlPanel()
   {
-   if(!CreateBackgroundPanel())
-      return(false);
-   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Criar Estrategia",28,29,432,C'45,110,255'))
+   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Abrir Construtor CTk",18,18,220,C'45,110,255'))
       return(false);
 
    ChartRedraw();
@@ -1092,11 +1060,6 @@ bool CreateControlPanel()
 void DestroyControlPanel()
   {
    ObjectDelete(0,BUTTON_CREATE_NAME);
-   ObjectDelete(0,PANEL_NAME);
-   ObjectDelete(0,LOG_PANEL_NAME);
-   ObjectDelete(0,LOG_LABEL_PREFIX+"0");
-   ObjectDelete(0,LOG_LABEL_PREFIX+"1");
-   ObjectDelete(0,LOG_LABEL_PREFIX+"2");
    DestroySignalMarkers();
   }
 //+------------------------------------------------------------------+
@@ -1130,16 +1093,7 @@ int OnInit()
       g_chart_theme.RestoreTheme();
       return(INIT_FAILED);
      }
-
-   if(!CreateLogOverlay())
-     {
-      Print("AlphaForge V3: falha ao criar painel de logs.");
-      DestroyControlPanel();
-      g_chart_theme.RestoreTheme();
-      return(INIT_FAILED);
-     }
-
-   RefreshBridgeOverlay();
+   RefreshRuntimeComment();
 
    return(INIT_SUCCEEDED);
   }
@@ -1151,6 +1105,7 @@ void OnDeinit(const int reason)
    if(HasInteractiveChart())
      {
       DestroyControlPanel();
+      Comment("");
      }
    if(HasInteractiveChart())
       g_chart_theme.RestoreTheme();
@@ -1161,6 +1116,8 @@ void OnDeinit(const int reason)
 void OnTick()
   {
    EvaluateAndTrade();
+   if(HasInteractiveChart())
+      RefreshRuntimeComment();
   }
 //+------------------------------------------------------------------+
 //| Chart event                                                      |
@@ -1174,8 +1131,7 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
      {
       g_chart_theme.RefreshThemeDecorations();
       CreateControlPanel();
-      CreateLogOverlay();
-      RefreshBridgeOverlay();
+      RefreshRuntimeComment();
       return;
      }
 
