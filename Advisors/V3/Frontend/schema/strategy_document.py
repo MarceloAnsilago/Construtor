@@ -37,6 +37,19 @@ class SignalLimitDocument:
 
 
 @dataclass(frozen=True)
+class StopLossFixedDocument:
+    enabled: bool
+    distance: str
+
+
+@dataclass(frozen=True)
+class StopLossDocument:
+    mode: str
+    measure: str
+    fixed: StopLossFixedDocument
+
+
+@dataclass(frozen=True)
 class SignalsDocument:
     order_mode: str
     limit: SignalLimitDocument
@@ -49,6 +62,7 @@ class StrategyDocument:
     strategy_name: str
     magic_number: str
     signals: SignalsDocument
+    stop_loss: StopLossDocument
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -79,6 +93,14 @@ class StrategyDocument:
                     "upper_wick_max": self.signals.filter.upper_wick_max,
                     "lower_wick_min": self.signals.filter.lower_wick_min,
                     "lower_wick_max": self.signals.filter.lower_wick_max,
+                },
+            },
+            "stop_loss": {
+                "mode": self.stop_loss.mode,
+                "measure": self.stop_loss.measure,
+                "fixed": {
+                    "enabled": self.stop_loss.fixed.enabled,
+                    "distance": self.stop_loss.fixed.distance,
                 },
             },
         }

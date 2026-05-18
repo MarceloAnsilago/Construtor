@@ -1,20 +1,22 @@
 import customtkinter as ctk
 
+from state.strategy_store import StrategyStore
 from themes.theme import UITheme
 
 
 class StopLossView(ctk.CTkFrame):
-    def __init__(self, master, theme: UITheme) -> None:
+    def __init__(self, master, theme: UITheme, strategy_store: StrategyStore | None = None) -> None:
         super().__init__(master, fg_color="transparent")
         self._theme = theme
+        self._strategy_store = strategy_store or StrategyStore()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self._mode = "fixed"
+        self._mode = "none"
         self._calc_method = "ref"
         self._calc_tab_var = ctk.StringVar(value="Ref.")
-        self._type_var = ctk.StringVar(value="Pontos")
+        self._type_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.measure")))
 
         self._scroll = ctk.CTkScrollableFrame(
             self,
@@ -29,7 +31,8 @@ class StopLossView(ctk.CTkFrame):
         self._build_calc_card()
         self._build_multiplier_card()
 
-        self._set_mode("fixed")
+        self._type_var.trace_add("write", self._on_type_change)
+        self.load_from_store()
         self._set_calc_method("ref")
 
     def _build_header(self) -> None:
@@ -73,8 +76,10 @@ class StopLossView(ctk.CTkFrame):
         self._fixed_checkbox.grid(row=1, column=0, columnspan=2, sticky="w", padx=16, pady=(0, 16))
 
         self._add_label(card, 2, "Distancia do stop")
-        self._fixed_distance = self._create_entry(card, "100.0")
+        self._fixed_distance_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.fixed.distance")))
+        self._fixed_distance = self._create_entry(card, self._fixed_distance_var.get(), self._fixed_distance_var)
         self._fixed_distance.grid(row=3, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 14))
+        self._fixed_distance_var.trace_add("write", self._on_fixed_distance_change)
 
     def _build_calc_card(self) -> None:
         card = self._create_card(1, 1, "Stop loss (calculo)")
@@ -306,9 +311,10 @@ class StopLossView(ctk.CTkFrame):
         )
         return combo
 
-    def _create_entry(self, master, value: str) -> ctk.CTkEntry:
+    def _create_entry(self, master, value: str, variable: ctk.StringVar | None = None) -> ctk.CTkEntry:
         entry = ctk.CTkEntry(
             master,
+            textvariable=variable,
             height=32,
             corner_radius=0,
             border_width=1,
@@ -317,7 +323,8 @@ class StopLossView(ctk.CTkFrame):
             text_color=self._theme.colors.text,
             font=self._theme.font("body"),
         )
-        entry.insert(0, value)
+        if variable is None:
+            entry.insert(0, value)
         return entry
 
     def _add_label(self, master, row: int, text: str, padx: int = 16, pady: tuple[int, int] = (0, 4)) -> None:
@@ -340,14 +347,25 @@ class StopLossView(ctk.CTkFrame):
             self._fixed_checkbox.select()
             self._calc_checkbox.deselect()
             self._mult_checkbox.deselect()
+            self._strategy_store.set("stop_loss.mode", "fixed")
+            self._strategy_store.set("stop_loss.fixed.enabled", True)
         elif mode == "calc":
             self._fixed_checkbox.deselect()
             self._calc_checkbox.select()
             self._mult_checkbox.deselect()
-        else:
+            self._strategy_store.set("stop_loss.mode", "calc")
+            self._strategy_store.set("stop_loss.fixed.enabled", False)
+        elif mode == "mult":
             self._fixed_checkbox.deselect()
             self._calc_checkbox.deselect()
             self._mult_checkbox.select()
+            self._strategy_store.set("stop_loss.mode", "mult")
+            self._strategy_store.set("stop_loss.fixed.enabled", False)
+        else:
+            self._fixed_checkbox.deselect()
+            self._calc_checkbox.deselect()
+            self._mult_checkbox.deselect()
+            self._strategy_store.set("stop_loss.fixed.enabled", False)
 
         self._fixed_distance.configure(state="normal" if mode == "fixed" else "disabled")
         self._mult_base.configure(state="readonly" if mode == "mult" else "disabled")
@@ -396,3 +414,24 @@ class StopLossView(ctk.CTkFrame):
 
         self._calc_max_base.configure(state="readonly" if max_enabled else "disabled")
         self._calc_max_count.configure(state="normal" if max_enabled else "disabled")
+
+    def _on_type_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.measure", self._type_var.get())
+
+    def _on_fixed_distance_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.fixed.distance", self._fixed_distance_var.get().strip() or "0")
+
+    def load_from_store(self) -> None:
+        self._type_var.set(str(self._strategy_store.get("stop_loss.measure")))
+        self._fixed_distance_var.set(str(self._strategy_store.get("stop_loss.fixed.distance")))
+
+        mode = str(self._strategy_store.get("stop_loss.mode")).strip() or "fixed"
+        fixed_enabled = bool(self._strategy_store.get("stop_loss.fixed.enabled"))
+        if fixed_enabled:
+            self._set_mode("fixed")
+        elif mode == "calc":
+            self._set_mode("calc")
+        elif mode == "mult":
+            self._set_mode("mult")
+        else:
+            self._set_mode("none")

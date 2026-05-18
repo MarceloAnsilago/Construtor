@@ -47,6 +47,11 @@ input double InpTamanhoMaximoPavioSuperior = 0.0;
 input double InpTamanhoMinimoPavioInferior = 0.0;
 input double InpTamanhoMaximoPavioInferior = 0.0;
 
+input group "5.Stop loss"
+input bool InpUsarStopLossFixo = false;
+input bool InpTipoDeStopLossPercentual = false;
+input double InpDistanciaDoStopLossFixo = 100.0;
+
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string SIGNAL_MARKER_PREFIX = "AlphaForgeV3.SignalMarker.";
 
@@ -195,6 +200,13 @@ string BuildOrderSummaryText()
    return(order_text);
   }
 
+string BuildStopLossSummaryText()
+  {
+   if(!g_config.stop_loss.enabled)
+      return("Stop loss: desativado");
+   return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.distance));
+  }
+
 int ResolveConfiguredSignalDirection()
   {
    if(g_config.risk.allow_buy && !g_config.risk.allow_sell)
@@ -218,6 +230,7 @@ string BuildRuntimeCommentText()
    int configured_direction=ResolveConfiguredSignalDirection();
    text+="\nDirecao base do sinal: "+(configured_direction>0 ? "Compra" : (configured_direction<0 ? "Venda" : "Automatica"));
    text+="\nVolume inicial: "+FormatRuntimeDouble(ResolveInitialVolume())+" | Spread max: "+FormatRuntimeDouble(ResolveMaxSpreadPoints());
+   text+="\n"+BuildStopLossSummaryText();
    text+="\n"+BuildOrderSummaryText();
 
    if(g_config.signals.order_mode==ModoOrdemLimite)
@@ -400,6 +413,38 @@ double ConvertDistanceToMetric(const double distance_price,const double referenc
    if(_Point<=0.0)
       return(0.0);
    return(distance_price/_Point);
+  }
+
+double ResolveStopLossDistancePrice(const double reference_price)
+  {
+   if(!g_config.stop_loss.enabled)
+      return(0.0);
+
+   double distance=g_config.stop_loss.distance;
+   if(distance<=0.0)
+      return(0.0);
+
+   if(NormalizeText(g_config.stop_loss.measure)=="Percentual")
+     {
+      if(reference_price<=0.0)
+         return(0.0);
+      return(reference_price*(distance/100.0));
+     }
+
+   return(distance*_Point);
+  }
+
+double ResolveStopLossPrice(const int direction,const double entry_price)
+  {
+   double distance_price=ResolveStopLossDistancePrice(entry_price);
+   if(distance_price<=0.0 || entry_price<=0.0)
+      return(0.0);
+
+   double stop_loss_price=(direction>0) ? entry_price-distance_price : entry_price+distance_price;
+   stop_loss_price=NormalizeDouble(stop_loss_price,_Digits);
+   if(stop_loss_price<=0.0)
+      return(0.0);
+   return(stop_loss_price);
   }
 
 double NormalizeVolume(const double requested_volume)
@@ -781,6 +826,8 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    double price_offset=g_config.signals.limit.reference.distance*_Point;
    double updated_price=(order_type==ORDER_TYPE_BUY_LIMIT) ? reference_price-price_offset : reference_price+price_offset;
    updated_price=NormalizeDouble(updated_price,_Digits);
+   int pending_direction=(order_type==ORDER_TYPE_BUY_LIMIT) ? 1 : -1;
+   double updated_stop_loss=ResolveStopLossPrice(pending_direction,updated_price);
 
    if(updated_price<=0.0)
       return;
@@ -792,7 +839,7 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    g_trade.SetTypeFillingBySymbol(_Symbol);
    g_trade.SetDeviationInPoints(20);
 
-   if(!g_trade.OrderModify(ticket,updated_price,0.0,0.0,order_time,expiration))
+   if(!g_trade.OrderModify(ticket,updated_price,updated_stop_loss,0.0,order_time,expiration))
      {
       Print(
          "AlphaForge V3: falha ao mover ordem limite por referencia. Ticket=",ticket,
@@ -805,6 +852,7 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    Print(
       "AlphaForge V3: ordem limite movida para o proximo candle. Ticket=",ticket,
       " NovoPreco=",DoubleToString(updated_price,_Digits),
+      " SL=",DoubleToString(updated_stop_loss,_Digits),
       " Base=",ReferenceBaseToText(g_config.signals.limit.reference.base),
       " Candle=",ReferenceCandleToText(g_config.signals.limit.reference.candle)
    );
@@ -856,6 +904,9 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
       return(false);
      }
 
+   double entry_price=direction>0 ? tick.ask : tick.bid;
+   double stop_loss_price=ResolveStopLossPrice(direction,entry_price);
+
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
    g_trade.SetDeviationInPoints(20);
@@ -869,9 +920,9 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
    bool sent=false;
    if(direction>0)
-      sent=g_trade.Buy(volume,_Symbol,0.0,0.0,0.0,comment);
+      sent=g_trade.Buy(volume,_Symbol,0.0,stop_loss_price,0.0,comment);
    else
-      sent=g_trade.Sell(volume,_Symbol,0.0,0.0,0.0,comment);
+      sent=g_trade.Sell(volume,_Symbol,0.0,stop_loss_price,0.0,comment);
 
    if(!sent)
      {
@@ -879,7 +930,13 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
       return(false);
      }
 
-  Print("AlphaForge V3: ordem a mercado enviada com sucesso. Ticket=",g_trade.ResultOrder()," Volume=",DoubleToString(volume,2));
+  Print(
+     "AlphaForge V3: ordem a mercado enviada com sucesso. Ticket=",g_trade.ResultOrder(),
+     " Volume=",DoubleToString(volume,2),
+     " SL=",DoubleToString(stop_loss_price,_Digits),
+     " TipoSL=",g_config.stop_loss.measure,
+     " DistSL=",DoubleToString(g_config.stop_loss.distance,2)
+  );
   return(true);
   }
 
@@ -947,6 +1004,8 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
       return(false);
      }
 
+   double stop_loss_price=ResolveStopLossPrice(direction,pending_price);
+
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
    g_trade.SetDeviationInPoints(20);
@@ -963,9 +1022,9 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
 
    bool sent=false;
    if(direction>0)
-      sent=g_trade.BuyLimit(volume,pending_price,_Symbol,0.0,0.0,ORDER_TIME_GTC,0,comment);
+      sent=g_trade.BuyLimit(volume,pending_price,_Symbol,stop_loss_price,0.0,ORDER_TIME_GTC,0,comment);
    else
-      sent=g_trade.SellLimit(volume,pending_price,_Symbol,0.0,0.0,ORDER_TIME_GTC,0,comment);
+      sent=g_trade.SellLimit(volume,pending_price,_Symbol,stop_loss_price,0.0,ORDER_TIME_GTC,0,comment);
 
    if(!sent)
      {
@@ -976,6 +1035,9 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
    Print(
       "AlphaForge V3: ordem limite por referencia enviada. Ticket=",g_trade.ResultOrder(),
       " Preco=",DoubleToString(pending_price,_Digits),
+      " SL=",DoubleToString(stop_loss_price,_Digits),
+      " TipoSL=",g_config.stop_loss.measure,
+      " DistSL=",DoubleToString(g_config.stop_loss.distance,2),
       " Base=",ReferenceBaseToText(g_config.signals.limit.reference.base),
       " Candle=",ReferenceCandleToText(g_config.signals.limit.reference.candle),
       " Dist=",DoubleToString(g_config.signals.limit.reference.distance,2)

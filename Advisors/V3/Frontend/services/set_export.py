@@ -33,6 +33,9 @@ INPUT_TO_STORE_KEYS = {
     "InpTamanhoMaximoPavioInferior": ("signals.filter.lower_wick_max",),
     "InpMinimoDePavios": ("signals.filter.upper_wick_min", "signals.filter.lower_wick_min"),
     "InpMaximoDePavios": ("signals.filter.upper_wick_max", "signals.filter.lower_wick_max"),
+    "InpUsarStopLossFixo": ("stop_loss.fixed.enabled",),
+    "InpTipoDeStopLossPercentual": ("stop_loss.measure",),
+    "InpDistanciaDoStopLossFixo": ("stop_loss.fixed.distance",),
 }
 
 ORDER_MODE_FROM_SET = {
@@ -122,6 +125,10 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
     if input_name == "InpAtivarFiltro":
         return _parse_bool(value)
     if input_name == "InpMedirEmPercentual":
+        return "Percentual" if _parse_bool(value) else "Pontos"
+    if input_name == "InpUsarStopLossFixo":
+        return _parse_bool(value)
+    if input_name == "InpTipoDeStopLossPercentual":
         return "Percentual" if _parse_bool(value) else "Pontos"
     if input_name == "InpTempoGraficoDoFiltro":
         return "Corrente" if value.lower() == "current" else value

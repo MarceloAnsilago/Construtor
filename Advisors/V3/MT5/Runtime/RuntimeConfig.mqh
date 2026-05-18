@@ -76,6 +76,13 @@ struct SSignalConfig
    SSignalFilterConfig filter;
   };
 
+struct SStopLossFixedConfig
+  {
+   bool    enabled;
+   string  measure;
+   double  distance;
+  };
+
 struct SRiskConfig
   {
    bool   allow_buy;
@@ -89,6 +96,7 @@ struct SRuntimeConfig
    string        strategy_name;
    long          magic_number;
    SSignalConfig signals;
+   SStopLossFixedConfig stop_loss;
    SRiskConfig   risk;
   };
 

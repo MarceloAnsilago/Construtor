@@ -46,6 +46,8 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.signals.filter.lower_wick_min=0.0;
    if(config.signals.filter.lower_wick_max<0.0)
       config.signals.filter.lower_wick_max=0.0;
+   if(config.stop_loss.distance<0.0)
+      config.stop_loss.distance=0.0;
   }
 
 #endif

@@ -7,6 +7,8 @@ from schema.strategy_document import (
     SignalLimitDocument,
     SignalLimitReferenceDocument,
     SignalsDocument,
+    StopLossDocument,
+    StopLossFixedDocument,
     StrategyDocument,
 )
 
@@ -74,6 +76,14 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                 lower_wick_max=str(store.get("signals.filter.lower_wick_max")),
             ),
         ),
+        stop_loss=StopLossDocument(
+            mode=str(store.get("stop_loss.mode")),
+            measure=str(store.get("stop_loss.measure")),
+            fixed=StopLossFixedDocument(
+                enabled=bool(store.get("stop_loss.fixed.enabled")),
+                distance=str(store.get("stop_loss.fixed.distance")),
+            ),
+        ),
     )
 
 
@@ -97,6 +107,10 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "signal_filter_upper_wick_max": str(store.get("signals.filter.upper_wick_max")),
         "signal_filter_lower_wick_min": str(store.get("signals.filter.lower_wick_min")),
         "signal_filter_lower_wick_max": str(store.get("signals.filter.lower_wick_max")),
+        "stop_loss_mode": str(store.get("stop_loss.mode")),
+        "stop_loss_measure": str(store.get("stop_loss.measure")),
+        "stop_loss_fixed_enabled": "Sim" if bool(store.get("stop_loss.fixed.enabled")) else "Nao",
+        "stop_loss_fixed_distance": str(store.get("stop_loss.fixed.distance")),
     }
 
 
@@ -142,4 +156,7 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpTamanhoMaximoPavioSuperior={store.get('signals.filter.upper_wick_max')}",
         f"InpTamanhoMinimoPavioInferior={store.get('signals.filter.lower_wick_min')}",
         f"InpTamanhoMaximoPavioInferior={store.get('signals.filter.lower_wick_max')}",
+        f"InpUsarStopLossFixo={_bool_to_set(store.get('stop_loss.fixed.enabled'))}",
+        f"InpTipoDeStopLossPercentual={_bool_to_set(str(store.get('stop_loss.measure')) == 'Percentual')}",
+        f"InpDistanciaDoStopLossFixo={store.get('stop_loss.fixed.distance')}",
     ]

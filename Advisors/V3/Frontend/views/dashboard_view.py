@@ -117,7 +117,7 @@ class DashboardView(ctk.CTkFrame):
             return self._create_view(InitialSettingsView, strategy_store=self._strategy_store)
 
         if item.item_id == "stop_loss":
-            return self._create_view(StopLossView)
+            return self._create_view(StopLossView, strategy_store=self._strategy_store)
 
         if item.item_id == "stop_movel":
             return self._create_view(StopMovelView)
