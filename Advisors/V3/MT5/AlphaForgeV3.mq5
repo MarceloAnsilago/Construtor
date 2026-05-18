@@ -202,7 +202,7 @@ string FormatRuntimeDouble(const double value)
 
 string BuildRuntimeCommentText()
   {
-   string text="AlphaForge V3";
+   string text="\n\n\n\nAlphaForge V3";
    text+="\nOrigem: "+g_config_source;
    text+="\nStrategy: "+ResolveStrategyNameText()+" | Magic: "+ResolveMagicNumberText();
    text+="\nCompra: "+(g_config.risk.allow_buy ? "Sim" : "Nao")+" | Venda: "+(g_config.risk.allow_sell ? "Sim" : "Nao");
