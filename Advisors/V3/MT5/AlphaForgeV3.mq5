@@ -53,6 +53,7 @@ input bool InpTipoDeStopLossPercentual = false;
 input double InpDistanciaDoStopLossFixo = 100.0;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
+string BUTTON_CARD_NAME     = "AlphaForgeV3.BtnCard";
 string SIGNAL_MARKER_PREFIX = "AlphaForgeV3.SignalMarker.";
 
 string g_config_source = "Inputs/.set";
@@ -1206,20 +1207,41 @@ bool CreateButtonObject(const string name,const string text,const int x,const in
    ObjectSetInteger(0,name,OBJPROP_XDISTANCE,x);
    ObjectSetInteger(0,name,OBJPROP_YDISTANCE,y);
    ObjectSetInteger(0,name,OBJPROP_XSIZE,width);
-   ObjectSetInteger(0,name,OBJPROP_YSIZE,34);
-   ObjectSetInteger(0,name,OBJPROP_FONTSIZE,10);
-   ObjectSetInteger(0,name,OBJPROP_COLOR,C'210,220,235');
+   ObjectSetInteger(0,name,OBJPROP_YSIZE,40);
+   ObjectSetInteger(0,name,OBJPROP_FONTSIZE,11);
+   ObjectSetInteger(0,name,OBJPROP_COLOR,C'249,243,233');
    ObjectSetInteger(0,name,OBJPROP_BGCOLOR,back_color);
-   ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,C'50,70,100');
+   ObjectSetInteger(0,name,OBJPROP_BORDER_COLOR,C'200,148,99');
    ObjectSetInteger(0,name,OBJPROP_SELECTABLE,false);
    ObjectSetInteger(0,name,OBJPROP_HIDDEN,true);
+   ObjectSetInteger(0,name,OBJPROP_ZORDER,1);
+   ObjectSetString(0,name,OBJPROP_FONT,"Segoe UI Semibold");
    ObjectSetString(0,name,OBJPROP_TEXT,text);
    return(true);
   }
 
 bool CreateControlPanel()
   {
-   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Abrir Construtor CTk",18,18,220,C'45,110,255'))
+   if(ObjectFind(0,BUTTON_CARD_NAME)<0)
+     {
+      if(!ObjectCreate(0,BUTTON_CARD_NAME,OBJ_RECTANGLE_LABEL,0,0,0))
+         return(false);
+     }
+
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_CORNER,CORNER_LEFT_UPPER);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_XDISTANCE,14);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_YDISTANCE,14);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_XSIZE,236);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_YSIZE,48);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_BGCOLOR,C'43,57,80');
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_BORDER_COLOR,C'54,71,99');
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_COLOR,C'54,71,99');
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_BACK,false);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_SELECTABLE,false);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_HIDDEN,true);
+   ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_ZORDER,0);
+
+   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Abrir Construtor CTk",22,18,228,C'230,118,59'))
       return(false);
 
    ChartRedraw();
@@ -1229,6 +1251,7 @@ bool CreateControlPanel()
 void DestroyControlPanel()
   {
    ObjectDelete(0,BUTTON_CREATE_NAME);
+   ObjectDelete(0,BUTTON_CARD_NAME);
    DestroySignalMarkers();
   }
 //+------------------------------------------------------------------+
