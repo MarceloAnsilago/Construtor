@@ -1538,6 +1538,7 @@ class SinaisView(ctk.CTkFrame):
         self._add_label(card, 2, "Categoria", padx=12)
         category_var = ctk.StringVar(value="Outros")
         category_combo = self._create_combo(card, list(self._montar_indicator_categories.keys()), category_var)
+        category_combo.configure(font=self._theme.font("body", weight="bold"))
         category_combo.grid(row=3, column=0, sticky="ew", padx=12, pady=(0, 10))
 
         indicator_names = self._get_montar_indicator_names_for_category(category_var.get())
