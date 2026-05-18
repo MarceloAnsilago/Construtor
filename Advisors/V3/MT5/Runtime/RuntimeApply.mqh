@@ -32,7 +32,6 @@ void SyncRuntimeConfigFromInputs()
    g_config.stop_loss.reference.base=InpReferenciaDoStopLoss;
    g_config.stop_loss.reference.candle=InpCandleDaReferenciaDoStopLoss;
    g_config.stop_loss.reference.distance=InpDistanciaDoStopLossPorReferencia;
-   g_config.stop_loss.reference.expire=InpExpiracaoDoStopLossPorReferencia;
    g_config.risk.allow_buy=InpOperarNaCompra;
    g_config.risk.allow_sell=InpOperarNaVenda;
    g_config.risk.initial_volume=InpVolumeInicial;

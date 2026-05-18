@@ -33,12 +33,6 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       && config.stop_loss.reference.candle!=CandlePenultimo
       && config.stop_loss.reference.candle!=CandleAntepenultimo)
       config.stop_loss.reference.candle=CandleAtual;
-   if(config.stop_loss.reference.expire!=NaoExpirar
-      && config.stop_loss.reference.expire!=Expirar1Candle
-      && config.stop_loss.reference.expire!=Expirar2Candles
-      && config.stop_loss.reference.expire!=Expirar3Candles
-      && config.stop_loss.reference.expire!=Expirar4Candles)
-      config.stop_loss.reference.expire=NaoExpirar;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;

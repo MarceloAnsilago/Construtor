@@ -40,7 +40,6 @@ INPUT_TO_STORE_KEYS = {
     "InpReferenciaDoStopLoss": ("stop_loss.calc.reference.base",),
     "InpCandleDaReferenciaDoStopLoss": ("stop_loss.calc.reference.candle",),
     "InpDistanciaDoStopLossPorReferencia": ("stop_loss.calc.reference.distance",),
-    "InpExpiracaoDoStopLossPorReferencia": ("stop_loss.calc.reference.expire",),
 }
 
 ORDER_MODE_FROM_SET = {
@@ -141,8 +140,6 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
         return REFERENCE_BASE_FROM_SET.get(value, "Maxima")
     if input_name == "InpCandleDaReferenciaDoStopLoss":
         return REFERENCE_CANDLE_FROM_SET.get(value, "Atual")
-    if input_name == "InpExpiracaoDoStopLossPorReferencia":
-        return EXPIRATION_FROM_SET.get(value, "Nao expirar")
     if input_name == "InpTempoGraficoDoFiltro":
         return "Corrente" if value.lower() == "current" else value
     return value

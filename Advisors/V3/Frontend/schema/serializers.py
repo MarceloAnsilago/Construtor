@@ -91,7 +91,6 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                     base=str(store.get("stop_loss.calc.reference.base")),
                     candle=str(store.get("stop_loss.calc.reference.candle")),
                     distance=str(store.get("stop_loss.calc.reference.distance")),
-                    expire=str(store.get("stop_loss.calc.reference.expire")),
                 ),
             ),
         ),
@@ -126,7 +125,6 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "stop_loss_calc_reference_base": str(store.get("stop_loss.calc.reference.base")),
         "stop_loss_calc_reference_candle": str(store.get("stop_loss.calc.reference.candle")),
         "stop_loss_calc_reference_distance": str(store.get("stop_loss.calc.reference.distance")),
-        "stop_loss_calc_reference_expire": str(store.get("stop_loss.calc.reference.expire")),
     }
 
 
@@ -179,5 +177,4 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpReferenciaDoStopLoss={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.reference.base'), '0')}",
         f"InpCandleDaReferenciaDoStopLoss={_enum_to_set(REFERENCE_CANDLE_TO_SET, store.get('stop_loss.calc.reference.candle'), '0')}",
         f"InpDistanciaDoStopLossPorReferencia={store.get('stop_loss.calc.reference.distance')}",
-        f"InpExpiracaoDoStopLossPorReferencia={_enum_to_set(EXPIRATION_TO_SET, store.get('stop_loss.calc.reference.expire'), '0')}",
     ]

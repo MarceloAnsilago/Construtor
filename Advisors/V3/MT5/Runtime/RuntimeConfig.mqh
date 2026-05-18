@@ -88,7 +88,6 @@ struct SStopLossReferenceConfig
    ESignalLimitReferenceBase    base;
    ESignalLimitReferenceCandle  candle;
    double                       distance;
-   ESignalLimitExpiration       expire;
   };
 
 struct SStopLossConfig

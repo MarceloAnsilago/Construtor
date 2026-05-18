@@ -55,7 +55,6 @@ input double InpDistanciaDoStopLossFixo = 100.0;
 input ESignalLimitReferenceBase InpReferenciaDoStopLoss = BaseMaxima;
 input ESignalLimitReferenceCandle InpCandleDaReferenciaDoStopLoss = CandleAtual;
 input double InpDistanciaDoStopLossPorReferencia = 0.0;
-input ESignalLimitExpiration InpExpiracaoDoStopLossPorReferencia = NaoExpirar;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string BUTTON_CARD_NAME     = "AlphaForgeV3.BtnCard";
