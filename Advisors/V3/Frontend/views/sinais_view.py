@@ -2250,9 +2250,11 @@ class SinaisView(ctk.CTkFrame):
         self._strategy_store.set("risk.allow_sell", "Nao" if is_buy else "Sim")
 
         opposite_text = (
-            "O sinal de venda será criado automaticamente."
+            "Quando o criterio nao define direcao, o filtro usa Compra. "
+            "O sinal contrario so e criado automaticamente nos criterios direcionais."
             if is_buy
-            else "O sinal de compra será criado automaticamente."
+            else "Quando o criterio nao define direcao, o filtro usa Venda. "
+            "O sinal contrario so e criado automaticamente nos criterios direcionais."
         )
         for label in self._signal_info_labels:
             label.configure(text=opposite_text)

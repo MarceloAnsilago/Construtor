@@ -195,6 +195,15 @@ string BuildOrderSummaryText()
    return(order_text);
   }
 
+int ResolveConfiguredSignalDirection()
+  {
+   if(g_config.risk.allow_buy && !g_config.risk.allow_sell)
+      return(1);
+   if(!g_config.risk.allow_buy && g_config.risk.allow_sell)
+      return(-1);
+   return(0);
+  }
+
 string FormatRuntimeDouble(const double value)
   {
    return(DoubleToString(value,2));
@@ -206,6 +215,8 @@ string BuildRuntimeCommentText()
    text+="\nOrigem: "+g_config_source;
    text+="\nStrategy: "+ResolveStrategyNameText()+" | Magic: "+ResolveMagicNumberText();
    text+="\nCompra: "+(g_config.risk.allow_buy ? "Sim" : "Nao")+" | Venda: "+(g_config.risk.allow_sell ? "Sim" : "Nao");
+   int configured_direction=ResolveConfiguredSignalDirection();
+   text+="\nDirecao base do sinal: "+(configured_direction>0 ? "Compra" : (configured_direction<0 ? "Venda" : "Automatica"));
    text+="\nVolume inicial: "+FormatRuntimeDouble(ResolveInitialVolume())+" | Spread max: "+FormatRuntimeDouble(ResolveMaxSpreadPoints());
    text+="\n"+BuildOrderSummaryText();
 
@@ -617,6 +628,12 @@ bool EvaluateSignalFilter(const MqlRates &signal_bar)
 
 int ResolveSignalDirection(const MqlRates &signal_bar)
   {
+   // For non-directional criteria like the current candle filter, honor the
+   // direction selected in the CTk when exactly one side is marked.
+   int configured_direction=ResolveConfiguredSignalDirection();
+   if(configured_direction!=0)
+      return(configured_direction);
+
    if(signal_bar.close>signal_bar.open)
       return(1);
    if(signal_bar.close<signal_bar.open)
