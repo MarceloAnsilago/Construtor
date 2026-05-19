@@ -148,6 +148,13 @@ string NormalizeText(const string value)
    return(text);
   }
 
+bool IsPercentMeasure(const string measure)
+  {
+   string normalized=NormalizeText(measure);
+   StringToLower(normalized);
+   return(normalized=="percentual");
+  }
+
 string OrderModeToText(const ESignalOrderMode mode)
   {
    if(mode==ModoOrdemLimite)
@@ -254,6 +261,13 @@ int ResolveConfiguredSignalDirection()
 string FormatRuntimeDouble(const double value)
   {
    return(DoubleToString(value,2));
+  }
+
+double ConvertPriceDistanceToPoints(const double distance_price)
+  {
+   if(_Point<=0.0)
+      return(0.0);
+   return(distance_price/_Point);
   }
 
 string BuildRuntimeCommentText()
@@ -438,7 +452,7 @@ ENUM_TIMEFRAMES ResolveTimeframe(const string timeframe_text)
 
 double ConvertDistanceToMetric(const double distance_price,const double reference_price,const string measure)
   {
-   if(NormalizeText(measure)=="Percentual")
+   if(IsPercentMeasure(measure))
      {
       if(reference_price<=0.0)
          return(0.0);
@@ -459,7 +473,7 @@ double ResolveStopLossDistancePrice(const double reference_price)
    if(distance<=0.0)
       return(0.0);
 
-   if(NormalizeText(g_config.stop_loss.measure)=="Percentual")
+   if(g_config.stop_loss.is_percent)
      {
       if(reference_price<=0.0)
          return(0.0);
@@ -469,12 +483,12 @@ double ResolveStopLossDistancePrice(const double reference_price)
    return(distance*_Point);
   }
 
-double ResolveMetricDistancePrice(const double distance,const double reference_price,const string measure)
+double ResolveMetricDistancePrice(const double distance,const double reference_price)
   {
    if(distance<=0.0)
       return(0.0);
 
-   if(NormalizeText(measure)=="Percentual")
+   if(g_config.stop_loss.is_percent)
      {
       if(reference_price<=0.0)
          return(0.0);
@@ -512,11 +526,36 @@ void LogRejectedReferenceStopLoss(
       " Entry=",DoubleToString(entry_price,_Digits),
       " Ref=",DoubleToString(reference_price,_Digits),
       " DistCalc=",DoubleToString(distance_price,_Digits),
+      " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
       " SL=",DoubleToString(stop_loss_price,_Digits),
       " Base=",ReferenceBaseToText(g_config.stop_loss.reference.base),
       " Candle=",ReferenceCandleToText(g_config.stop_loss.reference.candle),
       " DistCfg=",DoubleToString(g_config.stop_loss.reference.distance,2),
       " Medida=",g_config.stop_loss.measure
+   );
+  }
+
+void LogReferenceStopLossCalculation(
+   const int direction,
+   const double entry_price,
+   const double reference_price,
+   const double configured_distance,
+   const double distance_price,
+   const double stop_loss_price
+)
+  {
+   Print(
+      "AlphaForge V3: calculo do stop loss por referencia.",
+      " Direcao=",IntegerToString(direction),
+      " Entry=",DoubleToString(entry_price,_Digits),
+      " Ref=",DoubleToString(reference_price,_Digits),
+      " Base=",ReferenceBaseToText(g_config.stop_loss.reference.base),
+      " Candle=",ReferenceCandleToText(g_config.stop_loss.reference.candle),
+      " Medida=",g_config.stop_loss.measure,
+      " DistCfg=",DoubleToString(configured_distance,2),
+      " DistCalc=",DoubleToString(distance_price,_Digits),
+      " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
+      " SL=",DoubleToString(stop_loss_price,_Digits)
    );
   }
 
@@ -535,8 +574,7 @@ double ResolveReferenceStopLossPrice(const int direction,const double entry_pric
    double reference_price=ResolveReferencePrice(reference_bar,g_config.stop_loss.reference.base);
    double distance_price=ResolveMetricDistancePrice(
       g_config.stop_loss.reference.distance,
-      reference_price,
-      g_config.stop_loss.measure
+      reference_price
    );
    if(reference_price<=0.0 || distance_price<0.0 || entry_price<=0.0)
      {
@@ -546,6 +584,14 @@ double ResolveReferenceStopLossPrice(const int direction,const double entry_pric
 
    double stop_loss_price=(direction>0) ? reference_price-distance_price : reference_price+distance_price;
    stop_loss_price=NormalizeDouble(stop_loss_price,_Digits);
+   LogReferenceStopLossCalculation(
+      direction,
+      entry_price,
+      reference_price,
+      g_config.stop_loss.reference.distance,
+      distance_price,
+      stop_loss_price
+   );
    if(stop_loss_price<=0.0)
      {
       LogRejectedReferenceStopLoss("stop_loss_menor_ou_igual_zero",direction,entry_price,reference_price,distance_price,stop_loss_price);
@@ -1158,8 +1204,8 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
   Print(
      "AlphaForge V3: ordem a mercado enviada com sucesso. Ticket=",g_trade.ResultOrder(),
      " Volume=",DoubleToString(volume,2),
-     " SL=",DoubleToString(stop_loss_price,_Digits),
-     " TipoSL=",g_config.stop_loss.measure,
+      " SL=",DoubleToString(stop_loss_price,_Digits),
+      " TipoSL=",g_config.stop_loss.measure,
      " DistSL=",DoubleToString(ResolveConfiguredStopLossDistance(),2)
   );
   return(true);

@@ -94,6 +94,7 @@ struct SStopLossConfig
   {
    string                     mode;
    string                     measure;
+   bool                       is_percent;
    SStopLossFixedConfig       fixed;
    SStopLossReferenceConfig   reference;
   };

@@ -26,6 +26,7 @@ void SyncRuntimeConfigFromInputs()
    g_config.signals.filter.lower_wick_max=InpTamanhoMaximoPavioInferior;
    g_config.stop_loss.mode=InpUsarStopLossFixo ? "fixed" : (InpUsarStopLossPorReferencia ? "calc_ref" : "none");
    g_config.stop_loss.measure=InpTipoDeStopLossPercentual ? "Percentual" : "Pontos";
+   g_config.stop_loss.is_percent=InpTipoDeStopLossPercentual;
    g_config.stop_loss.fixed.enabled=InpUsarStopLossFixo;
    g_config.stop_loss.fixed.distance=InpDistanciaDoStopLossFixo;
    g_config.stop_loss.reference.enabled=InpUsarStopLossPorReferencia;
