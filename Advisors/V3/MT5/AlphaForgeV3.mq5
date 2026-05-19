@@ -1230,6 +1230,7 @@ bool HasOpenPositionForSymbol()
 bool GetOpenPositionData(
    ENUM_POSITION_TYPE &position_type,
    double &stop_loss,
+   double &take_profit,
    ulong &ticket,
    datetime &open_time
 )
@@ -1240,6 +1241,7 @@ bool GetOpenPositionData(
    ticket=(ulong)PositionGetInteger(POSITION_TICKET);
    position_type=(ENUM_POSITION_TYPE)PositionGetInteger(POSITION_TYPE);
    stop_loss=PositionGetDouble(POSITION_SL);
+   take_profit=PositionGetDouble(POSITION_TP);
    open_time=(datetime)PositionGetInteger(POSITION_TIME);
    return(true);
   }
@@ -1363,9 +1365,10 @@ void EnforceManualStopLoss(void)
   {
    ENUM_POSITION_TYPE position_type=WRONG_VALUE;
    double stop_loss=0.0;
+   double take_profit=0.0;
    ulong ticket=0;
    datetime open_time=0;
-   if(!GetOpenPositionData(position_type,stop_loss,ticket,open_time))
+   if(!GetOpenPositionData(position_type,stop_loss,take_profit,ticket,open_time))
       return;
    if(stop_loss<=0.0)
       return;
@@ -1428,6 +1431,80 @@ void EnforceManualStopLoss(void)
    Print(
       "AlphaForge V3: posicao encerrada por stop manual. Ticket=",ticket,
       " SL=",DoubleToString(stop_loss,_Digits),
+      " Reason=",reason
+   );
+  }
+
+void EnforceManualTakeProfit(void)
+  {
+   ENUM_POSITION_TYPE position_type=WRONG_VALUE;
+   double stop_loss=0.0;
+   double take_profit=0.0;
+   ulong ticket=0;
+   datetime open_time=0;
+   if(!GetOpenPositionData(position_type,stop_loss,take_profit,ticket,open_time))
+      return;
+   if(take_profit<=0.0)
+      return;
+
+   MqlTick tick;
+   if(!SymbolInfoTick(_Symbol,tick))
+      return;
+
+   bool should_close=false;
+   string reason="";
+   if(position_type==POSITION_TYPE_BUY && tick.bid>=take_profit)
+     {
+      should_close=true;
+      reason="bid>=tp";
+     }
+   else if(position_type==POSITION_TYPE_SELL && tick.ask<=take_profit)
+     {
+      should_close=true;
+      reason="ask<=tp";
+     }
+
+   if(!should_close)
+     {
+      datetime current_bar_open=iTime(_Symbol,PERIOD_CURRENT,0);
+      if(current_bar_open>0 && open_time<=current_bar_open)
+        {
+         MqlRates current_bar;
+         if(ReadSignalBarAtShift(PERIOD_CURRENT,0,current_bar))
+           {
+            if(position_type==POSITION_TYPE_BUY && current_bar.high>=take_profit)
+              {
+               should_close=true;
+               reason="bar.high>=tp";
+              }
+            else if(position_type==POSITION_TYPE_SELL && current_bar.low<=take_profit)
+              {
+               should_close=true;
+               reason="bar.low<=tp";
+              }
+           }
+        }
+     }
+
+   if(!should_close)
+      return;
+
+   g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
+   if(!g_trade.PositionClose(_Symbol))
+     {
+      Print(
+         "AlphaForge V3: falha ao encerrar posicao por take profit manual. Ticket=",ticket,
+         " TP=",DoubleToString(take_profit,_Digits),
+         " Reason=",reason,
+         " Retcode=",g_trade.ResultRetcode(),
+         " Desc=",g_trade.ResultRetcodeDescription()
+      );
+      return;
+     }
+
+   Print(
+      "AlphaForge V3: posicao encerrada por take profit manual. Ticket=",ticket,
+      " TP=",DoubleToString(take_profit,_Digits),
       " Reason=",reason
    );
   }
@@ -2134,6 +2211,7 @@ void OnDeinit(const int reason)
 void OnTick()
   {
    EnforceManualStopLoss();
+   EnforceManualTakeProfit();
    EvaluateAndTrade();
    if(HasInteractiveChart())
       RefreshRuntimeComment();
