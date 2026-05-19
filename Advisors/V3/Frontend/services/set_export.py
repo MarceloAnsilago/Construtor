@@ -52,6 +52,11 @@ INPUT_TO_STORE_KEYS = {
     "InpBaseDoStopLossMultiplicador": ("stop_loss.mult.base",),
     "InpCandleDoStopLossMultiplicador": ("stop_loss.mult.candle",),
     "InpValorDoStopLossMultiplicador": ("stop_loss.mult.value",),
+    "InpUsarTakeProfitFixo": ("take_profit.mode", "take_profit.fixed.enabled"),
+    "InpTipoDeTakeProfitPercentual": ("take_profit.measure",),
+    "InpModoDoTakeProfitFixo": ("take_profit.fixed.method",),
+    "InpDistanciaDoTakeProfitFixo": ("take_profit.fixed.distance",),
+    "InpMultiplicadorDoTakeProfitFixo": ("take_profit.fixed.stop_multiple",),
 }
 
 ORDER_MODE_FROM_SET = {
@@ -166,6 +171,12 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
         return "Range (pavio a pavio)" if value == "1" else "Corpo do candle"
     if input_name == "InpCandleDoStopLossMultiplicador":
         return REFERENCE_CANDLE_FROM_SET.get(value, "Penultimo")
+    if input_name == "InpUsarTakeProfitFixo":
+        return "fixed" if _parse_bool(value) else "none"
+    if input_name == "InpTipoDeTakeProfitPercentual":
+        return "Percentual" if _parse_bool(value) else "Pontos"
+    if input_name == "InpModoDoTakeProfitFixo":
+        return "stop_mult" if value == "1" else "distance"
     if input_name == "InpTempoGraficoDoFiltro":
         return "Corrente" if value.lower() == "current" else value
     return value
@@ -252,6 +263,14 @@ def read_set_file(source: Path) -> dict[str, str | bool]:
             if _parse_bool(raw_value):
                 values["stop_loss.mode"] = "mult"
                 values["stop_loss.fixed.enabled"] = False
+            continue
+        if input_name.strip() == "InpUsarTakeProfitFixo":
+            if _parse_bool(raw_value):
+                values["take_profit.mode"] = "fixed"
+                values["take_profit.fixed.enabled"] = True
+            else:
+                values["take_profit.mode"] = "none"
+                values["take_profit.fixed.enabled"] = False
             continue
 
         for store_key in store_keys:

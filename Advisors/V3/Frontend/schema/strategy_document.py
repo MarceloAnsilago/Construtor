@@ -88,6 +88,21 @@ class StopLossDocument:
 
 
 @dataclass(frozen=True)
+class TakeProfitFixedDocument:
+    enabled: bool
+    method: str
+    distance: str
+    stop_multiple: str
+
+
+@dataclass(frozen=True)
+class TakeProfitDocument:
+    mode: str
+    measure: str
+    fixed: TakeProfitFixedDocument
+
+
+@dataclass(frozen=True)
 class SignalsDocument:
     order_mode: str
     limit: SignalLimitDocument
@@ -101,6 +116,7 @@ class StrategyDocument:
     magic_number: str
     signals: SignalsDocument
     stop_loss: StopLossDocument
+    take_profit: TakeProfitDocument
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -162,6 +178,16 @@ class StrategyDocument:
                     "base": self.stop_loss.mult.base,
                     "candle": self.stop_loss.mult.candle,
                     "value": self.stop_loss.mult.value,
+                },
+            },
+            "take_profit": {
+                "mode": self.take_profit.mode,
+                "measure": self.take_profit.measure,
+                "fixed": {
+                    "enabled": self.take_profit.fixed.enabled,
+                    "method": self.take_profit.fixed.method,
+                    "distance": self.take_profit.fixed.distance,
+                    "stop_multiple": self.take_profit.fixed.stop_multiple,
                 },
             },
         }

@@ -68,6 +68,13 @@ input EStopLossMultiplierBase InpBaseDoStopLossMultiplicador = StopLossMultiplic
 input ESignalLimitReferenceCandle InpCandleDoStopLossMultiplicador = CandlePenultimo;
 input double InpValorDoStopLossMultiplicador = 1.0;
 
+input group "6.Take profit"
+input bool InpUsarTakeProfitFixo = false;
+input bool InpTipoDeTakeProfitPercentual = false;
+input ETakeProfitFixedMode InpModoDoTakeProfitFixo = TakeProfitDistancia;
+input double InpDistanciaDoTakeProfitFixo = 100.0;
+input double InpMultiplicadorDoTakeProfitFixo = 1.0;
+
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string BUTTON_CARD_NAME     = "AlphaForgeV3.BtnCard";
 string SIGNAL_MARKER_PREFIX = "AlphaForgeV3.SignalMarker.";
@@ -230,12 +237,40 @@ string StopLossMultiplierBaseToText(const EStopLossMultiplierBase base)
    return("Corpo do candle");
   }
 
+string TakeProfitFixedModeToText(const ETakeProfitFixedMode mode)
+  {
+   if(mode==TakeProfitVezesStop)
+      return("Vezes o stop loss");
+   return("Take distancia");
+  }
+
 string BuildOrderSummaryText()
   {
    string order_text="Ordem: "+OrderModeToText(g_config.signals.order_mode);
    if(g_config.signals.order_mode==ModoOrdemLimite)
       order_text+=" / "+LimitModeToText(g_config.signals.limit.mode);
    return(order_text);
+  }
+
+string BuildTakeProfitSummaryText()
+  {
+   if(g_config.take_profit.mode=="fixed" && g_config.take_profit.fixed.enabled)
+     {
+      if(g_config.take_profit.fixed.method==TakeProfitVezesStop)
+        {
+         return(
+            "Take profit: fixo / Vezes stop"
+            +" / Mult="+FormatRuntimeDouble(g_config.take_profit.fixed.stop_multiple)
+         );
+        }
+
+      return(
+         "Take profit: fixo / "+g_config.take_profit.measure
+         +" / Dist="+FormatRuntimeDouble(g_config.take_profit.fixed.distance)
+      );
+     }
+
+   return("Take profit: desativado");
   }
 
 string BuildStopLossSummaryText()
@@ -381,6 +416,27 @@ double ResolveConfiguredStopLossDistance()
    return(g_config.stop_loss.fixed.distance);
   }
 
+string ResolveEffectiveTakeProfitMode()
+  {
+   if(g_config.take_profit.mode=="fixed")
+      return("fixed");
+   if(g_config.take_profit.fixed.enabled)
+      return("fixed");
+   return("none");
+  }
+
+bool IsTakeProfitRequired()
+  {
+   return(ResolveEffectiveTakeProfitMode()!="none");
+  }
+
+double ResolveConfiguredTakeProfitDistance()
+  {
+   if(g_config.take_profit.fixed.method==TakeProfitVezesStop)
+      return(g_config.take_profit.fixed.stop_multiple);
+   return(g_config.take_profit.fixed.distance);
+  }
+
 int ResolveConfiguredSignalDirection()
   {
    if(g_config.risk.allow_buy && !g_config.risk.allow_sell)
@@ -412,6 +468,7 @@ string BuildRuntimeCommentText()
    text+="\nDirecao base do sinal: "+(configured_direction>0 ? "Compra" : (configured_direction<0 ? "Venda" : "Automatica"));
    text+="\nVolume inicial: "+FormatRuntimeDouble(ResolveInitialVolume())+" | Spread max: "+FormatRuntimeDouble(ResolveMaxSpreadPoints());
    text+="\n"+BuildStopLossSummaryText();
+   text+="\n"+BuildTakeProfitSummaryText();
    text+="\n"+BuildOrderSummaryText();
 
    if(g_config.signals.order_mode==ModoOrdemLimite)
@@ -1077,6 +1134,70 @@ double ResolveStopLossPrice(const int direction,const double entry_price)
    return(stop_loss_price);
   }
 
+double ResolveTakeProfitPrice(const int direction,const double entry_price,const double stop_loss_price)
+  {
+   if(ResolveEffectiveTakeProfitMode()!="fixed")
+      return(0.0);
+   if(!g_config.take_profit.fixed.enabled || entry_price<=0.0)
+      return(0.0);
+
+   double distance_price=0.0;
+   if(g_config.take_profit.fixed.method==TakeProfitVezesStop)
+     {
+      double stop_distance=MathAbs(entry_price-stop_loss_price);
+      if(stop_distance<=0.0 || g_config.take_profit.fixed.stop_multiple<=0.0)
+        {
+         Print(
+            "AlphaForge V3: take profit fixo rejeitado. Motivo=distancia_stop_indisponivel",
+            " Direcao=",IntegerToString(direction),
+            " Entry=",DoubleToString(entry_price,_Digits),
+            " SL=",DoubleToString(stop_loss_price,_Digits),
+            " Metodo=",TakeProfitFixedModeToText(g_config.take_profit.fixed.method),
+            " Mult=",DoubleToString(g_config.take_profit.fixed.stop_multiple,2)
+         );
+         return(0.0);
+        }
+
+      distance_price=stop_distance*g_config.take_profit.fixed.stop_multiple;
+     }
+   else
+     {
+      if(g_config.take_profit.fixed.distance<=0.0)
+         return(0.0);
+
+      if(g_config.take_profit.is_percent)
+         distance_price=entry_price*(g_config.take_profit.fixed.distance/100.0);
+      else
+         distance_price=g_config.take_profit.fixed.distance*_Point;
+     }
+
+   if(distance_price<=0.0)
+      return(0.0);
+
+   double take_profit_price=(direction>0) ? entry_price+distance_price : entry_price-distance_price;
+   take_profit_price=NormalizeDouble(take_profit_price,_Digits);
+   if(take_profit_price<=0.0)
+      return(0.0);
+   if(direction>0 && take_profit_price<=entry_price)
+      return(0.0);
+   if(direction<0 && take_profit_price>=entry_price)
+      return(0.0);
+
+   Print(
+      "AlphaForge V3: calculo do take profit fixo.",
+      " Direcao=",IntegerToString(direction),
+      " Entry=",DoubleToString(entry_price,_Digits),
+      " SL=",DoubleToString(stop_loss_price,_Digits),
+      " Metodo=",TakeProfitFixedModeToText(g_config.take_profit.fixed.method),
+      " Medida=",g_config.take_profit.measure,
+      " DistCfg=",DoubleToString(ResolveConfiguredTakeProfitDistance(),2),
+      " DistCalc=",DoubleToString(distance_price,_Digits),
+      " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
+      " TP=",DoubleToString(take_profit_price,_Digits)
+   );
+   return(take_profit_price);
+  }
+
 double NormalizeVolume(const double requested_volume)
   {
    double min_volume=SymbolInfoDouble(_Symbol,SYMBOL_VOLUME_MIN);
@@ -1548,6 +1669,7 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    updated_price=NormalizeDouble(updated_price,_Digits);
    int pending_direction=(order_type==ORDER_TYPE_BUY_LIMIT) ? 1 : -1;
    double updated_stop_loss=ResolveStopLossPrice(pending_direction,updated_price);
+   double updated_take_profit=ResolveTakeProfitPrice(pending_direction,updated_price,updated_stop_loss);
 
    if(IsStopLossRequired() && updated_stop_loss<=0.0)
      {
@@ -1556,6 +1678,17 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
          " Ticket=",ticket,
          " NovoPreco=",DoubleToString(updated_price,_Digits),
          " Mode=",ResolveEffectiveStopLossMode()
+      );
+      return;
+     }
+
+   if(IsTakeProfitRequired() && updated_take_profit<=0.0)
+     {
+      Print(
+         "AlphaForge V3: movimento da ordem limite ignorado porque o take profit configurado ficou invalido.",
+         " Ticket=",ticket,
+         " NovoPreco=",DoubleToString(updated_price,_Digits),
+         " Mode=",ResolveEffectiveTakeProfitMode()
       );
       return;
      }
@@ -1570,7 +1703,7 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    g_trade.SetTypeFillingBySymbol(_Symbol);
    g_trade.SetDeviationInPoints(20);
 
-   if(!g_trade.OrderModify(ticket,updated_price,updated_stop_loss,0.0,order_time,expiration))
+   if(!g_trade.OrderModify(ticket,updated_price,updated_stop_loss,updated_take_profit,order_time,expiration))
      {
       Print(
          "AlphaForge V3: falha ao mover ordem limite por referencia. Ticket=",ticket,
@@ -1584,6 +1717,7 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
       "AlphaForge V3: ordem limite movida para o proximo candle. Ticket=",ticket,
       " NovoPreco=",DoubleToString(updated_price,_Digits),
       " SL=",DoubleToString(updated_stop_loss,_Digits),
+      " TP=",DoubleToString(updated_take_profit,_Digits),
       " Base=",ReferenceBaseToText(g_config.signals.limit.reference.base),
       " Candle=",ReferenceCandleToText(g_config.signals.limit.reference.candle)
    );
@@ -1637,6 +1771,7 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
    double entry_price=direction>0 ? tick.ask : tick.bid;
    double stop_loss_price=ResolveStopLossPrice(direction,entry_price);
+   double take_profit_price=ResolveTakeProfitPrice(direction,entry_price,stop_loss_price);
 
    if(IsStopLossRequired() && stop_loss_price<=0.0)
      {
@@ -1645,6 +1780,17 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
          " Direcao=",IntegerToString(direction),
          " Entry=",DoubleToString(entry_price,_Digits),
          " Mode=",ResolveEffectiveStopLossMode()
+      );
+      return(false);
+     }
+
+   if(IsTakeProfitRequired() && take_profit_price<=0.0)
+     {
+      Print(
+         "AlphaForge V3: ordem a mercado bloqueada porque o take profit configurado ficou invalido.",
+         " Direcao=",IntegerToString(direction),
+         " Entry=",DoubleToString(entry_price,_Digits),
+         " Mode=",ResolveEffectiveTakeProfitMode()
       );
       return(false);
      }
@@ -1662,9 +1808,9 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
    bool sent=false;
    if(direction>0)
-      sent=g_trade.Buy(volume,_Symbol,0.0,stop_loss_price,0.0,comment);
+      sent=g_trade.Buy(volume,_Symbol,0.0,stop_loss_price,take_profit_price,comment);
    else
-      sent=g_trade.Sell(volume,_Symbol,0.0,stop_loss_price,0.0,comment);
+      sent=g_trade.Sell(volume,_Symbol,0.0,stop_loss_price,take_profit_price,comment);
 
    if(!sent)
      {
@@ -1676,8 +1822,10 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
      "AlphaForge V3: ordem a mercado enviada com sucesso. Ticket=",g_trade.ResultOrder(),
      " Volume=",DoubleToString(volume,2),
       " SL=",DoubleToString(stop_loss_price,_Digits),
+      " TP=",DoubleToString(take_profit_price,_Digits),
       " TipoSL=",g_config.stop_loss.measure,
-     " DistSL=",DoubleToString(ResolveConfiguredStopLossDistance(),2)
+     " DistSL=",DoubleToString(ResolveConfiguredStopLossDistance(),2),
+      " DistTP=",DoubleToString(ResolveConfiguredTakeProfitDistance(),2)
   );
   return(true);
   }
@@ -1747,6 +1895,7 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
      }
 
    double stop_loss_price=ResolveStopLossPrice(direction,pending_price);
+   double take_profit_price=ResolveTakeProfitPrice(direction,pending_price,stop_loss_price);
 
    if(IsStopLossRequired() && stop_loss_price<=0.0)
      {
@@ -1755,6 +1904,17 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
          " Direcao=",IntegerToString(direction),
          " Preco=",DoubleToString(pending_price,_Digits),
          " Mode=",ResolveEffectiveStopLossMode()
+      );
+      return(false);
+     }
+
+   if(IsTakeProfitRequired() && take_profit_price<=0.0)
+     {
+      Print(
+         "AlphaForge V3: ordem limite bloqueada porque o take profit configurado ficou invalido.",
+         " Direcao=",IntegerToString(direction),
+         " Preco=",DoubleToString(pending_price,_Digits),
+         " Mode=",ResolveEffectiveTakeProfitMode()
       );
       return(false);
      }
@@ -1775,9 +1935,9 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
 
    bool sent=false;
    if(direction>0)
-      sent=g_trade.BuyLimit(volume,pending_price,_Symbol,stop_loss_price,0.0,ORDER_TIME_GTC,0,comment);
+      sent=g_trade.BuyLimit(volume,pending_price,_Symbol,stop_loss_price,take_profit_price,ORDER_TIME_GTC,0,comment);
    else
-      sent=g_trade.SellLimit(volume,pending_price,_Symbol,stop_loss_price,0.0,ORDER_TIME_GTC,0,comment);
+      sent=g_trade.SellLimit(volume,pending_price,_Symbol,stop_loss_price,take_profit_price,ORDER_TIME_GTC,0,comment);
 
    if(!sent)
      {
@@ -1789,8 +1949,10 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
       "AlphaForge V3: ordem limite por referencia enviada. Ticket=",g_trade.ResultOrder(),
       " Preco=",DoubleToString(pending_price,_Digits),
       " SL=",DoubleToString(stop_loss_price,_Digits),
+      " TP=",DoubleToString(take_profit_price,_Digits),
       " TipoSL=",g_config.stop_loss.measure,
       " DistSL=",DoubleToString(ResolveConfiguredStopLossDistance(),2),
+      " DistTP=",DoubleToString(ResolveConfiguredTakeProfitDistance(),2),
       " BaseSL=",ReferenceBaseToText(g_config.stop_loss.reference.base),
       " CandleSL=",ReferenceCandleToText(g_config.stop_loss.reference.candle),
       " Base=",ReferenceBaseToText(g_config.signals.limit.reference.base),

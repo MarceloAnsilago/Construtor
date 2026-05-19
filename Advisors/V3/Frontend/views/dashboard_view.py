@@ -123,7 +123,7 @@ class DashboardView(ctk.CTkFrame):
             return self._create_view(StopMovelView)
 
         if item.item_id == "take_profit":
-            return self._create_view(TakeProfitView)
+            return self._create_view(TakeProfitView, strategy_store=self._strategy_store)
 
         if item.item_id == "break_even":
             return self._create_view(BreakEvenView)
@@ -183,6 +183,10 @@ class DashboardView(ctk.CTkFrame):
         stop_loss_view = self._view_cache.get("stop_loss")
         if stop_loss_view is not None and hasattr(stop_loss_view, "export_config"):
             stop_loss_view.export_config()
+
+        take_profit_view = self._view_cache.get("take_profit")
+        if take_profit_view is not None and hasattr(take_profit_view, "export_config"):
+            take_profit_view.export_config()
 
         stop_loss_view = self._view_cache.get("stop_loss")
         if stop_loss_view is not None and hasattr(stop_loss_view, "export_config"):

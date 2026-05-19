@@ -54,6 +54,9 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       && config.stop_loss.mult.candle!=CandlePenultimo
       && config.stop_loss.mult.candle!=CandleAntepenultimo)
       config.stop_loss.mult.candle=CandlePenultimo;
+   if(config.take_profit.fixed.method!=TakeProfitDistancia
+      && config.take_profit.fixed.method!=TakeProfitVezesStop)
+      config.take_profit.fixed.method=TakeProfitDistancia;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;
@@ -89,6 +92,10 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.maxmin.candles=1;
    if(config.stop_loss.mult.value<0.0)
       config.stop_loss.mult.value=0.0;
+   if(config.take_profit.fixed.distance<0.0)
+      config.take_profit.fixed.distance=0.0;
+   if(config.take_profit.fixed.stop_multiple<0.0)
+      config.take_profit.fixed.stop_multiple=0.0;
 
    if(config.stop_loss.mode=="fixed")
      {
@@ -138,6 +145,11 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.maxmin.enabled=false;
       config.stop_loss.mult.enabled=false;
      }
+
+   if(config.take_profit.mode=="fixed")
+      config.take_profit.fixed.enabled=true;
+   else
+      config.take_profit.fixed.enabled=false;
   }
 
 #endif

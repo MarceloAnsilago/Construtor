@@ -50,6 +50,12 @@ enum EStopLossMultiplierBase
    StopLossMultiplicadorRange=1
   };
 
+enum ETakeProfitFixedMode
+  {
+   TakeProfitDistancia=0,
+   TakeProfitVezesStop=1
+  };
+
 struct SSignalFilterConfig
   {
    bool             enabled;
@@ -138,6 +144,22 @@ struct SStopLossConfig
    SStopLossMultiplierConfig  mult;
   };
 
+struct STakeProfitFixedConfig
+  {
+   bool                  enabled;
+   ETakeProfitFixedMode  method;
+   double                distance;
+   double                stop_multiple;
+  };
+
+struct STakeProfitConfig
+  {
+   string                  mode;
+   string                  measure;
+   bool                    is_percent;
+   STakeProfitFixedConfig  fixed;
+  };
+
 struct SRiskConfig
   {
    bool   allow_buy;
@@ -152,6 +174,7 @@ struct SRuntimeConfig
    long          magic_number;
    SSignalConfig signals;
    SStopLossConfig stop_loss;
+   STakeProfitConfig take_profit;
    SRiskConfig   risk;
   };
 

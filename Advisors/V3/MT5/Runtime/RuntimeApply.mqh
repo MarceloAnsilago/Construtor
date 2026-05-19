@@ -45,6 +45,13 @@ void SyncRuntimeConfigFromInputs()
    g_config.stop_loss.mult.base=InpBaseDoStopLossMultiplicador;
    g_config.stop_loss.mult.candle=InpCandleDoStopLossMultiplicador;
    g_config.stop_loss.mult.value=InpValorDoStopLossMultiplicador;
+   g_config.take_profit.mode=InpUsarTakeProfitFixo ? "fixed" : "none";
+   g_config.take_profit.measure=InpTipoDeTakeProfitPercentual ? "Percentual" : "Pontos";
+   g_config.take_profit.is_percent=InpTipoDeTakeProfitPercentual;
+   g_config.take_profit.fixed.enabled=InpUsarTakeProfitFixo;
+   g_config.take_profit.fixed.method=InpModoDoTakeProfitFixo;
+   g_config.take_profit.fixed.distance=InpDistanciaDoTakeProfitFixo;
+   g_config.take_profit.fixed.stop_multiple=InpMultiplicadorDoTakeProfitFixo;
    g_config.risk.allow_buy=InpOperarNaCompra;
    g_config.risk.allow_sell=InpOperarNaVenda;
    g_config.risk.initial_volume=InpVolumeInicial;

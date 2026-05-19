@@ -14,6 +14,8 @@ from schema.strategy_document import (
     StopLossDocument,
     StopLossFixedDocument,
     StopLossMultiplierDocument,
+    TakeProfitDocument,
+    TakeProfitFixedDocument,
     StrategyDocument,
 )
 
@@ -110,6 +112,16 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                 base=str(store.get("stop_loss.mult.base")),
                 candle=str(store.get("stop_loss.mult.candle")),
                 value=str(store.get("stop_loss.mult.value")),
+            ),
+        ),
+        take_profit=TakeProfitDocument(
+            mode=str(store.get("take_profit.mode")),
+            measure=str(store.get("take_profit.measure")),
+            fixed=TakeProfitFixedDocument(
+                enabled=bool(store.get("take_profit.fixed.enabled")),
+                method=str(store.get("take_profit.fixed.method")),
+                distance=str(store.get("take_profit.fixed.distance")),
+                stop_multiple=str(store.get("take_profit.fixed.stop_multiple")),
             ),
         ),
     )
@@ -251,4 +263,9 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpBaseDoStopLossMultiplicador={'0' if str(store.get('stop_loss.mult.base')).strip() != 'Range (pavio a pavio)' else '1'}",
         f"InpCandleDoStopLossMultiplicador={_enum_to_set(REFERENCE_CANDLE_TO_SET, store.get('stop_loss.mult.candle'), '2')}",
         f"InpValorDoStopLossMultiplicador={store.get('stop_loss.mult.value')}",
+        f"InpUsarTakeProfitFixo={_bool_to_set(bool(store.get('take_profit.fixed.enabled')) and str(store.get('take_profit.mode')).strip() == 'fixed')}",
+        f"InpTipoDeTakeProfitPercentual={_bool_to_set(str(store.get('take_profit.measure')) == 'Percentual')}",
+        f"InpModoDoTakeProfitFixo={'1' if str(store.get('take_profit.fixed.method')).strip() == 'stop_mult' else '0'}",
+        f"InpDistanciaDoTakeProfitFixo={store.get('take_profit.fixed.distance')}",
+        f"InpMultiplicadorDoTakeProfitFixo={store.get('take_profit.fixed.stop_multiple')}",
     ]

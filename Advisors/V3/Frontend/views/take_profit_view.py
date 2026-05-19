@@ -1,20 +1,26 @@
 import customtkinter as ctk
 
+from state.strategy_store import StrategyStore
 from themes.theme import UITheme
 
 
 class TakeProfitView(ctk.CTkFrame):
-    def __init__(self, master, theme: UITheme) -> None:
+    def __init__(self, master, theme: UITheme, strategy_store: StrategyStore | None = None) -> None:
         super().__init__(master, fg_color="transparent")
         self._theme = theme
+        self._strategy_store = strategy_store or StrategyStore()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
 
-        self._mode = "fixed"
+        self._mode = "none"
+        self._fixed_method = "distance"
         self._calc_method = "ref"
+        self._fixed_tab_var = ctk.StringVar(value="Take distancia")
         self._calc_tab_var = ctk.StringVar(value="Ref.")
-        self._type_var = ctk.StringVar(value="Pontos")
+        self._type_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.measure")))
+        self._fixed_distance_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.fixed.distance")))
+        self._fixed_stop_multiple_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.fixed.stop_multiple")))
 
         self._scroll = ctk.CTkScrollableFrame(
             self,
@@ -30,8 +36,11 @@ class TakeProfitView(ctk.CTkFrame):
         self._build_multiplier_card()
         self._build_indicator_card()
 
-        self._set_mode("fixed")
+        self._type_var.trace_add("write", self._on_type_change)
+        self._fixed_distance_var.trace_add("write", self._on_fixed_distance_change)
+        self._fixed_stop_multiple_var.trace_add("write", self._on_fixed_stop_multiple_change)
         self._set_calc_method("ref")
+        self.load_from_store()
 
     def _build_header(self) -> None:
         header = ctk.CTkFrame(
@@ -71,11 +80,67 @@ class TakeProfitView(ctk.CTkFrame):
             "Usar take profit fixo",
             lambda: self._set_mode("fixed"),
         )
-        self._fixed_checkbox.grid(row=1, column=0, columnspan=2, sticky="w", padx=16, pady=(0, 16))
+        self._fixed_checkbox.grid(row=1, column=0, columnspan=2, sticky="w", padx=16, pady=(0, 12))
 
-        self._add_label(card, 2, "Take distancia")
-        self._fixed_distance = self._create_entry(card, "100.0")
-        self._fixed_distance.grid(row=3, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 14))
+        tabs_shell = ctk.CTkFrame(
+            card,
+            fg_color="transparent",
+            corner_radius=0,
+            border_width=0,
+            border_color=self._theme.colors.border,
+        )
+        tabs_shell.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=16, pady=(0, 16))
+        tabs_shell.grid_columnconfigure(0, weight=1)
+        tabs_shell.grid_rowconfigure(1, weight=1)
+        card.grid_rowconfigure(2, weight=1)
+
+        self._fixed_tabs = ctk.CTkSegmentedButton(
+            tabs_shell,
+            values=["Take distancia", "Vezes o stop loss"],
+            variable=self._fixed_tab_var,
+            command=self._on_fixed_tab_change,
+            height=34,
+            corner_radius=0,
+            fg_color=self._theme.colors.header_dark,
+            selected_color=self._theme.colors.accent,
+            selected_hover_color=self._theme.colors.accent_hover,
+            unselected_color=self._theme.colors.header_dark,
+            unselected_hover_color=self._theme.colors.sidebar_item_hover,
+            text_color=self._theme.colors.header_text,
+            text_color_disabled=self._theme.colors.card_soft,
+            font=self._theme.font("label", weight="bold"),
+        )
+        self._fixed_tabs.grid(row=0, column=0, sticky="ew", pady=(0, 12))
+
+        self._fixed_panels = ctk.CTkFrame(tabs_shell, fg_color="transparent")
+        self._fixed_panels.grid(row=1, column=0, sticky="nsew")
+        self._fixed_panels.grid_columnconfigure(0, weight=1)
+        self._fixed_panels.grid_rowconfigure(0, weight=1)
+
+        self._fixed_distance_panel = self._create_fixed_panel()
+        self._fixed_distance_panel.grid_columnconfigure(0, weight=1)
+        self._add_label(self._fixed_distance_panel, 0, "Take distancia", padx=12, pady=(12, 4))
+        self._fixed_distance = self._create_entry(
+            self._fixed_distance_panel,
+            self._fixed_distance_var.get(),
+            self._fixed_distance_var,
+        )
+        self._fixed_distance.grid(row=1, column=0, sticky="ew", padx=12, pady=(0, 12))
+
+        self._fixed_stop_panel = self._create_fixed_panel()
+        self._fixed_stop_panel.grid_columnconfigure(0, weight=1)
+        self._add_label(self._fixed_stop_panel, 0, "Vezes o stop loss", padx=12, pady=(12, 4))
+        self._fixed_stop_multiple = self._create_entry(
+            self._fixed_stop_panel,
+            self._fixed_stop_multiple_var.get(),
+            self._fixed_stop_multiple_var,
+        )
+        self._fixed_stop_multiple.grid(row=1, column=0, sticky="ew", padx=12, pady=(0, 12))
+
+        self._fixed_panel_map = {
+            "distance": self._fixed_distance_panel,
+            "stop_mult": self._fixed_stop_panel,
+        }
 
     def _build_calc_card(self) -> None:
         card = self._create_card(1, 1, "Take profit (calculo)")
@@ -279,6 +344,15 @@ class TakeProfitView(ctk.CTkFrame):
         ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
         return card
 
+    def _create_fixed_panel(self) -> ctk.CTkFrame:
+        return ctk.CTkFrame(
+            self._fixed_panels,
+            fg_color=self._theme.colors.surface,
+            corner_radius=0,
+            border_width=1,
+            border_color=self._theme.colors.border,
+        )
+
     def _create_calc_panel(self) -> ctk.CTkFrame:
         return ctk.CTkFrame(
             self._calc_panels,
@@ -325,9 +399,10 @@ class TakeProfitView(ctk.CTkFrame):
             state="readonly",
         )
 
-    def _create_entry(self, master, value: str) -> ctk.CTkEntry:
+    def _create_entry(self, master, value: str, variable: ctk.StringVar | None = None) -> ctk.CTkEntry:
         entry = ctk.CTkEntry(
             master,
+            textvariable=variable,
             height=32,
             corner_radius=0,
             border_width=1,
@@ -336,7 +411,8 @@ class TakeProfitView(ctk.CTkFrame):
             text_color=self._theme.colors.text,
             font=self._theme.font("body"),
         )
-        entry.insert(0, value)
+        if variable is None:
+            entry.insert(0, value)
         return entry
 
     def _add_label(self, master, row: int, text: str, padx: int = 16, pady: tuple[int, int] = (0, 4)) -> None:
@@ -347,6 +423,13 @@ class TakeProfitView(ctk.CTkFrame):
             text_color=self._theme.colors.text_muted,
             font=self._theme.font("label"),
         ).grid(row=row, column=0, columnspan=2, sticky="ew", padx=padx, pady=pady)
+
+    def _on_fixed_tab_change(self, selected: str) -> None:
+        mapping = {
+            "Take distancia": "distance",
+            "Vezes o stop loss": "stop_mult",
+        }
+        self._set_fixed_method(mapping[selected])
 
     def _on_tab_change(self, selected: str) -> None:
         mapping = {"Ref.": "ref", "Med.": "med", "Max/Min": "maxmin"}
@@ -360,17 +443,36 @@ class TakeProfitView(ctk.CTkFrame):
         self._mult_checkbox.select() if mode == "mult" else self._mult_checkbox.deselect()
         self._indicador_checkbox.select() if mode == "indicador" else self._indicador_checkbox.deselect()
 
-        self._fixed_distance.configure(state="normal" if mode == "fixed" else "disabled")
+        self._strategy_store.set("take_profit.mode", "fixed" if mode == "fixed" else "none")
+        self._strategy_store.set("take_profit.fixed.enabled", mode == "fixed")
 
+        self._fixed_tabs.configure(state="normal" if mode == "fixed" else "disabled")
         self._calc_tabs.configure(state="normal" if mode == "calc" else "disabled")
         self._mult_base.configure(state="readonly" if mode == "mult" else "disabled")
         self._mult_candle.configure(state="readonly" if mode == "mult" else "disabled")
         self._mult_value.configure(state="normal" if mode == "mult" else "disabled")
-
         self._indicador_trigger.configure(state="normal" if mode == "indicador" else "disabled")
         self._indicador_type.configure(state="readonly" if mode == "indicador" else "disabled")
 
+        self._sync_fixed_method_controls()
         self._sync_calc_method_controls()
+
+    def _set_fixed_method(self, method: str) -> None:
+        self._fixed_method = method
+        self._strategy_store.set("take_profit.fixed.method", method)
+        labels = {
+            "distance": "Take distancia",
+            "stop_mult": "Vezes o stop loss",
+        }
+        self._fixed_tab_var.set(labels[method])
+
+        for name, panel in self._fixed_panel_map.items():
+            if name == method:
+                panel.grid(row=0, column=0, sticky="nsew")
+            else:
+                panel.grid_forget()
+
+        self._sync_fixed_method_controls()
 
     def _set_calc_method(self, method: str) -> None:
         self._calc_method = method
@@ -388,6 +490,14 @@ class TakeProfitView(ctk.CTkFrame):
                 panel.grid_forget()
 
         self._sync_calc_method_controls()
+
+    def _sync_fixed_method_controls(self) -> None:
+        fixed_enabled = self._mode == "fixed"
+        distance_enabled = fixed_enabled and self._fixed_method == "distance"
+        stop_mult_enabled = fixed_enabled and self._fixed_method == "stop_mult"
+
+        self._fixed_distance.configure(state="normal" if distance_enabled else "disabled")
+        self._fixed_stop_multiple.configure(state="normal" if stop_mult_enabled else "disabled")
 
     def _sync_calc_method_controls(self) -> None:
         calc_enabled = self._mode == "calc"
@@ -411,3 +521,50 @@ class TakeProfitView(ctk.CTkFrame):
 
         self._calc_max_base.configure(state="readonly" if max_enabled else "disabled")
         self._calc_max_count.configure(state="normal" if max_enabled else "disabled")
+
+    def _on_type_change(self, *_args) -> None:
+        self._strategy_store.set("take_profit.measure", self._type_var.get())
+
+    def _on_fixed_distance_change(self, *_args) -> None:
+        self._strategy_store.set("take_profit.fixed.distance", self._fixed_distance_var.get().strip() or "0")
+
+    def _on_fixed_stop_multiple_change(self, *_args) -> None:
+        self._strategy_store.set("take_profit.fixed.stop_multiple", self._fixed_stop_multiple_var.get().strip() or "1.0")
+
+    def load_from_store(self) -> None:
+        self._type_var.set(str(self._strategy_store.get("take_profit.measure")))
+        self._fixed_distance_var.set(str(self._strategy_store.get("take_profit.fixed.distance")))
+        self._fixed_stop_multiple_var.set(str(self._strategy_store.get("take_profit.fixed.stop_multiple")))
+
+        fixed_method = str(self._strategy_store.get("take_profit.fixed.method")).strip() or "distance"
+        self._set_fixed_method(fixed_method if fixed_method in {"distance", "stop_mult"} else "distance")
+
+        if bool(self._strategy_store.get("take_profit.fixed.enabled")):
+            self._set_mode("fixed")
+        else:
+            self._set_mode("none")
+
+    def export_config(self) -> dict[str, str | bool]:
+        measure = self._type_var.get()
+        fixed_distance = self._fixed_distance_var.get().strip() or "0"
+        fixed_stop_multiple = self._fixed_stop_multiple_var.get().strip() or "1.0"
+
+        self._strategy_store.set("take_profit.measure", measure)
+        self._strategy_store.set("take_profit.fixed.method", self._fixed_method)
+        self._strategy_store.set("take_profit.fixed.distance", fixed_distance)
+        self._strategy_store.set("take_profit.fixed.stop_multiple", fixed_stop_multiple)
+
+        if self._mode == "fixed":
+            self._strategy_store.set("take_profit.mode", "fixed")
+            self._strategy_store.set("take_profit.fixed.enabled", True)
+        else:
+            self._strategy_store.set("take_profit.mode", "none")
+            self._strategy_store.set("take_profit.fixed.enabled", False)
+
+        return {
+            "mode": self._mode,
+            "measure": measure,
+            "fixed_method": self._fixed_method,
+            "fixed_distance": fixed_distance,
+            "fixed_stop_multiple": fixed_stop_multiple,
+        }
