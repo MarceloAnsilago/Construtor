@@ -266,11 +266,39 @@ string BuildStopLossSummaryText()
    return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.fixed.distance));
   }
 
+string ResolveEffectiveStopLossMode()
+  {
+   if(g_config.stop_loss.mode=="fixed")
+      return("fixed");
+   if(g_config.stop_loss.mode=="calc_ref")
+      return("calc_ref");
+   if(g_config.stop_loss.mode=="calc_med")
+      return("calc_med");
+
+   if(g_config.stop_loss.reference.enabled && !g_config.stop_loss.media.enabled)
+      return("calc_ref");
+   if(g_config.stop_loss.media.enabled && !g_config.stop_loss.reference.enabled)
+      return("calc_med");
+   if(g_config.stop_loss.fixed.enabled)
+      return("fixed");
+   if(g_config.stop_loss.reference.enabled)
+      return("calc_ref");
+   if(g_config.stop_loss.media.enabled)
+      return("calc_med");
+   return("none");
+  }
+
+bool IsStopLossRequired()
+  {
+   return(ResolveEffectiveStopLossMode()!="none");
+  }
+
 double ResolveConfiguredStopLossDistance()
   {
-   if(g_config.stop_loss.mode=="calc_ref" || g_config.stop_loss.reference.enabled)
+   string effective_mode=ResolveEffectiveStopLossMode();
+   if(effective_mode=="calc_ref")
       return(g_config.stop_loss.reference.distance);
-   if(g_config.stop_loss.mode=="calc_med" || g_config.stop_loss.media.enabled)
+   if(effective_mode=="calc_med")
       return(g_config.stop_loss.media.distance);
    return(g_config.stop_loss.fixed.distance);
   }
@@ -744,9 +772,10 @@ double ResolveMediaStopLossPrice(const int direction,const double entry_price)
 
 double ResolveStopLossPrice(const int direction,const double entry_price)
   {
-   if(g_config.stop_loss.mode=="calc_ref" || g_config.stop_loss.reference.enabled)
+   string effective_mode=ResolveEffectiveStopLossMode();
+   if(effective_mode=="calc_ref")
       return(ResolveReferenceStopLossPrice(direction,entry_price));
-   if(g_config.stop_loss.mode=="calc_med" || g_config.stop_loss.media.enabled)
+   if(effective_mode=="calc_med")
       return(ResolveMediaStopLossPrice(direction,entry_price));
 
    double distance_price=ResolveStopLossDistancePrice(entry_price);
@@ -1232,6 +1261,17 @@ void UpdateLimitReferencePendingOrder(const ENUM_TIMEFRAMES timeframe)
    int pending_direction=(order_type==ORDER_TYPE_BUY_LIMIT) ? 1 : -1;
    double updated_stop_loss=ResolveStopLossPrice(pending_direction,updated_price);
 
+   if(IsStopLossRequired() && updated_stop_loss<=0.0)
+     {
+      Print(
+         "AlphaForge V3: movimento da ordem limite ignorado porque o stop loss configurado ficou invalido.",
+         " Ticket=",ticket,
+         " NovoPreco=",DoubleToString(updated_price,_Digits),
+         " Mode=",ResolveEffectiveStopLossMode()
+      );
+      return;
+     }
+
    if(updated_price<=0.0)
       return;
 
@@ -1309,6 +1349,17 @@ bool SubmitMarketOrder(const int direction,const ENUM_TIMEFRAMES timeframe,const
 
    double entry_price=direction>0 ? tick.ask : tick.bid;
    double stop_loss_price=ResolveStopLossPrice(direction,entry_price);
+
+   if(IsStopLossRequired() && stop_loss_price<=0.0)
+     {
+      Print(
+         "AlphaForge V3: ordem a mercado bloqueada porque o stop loss configurado ficou invalido.",
+         " Direcao=",IntegerToString(direction),
+         " Entry=",DoubleToString(entry_price,_Digits),
+         " Mode=",ResolveEffectiveStopLossMode()
+      );
+      return(false);
+     }
 
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);
@@ -1408,6 +1459,17 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
      }
 
    double stop_loss_price=ResolveStopLossPrice(direction,pending_price);
+
+   if(IsStopLossRequired() && stop_loss_price<=0.0)
+     {
+      Print(
+         "AlphaForge V3: ordem limite bloqueada porque o stop loss configurado ficou invalido.",
+         " Direcao=",IntegerToString(direction),
+         " Preco=",DoubleToString(pending_price,_Digits),
+         " Mode=",ResolveEffectiveStopLossMode()
+      );
+      return(false);
+     }
 
    g_trade.SetExpertMagicNumber(ResolveMagicNumberValue());
    g_trade.SetTypeFillingBySymbol(_Symbol);

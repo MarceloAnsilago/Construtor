@@ -69,6 +69,31 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.media.candles=1;
    if(config.stop_loss.media.distance<0.0)
       config.stop_loss.media.distance=0.0;
+
+   if(config.stop_loss.mode=="fixed")
+     {
+      config.stop_loss.fixed.enabled=true;
+      config.stop_loss.reference.enabled=false;
+      config.stop_loss.media.enabled=false;
+     }
+   else if(config.stop_loss.mode=="calc_ref")
+     {
+      config.stop_loss.fixed.enabled=false;
+      config.stop_loss.reference.enabled=true;
+      config.stop_loss.media.enabled=false;
+     }
+   else if(config.stop_loss.mode=="calc_med")
+     {
+      config.stop_loss.fixed.enabled=false;
+      config.stop_loss.reference.enabled=false;
+      config.stop_loss.media.enabled=true;
+     }
+   else if(config.stop_loss.mode=="none")
+     {
+      config.stop_loss.fixed.enabled=false;
+      config.stop_loss.reference.enabled=false;
+      config.stop_loss.media.enabled=false;
+     }
   }
 
 #endif
