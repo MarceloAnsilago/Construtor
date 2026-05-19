@@ -26,6 +26,9 @@ class StopLossView(ctk.CTkFrame):
         self._calc_max_extreme_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.maxmin.extreme")))
         self._calc_max_base_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.maxmin.base")))
         self._calc_max_count_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.maxmin.count")))
+        self._mult_base_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.mult.base")))
+        self._mult_candle_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.mult.candle")))
+        self._mult_value_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.mult.value")))
 
         self._scroll = ctk.CTkScrollableFrame(
             self,
@@ -50,6 +53,9 @@ class StopLossView(ctk.CTkFrame):
         self._calc_max_extreme_var.trace_add("write", self._on_calc_max_extreme_change)
         self._calc_max_base_var.trace_add("write", self._on_calc_max_base_change)
         self._calc_max_count_var.trace_add("write", self._on_calc_max_count_change)
+        self._mult_base_var.trace_add("write", self._on_mult_base_change)
+        self._mult_candle_var.trace_add("write", self._on_mult_candle_change)
+        self._mult_value_var.trace_add("write", self._on_mult_value_change)
         self.load_from_store()
 
     def _build_header(self) -> None:
@@ -235,7 +241,7 @@ class StopLossView(ctk.CTkFrame):
         self._mult_base = self._create_combo(
             card,
             ["Corpo do candle", "Range (pavio a pavio)"],
-            ctk.StringVar(value="Corpo do candle"),
+            self._mult_base_var,
         )
         self._mult_base.grid(row=3, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
@@ -243,12 +249,12 @@ class StopLossView(ctk.CTkFrame):
         self._mult_candle = self._create_combo(
             card,
             ["Atual", "Ultimo", "Penultimo", "Antepenultimo"],
-            ctk.StringVar(value="Penultimo"),
+            self._mult_candle_var,
         )
         self._mult_candle.grid(row=5, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
         self._add_label(card, 6, "Multiplicador")
-        self._mult_value = self._create_entry(card, "1.0")
+        self._mult_value = self._create_entry(card, self._mult_value_var.get(), self._mult_value_var)
         self._mult_value.grid(row=7, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 14))
 
     def _create_card(self, row: int, column: int, title: str) -> ctk.CTkFrame:
@@ -463,6 +469,15 @@ class StopLossView(ctk.CTkFrame):
     def _on_calc_max_count_change(self, *_args) -> None:
         self._strategy_store.set("stop_loss.calc.maxmin.count", self._calc_max_count_var.get().strip() or "1")
 
+    def _on_mult_base_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.mult.base", self._mult_base_var.get())
+
+    def _on_mult_candle_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.mult.candle", self._mult_candle_var.get())
+
+    def _on_mult_value_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.mult.value", self._mult_value_var.get().strip() or "1.0")
+
     def load_from_store(self) -> None:
         self._type_var.set(str(self._strategy_store.get("stop_loss.measure")))
         self._fixed_distance_var.set(str(self._strategy_store.get("stop_loss.fixed.distance")))
@@ -475,6 +490,9 @@ class StopLossView(ctk.CTkFrame):
         self._calc_max_extreme_var.set(str(self._strategy_store.get("stop_loss.calc.maxmin.extreme")))
         self._calc_max_base_var.set(str(self._strategy_store.get("stop_loss.calc.maxmin.base")))
         self._calc_max_count_var.set(str(self._strategy_store.get("stop_loss.calc.maxmin.count")))
+        self._mult_base_var.set(str(self._strategy_store.get("stop_loss.mult.base")))
+        self._mult_candle_var.set(str(self._strategy_store.get("stop_loss.mult.candle")))
+        self._mult_value_var.set(str(self._strategy_store.get("stop_loss.mult.value")))
         calc_method = str(self._strategy_store.get("stop_loss.calc_method")).strip() or "ref"
         self._set_calc_method(calc_method if calc_method in {"ref", "med", "maxmin"} else "ref")
 
@@ -513,6 +531,12 @@ class StopLossView(ctk.CTkFrame):
         if calc_method == "ref" and (ref_distance not in {"", "0", "0.0"} or ref_base != "Maxima" or ref_candle != "Atual"):
             return "calc"
 
+        mult_base = str(self._strategy_store.get("stop_loss.mult.base")).strip()
+        mult_candle = str(self._strategy_store.get("stop_loss.mult.candle")).strip()
+        mult_value = str(self._strategy_store.get("stop_loss.mult.value")).strip()
+        if mult_value not in {"", "0", "0.0", "1", "1.0"} or mult_base != "Corpo do candle" or mult_candle != "Penultimo":
+            return "mult"
+
         return "none"
 
     def export_config(self) -> dict[str, str | bool]:
@@ -527,6 +551,9 @@ class StopLossView(ctk.CTkFrame):
         max_extreme = self._calc_max_extreme.get()
         max_base = self._calc_max_base.get()
         max_count = self._calc_max_count.get().strip() or "1"
+        mult_base = self._mult_base.get()
+        mult_candle = self._mult_candle.get()
+        mult_value = self._mult_value.get().strip() or "1.0"
 
         self._strategy_store.set("stop_loss.measure", measure)
         self._strategy_store.set("stop_loss.fixed.distance", fixed_distance)
@@ -540,6 +567,9 @@ class StopLossView(ctk.CTkFrame):
         self._strategy_store.set("stop_loss.calc.maxmin.extreme", max_extreme)
         self._strategy_store.set("stop_loss.calc.maxmin.base", max_base)
         self._strategy_store.set("stop_loss.calc.maxmin.count", max_count)
+        self._strategy_store.set("stop_loss.mult.base", mult_base)
+        self._strategy_store.set("stop_loss.mult.candle", mult_candle)
+        self._strategy_store.set("stop_loss.mult.value", mult_value)
 
         if self._mode == "fixed":
             self._strategy_store.set("stop_loss.mode", "fixed")
@@ -566,4 +596,7 @@ class StopLossView(ctk.CTkFrame):
             "maxmin_extreme": max_extreme,
             "maxmin_base": max_base,
             "maxmin_count": max_count,
+            "mult_base": mult_base,
+            "mult_candle": mult_candle,
+            "mult_value": mult_value,
         }

@@ -24,7 +24,7 @@ void SyncRuntimeConfigFromInputs()
    g_config.signals.filter.upper_wick_max=InpTamanhoMaximoPavioSuperior;
    g_config.signals.filter.lower_wick_min=InpTamanhoMinimoPavioInferior;
    g_config.signals.filter.lower_wick_max=InpTamanhoMaximoPavioInferior;
-   g_config.stop_loss.mode=InpUsarStopLossFixo ? "fixed" : (InpUsarStopLossPorReferencia ? "calc_ref" : (InpUsarStopLossPorMedia ? "calc_med" : (InpUsarStopLossPorMaxMin ? "calc_maxmin" : "none")));
+   g_config.stop_loss.mode=InpUsarStopLossFixo ? "fixed" : (InpUsarStopLossPorReferencia ? "calc_ref" : (InpUsarStopLossPorMedia ? "calc_med" : (InpUsarStopLossPorMaxMin ? "calc_maxmin" : (InpUsarStopLossMultiplicador ? "mult" : "none"))));
    g_config.stop_loss.measure=InpTipoDeStopLossPercentual ? "Percentual" : "Pontos";
    g_config.stop_loss.is_percent=InpTipoDeStopLossPercentual;
    g_config.stop_loss.fixed.enabled=InpUsarStopLossFixo;
@@ -41,6 +41,10 @@ void SyncRuntimeConfigFromInputs()
    g_config.stop_loss.maxmin.extreme=InpExtremoDoStopLossPorMaxMin;
    g_config.stop_loss.maxmin.candles=InpQuantidadeDeCandlesDoStopLossPorMaxMin;
    g_config.stop_loss.maxmin.base=InpReferenciaDoStopLossPorMaxMin;
+   g_config.stop_loss.mult.enabled=InpUsarStopLossMultiplicador;
+   g_config.stop_loss.mult.base=InpBaseDoStopLossMultiplicador;
+   g_config.stop_loss.mult.candle=InpCandleDoStopLossMultiplicador;
+   g_config.stop_loss.mult.value=InpValorDoStopLossMultiplicador;
    g_config.risk.allow_buy=InpOperarNaCompra;
    g_config.risk.allow_sell=InpOperarNaVenda;
    g_config.risk.initial_volume=InpVolumeInicial;

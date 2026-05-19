@@ -13,6 +13,7 @@ from schema.strategy_document import (
     StopLossCalcReferenceDocument,
     StopLossDocument,
     StopLossFixedDocument,
+    StopLossMultiplierDocument,
     StrategyDocument,
 )
 
@@ -105,6 +106,11 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                     count=str(store.get("stop_loss.calc.maxmin.count")),
                 ),
             ),
+            mult=StopLossMultiplierDocument(
+                base=str(store.get("stop_loss.mult.base")),
+                candle=str(store.get("stop_loss.mult.candle")),
+                value=str(store.get("stop_loss.mult.value")),
+            ),
         ),
     )
 
@@ -143,6 +149,9 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "stop_loss_calc_maxmin_extreme": str(store.get("stop_loss.calc.maxmin.extreme")),
         "stop_loss_calc_maxmin_base": str(store.get("stop_loss.calc.maxmin.base")),
         "stop_loss_calc_maxmin_count": str(store.get("stop_loss.calc.maxmin.count")),
+        "stop_loss_mult_base": str(store.get("stop_loss.mult.base")),
+        "stop_loss_mult_candle": str(store.get("stop_loss.mult.candle")),
+        "stop_loss_mult_value": str(store.get("stop_loss.mult.value")),
     }
 
 
@@ -185,6 +194,12 @@ def _resolve_effective_stop_loss_mode(store: StrategyStore) -> str:
     ref_candle = str(store.get("stop_loss.calc.reference.candle")).strip()
     if calc_method == "ref" and (ref_distance not in {"", "0", "0.0"} or ref_base != "Maxima" or ref_candle != "Atual"):
         return "calc"
+
+    mult_base = str(store.get("stop_loss.mult.base")).strip()
+    mult_candle = str(store.get("stop_loss.mult.candle")).strip()
+    mult_value = str(store.get("stop_loss.mult.value")).strip()
+    if mult_value not in {"", "0", "0.0", "1", "1.0"} or mult_base != "Corpo do candle" or mult_candle != "Penultimo":
+        return "mult"
 
     return "none"
 
@@ -232,4 +247,8 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpExtremoDoStopLossPorMaxMin={'0' if str(store.get('stop_loss.calc.maxmin.extreme')).strip() != 'Menor' else '1'}",
         f"InpQuantidadeDeCandlesDoStopLossPorMaxMin={store.get('stop_loss.calc.maxmin.count')}",
         f"InpReferenciaDoStopLossPorMaxMin={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.maxmin.base'), '0')}",
+        f"InpUsarStopLossMultiplicador={_bool_to_set(effective_stop_loss_mode == 'mult')}",
+        f"InpBaseDoStopLossMultiplicador={'0' if str(store.get('stop_loss.mult.base')).strip() != 'Range (pavio a pavio)' else '1'}",
+        f"InpCandleDoStopLossMultiplicador={_enum_to_set(REFERENCE_CANDLE_TO_SET, store.get('stop_loss.mult.candle'), '2')}",
+        f"InpValorDoStopLossMultiplicador={store.get('stop_loss.mult.value')}",
     ]

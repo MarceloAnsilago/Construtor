@@ -72,11 +72,19 @@ class StopLossCalcDocument:
 
 
 @dataclass(frozen=True)
+class StopLossMultiplierDocument:
+    base: str
+    candle: str
+    value: str
+
+
+@dataclass(frozen=True)
 class StopLossDocument:
     mode: str
     measure: str
     fixed: StopLossFixedDocument
     calc: StopLossCalcDocument
+    mult: StopLossMultiplierDocument
 
 
 @dataclass(frozen=True)
@@ -149,6 +157,11 @@ class StrategyDocument:
                         "base": self.stop_loss.calc.maxmin.base,
                         "count": self.stop_loss.calc.maxmin.count,
                     },
+                },
+                "mult": {
+                    "base": self.stop_loss.mult.base,
+                    "candle": self.stop_loss.mult.candle,
+                    "value": self.stop_loss.mult.value,
                 },
             },
         }

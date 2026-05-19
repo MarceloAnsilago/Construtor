@@ -44,6 +44,12 @@ enum EStopLossMaxMinExtreme
    StopLossMenor=1
   };
 
+enum EStopLossMultiplierBase
+  {
+   StopLossMultiplicadorCorpo=0,
+   StopLossMultiplicadorRange=1
+  };
+
 struct SSignalFilterConfig
   {
    bool             enabled;
@@ -112,6 +118,14 @@ struct SStopLossMaxMinConfig
    ESignalLimitReferenceBase  base;
   };
 
+struct SStopLossMultiplierConfig
+  {
+   bool                         enabled;
+   EStopLossMultiplierBase      base;
+   ESignalLimitReferenceCandle  candle;
+   double                       value;
+  };
+
 struct SStopLossConfig
   {
    string                     mode;
@@ -121,6 +135,7 @@ struct SStopLossConfig
    SStopLossReferenceConfig   reference;
    SStopLossMediaConfig       media;
    SStopLossMaxMinConfig      maxmin;
+   SStopLossMultiplierConfig  mult;
   };
 
 struct SRiskConfig

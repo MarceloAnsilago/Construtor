@@ -46,6 +46,14 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
    if(config.stop_loss.maxmin.extreme!=StopLossMaior
       && config.stop_loss.maxmin.extreme!=StopLossMenor)
       config.stop_loss.maxmin.extreme=StopLossMaior;
+   if(config.stop_loss.mult.base!=StopLossMultiplicadorCorpo
+      && config.stop_loss.mult.base!=StopLossMultiplicadorRange)
+      config.stop_loss.mult.base=StopLossMultiplicadorCorpo;
+   if(config.stop_loss.mult.candle!=CandleAtual
+      && config.stop_loss.mult.candle!=CandleUltimo
+      && config.stop_loss.mult.candle!=CandlePenultimo
+      && config.stop_loss.mult.candle!=CandleAntepenultimo)
+      config.stop_loss.mult.candle=CandlePenultimo;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;
@@ -79,6 +87,8 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.media.distance=0.0;
    if(config.stop_loss.maxmin.candles<1)
       config.stop_loss.maxmin.candles=1;
+   if(config.stop_loss.mult.value<0.0)
+      config.stop_loss.mult.value=0.0;
 
    if(config.stop_loss.mode=="fixed")
      {
@@ -86,6 +96,7 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.reference.enabled=false;
       config.stop_loss.media.enabled=false;
       config.stop_loss.maxmin.enabled=false;
+      config.stop_loss.mult.enabled=false;
      }
    else if(config.stop_loss.mode=="calc_ref")
      {
@@ -93,6 +104,7 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.reference.enabled=true;
       config.stop_loss.media.enabled=false;
       config.stop_loss.maxmin.enabled=false;
+      config.stop_loss.mult.enabled=false;
      }
    else if(config.stop_loss.mode=="calc_med")
      {
@@ -100,6 +112,7 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.reference.enabled=false;
       config.stop_loss.media.enabled=true;
       config.stop_loss.maxmin.enabled=false;
+      config.stop_loss.mult.enabled=false;
      }
    else if(config.stop_loss.mode=="calc_maxmin")
      {
@@ -107,6 +120,15 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.reference.enabled=false;
       config.stop_loss.media.enabled=false;
       config.stop_loss.maxmin.enabled=true;
+      config.stop_loss.mult.enabled=false;
+     }
+   else if(config.stop_loss.mode=="mult")
+     {
+      config.stop_loss.fixed.enabled=false;
+      config.stop_loss.reference.enabled=false;
+      config.stop_loss.media.enabled=false;
+      config.stop_loss.maxmin.enabled=false;
+      config.stop_loss.mult.enabled=true;
      }
    else if(config.stop_loss.mode=="none")
      {
@@ -114,6 +136,7 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.reference.enabled=false;
       config.stop_loss.media.enabled=false;
       config.stop_loss.maxmin.enabled=false;
+      config.stop_loss.mult.enabled=false;
      }
   }
 

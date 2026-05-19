@@ -210,3 +210,7 @@ class DashboardView(ctk.CTkFrame):
         sinais_view = self._view_cache.get("sinais")
         if sinais_view is not None and hasattr(sinais_view, "export_runtime_config"):
             sinais_view.export_runtime_config()
+
+        stop_loss_view = self._view_cache.get("stop_loss")
+        if stop_loss_view is not None and hasattr(stop_loss_view, "export_config"):
+            stop_loss_view.export_config()

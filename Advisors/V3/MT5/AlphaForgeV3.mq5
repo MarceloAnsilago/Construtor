@@ -63,6 +63,10 @@ input double InpDistanciaDoStopLossPorMedia = 0.0;
 input EStopLossMaxMinExtreme InpExtremoDoStopLossPorMaxMin = StopLossMaior;
 input int InpQuantidadeDeCandlesDoStopLossPorMaxMin = 3;
 input ESignalLimitReferenceBase InpReferenciaDoStopLossPorMaxMin = BaseMaxima;
+input bool InpUsarStopLossMultiplicador = false;
+input EStopLossMultiplierBase InpBaseDoStopLossMultiplicador = StopLossMultiplicadorCorpo;
+input ESignalLimitReferenceCandle InpCandleDoStopLossMultiplicador = CandlePenultimo;
+input double InpValorDoStopLossMultiplicador = 1.0;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string BUTTON_CARD_NAME     = "AlphaForgeV3.BtnCard";
@@ -219,6 +223,13 @@ string StopLossExtremeToText(const EStopLossMaxMinExtreme extreme)
    return("Maior");
   }
 
+string StopLossMultiplierBaseToText(const EStopLossMultiplierBase base)
+  {
+   if(base==StopLossMultiplicadorRange)
+      return("Range (pavio a pavio)");
+   return("Corpo do candle");
+  }
+
 string BuildOrderSummaryText()
   {
    string order_text="Ordem: "+OrderModeToText(g_config.signals.order_mode);
@@ -262,6 +273,16 @@ string BuildStopLossSummaryText()
       );
      }
 
+   if(g_config.stop_loss.mode=="mult" && g_config.stop_loss.mult.enabled)
+     {
+      return(
+         "Stop loss: multiplicador"
+         +" / Base="+StopLossMultiplierBaseToText(g_config.stop_loss.mult.base)
+         +" / Candle="+ReferenceCandleToText(g_config.stop_loss.mult.candle)
+         +" / Mult="+FormatRuntimeDouble(g_config.stop_loss.mult.value)
+      );
+     }
+
    if(g_config.stop_loss.reference.enabled)
      {
       return(
@@ -292,6 +313,16 @@ string BuildStopLossSummaryText()
       );
      }
 
+   if(g_config.stop_loss.mult.enabled)
+     {
+      return(
+         "Stop loss: multiplicador"
+         +" / Base="+StopLossMultiplierBaseToText(g_config.stop_loss.mult.base)
+         +" / Candle="+ReferenceCandleToText(g_config.stop_loss.mult.candle)
+         +" / Mult="+FormatRuntimeDouble(g_config.stop_loss.mult.value)
+      );
+     }
+
    if(!g_config.stop_loss.fixed.enabled)
       return("Stop loss: desativado");
    return("Stop loss: fixo / "+g_config.stop_loss.measure+" / Dist="+FormatRuntimeDouble(g_config.stop_loss.fixed.distance));
@@ -307,6 +338,8 @@ string ResolveEffectiveStopLossMode()
       return("calc_med");
    if(g_config.stop_loss.mode=="calc_maxmin")
       return("calc_maxmin");
+   if(g_config.stop_loss.mode=="mult")
+      return("mult");
 
    if(g_config.stop_loss.reference.enabled && !g_config.stop_loss.media.enabled)
       return("calc_ref");
@@ -314,6 +347,8 @@ string ResolveEffectiveStopLossMode()
       return("calc_med");
    if(g_config.stop_loss.maxmin.enabled && !g_config.stop_loss.reference.enabled && !g_config.stop_loss.media.enabled)
       return("calc_maxmin");
+   if(g_config.stop_loss.mult.enabled && !g_config.stop_loss.reference.enabled && !g_config.stop_loss.media.enabled && !g_config.stop_loss.maxmin.enabled)
+      return("mult");
    if(g_config.stop_loss.fixed.enabled)
       return("fixed");
    if(g_config.stop_loss.reference.enabled)
@@ -322,6 +357,8 @@ string ResolveEffectiveStopLossMode()
       return("calc_med");
    if(g_config.stop_loss.maxmin.enabled)
       return("calc_maxmin");
+   if(g_config.stop_loss.mult.enabled)
+      return("mult");
    return("none");
   }
 
@@ -339,6 +376,8 @@ double ResolveConfiguredStopLossDistance()
       return(g_config.stop_loss.media.distance);
    if(effective_mode=="calc_maxmin")
       return(0.0);
+   if(effective_mode=="mult")
+      return(g_config.stop_loss.mult.value);
    return(g_config.stop_loss.fixed.distance);
   }
 
@@ -626,6 +665,19 @@ bool TryLoadStopLossMaxMinBars(MqlRates &bars[])
    return(copied>=bars_count);
   }
 
+bool TryLoadStopLossMultiplierBar(MqlRates &reference_bar)
+  {
+   int reference_shift=ResolveReferenceBarShift(g_config.stop_loss.mult.candle);
+   MqlRates bars[];
+   ArraySetAsSeries(bars,true);
+   int copied=CopyRates(_Symbol,(ENUM_TIMEFRAMES)Period(),reference_shift,1,bars);
+   if(copied<1)
+      return(false);
+
+   reference_bar=bars[0];
+   return(true);
+  }
+
 void LogRejectedMediaStopLoss(
    const string reason,
    const int direction,
@@ -691,6 +743,29 @@ void LogRejectedMaxMinStopLoss(
       " Extremo=",StopLossExtremeToText(g_config.stop_loss.maxmin.extreme),
       " Base=",ReferenceBaseToText(g_config.stop_loss.maxmin.base),
       " Candles=",IntegerToString(g_config.stop_loss.maxmin.candles)
+   );
+  }
+
+void LogRejectedMultiplierStopLoss(
+   const string reason,
+   const int direction,
+   const double entry_price,
+   const double reference_price,
+   const double distance_price,
+   const double stop_loss_price
+)
+  {
+   Print(
+      "AlphaForge V3: stop loss por multiplicador rejeitado. Motivo=",reason,
+      " Direcao=",IntegerToString(direction),
+      " Entry=",DoubleToString(entry_price,_Digits),
+      " Ref=",DoubleToString(reference_price,_Digits),
+      " DistCalc=",DoubleToString(distance_price,_Digits),
+      " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
+      " SL=",DoubleToString(stop_loss_price,_Digits),
+      " Base=",StopLossMultiplierBaseToText(g_config.stop_loss.mult.base),
+      " Candle=",ReferenceCandleToText(g_config.stop_loss.mult.candle),
+      " Mult=",DoubleToString(g_config.stop_loss.mult.value,2)
    );
   }
 
@@ -807,6 +882,14 @@ double ResolveExtremeReferencePrice(const MqlRates &bars[],const int count,const
    return(selected_price);
   }
 
+double ResolveStopLossMultiplierReferencePrice(const MqlRates &reference_bar)
+  {
+   if(g_config.stop_loss.mult.base==StopLossMultiplicadorRange)
+      return(reference_bar.high-reference_bar.low);
+
+   return(MathAbs(reference_bar.close-reference_bar.open));
+  }
+
 double ResolveMediaStopLossPrice(const int direction,const double entry_price)
   {
    if(!g_config.stop_loss.media.enabled)
@@ -918,6 +1001,59 @@ double ResolveMaxMinStopLossPrice(const int direction,const double entry_price)
    return(stop_loss_price);
   }
 
+double ResolveMultiplierStopLossPrice(const int direction,const double entry_price)
+  {
+   if(!g_config.stop_loss.mult.enabled)
+      return(0.0);
+
+   MqlRates reference_bar;
+   if(!TryLoadStopLossMultiplierBar(reference_bar))
+     {
+      LogRejectedMultiplierStopLoss("vela_referencia_indisponivel",direction,entry_price,0.0,0.0,0.0);
+      return(0.0);
+     }
+
+   double reference_price=ResolveStopLossMultiplierReferencePrice(reference_bar);
+   double distance_price=reference_price*g_config.stop_loss.mult.value;
+   if(reference_price<=0.0 || distance_price<=0.0 || entry_price<=0.0)
+     {
+      LogRejectedMultiplierStopLoss("preco_ou_distancia_invalido",direction,entry_price,reference_price,distance_price,0.0);
+      return(0.0);
+     }
+
+   double stop_loss_price=(direction>0) ? entry_price-distance_price : entry_price+distance_price;
+   stop_loss_price=NormalizeDouble(stop_loss_price,_Digits);
+   Print(
+      "AlphaForge V3: calculo do stop loss por multiplicador.",
+      " Direcao=",IntegerToString(direction),
+      " Entry=",DoubleToString(entry_price,_Digits),
+      " Ref=",DoubleToString(reference_price,_Digits),
+      " Base=",StopLossMultiplierBaseToText(g_config.stop_loss.mult.base),
+      " Candle=",ReferenceCandleToText(g_config.stop_loss.mult.candle),
+      " Mult=",DoubleToString(g_config.stop_loss.mult.value,2),
+      " DistCalc=",DoubleToString(distance_price,_Digits),
+      " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
+      " SL=",DoubleToString(stop_loss_price,_Digits)
+   );
+   if(stop_loss_price<=0.0)
+     {
+      LogRejectedMultiplierStopLoss("stop_loss_menor_ou_igual_zero",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+   if(direction>0 && stop_loss_price>=entry_price)
+     {
+      LogRejectedMultiplierStopLoss("compra_com_sl_acima_ou_igual_entrada",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+   if(direction<0 && stop_loss_price<=entry_price)
+     {
+      LogRejectedMultiplierStopLoss("venda_com_sl_abaixo_ou_igual_entrada",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+
+   return(stop_loss_price);
+  }
+
 double ResolveStopLossPrice(const int direction,const double entry_price)
   {
    string effective_mode=ResolveEffectiveStopLossMode();
@@ -927,6 +1063,8 @@ double ResolveStopLossPrice(const int direction,const double entry_price)
       return(ResolveMediaStopLossPrice(direction,entry_price));
    if(effective_mode=="calc_maxmin")
       return(ResolveMaxMinStopLossPrice(direction,entry_price));
+   if(effective_mode=="mult")
+      return(ResolveMultiplierStopLossPrice(direction,entry_price));
 
    double distance_price=ResolveStopLossDistancePrice(entry_price);
    if(distance_price<=0.0 || entry_price<=0.0)

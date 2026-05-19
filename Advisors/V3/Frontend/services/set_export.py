@@ -37,6 +37,7 @@ INPUT_TO_STORE_KEYS = {
     "InpUsarStopLossPorReferencia": ("stop_loss.mode", "stop_loss.calc_method"),
     "InpUsarStopLossPorMedia": ("stop_loss.mode", "stop_loss.calc_method"),
     "InpUsarStopLossPorMaxMin": ("stop_loss.mode", "stop_loss.calc_method"),
+    "InpUsarStopLossMultiplicador": ("stop_loss.mode",),
     "InpTipoDeStopLossPercentual": ("stop_loss.measure",),
     "InpDistanciaDoStopLossFixo": ("stop_loss.fixed.distance",),
     "InpReferenciaDoStopLoss": ("stop_loss.calc.reference.base",),
@@ -48,6 +49,9 @@ INPUT_TO_STORE_KEYS = {
     "InpExtremoDoStopLossPorMaxMin": ("stop_loss.calc.maxmin.extreme",),
     "InpQuantidadeDeCandlesDoStopLossPorMaxMin": ("stop_loss.calc.maxmin.count",),
     "InpReferenciaDoStopLossPorMaxMin": ("stop_loss.calc.maxmin.base",),
+    "InpBaseDoStopLossMultiplicador": ("stop_loss.mult.base",),
+    "InpCandleDoStopLossMultiplicador": ("stop_loss.mult.candle",),
+    "InpValorDoStopLossMultiplicador": ("stop_loss.mult.value",),
 }
 
 ORDER_MODE_FROM_SET = {
@@ -146,6 +150,8 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
         return "calc" if _parse_bool(value) else "med"
     if input_name == "InpUsarStopLossPorMaxMin":
         return "calc" if _parse_bool(value) else "maxmin"
+    if input_name == "InpUsarStopLossMultiplicador":
+        return "mult" if _parse_bool(value) else "none"
     if input_name == "InpTipoDeStopLossPercentual":
         return "Percentual" if _parse_bool(value) else "Pontos"
     if input_name == "InpReferenciaDoStopLoss":
@@ -156,6 +162,10 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
         return "Menor" if value == "1" else "Maior"
     if input_name == "InpReferenciaDoStopLossPorMaxMin":
         return REFERENCE_BASE_FROM_SET.get(value, "Maxima")
+    if input_name == "InpBaseDoStopLossMultiplicador":
+        return "Range (pavio a pavio)" if value == "1" else "Corpo do candle"
+    if input_name == "InpCandleDoStopLossMultiplicador":
+        return REFERENCE_CANDLE_FROM_SET.get(value, "Penultimo")
     if input_name == "InpTempoGraficoDoFiltro":
         return "Corrente" if value.lower() == "current" else value
     return value
@@ -169,6 +179,8 @@ def _infer_stop_loss_mode(values: dict[str, str | bool]) -> None:
     mode = str(values.get("stop_loss.mode", "")).strip()
     calc_method = str(values.get("stop_loss.calc_method", "")).strip()
     if mode == "calc" and calc_method in {"ref", "med", "maxmin"}:
+        return
+    if mode == "mult":
         return
 
     ref_distance = str(values.get("stop_loss.calc.reference.distance", "")).strip()
@@ -193,6 +205,13 @@ def _infer_stop_loss_mode(values: dict[str, str | bool]) -> None:
     if maxmin_count not in {"", "3"} or maxmin_base not in {"", "Maxima"} or maxmin_extreme not in {"", "Maior"}:
         values["stop_loss.mode"] = "calc"
         values["stop_loss.calc_method"] = "maxmin"
+        return
+
+    mult_base = str(values.get("stop_loss.mult.base", "")).strip()
+    mult_candle = str(values.get("stop_loss.mult.candle", "")).strip()
+    mult_value = str(values.get("stop_loss.mult.value", "")).strip()
+    if mult_value not in {"", "0", "0.0", "1", "1.0"} or mult_base not in {"", "Corpo do candle"} or mult_candle not in {"", "Penultimo"}:
+        values["stop_loss.mode"] = "mult"
         return
 
     values["stop_loss.mode"] = "none"
@@ -227,6 +246,11 @@ def read_set_file(source: Path) -> dict[str, str | bool]:
             if _parse_bool(raw_value):
                 values["stop_loss.mode"] = "calc"
                 values["stop_loss.calc_method"] = "maxmin"
+                values["stop_loss.fixed.enabled"] = False
+            continue
+        if input_name.strip() == "InpUsarStopLossMultiplicador":
+            if _parse_bool(raw_value):
+                values["stop_loss.mode"] = "mult"
                 values["stop_loss.fixed.enabled"] = False
             continue
 
