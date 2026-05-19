@@ -50,11 +50,15 @@ input double InpTamanhoMaximoPavioInferior = 0.0;
 input group "5.Stop loss"
 input bool InpUsarStopLossFixo = false;
 input bool InpUsarStopLossPorReferencia = false;
+input bool InpUsarStopLossPorMedia = false;
 input bool InpTipoDeStopLossPercentual = false;
 input double InpDistanciaDoStopLossFixo = 100.0;
 input ESignalLimitReferenceBase InpReferenciaDoStopLoss = BaseMaxima;
 input ESignalLimitReferenceCandle InpCandleDaReferenciaDoStopLoss = CandleAtual;
 input double InpDistanciaDoStopLossPorReferencia = 0.0;
+input int InpQuantidadeDeCandlesDaMediaStopLoss = 3;
+input ESignalLimitReferenceBase InpReferenciaDaMediaStopLoss = BaseMaxima;
+input double InpDistanciaDoStopLossPorMedia = 0.0;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string BUTTON_CARD_NAME     = "AlphaForgeV3.BtnCard";
@@ -227,6 +231,16 @@ string BuildStopLossSummaryText()
       );
      }
 
+   if(g_config.stop_loss.mode=="calc_med" && g_config.stop_loss.media.enabled)
+     {
+      return(
+         "Stop loss: media / "+g_config.stop_loss.measure
+         +" / Base="+ReferenceBaseToText(g_config.stop_loss.media.base)
+         +" / Candles="+IntegerToString(g_config.stop_loss.media.candles)
+         +" / Dist="+FormatRuntimeDouble(g_config.stop_loss.media.distance)
+      );
+     }
+
    if(g_config.stop_loss.reference.enabled)
      {
       return(
@@ -234,6 +248,16 @@ string BuildStopLossSummaryText()
          +" / Base="+ReferenceBaseToText(g_config.stop_loss.reference.base)
          +" / Candle="+ReferenceCandleToText(g_config.stop_loss.reference.candle)
          +" / Dist="+FormatRuntimeDouble(g_config.stop_loss.reference.distance)
+      );
+     }
+
+   if(g_config.stop_loss.media.enabled)
+     {
+      return(
+         "Stop loss: media / "+g_config.stop_loss.measure
+         +" / Base="+ReferenceBaseToText(g_config.stop_loss.media.base)
+         +" / Candles="+IntegerToString(g_config.stop_loss.media.candles)
+         +" / Dist="+FormatRuntimeDouble(g_config.stop_loss.media.distance)
       );
      }
 
@@ -246,6 +270,8 @@ double ResolveConfiguredStopLossDistance()
   {
    if(g_config.stop_loss.mode=="calc_ref" || g_config.stop_loss.reference.enabled)
       return(g_config.stop_loss.reference.distance);
+   if(g_config.stop_loss.mode=="calc_med" || g_config.stop_loss.media.enabled)
+      return(g_config.stop_loss.media.distance);
    return(g_config.stop_loss.fixed.distance);
   }
 
@@ -511,6 +537,41 @@ bool TryLoadStopLossReferenceBar(MqlRates &reference_bar)
    return(true);
   }
 
+bool TryLoadStopLossMediaBars(MqlRates &bars[])
+  {
+   int bars_count=g_config.stop_loss.media.candles;
+   if(bars_count<1)
+      return(false);
+
+   ArraySetAsSeries(bars,true);
+   int copied=CopyRates(_Symbol,(ENUM_TIMEFRAMES)Period(),1,bars_count,bars);
+   return(copied>=bars_count);
+  }
+
+void LogRejectedMediaStopLoss(
+   const string reason,
+   const int direction,
+   const double entry_price,
+   const double reference_price,
+   const double distance_price,
+   const double stop_loss_price
+)
+  {
+   Print(
+      "AlphaForge V3: stop loss por media rejeitado. Motivo=",reason,
+      " Direcao=",IntegerToString(direction),
+      " Entry=",DoubleToString(entry_price,_Digits),
+      " Media=",DoubleToString(reference_price,_Digits),
+      " DistCalc=",DoubleToString(distance_price,_Digits),
+      " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
+      " SL=",DoubleToString(stop_loss_price,_Digits),
+      " Base=",ReferenceBaseToText(g_config.stop_loss.media.base),
+      " Candles=",IntegerToString(g_config.stop_loss.media.candles),
+      " DistCfg=",DoubleToString(g_config.stop_loss.media.distance,2),
+      " Medida=",g_config.stop_loss.measure
+   );
+  }
+
 void LogRejectedReferenceStopLoss(
    const string reason,
    const int direction,
@@ -612,10 +673,81 @@ double ResolveReferenceStopLossPrice(const int direction,const double entry_pric
    return(stop_loss_price);
   }
 
+double ResolveAverageReferencePrice(const MqlRates &bars[],const int count,const ESignalLimitReferenceBase reference_name)
+  {
+   if(count<=0)
+      return(0.0);
+
+   double total=0.0;
+   for(int index=0; index<count; index++)
+      total+=ResolveReferencePrice(bars[index],reference_name);
+
+   return(total/(double)count);
+  }
+
+double ResolveMediaStopLossPrice(const int direction,const double entry_price)
+  {
+   if(!g_config.stop_loss.media.enabled)
+      return(0.0);
+
+   MqlRates bars[];
+   if(!TryLoadStopLossMediaBars(bars))
+     {
+      LogRejectedMediaStopLoss("velas_media_indisponiveis",direction,entry_price,0.0,0.0,0.0);
+      return(0.0);
+     }
+
+   double reference_price=ResolveAverageReferencePrice(bars,g_config.stop_loss.media.candles,g_config.stop_loss.media.base);
+   double distance_price=ResolveMetricDistancePrice(
+      g_config.stop_loss.media.distance,
+      reference_price
+   );
+   if(reference_price<=0.0 || distance_price<0.0 || entry_price<=0.0)
+     {
+      LogRejectedMediaStopLoss("preco_ou_distancia_invalido",direction,entry_price,reference_price,distance_price,0.0);
+      return(0.0);
+     }
+
+   double stop_loss_price=(direction>0) ? reference_price-distance_price : reference_price+distance_price;
+   stop_loss_price=NormalizeDouble(stop_loss_price,_Digits);
+   Print(
+      "AlphaForge V3: calculo do stop loss por media.",
+      " Direcao=",IntegerToString(direction),
+      " Entry=",DoubleToString(entry_price,_Digits),
+      " Media=",DoubleToString(reference_price,_Digits),
+      " Base=",ReferenceBaseToText(g_config.stop_loss.media.base),
+      " Candles=",IntegerToString(g_config.stop_loss.media.candles),
+      " Medida=",g_config.stop_loss.measure,
+      " DistCfg=",DoubleToString(g_config.stop_loss.media.distance,2),
+      " DistCalc=",DoubleToString(distance_price,_Digits),
+      " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
+      " SL=",DoubleToString(stop_loss_price,_Digits)
+   );
+   if(stop_loss_price<=0.0)
+     {
+      LogRejectedMediaStopLoss("stop_loss_menor_ou_igual_zero",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+   if(direction>0 && stop_loss_price>=entry_price)
+     {
+      LogRejectedMediaStopLoss("compra_com_sl_acima_ou_igual_entrada",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+   if(direction<0 && stop_loss_price<=entry_price)
+     {
+      LogRejectedMediaStopLoss("venda_com_sl_abaixo_ou_igual_entrada",direction,entry_price,reference_price,distance_price,stop_loss_price);
+      return(0.0);
+     }
+
+   return(stop_loss_price);
+  }
+
 double ResolveStopLossPrice(const int direction,const double entry_price)
   {
    if(g_config.stop_loss.mode=="calc_ref" || g_config.stop_loss.reference.enabled)
       return(ResolveReferenceStopLossPrice(direction,entry_price));
+   if(g_config.stop_loss.mode=="calc_med" || g_config.stop_loss.media.enabled)
+      return(ResolveMediaStopLossPrice(direction,entry_price));
 
    double distance_price=ResolveStopLossDistancePrice(entry_price);
    if(distance_price<=0.0 || entry_price<=0.0)

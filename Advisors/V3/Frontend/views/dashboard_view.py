@@ -183,6 +183,10 @@ class DashboardView(ctk.CTkFrame):
         stop_loss_view = self._view_cache.get("stop_loss")
         if stop_loss_view is not None and hasattr(stop_loss_view, "export_config"):
             stop_loss_view.export_config()
+
+        stop_loss_view = self._view_cache.get("stop_loss")
+        if stop_loss_view is not None and hasattr(stop_loss_view, "export_config"):
+            stop_loss_view.export_config()
             return build_runtime_snapshot(self._strategy_store)
         return {}
 

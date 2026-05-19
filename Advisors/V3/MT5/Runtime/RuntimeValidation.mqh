@@ -33,6 +33,11 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       && config.stop_loss.reference.candle!=CandlePenultimo
       && config.stop_loss.reference.candle!=CandleAntepenultimo)
       config.stop_loss.reference.candle=CandleAtual;
+   if(config.stop_loss.media.base!=BaseMaxima
+      && config.stop_loss.media.base!=BaseMinima
+      && config.stop_loss.media.base!=BaseAbertura
+      && config.stop_loss.media.base!=BaseFechamento)
+      config.stop_loss.media.base=BaseMaxima;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;
@@ -60,6 +65,10 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.fixed.distance=0.0;
    if(config.stop_loss.reference.distance<0.0)
       config.stop_loss.reference.distance=0.0;
+   if(config.stop_loss.media.candles<1)
+      config.stop_loss.media.candles=1;
+   if(config.stop_loss.media.distance<0.0)
+      config.stop_loss.media.distance=0.0;
   }
 
 #endif

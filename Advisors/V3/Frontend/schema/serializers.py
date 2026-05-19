@@ -8,6 +8,7 @@ from schema.strategy_document import (
     SignalLimitReferenceDocument,
     SignalsDocument,
     StopLossCalcDocument,
+    StopLossCalcMediaDocument,
     StopLossCalcReferenceDocument,
     StopLossDocument,
     StopLossFixedDocument,
@@ -92,6 +93,11 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                     candle=str(store.get("stop_loss.calc.reference.candle")),
                     distance=str(store.get("stop_loss.calc.reference.distance")),
                 ),
+                media=StopLossCalcMediaDocument(
+                    candles=str(store.get("stop_loss.calc.media.candles")),
+                    base=str(store.get("stop_loss.calc.media.base")),
+                    distance=str(store.get("stop_loss.calc.media.distance")),
+                ),
             ),
         ),
     )
@@ -125,6 +131,9 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "stop_loss_calc_reference_base": str(store.get("stop_loss.calc.reference.base")),
         "stop_loss_calc_reference_candle": str(store.get("stop_loss.calc.reference.candle")),
         "stop_loss_calc_reference_distance": str(store.get("stop_loss.calc.reference.distance")),
+        "stop_loss_calc_media_candles": str(store.get("stop_loss.calc.media.candles")),
+        "stop_loss_calc_media_base": str(store.get("stop_loss.calc.media.base")),
+        "stop_loss_calc_media_distance": str(store.get("stop_loss.calc.media.distance")),
     }
 
 
@@ -144,7 +153,30 @@ def _enum_to_set(mapping: dict[str, str], value: object, default: str) -> str:
     return mapping.get(normalized, default)
 
 
+def _resolve_effective_stop_loss_mode(store: StrategyStore) -> str:
+    if bool(store.get("stop_loss.fixed.enabled")):
+        return "fixed"
+
+    mode = str(store.get("stop_loss.mode")).strip()
+    if mode in {"calc", "mult"}:
+        return mode
+
+    calc_method = str(store.get("stop_loss.calc_method")).strip()
+    if calc_method in {"med", "maxmin"}:
+        return "calc"
+
+    ref_distance = str(store.get("stop_loss.calc.reference.distance")).strip()
+    ref_base = str(store.get("stop_loss.calc.reference.base")).strip()
+    ref_candle = str(store.get("stop_loss.calc.reference.candle")).strip()
+    if calc_method == "ref" and (ref_distance not in {"", "0", "0.0"} or ref_base != "Maxima" or ref_candle != "Atual"):
+        return "calc"
+
+    return "none"
+
+
 def build_tester_set_lines(store: StrategyStore) -> list[str]:
+    effective_stop_loss_mode = _resolve_effective_stop_loss_mode(store)
+    calc_method = str(store.get("stop_loss.calc_method")).strip()
     return [
         f"InpNomeDaEstrategia={store.get('strategy.name')}",
         f"InpMagicNumber={store.get('strategy.magic_number')}",
@@ -170,11 +202,15 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpTamanhoMaximoPavioSuperior={store.get('signals.filter.upper_wick_max')}",
         f"InpTamanhoMinimoPavioInferior={store.get('signals.filter.lower_wick_min')}",
         f"InpTamanhoMaximoPavioInferior={store.get('signals.filter.lower_wick_max')}",
-        f"InpUsarStopLossFixo={_bool_to_set(store.get('stop_loss.fixed.enabled'))}",
-        f"InpUsarStopLossPorReferencia={_bool_to_set(str(store.get('stop_loss.mode')) == 'calc' and str(store.get('stop_loss.calc_method')) == 'ref')}",
+        f"InpUsarStopLossFixo={_bool_to_set(effective_stop_loss_mode == 'fixed')}",
+        f"InpUsarStopLossPorReferencia={_bool_to_set(effective_stop_loss_mode == 'calc' and calc_method == 'ref')}",
+        f"InpUsarStopLossPorMedia={_bool_to_set(effective_stop_loss_mode == 'calc' and calc_method == 'med')}",
         f"InpTipoDeStopLossPercentual={_bool_to_set(str(store.get('stop_loss.measure')) == 'Percentual')}",
         f"InpDistanciaDoStopLossFixo={store.get('stop_loss.fixed.distance')}",
         f"InpReferenciaDoStopLoss={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.reference.base'), '0')}",
         f"InpCandleDaReferenciaDoStopLoss={_enum_to_set(REFERENCE_CANDLE_TO_SET, store.get('stop_loss.calc.reference.candle'), '0')}",
         f"InpDistanciaDoStopLossPorReferencia={store.get('stop_loss.calc.reference.distance')}",
+        f"InpQuantidadeDeCandlesDaMediaStopLoss={store.get('stop_loss.calc.media.candles')}",
+        f"InpReferenciaDaMediaStopLoss={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.media.base'), '0')}",
+        f"InpDistanciaDoStopLossPorMedia={store.get('stop_loss.calc.media.distance')}",
     ]

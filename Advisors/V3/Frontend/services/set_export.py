@@ -35,11 +35,15 @@ INPUT_TO_STORE_KEYS = {
     "InpMaximoDePavios": ("signals.filter.upper_wick_max", "signals.filter.lower_wick_max"),
     "InpUsarStopLossFixo": ("stop_loss.fixed.enabled",),
     "InpUsarStopLossPorReferencia": ("stop_loss.mode", "stop_loss.calc_method"),
+    "InpUsarStopLossPorMedia": ("stop_loss.mode", "stop_loss.calc_method"),
     "InpTipoDeStopLossPercentual": ("stop_loss.measure",),
     "InpDistanciaDoStopLossFixo": ("stop_loss.fixed.distance",),
     "InpReferenciaDoStopLoss": ("stop_loss.calc.reference.base",),
     "InpCandleDaReferenciaDoStopLoss": ("stop_loss.calc.reference.candle",),
     "InpDistanciaDoStopLossPorReferencia": ("stop_loss.calc.reference.distance",),
+    "InpQuantidadeDeCandlesDaMediaStopLoss": ("stop_loss.calc.media.candles",),
+    "InpReferenciaDaMediaStopLoss": ("stop_loss.calc.media.base",),
+    "InpDistanciaDoStopLossPorMedia": ("stop_loss.calc.media.distance",),
 }
 
 ORDER_MODE_FROM_SET = {
@@ -134,6 +138,8 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
         return _parse_bool(value)
     if input_name == "InpUsarStopLossPorReferencia":
         return "calc" if _parse_bool(value) else "ref"
+    if input_name == "InpUsarStopLossPorMedia":
+        return "calc" if _parse_bool(value) else "med"
     if input_name == "InpTipoDeStopLossPercentual":
         return "Percentual" if _parse_bool(value) else "Pontos"
     if input_name == "InpReferenciaDoStopLoss":
@@ -143,6 +149,35 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
     if input_name == "InpTempoGraficoDoFiltro":
         return "Corrente" if value.lower() == "current" else value
     return value
+
+
+def _infer_stop_loss_mode(values: dict[str, str | bool]) -> None:
+    if bool(values.get("stop_loss.fixed.enabled")):
+        values["stop_loss.mode"] = "fixed"
+        return
+
+    mode = str(values.get("stop_loss.mode", "")).strip()
+    calc_method = str(values.get("stop_loss.calc_method", "")).strip()
+    if mode == "calc" and calc_method in {"ref", "med", "maxmin"}:
+        return
+
+    ref_distance = str(values.get("stop_loss.calc.reference.distance", "")).strip()
+    ref_base = str(values.get("stop_loss.calc.reference.base", "")).strip()
+    ref_candle = str(values.get("stop_loss.calc.reference.candle", "")).strip()
+    if ref_distance not in {"", "0", "0.0"} or ref_base not in {"", "Maxima"} or ref_candle not in {"", "Atual"}:
+        values["stop_loss.mode"] = "calc"
+        values["stop_loss.calc_method"] = "ref"
+        return
+
+    media_distance = str(values.get("stop_loss.calc.media.distance", "")).strip()
+    media_candles = str(values.get("stop_loss.calc.media.candles", "")).strip()
+    media_base = str(values.get("stop_loss.calc.media.base", "")).strip()
+    if media_distance not in {"", "0", "0.0"} or media_candles not in {"", "3"} or media_base not in {"", "Maxima"}:
+        values["stop_loss.mode"] = "calc"
+        values["stop_loss.calc_method"] = "med"
+        return
+
+    values["stop_loss.mode"] = "none"
 
 
 def read_set_file(source: Path) -> dict[str, str | bool]:
@@ -164,8 +199,15 @@ def read_set_file(source: Path) -> dict[str, str | bool]:
                 values["stop_loss.calc_method"] = "ref"
                 values["stop_loss.fixed.enabled"] = False
             continue
+        if input_name.strip() == "InpUsarStopLossPorMedia":
+            if _parse_bool(raw_value):
+                values["stop_loss.mode"] = "calc"
+                values["stop_loss.calc_method"] = "med"
+                values["stop_loss.fixed.enabled"] = False
+            continue
 
         for store_key in store_keys:
             values[store_key] = mapped_value
 
+    _infer_stop_loss_mode(values)
     return values

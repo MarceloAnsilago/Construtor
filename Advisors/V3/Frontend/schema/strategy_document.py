@@ -50,9 +50,17 @@ class StopLossCalcReferenceDocument:
 
 
 @dataclass(frozen=True)
+class StopLossCalcMediaDocument:
+    candles: str
+    base: str
+    distance: str
+
+
+@dataclass(frozen=True)
 class StopLossCalcDocument:
     method: str
     reference: StopLossCalcReferenceDocument
+    media: StopLossCalcMediaDocument
 
 
 @dataclass(frozen=True)
@@ -122,6 +130,11 @@ class StrategyDocument:
                         "base": self.stop_loss.calc.reference.base,
                         "candle": self.stop_loss.calc.reference.candle,
                         "distance": self.stop_loss.calc.reference.distance,
+                    },
+                    "media": {
+                        "candles": self.stop_loss.calc.media.candles,
+                        "base": self.stop_loss.calc.media.base,
+                        "distance": self.stop_loss.calc.media.distance,
                     },
                 },
             },

@@ -90,6 +90,14 @@ struct SStopLossReferenceConfig
    double                       distance;
   };
 
+struct SStopLossMediaConfig
+  {
+   bool                       enabled;
+   int                        candles;
+   ESignalLimitReferenceBase  base;
+   double                     distance;
+  };
+
 struct SStopLossConfig
   {
    string                     mode;
@@ -97,6 +105,7 @@ struct SStopLossConfig
    bool                       is_percent;
    SStopLossFixedConfig       fixed;
    SStopLossReferenceConfig   reference;
+   SStopLossMediaConfig       media;
   };
 
 struct SRiskConfig
