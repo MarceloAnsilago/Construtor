@@ -23,6 +23,9 @@ class StopLossView(ctk.CTkFrame):
         self._calc_med_candles_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.media.candles")))
         self._calc_med_base_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.media.base")))
         self._calc_med_distance_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.media.distance")))
+        self._calc_max_extreme_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.maxmin.extreme")))
+        self._calc_max_base_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.maxmin.base")))
+        self._calc_max_count_var = ctk.StringVar(value=str(self._strategy_store.get("stop_loss.calc.maxmin.count")))
 
         self._scroll = ctk.CTkScrollableFrame(
             self,
@@ -44,6 +47,9 @@ class StopLossView(ctk.CTkFrame):
         self._calc_med_candles_var.trace_add("write", self._on_calc_med_candles_change)
         self._calc_med_base_var.trace_add("write", self._on_calc_med_base_change)
         self._calc_med_distance_var.trace_add("write", self._on_calc_med_distance_change)
+        self._calc_max_extreme_var.trace_add("write", self._on_calc_max_extreme_change)
+        self._calc_max_base_var.trace_add("write", self._on_calc_max_base_change)
+        self._calc_max_count_var.trace_add("write", self._on_calc_max_count_change)
         self.load_from_store()
 
     def _build_header(self) -> None:
@@ -192,16 +198,23 @@ class StopLossView(ctk.CTkFrame):
             lambda: self._set_calc_method("maxmin"),
         )
         self._calc_max_checkbox.grid(row=0, column=0, sticky="w", padx=12, pady=(12, 10))
-        self._add_label(self._calc_max_panel, 1, "Base:", padx=12)
+        self._add_label(self._calc_max_panel, 1, "Maior/Menor:", padx=12)
+        self._calc_max_extreme = self._create_combo(
+            self._calc_max_panel,
+            ["Maior", "Menor"],
+            self._calc_max_extreme_var,
+        )
+        self._calc_max_extreme.grid(row=2, column=0, sticky="ew", padx=12, pady=(0, 10))
+        self._add_label(self._calc_max_panel, 3, "Base:", padx=12)
         self._calc_max_base = self._create_combo(
             self._calc_max_panel,
             ["Maxima", "Minima", "Abertura", "Fechamento"],
-            ctk.StringVar(value="Maxima"),
+            self._calc_max_base_var,
         )
-        self._calc_max_base.grid(row=2, column=0, sticky="ew", padx=12, pady=(0, 10))
-        self._add_label(self._calc_max_panel, 3, "Dos ultimos:", padx=12)
-        self._calc_max_count = self._create_entry(self._calc_max_panel, "3")
-        self._calc_max_count.grid(row=4, column=0, sticky="ew", padx=12, pady=(0, 12))
+        self._calc_max_base.grid(row=4, column=0, sticky="ew", padx=12, pady=(0, 10))
+        self._add_label(self._calc_max_panel, 5, "Dos ultimos:", padx=12)
+        self._calc_max_count = self._create_entry(self._calc_max_panel, self._calc_max_count_var.get(), self._calc_max_count_var)
+        self._calc_max_count.grid(row=6, column=0, sticky="ew", padx=12, pady=(0, 12))
 
         self._calc_panel_map = {
             "ref": self._calc_ref_panel,
@@ -413,6 +426,7 @@ class StopLossView(ctk.CTkFrame):
         self._calc_med_candles.configure(state="normal" if med_enabled else "disabled")
         self._calc_med_distance.configure(state="normal" if med_enabled else "disabled")
 
+        self._calc_max_extreme.configure(state="readonly" if max_enabled else "disabled")
         self._calc_max_base.configure(state="readonly" if max_enabled else "disabled")
         self._calc_max_count.configure(state="normal" if max_enabled else "disabled")
 
@@ -440,6 +454,15 @@ class StopLossView(ctk.CTkFrame):
     def _on_calc_med_distance_change(self, *_args) -> None:
         self._strategy_store.set("stop_loss.calc.media.distance", self._calc_med_distance_var.get().strip() or "0")
 
+    def _on_calc_max_extreme_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.calc.maxmin.extreme", self._calc_max_extreme_var.get())
+
+    def _on_calc_max_base_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.calc.maxmin.base", self._calc_max_base_var.get())
+
+    def _on_calc_max_count_change(self, *_args) -> None:
+        self._strategy_store.set("stop_loss.calc.maxmin.count", self._calc_max_count_var.get().strip() or "1")
+
     def load_from_store(self) -> None:
         self._type_var.set(str(self._strategy_store.get("stop_loss.measure")))
         self._fixed_distance_var.set(str(self._strategy_store.get("stop_loss.fixed.distance")))
@@ -449,6 +472,9 @@ class StopLossView(ctk.CTkFrame):
         self._calc_med_candles_var.set(str(self._strategy_store.get("stop_loss.calc.media.candles")))
         self._calc_med_base_var.set(str(self._strategy_store.get("stop_loss.calc.media.base")))
         self._calc_med_distance_var.set(str(self._strategy_store.get("stop_loss.calc.media.distance")))
+        self._calc_max_extreme_var.set(str(self._strategy_store.get("stop_loss.calc.maxmin.extreme")))
+        self._calc_max_base_var.set(str(self._strategy_store.get("stop_loss.calc.maxmin.base")))
+        self._calc_max_count_var.set(str(self._strategy_store.get("stop_loss.calc.maxmin.count")))
         calc_method = str(self._strategy_store.get("stop_loss.calc_method")).strip() or "ref"
         self._set_calc_method(calc_method if calc_method in {"ref", "med", "maxmin"} else "ref")
 
@@ -473,7 +499,13 @@ class StopLossView(ctk.CTkFrame):
 
         calc_method = str(self._strategy_store.get("stop_loss.calc_method")).strip()
         if calc_method in {"med", "maxmin"}:
-            return "calc"
+            if calc_method == "med":
+                return "calc"
+            max_count = str(self._strategy_store.get("stop_loss.calc.maxmin.count")).strip()
+            max_base = str(self._strategy_store.get("stop_loss.calc.maxmin.base")).strip()
+            max_extreme = str(self._strategy_store.get("stop_loss.calc.maxmin.extreme")).strip()
+            if max_count not in {"", "3"} or max_base != "Maxima" or max_extreme != "Maior":
+                return "calc"
 
         ref_distance = str(self._strategy_store.get("stop_loss.calc.reference.distance")).strip()
         ref_base = str(self._strategy_store.get("stop_loss.calc.reference.base")).strip()
@@ -492,6 +524,9 @@ class StopLossView(ctk.CTkFrame):
         med_candles = self._calc_med_candles.get().strip() or "1"
         med_base = self._calc_med_base.get()
         med_distance = self._calc_med_distance.get().strip() or "0"
+        max_extreme = self._calc_max_extreme.get()
+        max_base = self._calc_max_base.get()
+        max_count = self._calc_max_count.get().strip() or "1"
 
         self._strategy_store.set("stop_loss.measure", measure)
         self._strategy_store.set("stop_loss.fixed.distance", fixed_distance)
@@ -502,6 +537,9 @@ class StopLossView(ctk.CTkFrame):
         self._strategy_store.set("stop_loss.calc.media.candles", med_candles)
         self._strategy_store.set("stop_loss.calc.media.base", med_base)
         self._strategy_store.set("stop_loss.calc.media.distance", med_distance)
+        self._strategy_store.set("stop_loss.calc.maxmin.extreme", max_extreme)
+        self._strategy_store.set("stop_loss.calc.maxmin.base", max_base)
+        self._strategy_store.set("stop_loss.calc.maxmin.count", max_count)
 
         if self._mode == "fixed":
             self._strategy_store.set("stop_loss.mode", "fixed")
@@ -525,4 +563,7 @@ class StopLossView(ctk.CTkFrame):
             "media_candles": med_candles,
             "media_base": med_base,
             "media_distance": med_distance,
+            "maxmin_extreme": max_extreme,
+            "maxmin_base": max_base,
+            "maxmin_count": max_count,
         }

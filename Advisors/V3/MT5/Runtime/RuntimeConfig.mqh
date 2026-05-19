@@ -38,6 +38,12 @@ enum ESignalLimitExpiration
    Expirar4Candles=4
   };
 
+enum EStopLossMaxMinExtreme
+  {
+   StopLossMaior=0,
+   StopLossMenor=1
+  };
+
 struct SSignalFilterConfig
   {
    bool             enabled;
@@ -98,6 +104,14 @@ struct SStopLossMediaConfig
    double                     distance;
   };
 
+struct SStopLossMaxMinConfig
+  {
+   bool                       enabled;
+   EStopLossMaxMinExtreme     extreme;
+   int                        candles;
+   ESignalLimitReferenceBase  base;
+  };
+
 struct SStopLossConfig
   {
    string                     mode;
@@ -106,6 +120,7 @@ struct SStopLossConfig
    SStopLossFixedConfig       fixed;
    SStopLossReferenceConfig   reference;
    SStopLossMediaConfig       media;
+   SStopLossMaxMinConfig      maxmin;
   };
 
 struct SRiskConfig

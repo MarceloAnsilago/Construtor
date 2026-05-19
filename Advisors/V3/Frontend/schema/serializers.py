@@ -8,6 +8,7 @@ from schema.strategy_document import (
     SignalLimitReferenceDocument,
     SignalsDocument,
     StopLossCalcDocument,
+    StopLossCalcMaxMinDocument,
     StopLossCalcMediaDocument,
     StopLossCalcReferenceDocument,
     StopLossDocument,
@@ -98,6 +99,11 @@ def build_strategy_document(store: StrategyStore) -> StrategyDocument:
                     base=str(store.get("stop_loss.calc.media.base")),
                     distance=str(store.get("stop_loss.calc.media.distance")),
                 ),
+                maxmin=StopLossCalcMaxMinDocument(
+                    extreme=str(store.get("stop_loss.calc.maxmin.extreme")),
+                    base=str(store.get("stop_loss.calc.maxmin.base")),
+                    count=str(store.get("stop_loss.calc.maxmin.count")),
+                ),
             ),
         ),
     )
@@ -134,6 +140,9 @@ def build_runtime_snapshot(store: StrategyStore) -> dict[str, str]:
         "stop_loss_calc_media_candles": str(store.get("stop_loss.calc.media.candles")),
         "stop_loss_calc_media_base": str(store.get("stop_loss.calc.media.base")),
         "stop_loss_calc_media_distance": str(store.get("stop_loss.calc.media.distance")),
+        "stop_loss_calc_maxmin_extreme": str(store.get("stop_loss.calc.maxmin.extreme")),
+        "stop_loss_calc_maxmin_base": str(store.get("stop_loss.calc.maxmin.base")),
+        "stop_loss_calc_maxmin_count": str(store.get("stop_loss.calc.maxmin.count")),
     }
 
 
@@ -162,8 +171,14 @@ def _resolve_effective_stop_loss_mode(store: StrategyStore) -> str:
         return mode
 
     calc_method = str(store.get("stop_loss.calc_method")).strip()
-    if calc_method in {"med", "maxmin"}:
+    if calc_method == "med":
         return "calc"
+    if calc_method == "maxmin":
+        maxmin_count = str(store.get("stop_loss.calc.maxmin.count")).strip()
+        maxmin_base = str(store.get("stop_loss.calc.maxmin.base")).strip()
+        maxmin_extreme = str(store.get("stop_loss.calc.maxmin.extreme")).strip()
+        if maxmin_count not in {"", "3"} or maxmin_base != "Maxima" or maxmin_extreme != "Maior":
+            return "calc"
 
     ref_distance = str(store.get("stop_loss.calc.reference.distance")).strip()
     ref_base = str(store.get("stop_loss.calc.reference.base")).strip()
@@ -205,6 +220,7 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpUsarStopLossFixo={_bool_to_set(effective_stop_loss_mode == 'fixed')}",
         f"InpUsarStopLossPorReferencia={_bool_to_set(effective_stop_loss_mode == 'calc' and calc_method == 'ref')}",
         f"InpUsarStopLossPorMedia={_bool_to_set(effective_stop_loss_mode == 'calc' and calc_method == 'med')}",
+        f"InpUsarStopLossPorMaxMin={_bool_to_set(effective_stop_loss_mode == 'calc' and calc_method == 'maxmin')}",
         f"InpTipoDeStopLossPercentual={_bool_to_set(str(store.get('stop_loss.measure')) == 'Percentual')}",
         f"InpDistanciaDoStopLossFixo={store.get('stop_loss.fixed.distance')}",
         f"InpReferenciaDoStopLoss={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.reference.base'), '0')}",
@@ -213,4 +229,7 @@ def build_tester_set_lines(store: StrategyStore) -> list[str]:
         f"InpQuantidadeDeCandlesDaMediaStopLoss={store.get('stop_loss.calc.media.candles')}",
         f"InpReferenciaDaMediaStopLoss={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.media.base'), '0')}",
         f"InpDistanciaDoStopLossPorMedia={store.get('stop_loss.calc.media.distance')}",
+        f"InpExtremoDoStopLossPorMaxMin={'0' if str(store.get('stop_loss.calc.maxmin.extreme')).strip() != 'Menor' else '1'}",
+        f"InpQuantidadeDeCandlesDoStopLossPorMaxMin={store.get('stop_loss.calc.maxmin.count')}",
+        f"InpReferenciaDoStopLossPorMaxMin={_enum_to_set(REFERENCE_BASE_TO_SET, store.get('stop_loss.calc.maxmin.base'), '0')}",
     ]

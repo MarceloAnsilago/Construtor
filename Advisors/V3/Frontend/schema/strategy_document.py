@@ -57,10 +57,18 @@ class StopLossCalcMediaDocument:
 
 
 @dataclass(frozen=True)
+class StopLossCalcMaxMinDocument:
+    extreme: str
+    base: str
+    count: str
+
+
+@dataclass(frozen=True)
 class StopLossCalcDocument:
     method: str
     reference: StopLossCalcReferenceDocument
     media: StopLossCalcMediaDocument
+    maxmin: StopLossCalcMaxMinDocument
 
 
 @dataclass(frozen=True)
@@ -135,6 +143,11 @@ class StrategyDocument:
                         "candles": self.stop_loss.calc.media.candles,
                         "base": self.stop_loss.calc.media.base,
                         "distance": self.stop_loss.calc.media.distance,
+                    },
+                    "maxmin": {
+                        "extreme": self.stop_loss.calc.maxmin.extreme,
+                        "base": self.stop_loss.calc.maxmin.base,
+                        "count": self.stop_loss.calc.maxmin.count,
                     },
                 },
             },

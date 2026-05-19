@@ -38,6 +38,14 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       && config.stop_loss.media.base!=BaseAbertura
       && config.stop_loss.media.base!=BaseFechamento)
       config.stop_loss.media.base=BaseMaxima;
+   if(config.stop_loss.maxmin.base!=BaseMaxima
+      && config.stop_loss.maxmin.base!=BaseMinima
+      && config.stop_loss.maxmin.base!=BaseAbertura
+      && config.stop_loss.maxmin.base!=BaseFechamento)
+      config.stop_loss.maxmin.base=BaseMaxima;
+   if(config.stop_loss.maxmin.extreme!=StopLossMaior
+      && config.stop_loss.maxmin.extreme!=StopLossMenor)
+      config.stop_loss.maxmin.extreme=StopLossMaior;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;
@@ -69,30 +77,43 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.stop_loss.media.candles=1;
    if(config.stop_loss.media.distance<0.0)
       config.stop_loss.media.distance=0.0;
+   if(config.stop_loss.maxmin.candles<1)
+      config.stop_loss.maxmin.candles=1;
 
    if(config.stop_loss.mode=="fixed")
      {
       config.stop_loss.fixed.enabled=true;
       config.stop_loss.reference.enabled=false;
       config.stop_loss.media.enabled=false;
+      config.stop_loss.maxmin.enabled=false;
      }
    else if(config.stop_loss.mode=="calc_ref")
      {
       config.stop_loss.fixed.enabled=false;
       config.stop_loss.reference.enabled=true;
       config.stop_loss.media.enabled=false;
+      config.stop_loss.maxmin.enabled=false;
      }
    else if(config.stop_loss.mode=="calc_med")
      {
       config.stop_loss.fixed.enabled=false;
       config.stop_loss.reference.enabled=false;
       config.stop_loss.media.enabled=true;
+      config.stop_loss.maxmin.enabled=false;
+     }
+   else if(config.stop_loss.mode=="calc_maxmin")
+     {
+      config.stop_loss.fixed.enabled=false;
+      config.stop_loss.reference.enabled=false;
+      config.stop_loss.media.enabled=false;
+      config.stop_loss.maxmin.enabled=true;
      }
    else if(config.stop_loss.mode=="none")
      {
       config.stop_loss.fixed.enabled=false;
       config.stop_loss.reference.enabled=false;
       config.stop_loss.media.enabled=false;
+      config.stop_loss.maxmin.enabled=false;
      }
   }
 
