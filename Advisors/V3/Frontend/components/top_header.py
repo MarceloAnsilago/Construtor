@@ -10,7 +10,7 @@ class TopHeader(ctk.CTkFrame):
             fg_color=theme.colors.surface,
             corner_radius=0,
             height=54,
-            border_width=1,
+            border_width=0,
             border_color=theme.colors.border,
         )
         self.grid_columnconfigure(0, weight=1)

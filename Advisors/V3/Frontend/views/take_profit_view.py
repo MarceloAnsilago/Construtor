@@ -38,7 +38,7 @@ class TakeProfitView(ctk.CTkFrame):
             self._scroll,
             fg_color=self._theme.colors.card,
             corner_radius=0,
-            border_width=1,
+            border_width=0,
             border_color=self._theme.colors.border,
         )
         header.grid(row=0, column=0, columnspan=4, sticky="ew", padx=6, pady=(4, 10))
@@ -88,9 +88,9 @@ class TakeProfitView(ctk.CTkFrame):
 
         tabs_shell = ctk.CTkFrame(
             card,
-            fg_color=self._theme.colors.surface_alt,
+            fg_color="transparent",
             corner_radius=0,
-            border_width=1,
+            border_width=0,
             border_color=self._theme.colors.border,
         )
         tabs_shell.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=16, pady=(0, 16))
@@ -105,19 +105,19 @@ class TakeProfitView(ctk.CTkFrame):
             command=self._on_tab_change,
             height=34,
             corner_radius=0,
-            fg_color=self._theme.colors.sidebar_item_hover,
+            fg_color=self._theme.colors.header_dark,
             selected_color=self._theme.colors.accent,
             selected_hover_color=self._theme.colors.accent_hover,
-            unselected_color=self._theme.colors.surface,
-            unselected_hover_color=self._theme.colors.card_soft,
-            text_color=self._theme.colors.text,
-            text_color_disabled=self._theme.colors.text_subtle,
+            unselected_color=self._theme.colors.header_dark,
+            unselected_hover_color=self._theme.colors.sidebar_item_hover,
+            text_color=self._theme.colors.header_text,
+            text_color_disabled=self._theme.colors.card_soft,
             font=self._theme.font("label", weight="bold"),
         )
-        self._calc_tabs.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+        self._calc_tabs.grid(row=0, column=0, sticky="ew", pady=(0, 12))
 
         self._calc_panels = ctk.CTkFrame(tabs_shell, fg_color="transparent")
-        self._calc_panels.grid(row=1, column=0, sticky="nsew", padx=10, pady=(0, 10))
+        self._calc_panels.grid(row=1, column=0, sticky="nsew")
         self._calc_panels.grid_columnconfigure(0, weight=1)
         self._calc_panels.grid_rowconfigure(0, weight=1)
 
@@ -263,7 +263,7 @@ class TakeProfitView(ctk.CTkFrame):
             self._scroll,
             fg_color=self._theme.colors.card,
             corner_radius=0,
-            border_width=1,
+            border_width=0,
             border_color=self._theme.colors.border,
         )
         card.grid(row=row, column=column, sticky="nsew", padx=6, pady=4)
@@ -282,7 +282,7 @@ class TakeProfitView(ctk.CTkFrame):
     def _create_calc_panel(self) -> ctk.CTkFrame:
         return ctk.CTkFrame(
             self._calc_panels,
-            fg_color=self._theme.colors.card,
+            fg_color=self._theme.colors.surface,
             corner_radius=0,
             border_width=1,
             border_color=self._theme.colors.border,

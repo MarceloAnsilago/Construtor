@@ -106,7 +106,7 @@ class Sidebar(ctk.CTkFrame):
             master,
             fg_color=theme.colors.sidebar,
             corner_radius=0,
-            border_width=1,
+            border_width=0,
             border_color=theme.colors.border,
             width=240,
         )

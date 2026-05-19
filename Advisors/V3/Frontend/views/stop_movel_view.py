@@ -34,7 +34,7 @@ class StopMovelView(ctk.CTkFrame):
             self._scroll,
             fg_color=self._theme.colors.card,
             corner_radius=0,
-            border_width=1,
+            border_width=0,
             border_color=self._theme.colors.border,
         )
         header.grid(row=0, column=0, columnspan=3, sticky="ew", padx=6, pady=(4, 10))
@@ -134,7 +134,7 @@ class StopMovelView(ctk.CTkFrame):
             self._scroll,
             fg_color=self._theme.colors.card,
             corner_radius=0,
-            border_width=1,
+            border_width=0,
             border_color=self._theme.colors.border,
         )
         card.grid(row=row, column=column, sticky="nsew", padx=6, pady=4)

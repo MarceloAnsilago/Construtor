@@ -59,7 +59,7 @@ class DashboardView(ctk.CTkFrame):
             self,
             fg_color=theme.colors.card_soft,
             corner_radius=0,
-            border_width=1,
+            border_width=0,
             border_color=theme.colors.border,
         )
         self._placeholder.grid(row=1, column=0, sticky="nsew", pady=(10, 0))
