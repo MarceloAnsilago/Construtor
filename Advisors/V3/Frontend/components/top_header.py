@@ -31,7 +31,7 @@ class TopHeader(ctk.CTkFrame):
 
         ctk.CTkLabel(
             self,
-            text="Construtor | AlphaForge V3",
+            text="AlphaForge V3",
             text_color=theme.colors.text,
             font=theme.font("subtitle", weight="normal"),
             anchor="w",

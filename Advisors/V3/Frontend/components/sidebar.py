@@ -140,7 +140,7 @@ class Sidebar(ctk.CTkFrame):
 
         ctk.CTkLabel(
             brand_frame,
-            text="Construtor | AlphaForge V3",
+            text="AlphaForge V3",
             text_color=self._theme.colors.text,
             font=self._theme.font("subtitle", weight="normal"),
             anchor="w",

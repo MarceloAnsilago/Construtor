@@ -5,7 +5,7 @@ from ctypes import wintypes
 from layouts.main_window import AlphaForgeApp
 
 
-APP_TITLE = "Construtor | AlphaForge V3"
+APP_TITLE = "AlphaForge V3"
 MUTEX_NAME = "AlphaForgeV3FrontendSingleton"
 ERROR_ALREADY_EXISTS = 183
 SW_RESTORE = 9

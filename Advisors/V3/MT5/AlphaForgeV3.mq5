@@ -1423,7 +1423,7 @@ bool CreateControlPanel()
    ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_HIDDEN,true);
    ObjectSetInteger(0,BUTTON_CARD_NAME,OBJPROP_ZORDER,0);
 
-   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Abrir Construtor CTk",22,18,228,C'230,118,59'))
+   if(!CreateButtonObject(BUTTON_CREATE_NAME,"Abrir AlphaForge V3",22,18,228,C'230,118,59'))
       return(false);
 
    ChartRedraw();
