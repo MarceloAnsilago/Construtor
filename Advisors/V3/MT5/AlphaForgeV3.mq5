@@ -15,11 +15,11 @@
 int ShellExecuteW(int hwnd,string lpOperation,string lpFile,string lpParameters,string lpDirectory,int nShowCmd);
 #import
 
-input group "1.Estrategia"
+input group "1.1 Estrategia"
 input string InpNomeDaEstrategia = "Minha estrategia";
 input long InpMagicNumber = 100000;
 
-input group "2.Sinais"
+input group "2.1 Tipo de ordens"
 input ESignalOrderMode InpModoDeOrdem = ModoOrdemMercado;
 input ESignalLimitMode InpModoDaOrdemLimite = ModoLimiteReferencia;
 input ESignalLimitReferenceBase InpReferenciaDaOrdemLimite = BaseMaxima;
@@ -28,13 +28,13 @@ input bool InpMoverParaOProximoCandle = false;
 input double InpDistanciaDaOrdemLimite = 0.0;
 input ESignalLimitExpiration InpExpiracaoDaOrdemLimite = NaoExpirar;
 
-input group "3.Risco e execucao"
+input group "3.1 Risco e execucao"
 input bool InpOperarNaCompra = true;
 input bool InpOperarNaVenda = true;
 input double InpVolumeInicial = 1.0;
 input double InpSpreadMaximo = 10.0;
 
-input group "4.Filtro"
+input group "4.1 Filtro"
 input bool InpAtivarFiltro = false;
 input bool InpMedirEmPercentual = false;
 input ENUM_TIMEFRAMES InpTempoGraficoDoFiltro = PERIOD_CURRENT;
@@ -47,33 +47,43 @@ input double InpTamanhoMaximoPavioSuperior = 0.0;
 input double InpTamanhoMinimoPavioInferior = 0.0;
 input double InpTamanhoMaximoPavioInferior = 0.0;
 
-input group "5.Stop loss"
+input group "5.1 Stop loss (fixo)"
 input bool InpUsarStopLossFixo = false;
-input bool InpUsarStopLossPorReferencia = false;
-input bool InpUsarStopLossPorMedia = false;
-input bool InpUsarStopLossPorMaxMin = false;
 input bool InpTipoDeStopLossPercentual = false;
 input double InpDistanciaDoStopLossFixo = 100.0;
+
+input group "5.2 Stop loss (referencia)"
+input bool InpUsarStopLossPorReferencia = false;
 input ESignalLimitReferenceBase InpReferenciaDoStopLoss = BaseMaxima;
 input ESignalLimitReferenceCandle InpCandleDaReferenciaDoStopLoss = CandleAtual;
 input double InpDistanciaDoStopLossPorReferencia = 0.0;
+
+input group "5.3 Stop loss (media)"
+input bool InpUsarStopLossPorMedia = false;
 input int InpQuantidadeDeCandlesDaMediaStopLoss = 3;
 input ESignalLimitReferenceBase InpReferenciaDaMediaStopLoss = BaseMaxima;
 input double InpDistanciaDoStopLossPorMedia = 0.0;
+
+input group "5.4 Stop loss (max/min)"
+input bool InpUsarStopLossPorMaxMin = false;
 input EStopLossMaxMinExtreme InpExtremoDoStopLossPorMaxMin = StopLossMaior;
 input int InpQuantidadeDeCandlesDoStopLossPorMaxMin = 3;
 input ESignalLimitReferenceBase InpReferenciaDoStopLossPorMaxMin = BaseMaxima;
+
+input group "5.5 Stop loss (multiplicador)"
 input bool InpUsarStopLossMultiplicador = false;
 input EStopLossMultiplierBase InpBaseDoStopLossMultiplicador = StopLossMultiplicadorCorpo;
 input ESignalLimitReferenceCandle InpCandleDoStopLossMultiplicador = CandlePenultimo;
 input double InpValorDoStopLossMultiplicador = 1.0;
 
-input group "6.Take profit"
+input group "6.1 Take profit (fixo)"
 input bool InpUsarTakeProfitFixo = false;
 input bool InpTipoDeTakeProfitPercentual = false;
 input ETakeProfitFixedMode InpModoDoTakeProfitFixo = TakeProfitDistancia;
 input double InpDistanciaDoTakeProfitFixo = 100.0;
 input double InpMultiplicadorDoTakeProfitFixo = 1.0;
+
+input group "6.2 Take profit (multiplicador)"
 input bool InpUsarTakeProfitMultiplicador = false;
 input EStopLossMultiplierBase InpBaseDoTakeProfitMultiplicador = StopLossMultiplicadorCorpo;
 input ESignalLimitReferenceCandle InpCandleDoTakeProfitMultiplicador = CandlePenultimo;
