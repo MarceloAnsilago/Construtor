@@ -46,3 +46,7 @@ InpTipoDeTakeProfitPercentual=true
 InpModoDoTakeProfitFixo=0
 InpDistanciaDoTakeProfitFixo=5
 InpMultiplicadorDoTakeProfitFixo=2
+InpUsarTakeProfitMultiplicador=true
+InpBaseDoTakeProfitMultiplicador=1
+InpCandleDoTakeProfitMultiplicador=1
+InpValorDoTakeProfitMultiplicador=2

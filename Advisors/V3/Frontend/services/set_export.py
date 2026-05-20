@@ -131,8 +131,12 @@ def _parse_bool(value: str) -> bool:
     return value.strip().lower() in {"true", "1", "sim", "yes"}
 
 
+def _extract_set_scalar(raw_value: str) -> str:
+    return raw_value.split("||", 1)[0].strip()
+
+
 def _map_input_value(input_name: str, raw_value: str) -> str | bool:
-    value = raw_value.strip()
+    value = _extract_set_scalar(raw_value)
     if input_name == "InpModoDeOrdem":
         return ORDER_MODE_FROM_SET.get(value, "Mercado")
     if input_name == "InpModoDaOrdemLimite":
@@ -252,30 +256,30 @@ def read_set_file(source: Path) -> dict[str, str | bool]:
 
         mapped_value = _map_input_value(input_name.strip(), raw_value)
         if input_name.strip() == "InpUsarStopLossPorReferencia":
-            if _parse_bool(raw_value):
+            if _parse_bool(_extract_set_scalar(raw_value)):
                 values["stop_loss.mode"] = "calc"
                 values["stop_loss.calc_method"] = "ref"
                 values["stop_loss.fixed.enabled"] = False
             continue
         if input_name.strip() == "InpUsarStopLossPorMedia":
-            if _parse_bool(raw_value):
+            if _parse_bool(_extract_set_scalar(raw_value)):
                 values["stop_loss.mode"] = "calc"
                 values["stop_loss.calc_method"] = "med"
                 values["stop_loss.fixed.enabled"] = False
             continue
         if input_name.strip() == "InpUsarStopLossPorMaxMin":
-            if _parse_bool(raw_value):
+            if _parse_bool(_extract_set_scalar(raw_value)):
                 values["stop_loss.mode"] = "calc"
                 values["stop_loss.calc_method"] = "maxmin"
                 values["stop_loss.fixed.enabled"] = False
             continue
         if input_name.strip() == "InpUsarStopLossMultiplicador":
-            if _parse_bool(raw_value):
+            if _parse_bool(_extract_set_scalar(raw_value)):
                 values["stop_loss.mode"] = "mult"
                 values["stop_loss.fixed.enabled"] = False
             continue
         if input_name.strip() == "InpUsarTakeProfitFixo":
-            if _parse_bool(raw_value):
+            if _parse_bool(_extract_set_scalar(raw_value)):
                 values["take_profit.mode"] = "fixed"
                 values["take_profit.fixed.enabled"] = True
             else:
@@ -283,7 +287,7 @@ def read_set_file(source: Path) -> dict[str, str | bool]:
                 values["take_profit.fixed.enabled"] = False
             continue
         if input_name.strip() == "InpUsarTakeProfitMultiplicador":
-            if _parse_bool(raw_value):
+            if _parse_bool(_extract_set_scalar(raw_value)):
                 values["take_profit.mode"] = "mult"
                 values["take_profit.fixed.enabled"] = False
             continue
