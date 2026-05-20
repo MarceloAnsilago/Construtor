@@ -1227,6 +1227,43 @@ bool HasOpenPositionForSymbol()
    return(PositionSelect(_Symbol));
   }
 
+void LogSymbolTradeDiagnostics()
+  {
+   long digits=SymbolInfoInteger(_Symbol,SYMBOL_DIGITS);
+   long calc_mode=SymbolInfoInteger(_Symbol,SYMBOL_TRADE_CALC_MODE);
+   double point=SymbolInfoDouble(_Symbol,SYMBOL_POINT);
+   double tick_size=SymbolInfoDouble(_Symbol,SYMBOL_TRADE_TICK_SIZE);
+   double tick_value=SymbolInfoDouble(_Symbol,SYMBOL_TRADE_TICK_VALUE);
+   double contract_size=SymbolInfoDouble(_Symbol,SYMBOL_TRADE_CONTRACT_SIZE);
+   double min_volume=SymbolInfoDouble(_Symbol,SYMBOL_VOLUME_MIN);
+   double max_volume=SymbolInfoDouble(_Symbol,SYMBOL_VOLUME_MAX);
+   double step_volume=SymbolInfoDouble(_Symbol,SYMBOL_VOLUME_STEP);
+
+   Print(
+      "AlphaForge V3: diagnostico do simbolo. Symbol=",_Symbol,
+      " Digits=",IntegerToString((int)digits),
+      " Point=",DoubleToString(point,8),
+      " TickSize=",DoubleToString(tick_size,8),
+      " TickValue=",DoubleToString(tick_value,8),
+      " ContractSize=",DoubleToString(contract_size,2),
+      " CalcMode=",IntegerToString((int)calc_mode),
+      " VolumeMin=",DoubleToString(min_volume,2),
+      " VolumeMax=",DoubleToString(max_volume,2),
+      " VolumeStep=",DoubleToString(step_volume,2)
+   );
+
+   if(tick_size<=0.0 || tick_value<=0.0 || contract_size<=0.0)
+     {
+      Print(
+         "AlphaForge V3: aviso. O simbolo possui propriedade economica invalida para backtest.",
+         " TickSize=",DoubleToString(tick_size,8),
+         " TickValue=",DoubleToString(tick_value,8),
+         " ContractSize=",DoubleToString(contract_size,2),
+         " Isso costuma deixar a curva reta e o lucro zerado mesmo com ordens executadas."
+      );
+     }
+  }
+
 bool GetOpenPositionData(
    ENUM_POSITION_TYPE &position_type,
    double &stop_loss,
@@ -1431,7 +1468,10 @@ void EnforceManualStopLoss(void)
    Print(
       "AlphaForge V3: posicao encerrada por stop manual. Ticket=",ticket,
       " SL=",DoubleToString(stop_loss,_Digits),
-      " Reason=",reason
+      " Reason=",reason,
+      " Open=",DoubleToString(PositionGetDouble(POSITION_PRICE_OPEN),_Digits),
+      " Volume=",DoubleToString(PositionGetDouble(POSITION_VOLUME),2),
+      " ProfitBeforeClose=",DoubleToString(PositionGetDouble(POSITION_PROFIT),2)
    );
   }
 
@@ -1505,7 +1545,10 @@ void EnforceManualTakeProfit(void)
    Print(
       "AlphaForge V3: posicao encerrada por take profit manual. Ticket=",ticket,
       " TP=",DoubleToString(take_profit,_Digits),
-      " Reason=",reason
+      " Reason=",reason,
+      " Open=",DoubleToString(PositionGetDouble(POSITION_PRICE_OPEN),_Digits),
+      " Volume=",DoubleToString(PositionGetDouble(POSITION_VOLUME),2),
+      " ProfitBeforeClose=",DoubleToString(PositionGetDouble(POSITION_PROFIT),2)
    );
   }
 
@@ -2165,6 +2208,7 @@ int OnInit()
    g_chart_theme.SetChartId(ChartID());
    ApplyInputFallbackConfig();
    Print("AlphaForge V3: configuracao carregada pelos inputs/.set do MT5.");
+   LogSymbolTradeDiagnostics();
 
    if(!HasInteractiveChart())
       return(INIT_SUCCEEDED);
