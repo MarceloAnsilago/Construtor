@@ -116,6 +116,13 @@ def get_default_set_dir() -> Path:
     return target
 
 
+def get_current_set_path(strategy_name: str) -> Path:
+    safe_name = "".join(char if char.isalnum() or char in ("-", "_") else "_" for char in strategy_name).strip("_")
+    if not safe_name:
+        safe_name = "alpha_strategy"
+    return get_default_set_dir() / f"{safe_name}.set"
+
+
 def write_set_file(store: StrategyStore, destination: Path) -> Path:
     lines = build_tester_set_lines(store)
     destination.parent.mkdir(parents=True, exist_ok=True)

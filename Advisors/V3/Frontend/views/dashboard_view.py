@@ -2,6 +2,7 @@ import customtkinter as ctk
 
 from models.navigation import NavigationItem
 from schema.serializers import build_runtime_snapshot
+from services.strategy_pipeline import PipelineResult, sync_validate_and_write_current_set
 from state.strategy_store import StrategyStore
 from themes.theme import UITheme
 from views.ajustes_finais_view import AjustesFinaisView
@@ -79,6 +80,11 @@ class DashboardView(ctk.CTkFrame):
     def current_strategy_name(self) -> str:
         self._sync_store_from_views()
         return str(self._strategy_store.get("strategy.name"))
+
+    def refresh_and_prepare_current_set(self) -> PipelineResult:
+        self._sync_store_from_views()
+        initial_config = self._build_initial_config_snapshot()
+        return sync_validate_and_write_current_set(self._strategy_store, initial_config)
 
     def load_strategy_values(self, values: dict[str, str | bool]) -> None:
         self._strategy_store.load_document(values)
@@ -173,7 +179,14 @@ class DashboardView(ctk.CTkFrame):
         initial_view = self._view_cache.get("inf_iniciais")
         if initial_view is not None and hasattr(initial_view, "export_config"):
             return initial_view.export_config()
-        return {}
+        return {
+            "strategy_name": str(self._strategy_store.get("strategy.name")),
+            "magic_number": str(self._strategy_store.get("strategy.magic_number")),
+            "allow_buy": str(self._strategy_store.get("risk.allow_buy")),
+            "allow_sell": str(self._strategy_store.get("risk.allow_sell")),
+            "initial_volume": str(self._strategy_store.get("risk.initial_volume")),
+            "max_spread": str(self._strategy_store.get("risk.max_spread")),
+        }
 
     def _build_signals_runtime_snapshot(self) -> dict[str, str]:
         sinais_view = self._view_cache.get("sinais")

@@ -55,6 +55,7 @@ class AlphaForgeApp(ctk.CTk):
         header = TopHeader(
             main_shell,
             self._theme,
+            on_refresh=self._refresh_strategy,
             on_import_set=self._import_set,
             on_export_set=self._export_set,
         )
@@ -81,6 +82,10 @@ class AlphaForgeApp(ctk.CTk):
         imported_values = read_set_file(Path(source))
         self._content.load_strategy_values(imported_values)
         self._header.set_status(f".set carregado: {Path(source).name}")
+
+    def _refresh_strategy(self) -> None:
+        result = self._content.refresh_and_prepare_current_set()
+        self._header.set_status(result.status_text, success=result.is_valid)
 
     def _export_set(self) -> None:
         strategy_name = self._content.current_strategy_name().strip() or "alpha_strategy"
