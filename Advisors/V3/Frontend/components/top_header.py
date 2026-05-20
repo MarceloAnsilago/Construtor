@@ -4,7 +4,7 @@ from themes.theme import UITheme
 
 
 class TopHeader(ctk.CTkFrame):
-    def __init__(self, master, theme: UITheme, on_refresh=None, on_import_set=None, on_export_set=None) -> None:
+    def __init__(self, master, theme: UITheme, on_import_set=None, on_export_set=None) -> None:
         super().__init__(
             master,
             fg_color=theme.colors.surface,
@@ -17,7 +17,6 @@ class TopHeader(ctk.CTkFrame):
         self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=0)
         self.grid_columnconfigure(3, weight=0)
-        self.grid_columnconfigure(4, weight=0)
         self.grid_propagate(False)
         self._theme = theme
 
@@ -28,7 +27,7 @@ class TopHeader(ctk.CTkFrame):
             height=3,
             border_width=0,
         )
-        stripe.grid(row=2, column=0, columnspan=5, sticky="ew", padx=12, pady=(2, 8))
+        stripe.grid(row=2, column=0, columnspan=4, sticky="ew", padx=12, pady=(2, 8))
 
         ctk.CTkLabel(
             self,
@@ -47,20 +46,6 @@ class TopHeader(ctk.CTkFrame):
         )
         self._status.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(10, 6))
 
-        self._refresh_button = ctk.CTkButton(
-            self,
-            text="Atualizar",
-            command=on_refresh,
-            height=32,
-            width=132,
-            corner_radius=0,
-            fg_color=theme.colors.accent,
-            hover_color=theme.colors.accent_hover,
-            text_color=theme.colors.header_text,
-            font=theme.font("label", weight="bold"),
-        )
-        self._refresh_button.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(10, 6))
-
         self._import_button = ctk.CTkButton(
             self,
             text="Abrir .set",
@@ -73,7 +58,7 @@ class TopHeader(ctk.CTkFrame):
             text_color=theme.colors.header_text,
             font=theme.font("label", weight="bold"),
         )
-        self._import_button.grid(row=1, column=3, sticky="e", padx=(0, 10), pady=(10, 6))
+        self._import_button.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(10, 6))
 
         self._export_button = ctk.CTkButton(
             self,
@@ -87,7 +72,7 @@ class TopHeader(ctk.CTkFrame):
             text_color=theme.colors.header_text,
             font=theme.font("label", weight="bold"),
         )
-        self._export_button.grid(row=1, column=4, sticky="e", padx=(0, 10), pady=(10, 6))
+        self._export_button.grid(row=1, column=3, sticky="e", padx=(0, 10), pady=(10, 6))
 
     def set_status(self, text: str, success: bool = True) -> None:
         color = self._theme.colors.text if success else self._theme.colors.accent_soft
