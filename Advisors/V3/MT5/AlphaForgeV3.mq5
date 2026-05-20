@@ -74,6 +74,10 @@ input bool InpTipoDeTakeProfitPercentual = false;
 input ETakeProfitFixedMode InpModoDoTakeProfitFixo = TakeProfitDistancia;
 input double InpDistanciaDoTakeProfitFixo = 100.0;
 input double InpMultiplicadorDoTakeProfitFixo = 1.0;
+input bool InpUsarTakeProfitMultiplicador = false;
+input EStopLossMultiplierBase InpBaseDoTakeProfitMultiplicador = StopLossMultiplicadorCorpo;
+input ESignalLimitReferenceCandle InpCandleDoTakeProfitMultiplicador = CandlePenultimo;
+input double InpValorDoTakeProfitMultiplicador = 1.0;
 
 string BUTTON_CREATE_NAME   = "AlphaForgeV3.BtnCreateStrategy";
 string BUTTON_CARD_NAME     = "AlphaForgeV3.BtnCard";
@@ -270,6 +274,16 @@ string BuildTakeProfitSummaryText()
       );
      }
 
+   if(g_config.take_profit.mode=="mult" && g_config.take_profit.mult.enabled)
+     {
+      return(
+         "Take profit: multiplicador"
+         +" / Base="+StopLossMultiplierBaseToText(g_config.take_profit.mult.base)
+         +" / Candle="+ReferenceCandleToText(g_config.take_profit.mult.candle)
+         +" / Mult="+FormatRuntimeDouble(g_config.take_profit.mult.value)
+      );
+     }
+
    return("Take profit: desativado");
   }
 
@@ -420,8 +434,12 @@ string ResolveEffectiveTakeProfitMode()
   {
    if(g_config.take_profit.mode=="fixed")
       return("fixed");
+   if(g_config.take_profit.mode=="mult")
+      return("mult");
    if(g_config.take_profit.fixed.enabled)
       return("fixed");
+   if(g_config.take_profit.mult.enabled)
+      return("mult");
    return("none");
   }
 
@@ -432,6 +450,8 @@ bool IsTakeProfitRequired()
 
 double ResolveConfiguredTakeProfitDistance()
   {
+   if(ResolveEffectiveTakeProfitMode()=="mult")
+      return(g_config.take_profit.mult.value);
    if(g_config.take_profit.fixed.method==TakeProfitVezesStop)
       return(g_config.take_profit.fixed.stop_multiple);
    return(g_config.take_profit.fixed.distance);
@@ -947,6 +967,27 @@ double ResolveStopLossMultiplierReferencePrice(const MqlRates &reference_bar)
    return(MathAbs(reference_bar.close-reference_bar.open));
   }
 
+bool TryLoadTakeProfitMultiplierBar(MqlRates &reference_bar)
+  {
+   int reference_shift=ResolveReferenceBarShift(g_config.take_profit.mult.candle);
+   MqlRates bars[];
+   ArraySetAsSeries(bars,true);
+   int copied=CopyRates(_Symbol,(ENUM_TIMEFRAMES)Period(),reference_shift,1,bars);
+   if(copied<1)
+      return(false);
+
+   reference_bar=bars[0];
+   return(true);
+  }
+
+double ResolveTakeProfitMultiplierReferencePrice(const MqlRates &reference_bar)
+  {
+   if(g_config.take_profit.mult.base==StopLossMultiplicadorRange)
+      return(reference_bar.high-reference_bar.low);
+
+   return(MathAbs(reference_bar.close-reference_bar.open));
+  }
+
 double ResolveMediaStopLossPrice(const int direction,const double entry_price)
   {
    if(!g_config.stop_loss.media.enabled)
@@ -1136,7 +1177,45 @@ double ResolveStopLossPrice(const int direction,const double entry_price)
 
 double ResolveTakeProfitPrice(const int direction,const double entry_price,const double stop_loss_price)
   {
-   if(ResolveEffectiveTakeProfitMode()!="fixed")
+   string effective_mode=ResolveEffectiveTakeProfitMode();
+   if(effective_mode=="mult")
+     {
+      if(!g_config.take_profit.mult.enabled || entry_price<=0.0 || g_config.take_profit.mult.value<=0.0)
+         return(0.0);
+
+      MqlRates reference_bar;
+      if(!TryLoadTakeProfitMultiplierBar(reference_bar))
+         return(0.0);
+
+      double reference_price=ResolveTakeProfitMultiplierReferencePrice(reference_bar);
+      double distance_price=reference_price*g_config.take_profit.mult.value;
+      if(reference_price<=0.0 || distance_price<=0.0)
+         return(0.0);
+
+      double take_profit_price=(direction>0) ? entry_price+distance_price : entry_price-distance_price;
+      take_profit_price=NormalizeDouble(take_profit_price,_Digits);
+      if(take_profit_price<=0.0)
+         return(0.0);
+      if(direction>0 && take_profit_price<=entry_price)
+         return(0.0);
+      if(direction<0 && take_profit_price>=entry_price)
+         return(0.0);
+
+      Print(
+         "AlphaForge V3: calculo do take profit por multiplicador.",
+         " Direcao=",IntegerToString(direction),
+         " Entry=",DoubleToString(entry_price,_Digits),
+         " Base=",StopLossMultiplierBaseToText(g_config.take_profit.mult.base),
+         " Candle=",ReferenceCandleToText(g_config.take_profit.mult.candle),
+         " Mult=",DoubleToString(g_config.take_profit.mult.value,2),
+         " DistCalc=",DoubleToString(distance_price,_Digits),
+         " DistPts=",DoubleToString(ConvertPriceDistanceToPoints(distance_price),2),
+         " TP=",DoubleToString(take_profit_price,_Digits)
+      );
+      return(take_profit_price);
+     }
+
+   if(effective_mode!="fixed")
       return(0.0);
    if(!g_config.take_profit.fixed.enabled || entry_price<=0.0)
       return(0.0);

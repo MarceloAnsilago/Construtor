@@ -19,6 +19,9 @@ class TakeProfitView(ctk.CTkFrame):
         self._type_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.measure")))
         self._fixed_distance_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.fixed.distance")))
         self._fixed_stop_multiple_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.fixed.stop_multiple")))
+        self._mult_base_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.mult.base")))
+        self._mult_candle_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.mult.candle")))
+        self._mult_value_var = ctk.StringVar(value=str(self._strategy_store.get("take_profit.mult.value")))
 
         self._scroll = ctk.CTkScrollableFrame(
             self,
@@ -26,7 +29,7 @@ class TakeProfitView(ctk.CTkFrame):
             corner_radius=0,
         )
         self._scroll.grid(row=0, column=0, sticky="nsew")
-        self._scroll.grid_columnconfigure((0, 1, 2, 3), weight=1, uniform="take-profit")
+        self._scroll.grid_columnconfigure((0, 1, 2), weight=1, uniform="take-profit")
 
         self._build_header()
         self._build_fixed_card()
@@ -36,6 +39,9 @@ class TakeProfitView(ctk.CTkFrame):
         self._type_var.trace_add("write", self._on_type_change)
         self._fixed_distance_var.trace_add("write", self._on_fixed_distance_change)
         self._fixed_stop_multiple_var.trace_add("write", self._on_fixed_stop_multiple_change)
+        self._mult_base_var.trace_add("write", self._on_mult_base_change)
+        self._mult_candle_var.trace_add("write", self._on_mult_candle_change)
+        self._mult_value_var.trace_add("write", self._on_mult_value_change)
         self.load_from_store()
 
     def _build_header(self) -> None:
@@ -46,7 +52,7 @@ class TakeProfitView(ctk.CTkFrame):
             border_width=0,
             border_color=self._theme.colors.border,
         )
-        header.grid(row=0, column=0, columnspan=4, sticky="ew", padx=6, pady=(4, 10))
+        header.grid(row=0, column=0, columnspan=3, sticky="ew", padx=6, pady=(4, 10))
         header.grid_columnconfigure(0, weight=0)
         header.grid_columnconfigure(1, weight=1)
 
@@ -151,7 +157,7 @@ class TakeProfitView(ctk.CTkFrame):
         self._mult_base = self._create_combo(
             card,
             ["Corpo do candle", "Range (pavio a pavio)"],
-            ctk.StringVar(value="Corpo do candle"),
+            self._mult_base_var,
         )
         self._mult_base.grid(row=3, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
@@ -159,12 +165,12 @@ class TakeProfitView(ctk.CTkFrame):
         self._mult_candle = self._create_combo(
             card,
             ["Atual", "Ultimo", "Penultimo", "Antepenultimo"],
-            ctk.StringVar(value="Penultimo"),
+            self._mult_candle_var,
         )
         self._mult_candle.grid(row=5, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
         self._add_label(card, 6, "Multiplicador")
-        self._mult_value = self._create_entry(card, "1.0")
+        self._mult_value = self._create_entry(card, self._mult_value_var.get(), self._mult_value_var)
         self._mult_value.grid(row=7, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 14))
 
     def _build_indicator_card(self) -> None:
@@ -297,6 +303,9 @@ class TakeProfitView(ctk.CTkFrame):
         if mode == "fixed":
             self._strategy_store.set("take_profit.mode", "fixed")
             self._strategy_store.set("take_profit.fixed.enabled", True)
+        elif mode == "mult":
+            self._strategy_store.set("take_profit.mode", "mult")
+            self._strategy_store.set("take_profit.fixed.enabled", False)
         else:
             self._strategy_store.set("take_profit.mode", "none")
             self._strategy_store.set("take_profit.fixed.enabled", False)
@@ -344,16 +353,30 @@ class TakeProfitView(ctk.CTkFrame):
     def _on_fixed_stop_multiple_change(self, *_args) -> None:
         self._strategy_store.set("take_profit.fixed.stop_multiple", self._fixed_stop_multiple_var.get().strip() or "1.0")
 
+    def _on_mult_base_change(self, *_args) -> None:
+        self._strategy_store.set("take_profit.mult.base", self._mult_base_var.get())
+
+    def _on_mult_candle_change(self, *_args) -> None:
+        self._strategy_store.set("take_profit.mult.candle", self._mult_candle_var.get())
+
+    def _on_mult_value_change(self, *_args) -> None:
+        self._strategy_store.set("take_profit.mult.value", self._mult_value_var.get().strip() or "1.0")
+
     def load_from_store(self) -> None:
         self._type_var.set(str(self._strategy_store.get("take_profit.measure")))
         self._fixed_distance_var.set(str(self._strategy_store.get("take_profit.fixed.distance")))
         self._fixed_stop_multiple_var.set(str(self._strategy_store.get("take_profit.fixed.stop_multiple")))
+        self._mult_base_var.set(str(self._strategy_store.get("take_profit.mult.base")))
+        self._mult_candle_var.set(str(self._strategy_store.get("take_profit.mult.candle")))
+        self._mult_value_var.set(str(self._strategy_store.get("take_profit.mult.value")))
 
         fixed_method = str(self._strategy_store.get("take_profit.fixed.method")).strip() or "distance"
         self._set_fixed_method(fixed_method if fixed_method in {"distance", "stop_mult"} else "distance")
 
         if bool(self._strategy_store.get("take_profit.fixed.enabled")):
             self._set_mode("fixed")
+        elif str(self._strategy_store.get("take_profit.mode")).strip() == "mult":
+            self._set_mode("mult")
         else:
             self._set_mode("none")
 
@@ -361,15 +384,24 @@ class TakeProfitView(ctk.CTkFrame):
         measure = self._type_var.get()
         fixed_distance = self._fixed_distance_var.get().strip() or "0"
         fixed_stop_multiple = self._fixed_stop_multiple_var.get().strip() or "1.0"
+        mult_base = self._mult_base_var.get()
+        mult_candle = self._mult_candle_var.get()
+        mult_value = self._mult_value_var.get().strip() or "1.0"
 
         self._strategy_store.set("take_profit.measure", measure)
         self._strategy_store.set("take_profit.fixed.method", self._fixed_method)
         self._strategy_store.set("take_profit.fixed.distance", fixed_distance)
         self._strategy_store.set("take_profit.fixed.stop_multiple", fixed_stop_multiple)
+        self._strategy_store.set("take_profit.mult.base", mult_base)
+        self._strategy_store.set("take_profit.mult.candle", mult_candle)
+        self._strategy_store.set("take_profit.mult.value", mult_value)
 
         if self._mode == "fixed":
             self._strategy_store.set("take_profit.mode", "fixed")
             self._strategy_store.set("take_profit.fixed.enabled", True)
+        elif self._mode == "mult":
+            self._strategy_store.set("take_profit.mode", "mult")
+            self._strategy_store.set("take_profit.fixed.enabled", False)
         else:
             self._strategy_store.set("take_profit.mode", "none")
             self._strategy_store.set("take_profit.fixed.enabled", False)
@@ -380,4 +412,7 @@ class TakeProfitView(ctk.CTkFrame):
             "fixed_method": self._fixed_method,
             "fixed_distance": fixed_distance,
             "fixed_stop_multiple": fixed_stop_multiple,
+            "mult_base": mult_base,
+            "mult_candle": mult_candle,
+            "mult_value": mult_value,
         }

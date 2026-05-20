@@ -57,6 +57,14 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
    if(config.take_profit.fixed.method!=TakeProfitDistancia
       && config.take_profit.fixed.method!=TakeProfitVezesStop)
       config.take_profit.fixed.method=TakeProfitDistancia;
+   if(config.take_profit.mult.base!=StopLossMultiplicadorCorpo
+      && config.take_profit.mult.base!=StopLossMultiplicadorRange)
+      config.take_profit.mult.base=StopLossMultiplicadorCorpo;
+   if(config.take_profit.mult.candle!=CandleAtual
+      && config.take_profit.mult.candle!=CandleUltimo
+      && config.take_profit.mult.candle!=CandlePenultimo
+      && config.take_profit.mult.candle!=CandleAntepenultimo)
+      config.take_profit.mult.candle=CandlePenultimo;
 
    if(config.risk.initial_volume<0.0)
       config.risk.initial_volume=0.0;
@@ -96,6 +104,8 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.take_profit.fixed.distance=0.0;
    if(config.take_profit.fixed.stop_multiple<0.0)
       config.take_profit.fixed.stop_multiple=0.0;
+   if(config.take_profit.mult.value<0.0)
+      config.take_profit.mult.value=0.0;
 
    if(config.stop_loss.mode=="fixed")
      {
@@ -147,9 +157,20 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
      }
 
    if(config.take_profit.mode=="fixed")
+     {
       config.take_profit.fixed.enabled=true;
-   else
+      config.take_profit.mult.enabled=false;
+     }
+   else if(config.take_profit.mode=="mult")
+     {
       config.take_profit.fixed.enabled=false;
+      config.take_profit.mult.enabled=true;
+     }
+   else
+     {
+      config.take_profit.fixed.enabled=false;
+      config.take_profit.mult.enabled=false;
+     }
   }
 
 #endif

@@ -96,10 +96,18 @@ class TakeProfitFixedDocument:
 
 
 @dataclass(frozen=True)
+class TakeProfitMultiplierDocument:
+    base: str
+    candle: str
+    value: str
+
+
+@dataclass(frozen=True)
 class TakeProfitDocument:
     mode: str
     measure: str
     fixed: TakeProfitFixedDocument
+    mult: TakeProfitMultiplierDocument
 
 
 @dataclass(frozen=True)
@@ -188,6 +196,11 @@ class StrategyDocument:
                     "method": self.take_profit.fixed.method,
                     "distance": self.take_profit.fixed.distance,
                     "stop_multiple": self.take_profit.fixed.stop_multiple,
+                },
+                "mult": {
+                    "base": self.take_profit.mult.base,
+                    "candle": self.take_profit.mult.candle,
+                    "value": self.take_profit.mult.value,
                 },
             },
         }

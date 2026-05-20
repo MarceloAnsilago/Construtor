@@ -152,12 +152,21 @@ struct STakeProfitFixedConfig
    double                stop_multiple;
   };
 
+struct STakeProfitMultiplierConfig
+  {
+   bool                         enabled;
+   EStopLossMultiplierBase      base;
+   ESignalLimitReferenceCandle  candle;
+   double                       value;
+  };
+
 struct STakeProfitConfig
   {
    string                  mode;
    string                  measure;
    bool                    is_percent;
    STakeProfitFixedConfig  fixed;
+   STakeProfitMultiplierConfig mult;
   };
 
 struct SRiskConfig
