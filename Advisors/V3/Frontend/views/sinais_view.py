@@ -557,9 +557,10 @@ class SinaisView(ctk.CTkFrame):
         self._canais_indicador_var = ctk.StringVar(value="Bandas de Bollinger")
         self._canais_indicador = self._create_combo(
             card,
-            ["Bandas de Bollinger", "Envelope", "Keltner", "Donchian", "Canal ATR"],
+            ["Bandas de Bollinger", "Envelopes", "Keltner", "Donchian", "Canal ATR"],
             self._canais_indicador_var,
         )
+        self._canais_indicador.configure(command=self._on_canais_indicator_select)
         self._canais_indicador.grid(row=4, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
         self._canais_signal_label = ctk.CTkLabel(
@@ -632,7 +633,7 @@ class SinaisView(ctk.CTkFrame):
         )
         self._canais_preco.grid(row=14, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 16))
 
-        self._canais_indicador_var.trace_add("write", self._on_canais_indicator_change)
+        self._canais_indicador.set("Bandas de Bollinger")
         self._refresh_canais_indicator_ui()
         self._set_canais_mode("Nao")
 
@@ -1290,7 +1291,7 @@ class SinaisView(ctk.CTkFrame):
                 "show_aux": True,
                 "show_price": True,
             },
-            "Envelope": {
+            "Envelopes": {
                 "signals": list(default_signals),
                 "aux_label": "Percentual",
                 "aux_default": "0.2",
@@ -2390,13 +2391,20 @@ class SinaisView(ctk.CTkFrame):
 
         return _callback
 
+    def _on_canais_indicator_select(self, selected: str) -> None:
+        self._canais_indicador_var.set(selected)
+        self._canais_indicador.set(selected)
+        self._refresh_canais_indicator_ui()
+        self._set_canais_mode(self._canais_mode.get())
+
     def _on_canais_indicator_change(self, *_args) -> None:
         self._refresh_canais_indicator_ui()
         self._set_canais_mode(self._canais_mode.get())
 
     def _refresh_canais_indicator_ui(self) -> None:
+        indicator_name = self._canais_indicador.get() or self._canais_indicador_var.get()
         config = self._canais_indicator_config.get(
-            self._canais_indicador_var.get(),
+            indicator_name,
             self._canais_indicator_config["Bandas de Bollinger"],
         )
         signal_values = list(config["signals"])
