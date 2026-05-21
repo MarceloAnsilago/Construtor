@@ -66,6 +66,7 @@ class OptimizationView(ctk.CTkFrame):
         self._add_summary_row(signals, 6, "Corpo min / max", "signal_filter_body_range", "0 / 0")
         self._add_summary_row(signals, 7, "Pavio sup. min / max", "signal_filter_upper_wick_range", "0 / 0")
         self._add_summary_row(signals, 8, "Pavio inf. min / max", "signal_filter_lower_wick_range", "0 / 0")
+        self._add_summary_row(signals, 9, "Canais de bandas", "signal_channels_summary", "Desativado")
 
     def _create_card(self, master, column: int, title: str) -> ctk.CTkFrame:
         card = ctk.CTkFrame(
@@ -158,6 +159,18 @@ class OptimizationView(ctk.CTkFrame):
         self._set_value("signal_filter_body_range", f"{body_min} / {body_max}")
         self._set_value("signal_filter_upper_wick_range", f"{upper_wick_min} / {upper_wick_max}")
         self._set_value("signal_filter_lower_wick_range", f"{lower_wick_min} / {lower_wick_max}")
+
+        channels_enabled = signals_config.get("signal_channels_enabled", "").strip() or "Nao"
+        if channels_enabled == "Sim":
+            indicator = signals_config.get("signal_channels_indicator", "").strip() or "Bandas de Bollinger"
+            signal_name = signals_config.get("signal_channels_signal", "").strip() or "Fechou fora"
+            period = signals_config.get("signal_channels_period", "").strip() or "20"
+            deviation = signals_config.get("signal_channels_deviation", "").strip() or "2.0"
+            shift = signals_config.get("signal_channels_shift", "").strip() or "0"
+            price = signals_config.get("signal_channels_price", "").strip() or "Fechamento"
+            self._set_value("signal_channels_summary", f"{indicator} | {signal_name} | P={period} | D={deviation} | S={shift} | {price}")
+        else:
+            self._set_value("signal_channels_summary", "Desativado")
 
     def _set_value(self, key: str, value: str) -> None:
         label = self._value_refs.get(key)

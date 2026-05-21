@@ -88,6 +88,12 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.signals.filter.lower_wick_min=0.0;
    if(config.signals.filter.lower_wick_max<0.0)
       config.signals.filter.lower_wick_max=0.0;
+   if(config.signals.channels.period<1)
+      config.signals.channels.period=20;
+   if(config.signals.channels.deviation<=0.0)
+      config.signals.channels.deviation=2.0;
+   if(config.signals.channels.shift<0)
+      config.signals.channels.shift=0;
    if(config.stop_loss.fixed.distance<0.0)
       config.stop_loss.fixed.distance=0.0;
    if(config.stop_loss.reference.distance<0.0)
@@ -106,6 +112,26 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       config.take_profit.fixed.stop_multiple=0.0;
    if(config.take_profit.mult.value<0.0)
       config.take_profit.mult.value=0.0;
+
+   if(config.signals.channels.indicator!="Bandas de Bollinger"
+      && config.signals.channels.indicator!="Envelopes"
+      && config.signals.channels.indicator!="Keltner"
+      && config.signals.channels.indicator!="Donchian"
+      && config.signals.channels.indicator!="Canal ATR")
+      config.signals.channels.indicator="Bandas de Bollinger";
+   if(config.signals.channels.signal!="Fechou fora"
+      && config.signals.channels.signal!="Fechou fora e voltou"
+      && config.signals.channels.signal!="Fechou dentro e saiu"
+      && config.signals.channels.signal!="Estando fora")
+      config.signals.channels.signal="Fechou fora";
+   if(config.signals.channels.price_mode!="Fechamento"
+      && config.signals.channels.price_mode!="Abertura"
+      && config.signals.channels.price_mode!="Maximo"
+      && config.signals.channels.price_mode!="Minimo"
+      && config.signals.channels.price_mode!="Mediano"
+      && config.signals.channels.price_mode!="Tipico"
+      && config.signals.channels.price_mode!="Medio")
+      config.signals.channels.price_mode="Fechamento";
 
    if(config.stop_loss.mode=="fixed")
      {

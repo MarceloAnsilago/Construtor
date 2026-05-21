@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "properties": {
     "strategy.name": {
       "type": "string",
@@ -86,6 +86,37 @@
     "signals.filter.lower_wick_max": {
       "type": "string",
       "default": "0"
+    },
+    "signals.channels.enabled": {
+      "type": "bool",
+      "default": false
+    },
+    "signals.channels.indicator": {
+      "type": "string",
+      "default": "Bandas de Bollinger",
+      "enum": ["Bandas de Bollinger", "Envelopes", "Keltner", "Donchian", "Canal ATR"]
+    },
+    "signals.channels.signal": {
+      "type": "string",
+      "default": "Fechou fora",
+      "enum": ["Fechou fora", "Fechou fora e voltou", "Fechou dentro e saiu", "Estando fora"]
+    },
+    "signals.channels.period": {
+      "type": "string",
+      "default": "20"
+    },
+    "signals.channels.deviation": {
+      "type": "string",
+      "default": "2.0"
+    },
+    "signals.channels.shift": {
+      "type": "string",
+      "default": "0"
+    },
+    "signals.channels.price": {
+      "type": "string",
+      "default": "Fechamento",
+      "enum": ["Fechamento", "Abertura", "Maximo", "Minimo", "Mediano", "Tipico", "Medio"]
     },
     "risk.allow_buy": {
       "type": "string",

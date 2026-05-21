@@ -72,6 +72,17 @@ struct SSignalFilterConfig
    double           lower_wick_max;
   };
 
+struct SSignalChannelsConfig
+  {
+   bool    enabled;
+   string  indicator;
+   string  signal;
+   int     period;
+   double  deviation;
+   int     shift;
+   string  price_mode;
+  };
+
 struct SSignalLimitReferenceConfig
   {
    ESignalLimitReferenceBase    base;
@@ -89,9 +100,10 @@ struct SSignalLimitConfig
 
 struct SSignalConfig
   {
-   ESignalOrderMode    order_mode;
-   SSignalLimitConfig  limit;
-   SSignalFilterConfig filter;
+   ESignalOrderMode       order_mode;
+   SSignalLimitConfig     limit;
+   SSignalFilterConfig    filter;
+   SSignalChannelsConfig  channels;
   };
 
 struct SStopLossFixedConfig

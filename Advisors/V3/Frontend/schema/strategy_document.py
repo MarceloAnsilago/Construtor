@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 @dataclass(frozen=True)
@@ -34,6 +34,17 @@ class SignalLimitReferenceDocument:
 class SignalLimitDocument:
     mode: str
     reference: SignalLimitReferenceDocument
+
+
+@dataclass(frozen=True)
+class SignalChannelsDocument:
+    enabled: bool
+    indicator: str
+    signal: str
+    period: str
+    deviation: str
+    shift: str
+    price: str
 
 
 @dataclass(frozen=True)
@@ -115,6 +126,7 @@ class SignalsDocument:
     order_mode: str
     limit: SignalLimitDocument
     filter: SignalFilterDocument
+    channels: SignalChannelsDocument
 
 
 @dataclass(frozen=True)
@@ -155,6 +167,15 @@ class StrategyDocument:
                     "upper_wick_max": self.signals.filter.upper_wick_max,
                     "lower_wick_min": self.signals.filter.lower_wick_min,
                     "lower_wick_max": self.signals.filter.lower_wick_max,
+                },
+                "channels": {
+                    "enabled": self.signals.channels.enabled,
+                    "indicator": self.signals.channels.indicator,
+                    "signal": self.signals.channels.signal,
+                    "period": self.signals.channels.period,
+                    "deviation": self.signals.channels.deviation,
+                    "shift": self.signals.channels.shift,
+                    "price": self.signals.channels.price,
                 },
             },
             "stop_loss": {

@@ -1996,6 +1996,13 @@ class SinaisView(ctk.CTkFrame):
         self._strategy_store.set("risk.allow_sell", "Sim" if bool(self._signal_sell_var.get()) else "Nao")
         self._strategy_store.set("signals.order_mode", self._ordem_mode.get())
         self._strategy_store.set("signals.limit_mode", self._ord_tab_var.get())
+        self._strategy_store.set("signals.channels.enabled", self._canais_mode.get() == "Sim")
+        self._strategy_store.set("signals.channels.indicator", self._canais_indicador.get())
+        self._strategy_store.set("signals.channels.signal", self._canais_sinal.get())
+        self._strategy_store.set("signals.channels.period", self._canais_periodo.get().strip() or "20")
+        self._strategy_store.set("signals.channels.deviation", self._canais_desvio.get().strip() or "2.0")
+        self._strategy_store.set("signals.channels.shift", self._canais_deslocamento.get().strip() or "0")
+        self._strategy_store.set("signals.channels.price", self._canais_preco.get())
         return build_runtime_snapshot(self._strategy_store)
 
     def export_active_panel_sections(self) -> list[dict[str, object]]:
@@ -2138,6 +2145,20 @@ class SinaisView(ctk.CTkFrame):
         for key, variable in self._filtro_entry_vars.items():
             variable.set(str(self._strategy_store.get(key)))
         self._sync_filtro_controls()
+        self._canais_indicador_var.set(str(self._strategy_store.get("signals.channels.indicator")))
+        self._canais_indicador.set(self._canais_indicador_var.get())
+        self._refresh_canais_indicator_ui()
+        self._canais_sinal_var.set(str(self._strategy_store.get("signals.channels.signal")))
+        self._canais_sinal.set(self._canais_sinal_var.get())
+        self._canais_periodo.delete(0, "end")
+        self._canais_periodo.insert(0, str(self._strategy_store.get("signals.channels.period")))
+        self._canais_desvio.delete(0, "end")
+        self._canais_desvio.insert(0, str(self._strategy_store.get("signals.channels.deviation")))
+        self._canais_deslocamento.delete(0, "end")
+        self._canais_deslocamento.insert(0, str(self._strategy_store.get("signals.channels.shift")))
+        self._canais_preco_var.set(str(self._strategy_store.get("signals.channels.price")))
+        self._canais_preco.set(self._canais_preco_var.get())
+        self._set_canais_mode("Sim" if bool(self._strategy_store.get("signals.channels.enabled")) else "Nao")
 
     def _create_panel(self, title: str, description: str) -> ctk.CTkFrame:
         panel = ctk.CTkFrame(
@@ -2394,6 +2415,7 @@ class SinaisView(ctk.CTkFrame):
     def _on_canais_indicator_select(self, selected: str) -> None:
         self._canais_indicador_var.set(selected)
         self._canais_indicador.set(selected)
+        self._strategy_store.set("signals.channels.indicator", selected)
         self._refresh_canais_indicator_ui()
         self._set_canais_mode(self._canais_mode.get())
 
@@ -2458,6 +2480,7 @@ class SinaisView(ctk.CTkFrame):
 
     def _set_canais_mode(self, mode: str) -> None:
         self._canais_mode.set(mode)
+        self._strategy_store.set("signals.channels.enabled", mode == "Sim")
         enabled = mode == "Sim"
         self._canais_yes.select() if enabled else self._canais_yes.deselect()
         self._canais_no.select() if not enabled else self._canais_no.deselect()

@@ -24,6 +24,13 @@ void SyncRuntimeConfigFromInputs()
    g_config.signals.filter.upper_wick_max=InpTamanhoMaximoPavioSuperior;
    g_config.signals.filter.lower_wick_min=InpTamanhoMinimoPavioInferior;
    g_config.signals.filter.lower_wick_max=InpTamanhoMaximoPavioInferior;
+   g_config.signals.channels.enabled=InpUsarCanaisDeBandas;
+   g_config.signals.channels.indicator=InpIndicadorDosCanais;
+   g_config.signals.channels.signal=InpSinalDosCanais;
+   g_config.signals.channels.period=(int)InpPeriodoDosCanais;
+   g_config.signals.channels.deviation=InpDesvioDosCanais;
+   g_config.signals.channels.shift=(int)InpDeslocamentoDosCanais;
+   g_config.signals.channels.price_mode=InpModoDePrecoDosCanais;
    g_config.stop_loss.mode=InpUsarStopLossFixo ? "fixed" : (InpUsarStopLossPorReferencia ? "calc_ref" : (InpUsarStopLossPorMedia ? "calc_med" : (InpUsarStopLossPorMaxMin ? "calc_maxmin" : (InpUsarStopLossMultiplicador ? "mult" : "none"))));
    g_config.stop_loss.measure=InpTipoDeStopLossPercentual ? "Percentual" : "Pontos";
    g_config.stop_loss.is_percent=InpTipoDeStopLossPercentual;

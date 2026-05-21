@@ -47,6 +47,15 @@ input double InpTamanhoMaximoPavioSuperior = 0.0;
 input double InpTamanhoMinimoPavioInferior = 0.0;
 input double InpTamanhoMaximoPavioInferior = 0.0;
 
+input group "4.2 Canais de bandas"
+input bool InpUsarCanaisDeBandas = false;
+input string InpIndicadorDosCanais = "Bandas de Bollinger";
+input string InpSinalDosCanais = "Fechou fora";
+input int InpPeriodoDosCanais = 20;
+input double InpDesvioDosCanais = 2.0;
+input int InpDeslocamentoDosCanais = 0;
+input string InpModoDePrecoDosCanais = "Fechamento";
+
 input group "5.1 Stop loss (fixo)"
 input bool InpUsarStopLossFixo = false;
 input bool InpTipoDeStopLossPercentual = false;
@@ -529,6 +538,18 @@ string BuildRuntimeCommentText()
    else
      {
       text+="\n\nFiltro: desativado";
+     }
+
+   if(g_config.signals.channels.enabled)
+     {
+      text+="\n\nCanais";
+      text+="\nIndicador: "+g_config.signals.channels.indicator+" | Sinal: "+g_config.signals.channels.signal;
+      text+="\nPeriodo: "+IntegerToString(g_config.signals.channels.period)+" | Desvio: "+FormatRuntimeDouble(g_config.signals.channels.deviation);
+      text+="\nShift: "+IntegerToString(g_config.signals.channels.shift)+" | Preco: "+g_config.signals.channels.price_mode;
+     }
+   else
+     {
+      text+="\n\nCanais: desativado";
      }
 
    return(text);
@@ -1687,6 +1708,11 @@ bool PassesNumericFilter(const double metric_value,const double min_value,const 
    return(true);
   }
 
+bool HasAnySignalCriteriaEnabled()
+  {
+   return(g_config.signals.filter.enabled || g_config.signals.channels.enabled);
+  }
+
 bool EvaluateSignalFilter(const MqlRates &signal_bar)
   {
    double candle_size_price=signal_bar.high-signal_bar.low;
@@ -1719,6 +1745,140 @@ bool EvaluateSignalFilter(const MqlRates &signal_bar)
       return(false);
 
    return(true);
+  }
+
+ENUM_APPLIED_PRICE ResolveAppliedPrice(const string price_mode)
+  {
+   string normalized=NormalizeText(price_mode);
+   if(normalized=="Abertura")
+      return(PRICE_OPEN);
+   if(normalized=="Maximo")
+      return(PRICE_HIGH);
+   if(normalized=="Minimo")
+      return(PRICE_LOW);
+   if(normalized=="Mediano")
+      return(PRICE_MEDIAN);
+   if(normalized=="Tipico")
+      return(PRICE_TYPICAL);
+   if(normalized=="Medio")
+      return(PRICE_WEIGHTED);
+   return(PRICE_CLOSE);
+  }
+
+int ClassifyBandPosition(const double close_price,const double upper_band,const double lower_band)
+  {
+   if(close_price>upper_band)
+      return(1);
+   if(close_price<lower_band)
+      return(-1);
+   return(0);
+  }
+
+bool ReadBollingerBandValue(const ENUM_TIMEFRAMES timeframe,const int period,const double deviation,const int bands_shift,const ENUM_APPLIED_PRICE applied_price,const int buffer_index,const int bar_shift,double &value)
+  {
+   int handle=iBands(_Symbol,timeframe,period,bands_shift,deviation,applied_price);
+   if(handle==INVALID_HANDLE)
+      return(false);
+
+   double buffer[];
+   ArraySetAsSeries(buffer,true);
+   bool copied=(CopyBuffer(handle,buffer_index,bar_shift,1,buffer)==1);
+   IndicatorRelease(handle);
+   if(!copied)
+      return(false);
+
+   value=buffer[0];
+   return(true);
+  }
+
+bool ReadBollingerBandsAtShift(const ENUM_TIMEFRAMES timeframe,const int bar_shift,double &upper_band,double &middle_band,double &lower_band)
+  {
+   int period=g_config.signals.channels.period;
+   double deviation=g_config.signals.channels.deviation;
+   int bands_shift=g_config.signals.channels.shift;
+   ENUM_APPLIED_PRICE applied_price=ResolveAppliedPrice(g_config.signals.channels.price_mode);
+
+   if(!ReadBollingerBandValue(timeframe,period,deviation,bands_shift,applied_price,1,bar_shift,upper_band))
+      return(false);
+   if(!ReadBollingerBandValue(timeframe,period,deviation,bands_shift,applied_price,0,bar_shift,middle_band))
+      return(false);
+   if(!ReadBollingerBandValue(timeframe,period,deviation,bands_shift,applied_price,2,bar_shift,lower_band))
+      return(false);
+   return(true);
+  }
+
+bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
+  {
+   MqlRates current_bar;
+   MqlRates previous_bar;
+   if(!ReadSignalBarAtShift(timeframe,1,current_bar))
+      return(false);
+   if(!ReadSignalBarAtShift(timeframe,2,previous_bar))
+      return(false);
+
+   double current_upper=0.0;
+   double current_middle=0.0;
+   double current_lower=0.0;
+   double previous_upper=0.0;
+   double previous_middle=0.0;
+   double previous_lower=0.0;
+   if(!ReadBollingerBandsAtShift(timeframe,1,current_upper,current_middle,current_lower))
+      return(false);
+   if(!ReadBollingerBandsAtShift(timeframe,2,previous_upper,previous_middle,previous_lower))
+      return(false);
+
+   int current_position=ClassifyBandPosition(current_bar.close,current_upper,current_lower);
+   int previous_position=ClassifyBandPosition(previous_bar.close,previous_upper,previous_lower);
+   string signal_mode=NormalizeText(g_config.signals.channels.signal);
+
+   direction=0;
+   if(signal_mode=="Fechou fora" || signal_mode=="Estando fora")
+     {
+      if(current_position>0)
+         direction=-1;
+      else if(current_position<0)
+         direction=1;
+      return(direction!=0);
+     }
+
+   if(signal_mode=="Fechou fora e voltou")
+     {
+      if(previous_position>0 && current_position==0)
+         direction=-1;
+      else if(previous_position<0 && current_position==0)
+         direction=1;
+      return(direction!=0);
+     }
+
+   if(signal_mode=="Fechou dentro e saiu")
+     {
+      if(previous_position==0 && current_position>0)
+         direction=-1;
+      else if(previous_position==0 && current_position<0)
+         direction=1;
+      return(direction!=0);
+     }
+
+   return(false);
+  }
+
+bool EvaluateSignalChannels(const ENUM_TIMEFRAMES timeframe,int &direction)
+  {
+   direction=0;
+   if(!g_config.signals.channels.enabled)
+      return(true);
+
+   string indicator_name=NormalizeText(g_config.signals.channels.indicator);
+   if(indicator_name!="Bandas de Bollinger")
+     {
+      Print("AlphaForge V3: indicador de canais ainda nao suportado no runtime: ",indicator_name);
+      return(false);
+     }
+
+   if(!EvaluateBollingerSignal(timeframe,direction))
+      return(false);
+
+   return(direction!=0);
   }
 
 int ResolveSignalDirection(const MqlRates &signal_bar)
@@ -2195,7 +2355,7 @@ bool SubmitLimitReferenceOrder(const int direction,const ENUM_TIMEFRAMES timefra
 
 void EvaluateAndTrade()
   {
-   if(!g_config.signals.filter.enabled)
+   if(!HasAnySignalCriteriaEnabled())
       return;
 
    ENUM_TIMEFRAMES timeframe=g_config.signals.filter.timeframe;
@@ -2207,14 +2367,27 @@ void EvaluateAndTrade()
    MqlRates signal_bar;
    if(!ReadClosedSignalBar(timeframe,signal_bar))
      {
-      Print("AlphaForge V3: nao foi possivel ler a vela fechada do filtro.");
+      Print("AlphaForge V3: nao foi possivel ler a vela fechada do sinal.");
       return;
      }
 
-   if(!EvaluateSignalFilter(signal_bar))
+   if(g_config.signals.filter.enabled && !EvaluateSignalFilter(signal_bar))
       return;
 
-   int direction=ResolveSignalDirection(signal_bar);
+   int direction=0;
+   if(g_config.signals.channels.enabled)
+     {
+      if(!EvaluateSignalChannels(timeframe,direction))
+         return;
+     }
+   else
+     {
+      direction=ResolveSignalDirection(signal_bar);
+     }
+
+   if(direction==0)
+      return;
+
    DrawSignalMarker(direction,timeframe,signal_bar);
    ESignalOrderMode order_mode=g_config.signals.order_mode;
    if(order_mode==ModoOrdemMercado)

@@ -31,6 +31,13 @@ INPUT_TO_STORE_KEYS = {
     "InpTamanhoMaximoPavioSuperior": ("signals.filter.upper_wick_max",),
     "InpTamanhoMinimoPavioInferior": ("signals.filter.lower_wick_min",),
     "InpTamanhoMaximoPavioInferior": ("signals.filter.lower_wick_max",),
+    "InpUsarCanaisDeBandas": ("signals.channels.enabled",),
+    "InpIndicadorDosCanais": ("signals.channels.indicator",),
+    "InpSinalDosCanais": ("signals.channels.signal",),
+    "InpPeriodoDosCanais": ("signals.channels.period",),
+    "InpDesvioDosCanais": ("signals.channels.deviation",),
+    "InpDeslocamentoDosCanais": ("signals.channels.shift",),
+    "InpModoDePrecoDosCanais": ("signals.channels.price",),
     "InpMinimoDePavios": ("signals.filter.upper_wick_min", "signals.filter.lower_wick_min"),
     "InpMaximoDePavios": ("signals.filter.upper_wick_max", "signals.filter.lower_wick_max"),
     "InpUsarStopLossFixo": ("stop_loss.fixed.enabled",),
@@ -152,6 +159,8 @@ def _map_input_value(input_name: str, raw_value: str) -> str | bool:
     if input_name == "InpMoverParaOProximoCandle":
         return _parse_bool(value)
     if input_name == "InpAtivarFiltro":
+        return _parse_bool(value)
+    if input_name == "InpUsarCanaisDeBandas":
         return _parse_bool(value)
     if input_name == "InpMedirEmPercentual":
         return "Percentual" if _parse_bool(value) else "Pontos"
