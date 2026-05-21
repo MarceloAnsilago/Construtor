@@ -123,6 +123,7 @@ class SinaisView(ctk.CTkFrame):
         self._montar_indicator_fields = self._build_montar_indicator_fields()
         self._montar_indicator_behavior = self._build_montar_indicator_behavior()
         self._montar_indicator_categories = self._build_montar_indicator_categories()
+        self._canais_indicator_config = self._build_canais_indicator_config()
         self._montar_slot_states: list[MontarSlotState] = []
         self._montar_logic_rows: list[dict[str, ctk.CTkComboBox]] = []
         self._montar_logic_saved_values: list[dict[str, str]] = []
@@ -545,49 +546,94 @@ class SinaisView(ctk.CTkFrame):
         )
         self._canais_no.grid(row=2, column=1, sticky="w", padx=(0, 16), pady=(0, 12))
 
-        self._add_label(card, 3, "Indicador")
+        self._canais_indicator_label = ctk.CTkLabel(
+            card,
+            text="Indicador",
+            anchor="w",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("label"),
+        )
+        self._canais_indicator_label.grid(row=3, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
+        self._canais_indicador_var = ctk.StringVar(value="Bandas de Bollinger")
         self._canais_indicador = self._create_combo(
             card,
             ["Bandas de Bollinger", "Envelope", "Keltner", "Donchian", "Canal ATR"],
-            ctk.StringVar(value="Bandas de Bollinger"),
+            self._canais_indicador_var,
         )
         self._canais_indicador.grid(row=4, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
-        self._add_label(card, 5, "Sinais")
+        self._canais_signal_label = ctk.CTkLabel(
+            card,
+            text="Sinais",
+            anchor="w",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("label"),
+        )
+        self._canais_signal_label.grid(row=5, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
+        self._canais_sinal_var = ctk.StringVar(value="Fechou fora")
         self._canais_sinal = self._create_combo(
             card,
             [
                 "Fechou fora",
-                "Fechou dentro e saiu",
-                "Fechou dentro e fechou fora",
                 "Fechou fora e voltou",
-                "Fechou fora e fechou dentro",
+                "Fechou dentro e saiu",
                 "Estando fora",
             ],
-            ctk.StringVar(value="Fechou fora"),
+            self._canais_sinal_var,
         )
         self._canais_sinal.grid(row=6, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
-        self._add_label(card, 7, "Periodo")
+        self._canais_periodo_label = ctk.CTkLabel(
+            card,
+            text="Periodo",
+            anchor="w",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("label"),
+        )
+        self._canais_periodo_label.grid(row=7, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
         self._canais_periodo = self._create_entry(card, "20")
         self._canais_periodo.grid(row=8, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
-        self._add_label(card, 9, "Desvio")
+        self._canais_aux_label = ctk.CTkLabel(
+            card,
+            text="Desvio",
+            anchor="w",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("label"),
+        )
+        self._canais_aux_label.grid(row=9, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
         self._canais_desvio = self._create_entry(card, "2.0")
         self._canais_desvio.grid(row=10, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
-        self._add_label(card, 11, "Deslocamento")
+        self._canais_shift_label = ctk.CTkLabel(
+            card,
+            text="Deslocamento",
+            anchor="w",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("label"),
+        )
+        self._canais_shift_label.grid(row=11, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
         self._canais_deslocamento = self._create_entry(card, "0")
         self._canais_deslocamento.grid(row=12, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 12))
 
-        self._add_label(card, 13, "Modo de preço")
+        self._canais_price_label = ctk.CTkLabel(
+            card,
+            text="Modo de preço",
+            anchor="w",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("label"),
+        )
+        self._canais_price_label.grid(row=13, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
+        self._canais_preco_var = ctk.StringVar(value="Fechamento")
         self._canais_preco = self._create_combo(
             card,
             ["Fechamento", "Abertura", "Maximo", "Minimo", "Mediano", "Tipico", "Medio"],
-            ctk.StringVar(value="Fechamento"),
+            self._canais_preco_var,
         )
         self._canais_preco.grid(row=14, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 16))
 
+        self._canais_indicador_var.trace_add("write", self._on_canais_indicator_change)
+        self._refresh_canais_indicator_ui()
         self._set_canais_mode("Nao")
 
     def _build_cruzamentos_card(self, panel: ctk.CTkFrame) -> None:
@@ -1227,6 +1273,51 @@ class SinaisView(ctk.CTkFrame):
             "Suporte e Resistência": [name for name in support_resistance_indicators if name in self._montar_indicator_outputs],
             "Indicadores Compostos/Híbridos": [name for name in hybrid_indicators if name in self._montar_indicator_outputs],
             "Outros": [name for name in all_indicators if name not in categorized_indicators],
+        }
+
+    def _build_canais_indicator_config(self) -> dict[str, dict[str, object]]:
+        default_signals = [
+            "Fechou fora",
+            "Fechou fora e voltou",
+            "Fechou dentro e saiu",
+            "Estando fora",
+        ]
+        return {
+            "Bandas de Bollinger": {
+                "signals": list(default_signals),
+                "aux_label": "Desvio",
+                "aux_default": "2.0",
+                "show_aux": True,
+                "show_price": True,
+            },
+            "Envelope": {
+                "signals": list(default_signals),
+                "aux_label": "Percentual",
+                "aux_default": "0.2",
+                "show_aux": True,
+                "show_price": True,
+            },
+            "Keltner": {
+                "signals": list(default_signals),
+                "aux_label": "Multiplicador",
+                "aux_default": "1.5",
+                "show_aux": True,
+                "show_price": True,
+            },
+            "Donchian": {
+                "signals": list(default_signals),
+                "aux_label": "Desvio",
+                "aux_default": "",
+                "show_aux": False,
+                "show_price": False,
+            },
+            "Canal ATR": {
+                "signals": list(default_signals),
+                "aux_label": "Multiplicador",
+                "aux_default": "1.5",
+                "show_aux": True,
+                "show_price": False,
+            },
         }
 
     def _get_montar_indicator_names_for_category(self, category_name: str) -> list[str]:
@@ -1954,17 +2045,26 @@ class SinaisView(ctk.CTkFrame):
             )
 
         if self._canais_mode.get() == "Sim":
+            canais_config = self._canais_indicator_config.get(
+                self._canais_indicador_var.get(),
+                self._canais_indicator_config["Bandas de Bollinger"],
+            )
+            canais_items = [
+                {"label": "Indicador", "value": self._canais_indicador.get()},
+                {"label": "Sinal", "value": self._canais_sinal.get()},
+                {"label": "Periodo", "value": self._canais_periodo.get().strip() or "0"},
+            ]
+            if bool(canais_config["show_aux"]):
+                canais_items.append(
+                    {"label": str(canais_config["aux_label"]), "value": self._canais_desvio.get().strip() or "0"}
+                )
+            canais_items.append({"label": "Deslocamento", "value": self._canais_deslocamento.get().strip() or "0"})
+            if bool(canais_config["show_price"]):
+                canais_items.append({"label": "Modo de preço", "value": self._canais_preco.get()})
             sections.append(
                 {
                     "title": "Canais de bandas",
-                    "items": [
-                        {"label": "Indicador", "value": self._canais_indicador.get()},
-                        {"label": "Sinal", "value": self._canais_sinal.get()},
-                        {"label": "Periodo", "value": self._canais_periodo.get().strip() or "0"},
-                        {"label": "Desvio", "value": self._canais_desvio.get().strip() or "0"},
-                        {"label": "Deslocamento", "value": self._canais_deslocamento.get().strip() or "0"},
-                        {"label": "Modo de preço", "value": self._canais_preco.get()},
-                    ],
+                    "items": canais_items,
                 }
             )
 
@@ -2290,6 +2390,40 @@ class SinaisView(ctk.CTkFrame):
 
         return _callback
 
+    def _on_canais_indicator_change(self, *_args) -> None:
+        self._refresh_canais_indicator_ui()
+        self._set_canais_mode(self._canais_mode.get())
+
+    def _refresh_canais_indicator_ui(self) -> None:
+        config = self._canais_indicator_config.get(
+            self._canais_indicador_var.get(),
+            self._canais_indicator_config["Bandas de Bollinger"],
+        )
+        signal_values = list(config["signals"])
+        self._canais_sinal.configure(values=signal_values)
+        if self._canais_sinal_var.get() not in signal_values:
+            self._canais_sinal_var.set(signal_values[0])
+
+        self._canais_aux_label.configure(text=str(config["aux_label"]))
+
+        show_aux = bool(config["show_aux"])
+        if show_aux:
+            self._canais_aux_label.grid()
+            self._canais_desvio.grid()
+            if not self._canais_desvio.get().strip():
+                self._canais_desvio.insert(0, str(config["aux_default"]))
+        else:
+            self._canais_aux_label.grid_remove()
+            self._canais_desvio.grid_remove()
+
+        show_price = bool(config["show_price"])
+        if show_price:
+            self._canais_price_label.grid()
+            self._canais_preco.grid()
+        else:
+            self._canais_price_label.grid_remove()
+            self._canais_preco.grid_remove()
+
     def _sync_filtro_controls(self) -> None:
         enabled = bool(self._filtro_enabled_var.get())
         self._filtro_measure.configure(state="readonly" if enabled else "disabled")
@@ -2323,9 +2457,13 @@ class SinaisView(ctk.CTkFrame):
         self._canais_indicador.configure(state="readonly" if enabled else "disabled")
         self._canais_sinal.configure(state="readonly" if enabled else "disabled")
         self._canais_periodo.configure(state="normal" if enabled else "disabled")
-        self._canais_desvio.configure(state="normal" if enabled else "disabled")
+        self._canais_desvio.configure(
+            state="normal" if enabled and self._canais_aux_label.winfo_manager() else "disabled"
+        )
         self._canais_deslocamento.configure(state="normal" if enabled else "disabled")
-        self._canais_preco.configure(state="readonly" if enabled else "disabled")
+        self._canais_preco.configure(
+            state="readonly" if enabled and self._canais_price_label.winfo_manager() else "disabled"
+        )
 
     def _set_cruz_mode(self, mode: str) -> None:
         self._cruz_mode.set(mode)
