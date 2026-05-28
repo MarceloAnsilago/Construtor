@@ -557,7 +557,7 @@ class SinaisView(ctk.CTkFrame):
         self._canais_indicador_var = ctk.StringVar(value="Bandas de Bollinger")
         self._canais_indicador = self._create_combo(
             card,
-            ["Bandas de Bollinger", "Envelopes", "Keltner", "Donchian", "Canal ATR"],
+            ["Bandas de Bollinger"],
             self._canais_indicador_var,
         )
         self._canais_indicador.configure(command=self._on_canais_indicator_select)
@@ -1291,34 +1291,6 @@ class SinaisView(ctk.CTkFrame):
                 "show_aux": True,
                 "show_price": True,
             },
-            "Envelopes": {
-                "signals": list(default_signals),
-                "aux_label": "Percentual",
-                "aux_default": "0.2",
-                "show_aux": True,
-                "show_price": True,
-            },
-            "Keltner": {
-                "signals": list(default_signals),
-                "aux_label": "Multiplicador",
-                "aux_default": "1.5",
-                "show_aux": True,
-                "show_price": True,
-            },
-            "Donchian": {
-                "signals": list(default_signals),
-                "aux_label": "Desvio",
-                "aux_default": "",
-                "show_aux": False,
-                "show_price": False,
-            },
-            "Canal ATR": {
-                "signals": list(default_signals),
-                "aux_label": "Multiplicador",
-                "aux_default": "1.5",
-                "show_aux": True,
-                "show_price": False,
-            },
         }
 
     def _get_montar_indicator_names_for_category(self, category_name: str) -> list[str]:
@@ -1997,7 +1969,7 @@ class SinaisView(ctk.CTkFrame):
         self._strategy_store.set("signals.order_mode", self._ordem_mode.get())
         self._strategy_store.set("signals.limit_mode", self._ord_tab_var.get())
         self._strategy_store.set("signals.channels.enabled", self._canais_mode.get() == "Sim")
-        self._strategy_store.set("signals.channels.indicator", self._canais_indicador.get())
+        self._strategy_store.set("signals.channels.indicator", self._normalize_canais_indicator(self._canais_indicador.get()))
         self._strategy_store.set("signals.channels.signal", self._canais_sinal.get())
         self._strategy_store.set("signals.channels.period", self._canais_periodo.get().strip() or "20")
         self._strategy_store.set("signals.channels.deviation", self._canais_desvio.get().strip() or "2.0")
@@ -2145,7 +2117,9 @@ class SinaisView(ctk.CTkFrame):
         for key, variable in self._filtro_entry_vars.items():
             variable.set(str(self._strategy_store.get(key)))
         self._sync_filtro_controls()
-        self._canais_indicador_var.set(str(self._strategy_store.get("signals.channels.indicator")))
+        self._canais_indicador_var.set(
+            self._normalize_canais_indicator(str(self._strategy_store.get("signals.channels.indicator")))
+        )
         self._canais_indicador.set(self._canais_indicador_var.get())
         self._refresh_canais_indicator_ui()
         self._canais_sinal_var.set(str(self._strategy_store.get("signals.channels.signal")))
@@ -2413,15 +2387,21 @@ class SinaisView(ctk.CTkFrame):
         return _callback
 
     def _on_canais_indicator_select(self, selected: str) -> None:
-        self._canais_indicador_var.set(selected)
-        self._canais_indicador.set(selected)
-        self._strategy_store.set("signals.channels.indicator", selected)
+        normalized = self._normalize_canais_indicator(selected)
+        self._canais_indicador_var.set(normalized)
+        self._canais_indicador.set(normalized)
+        self._strategy_store.set("signals.channels.indicator", normalized)
         self._refresh_canais_indicator_ui()
         self._set_canais_mode(self._canais_mode.get())
 
     def _on_canais_indicator_change(self, *_args) -> None:
         self._refresh_canais_indicator_ui()
         self._set_canais_mode(self._canais_mode.get())
+
+    def _normalize_canais_indicator(self, indicator_name: str) -> str:
+        if indicator_name == "Bandas de Bollinger":
+            return indicator_name
+        return "Bandas de Bollinger"
 
     def _refresh_canais_indicator_ui(self) -> None:
         indicator_name = self._canais_indicador.get() or self._canais_indicador_var.get()

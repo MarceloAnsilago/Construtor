@@ -113,11 +113,7 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
    if(config.take_profit.mult.value<0.0)
       config.take_profit.mult.value=0.0;
 
-   if(config.signals.channels.indicator!="Bandas de Bollinger"
-      && config.signals.channels.indicator!="Envelopes"
-      && config.signals.channels.indicator!="Keltner"
-      && config.signals.channels.indicator!="Donchian"
-      && config.signals.channels.indicator!="Canal ATR")
+   if(config.signals.channels.indicator!="Bandas de Bollinger")
       config.signals.channels.indicator="Bandas de Bollinger";
    if(config.signals.channels.signal!="Fechou fora"
       && config.signals.channels.signal!="Fechou fora e voltou"

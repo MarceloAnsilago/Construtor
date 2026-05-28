@@ -161,7 +161,7 @@ PARAMETERS: tuple[ParameterDefinition, ...] = (
         "string",
         "Bandas de Bollinger",
         "signals.channels",
-        ("Bandas de Bollinger", "Envelopes", "Keltner", "Donchian", "Canal ATR"),
+        ("Bandas de Bollinger",),
     ),
     ParameterDefinition(
         "signals.channels.signal",

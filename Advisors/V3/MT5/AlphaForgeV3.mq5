@@ -1774,6 +1774,16 @@ int ClassifyBandPosition(const double close_price,const double upper_band,const 
    return(0);
   }
 
+bool ResolveBandDirection(const int band_position,int &direction)
+  {
+   direction=0;
+   if(band_position>0)
+      direction=-1;
+   else if(band_position<0)
+      direction=1;
+   return(direction!=0);
+  }
+
 bool ReadBollingerBandValue(const ENUM_TIMEFRAMES timeframe,const int period,const double deviation,const int bands_shift,const ENUM_APPLIED_PRICE applied_price,const int buffer_index,const int bar_shift,double &value)
   {
    int handle=iBands(_Symbol,timeframe,period,bands_shift,deviation,applied_price);
@@ -1832,13 +1842,9 @@ bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
    string signal_mode=NormalizeText(g_config.signals.channels.signal);
 
    direction=0;
-   if(signal_mode=="Fechou fora" || signal_mode=="Estando fora")
+   if(signal_mode=="Fechou fora")
      {
-      if(current_position>0)
-         direction=-1;
-      else if(current_position<0)
-         direction=1;
-      return(direction!=0);
+      return(ResolveBandDirection(current_position,direction));
      }
 
    if(signal_mode=="Fechou fora e voltou")
@@ -1852,11 +1858,16 @@ bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
 
    if(signal_mode=="Fechou dentro e saiu")
      {
-      if(previous_position==0 && current_position>0)
-         direction=-1;
-      else if(previous_position==0 && current_position<0)
-         direction=1;
-      return(direction!=0);
+      if(previous_position==0)
+         return(ResolveBandDirection(current_position,direction));
+      return(false);
+     }
+
+   if(signal_mode=="Estando fora")
+     {
+      if(previous_position==current_position && current_position!=0)
+         return(ResolveBandDirection(current_position,direction));
+      return(false);
      }
 
    return(false);
