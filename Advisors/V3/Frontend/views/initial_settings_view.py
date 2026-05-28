@@ -1,3 +1,5 @@
+import random
+
 import customtkinter as ctk
 
 from models.initial_settings import build_initial_settings_options
@@ -6,6 +8,9 @@ from themes.theme import UITheme
 
 
 class InitialSettingsView(ctk.CTkFrame):
+    _DEFAULT_STRATEGY_NAME = "Minha estrategia"
+    _DEFAULT_MAGIC_DIGITS = 6
+
     def __init__(self, master, theme: UITheme, strategy_store: StrategyStore | None = None) -> None:
         super().__init__(master, fg_color="transparent")
         self._theme = theme
@@ -30,7 +35,10 @@ class InitialSettingsView(ctk.CTkFrame):
 
         self._name_var = ctk.StringVar(value=str(self._strategy_store.get("strategy.name")))
         magic_default = str(self._strategy_store.get("strategy.magic_number"))
-        if not magic_default.strip():
+        if (
+            not magic_default.strip()
+            or (self._name_var.get().strip() == self._DEFAULT_STRATEGY_NAME and magic_default.strip() == "100000")
+        ):
             magic_default = self._build_magic_value(self._name_var.get())
         self._magic_var = ctk.StringVar(value=magic_default)
         self._name_var.trace_add("write", self._on_name_change)
@@ -247,11 +255,34 @@ class InitialSettingsView(ctk.CTkFrame):
         ).grid(row=row, column=0, columnspan=2, sticky="ew", padx=16, pady=(0, 4))
 
     def _build_magic_value(self, name: str) -> str:
+        digits = self._resolve_magic_digits(self._magic_var.get() if hasattr(self, "_magic_var") else "")
+        if name.strip() == self._DEFAULT_STRATEGY_NAME:
+            return self._build_random_magic_value(digits)
+
         cleaned = "".join(char for char in name if char.isalnum())
         if not cleaned:
-            return "100000"
+            return self._build_random_magic_value(digits)
         total = sum(ord(char) for char in cleaned.upper())
-        return str(100000 + total)
+        lower_bound = 10 ** (digits - 1)
+        upper_bound = (10 ** digits) - 1
+        magic_value = lower_bound + (total % (upper_bound - lower_bound + 1))
+        return str(magic_value)
+
+    def _resolve_magic_digits(self, current_magic: str) -> int:
+        numeric = "".join(char for char in current_magic if char.isdigit())
+        if numeric:
+            return len(numeric)
+        default_magic = str(self._strategy_store.get("strategy.magic_number"))
+        default_numeric = "".join(char for char in default_magic if char.isdigit())
+        if default_numeric:
+            return len(default_numeric)
+        return self._DEFAULT_MAGIC_DIGITS
+
+    def _build_random_magic_value(self, digits: int) -> str:
+        safe_digits = max(1, digits)
+        lower_bound = 10 ** (safe_digits - 1)
+        upper_bound = (10 ** safe_digits) - 1
+        return str(random.randint(lower_bound, upper_bound))
 
     def _on_name_change(self, *_args) -> None:
         self._strategy_store.set("strategy.name", self._name_var.get())
@@ -301,7 +332,13 @@ class InitialSettingsView(ctk.CTkFrame):
         self._loading_store = True
         try:
             self._name_var.set(str(self._strategy_store.get("strategy.name")))
-            self._magic_var.set(str(self._strategy_store.get("strategy.magic_number")))
+            stored_magic = str(self._strategy_store.get("strategy.magic_number"))
+            if (
+                self._name_var.get().strip() == self._DEFAULT_STRATEGY_NAME
+                and stored_magic.strip() == "100000"
+            ):
+                stored_magic = self._build_magic_value(self._name_var.get())
+            self._magic_var.set(stored_magic)
             if "Operar na compra" in self._combo_vars:
                 self._combo_vars["Operar na compra"].set(str(self._strategy_store.get("risk.allow_buy")))
             if "Operar na venda" in self._combo_vars:
