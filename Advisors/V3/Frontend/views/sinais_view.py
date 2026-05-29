@@ -213,26 +213,102 @@ class SinaisView(ctk.CTkFrame):
 
         return panel
 
-    def _build_tipo_ordens_card(self, panel: ctk.CTkFrame) -> None:
-        card = ctk.CTkFrame(
-            panel,
+    def _create_signal_card(
+        self,
+        master,
+        column: int,
+        title: str,
+        padx,
+    ) -> ctk.CTkFrame:
+        panel = ctk.CTkFrame(
+            master,
             fg_color=self._theme.colors.card,
             corner_radius=0,
             border_width=1,
             border_color=self._theme.colors.border,
         )
-        card.grid(row=2, column=0, sticky="nsew", padx=(18, 6), pady=(0, 18))
-        card.grid_columnconfigure(0, weight=1)
-        card.grid_columnconfigure(1, weight=1)
-        card.grid_rowconfigure(3, weight=1)
+        panel.grid(row=2, column=column, sticky="nsew", padx=padx, pady=(0, 18))
+        panel.grid_columnconfigure(0, weight=1)
+        panel.grid_rowconfigure(2, weight=1)
 
         ctk.CTkLabel(
-            card,
-            text="Tipo de ordens",
+            panel,
+            text=title,
             text_color=self._theme.colors.text,
             font=self._theme.font("subtitle"),
             anchor="w",
-        ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
+        ).grid(row=0, column=0, sticky="ew", padx=16, pady=(16, 12))
+
+        tab_var = ctk.StringVar(value="Sinal")
+        tabs = ctk.CTkSegmentedButton(
+            panel,
+            values=["Sinal", "Otimizar"],
+            variable=tab_var,
+            height=30,
+            corner_radius=0,
+            fg_color=self._theme.colors.header_dark,
+            selected_color=self._theme.colors.accent,
+            selected_hover_color=self._theme.colors.accent_hover,
+            unselected_color=self._theme.colors.header_dark,
+            unselected_hover_color=self._theme.colors.sidebar_item_hover,
+            text_color=self._theme.colors.header_text,
+            text_color_disabled=self._theme.colors.card_soft,
+            font=self._theme.font("label", weight="bold"),
+        )
+        tabs.grid(row=1, column=0, sticky="ew", padx=16, pady=(0, 12))
+
+        shell = ctk.CTkFrame(
+            panel,
+            fg_color="transparent",
+            corner_radius=0,
+            border_width=0,
+        )
+        shell.grid(row=2, column=0, sticky="nsew", padx=16, pady=(0, 16))
+        shell.grid_columnconfigure(0, weight=1)
+        shell.grid_rowconfigure(0, weight=1)
+
+        signal_panel = self._create_subpanel(shell)
+        signal_panel.grid_columnconfigure(0, weight=1)
+        signal_panel.grid_rowconfigure(1, weight=1)
+        content_panel = ctk.CTkFrame(
+            signal_panel,
+            fg_color="transparent",
+            corner_radius=0,
+            border_width=0,
+        )
+        content_panel.grid(row=1, column=0, sticky="nsew", pady=(16, 0))
+        content_panel.grid_columnconfigure(0, weight=1)
+        optimize_panel = self._create_subpanel(shell)
+        optimize_panel.grid_columnconfigure(0, weight=1)
+
+        ctk.CTkLabel(
+            optimize_panel,
+            text="Placeholder visual para configuracoes de otimizacao.",
+            text_color=self._theme.colors.text_muted,
+            font=self._theme.font("body"),
+            anchor="w",
+            justify="left",
+            wraplength=220,
+        ).grid(row=0, column=0, sticky="ew", padx=12, pady=(12, 12))
+
+        def _set_local_tab(name: str) -> None:
+            tab_var.set(name)
+            if name == "Sinal":
+                optimize_panel.grid_forget()
+                signal_panel.grid(row=0, column=0, sticky="nsew")
+                return
+            signal_panel.grid_forget()
+            optimize_panel.grid(row=0, column=0, sticky="nsew")
+
+        tabs.configure(command=_set_local_tab)
+        _set_local_tab("Sinal")
+
+        return content_panel
+
+    def _build_tipo_ordens_card(self, panel: ctk.CTkFrame) -> None:
+        card = self._create_signal_card(panel, 0, "Tipo de ordens", (18, 6))
+        card.grid_columnconfigure(0, weight=1)
+        card.grid_columnconfigure(1, weight=1)
 
         self._ordem_mode = ctk.StringVar(value=str(self._strategy_store.get("signals.order_mode")))
         self._ordem_market = self._create_checkbox(
@@ -367,24 +443,9 @@ class SinaisView(ctk.CTkFrame):
         self._set_ord_tab("Referencia")
 
     def _build_filtro_card(self, panel: ctk.CTkFrame) -> None:
-        card = ctk.CTkFrame(
-            panel,
-            fg_color=self._theme.colors.card,
-            corner_radius=0,
-            border_width=1,
-            border_color=self._theme.colors.border,
-        )
-        card.grid(row=2, column=1, sticky="nsew", padx=6, pady=(0, 18))
+        card = self._create_signal_card(panel, 1, "Usar filtro", 6)
         card.grid_columnconfigure(0, weight=1)
         card.grid_columnconfigure(1, weight=1)
-
-        ctk.CTkLabel(
-            card,
-            text="Usar filtro",
-            text_color=self._theme.colors.text,
-            font=self._theme.font("subtitle"),
-            anchor="w",
-        ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
         self._filtro_enabled_var = ctk.IntVar(value=1 if bool(self._strategy_store.get("signals.filter.enabled")) else 0)
         self._filtro_enabled = self._create_checkbox(
@@ -460,24 +521,9 @@ class SinaisView(ctk.CTkFrame):
         self._sync_filtro_controls()
 
     def _build_canais_card(self, panel: ctk.CTkFrame) -> None:
-        card = ctk.CTkFrame(
-            panel,
-            fg_color=self._theme.colors.card,
-            corner_radius=0,
-            border_width=1,
-            border_color=self._theme.colors.border,
-        )
-        card.grid(row=2, column=2, sticky="nsew", padx=6, pady=(0, 18))
+        card = self._create_signal_card(panel, 2, "Canais de bandas", 6)
         card.grid_columnconfigure(0, weight=1)
         card.grid_columnconfigure(1, weight=1)
-
-        ctk.CTkLabel(
-            card,
-            text="Canais de bandas",
-            text_color=self._theme.colors.text,
-            font=self._theme.font("subtitle"),
-            anchor="w",
-        ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
         self._add_label(card, 1, "Usar canais de bandas", pady=(0, 6))
         self._canais_mode = ctk.StringVar(value="Nao")
@@ -587,25 +633,10 @@ class SinaisView(ctk.CTkFrame):
         self._set_canais_mode("Nao")
 
     def _build_cruzamentos_card(self, panel: ctk.CTkFrame) -> None:
-        card = ctk.CTkFrame(
-            panel,
-            fg_color=self._theme.colors.card,
-            corner_radius=0,
-            border_width=1,
-            border_color=self._theme.colors.border,
-        )
-        card.grid(row=2, column=3, sticky="nsew", padx=6, pady=(0, 18))
+        card = self._create_signal_card(panel, 3, "Cruzamentos", 6)
         card.grid_columnconfigure(0, weight=1)
         card.grid_columnconfigure(1, weight=1)
         card.grid_rowconfigure(4, weight=1)
-
-        ctk.CTkLabel(
-            card,
-            text="Cruzamentos",
-            text_color=self._theme.colors.text,
-            font=self._theme.font("subtitle"),
-            anchor="w",
-        ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
         self._add_label(card, 1, "Usar cruzamentos", pady=(0, 6))
         self._cruz_mode = ctk.StringVar(value="Nao")
@@ -766,25 +797,10 @@ class SinaisView(ctk.CTkFrame):
         self._set_cruz_tab("Geral")
 
     def _build_sobre_card(self, panel: ctk.CTkFrame) -> None:
-        card = ctk.CTkFrame(
-            panel,
-            fg_color=self._theme.colors.card,
-            corner_radius=0,
-            border_width=1,
-            border_color=self._theme.colors.border,
-        )
-        card.grid(row=2, column=4, sticky="nsew", padx=(6, 18), pady=(0, 18))
+        card = self._create_signal_card(panel, 4, "Sobrecompra / sobrevenda", (6, 18))
         card.grid_columnconfigure(0, weight=1)
         card.grid_columnconfigure(1, weight=1)
         card.grid_rowconfigure(3, weight=1)
-
-        ctk.CTkLabel(
-            card,
-            text="Sobrecompra / sobrevenda",
-            text_color=self._theme.colors.text,
-            font=self._theme.font("subtitle"),
-            anchor="w",
-        ).grid(row=0, column=0, columnspan=2, sticky="ew", padx=16, pady=(16, 16))
 
         self._sobre_enabled = self._create_checkbox(card, "Usar sobrecompra / sobrevenda", lambda: self._toggle_sobre())
         self._sobre_enabled.grid(row=1, column=0, columnspan=2, sticky="w", padx=16, pady=(0, 12))
