@@ -107,6 +107,8 @@ datetime g_last_signal_bar_time = 0;
 CAlphaForgeChartTheme g_chart_theme;
 CTrade g_trade;
 SRuntimeConfig g_config;
+int g_channel_visual_handle = INVALID_HANDLE;
+bool g_channel_visual_attached = false;
 
 #include "Runtime/RuntimeValidation.mqh"
 #include "Runtime/RuntimeApply.mqh"
@@ -1695,8 +1697,68 @@ void DestroySignalMarkers()
      {
       string name=ObjectName(0,index);
       if(StringFind(name,SIGNAL_MARKER_PREFIX)==0)
-         ObjectDelete(0,name);
+        ObjectDelete(0,name);
      }
+  }
+
+void DetachChannelVisual()
+  {
+   if(g_channel_visual_handle!=INVALID_HANDLE)
+     {
+      IndicatorRelease(g_channel_visual_handle);
+      g_channel_visual_handle=INVALID_HANDLE;
+     }
+   g_channel_visual_attached=false;
+  }
+
+bool AttachChannelVisual(const ENUM_TIMEFRAMES timeframe)
+  {
+   DetachChannelVisual();
+   if(!g_config.signals.channels.enabled)
+      return(false);
+
+   string indicator_name=NormalizeText(g_config.signals.channels.indicator);
+   ENUM_APPLIED_PRICE applied_price=ResolveAppliedPrice(g_config.signals.channels.price_mode);
+   int period=g_config.signals.channels.period;
+   int shift=g_config.signals.channels.shift;
+   double deviation=g_config.signals.channels.deviation;
+
+   if(indicator_name=="Bandas de Bollinger")
+      g_channel_visual_handle=iBands(_Symbol,timeframe,period,shift,deviation,applied_price);
+   else if(indicator_name=="Keltner")
+      g_channel_visual_handle=iCustom(_Symbol,timeframe,"AlphaForge\\AlphaForgeKeltner",period,deviation,shift,applied_price);
+
+   if(g_channel_visual_handle==INVALID_HANDLE)
+     {
+      Print("AlphaForge V3: falha ao criar visual do canal: ",indicator_name);
+      return(false);
+     }
+
+   if(!ChartIndicatorAdd(0,0,g_channel_visual_handle))
+     {
+      Print("AlphaForge V3: falha ao anexar visual do canal no grafico. Indicador=",indicator_name," Error=",GetLastError());
+      IndicatorRelease(g_channel_visual_handle);
+      g_channel_visual_handle=INVALID_HANDLE;
+      return(false);
+     }
+
+   g_channel_visual_attached=true;
+   return(true);
+  }
+
+void EnsureChannelVisual(const ENUM_TIMEFRAMES timeframe)
+  {
+   if(!g_config.signals.channels.enabled)
+     {
+      if(g_channel_visual_attached || g_channel_visual_handle!=INVALID_HANDLE)
+         DetachChannelVisual();
+      return;
+     }
+
+   if(g_channel_visual_attached)
+      return;
+
+   AttachChannelVisual(timeframe);
   }
 
 bool PassesNumericFilter(const double metric_value,const double min_value,const double max_value)
@@ -2598,9 +2660,10 @@ int OnInit()
      {
       Print("AlphaForge V3: falha ao criar o painel inicial.");
       g_chart_theme.RestoreTheme();
-      return(INIT_FAILED);
+     return(INIT_FAILED);
      }
    RefreshRuntimeComment();
+   EnsureChannelVisual(PERIOD_CURRENT);
 
    return(INIT_SUCCEEDED);
   }
@@ -2614,6 +2677,8 @@ void OnDeinit(const int reason)
       DestroyControlPanel();
       Comment("");
      }
+   DetachChannelVisual();
+   DestroySignalMarkers();
    if(HasInteractiveChart())
       g_chart_theme.RestoreTheme();
   }
@@ -2624,6 +2689,7 @@ void OnTick()
   {
    EnforceManualStopLoss();
    EnforceManualTakeProfit();
+   EnsureChannelVisual(PERIOD_CURRENT);
    EvaluateAndTrade();
    if(HasInteractiveChart())
       RefreshRuntimeComment();
@@ -2640,6 +2706,7 @@ void OnChartEvent(const int id,const long &lparam,const double &dparam,const str
      {
       g_chart_theme.RefreshThemeDecorations();
       CreateControlPanel();
+      EnsureChannelVisual(PERIOD_CURRENT);
       RefreshRuntimeComment();
       return;
      }

@@ -552,7 +552,7 @@ class SinaisView(ctk.CTkFrame):
         self._canais_indicador_var = ctk.StringVar(value="Bandas de Bollinger")
         self._canais_indicador = self._create_combo(
             card,
-            ["Bandas de Bollinger"],
+            ["Bandas de Bollinger", "Keltner"],
             self._canais_indicador_var,
         )
         self._canais_indicador.configure(command=self._on_canais_indicator_select)
@@ -1203,6 +1203,13 @@ class SinaisView(ctk.CTkFrame):
         ]
         return {
             "Bandas de Bollinger": {
+                "signals": list(default_signals),
+                "aux_label": "Desvio",
+                "aux_default": "2.0",
+                "show_aux": True,
+                "show_price": True,
+            },
+            "Keltner": {
                 "signals": list(default_signals),
                 "aux_label": "Desvio",
                 "aux_default": "2.0",
@@ -2297,7 +2304,7 @@ class SinaisView(ctk.CTkFrame):
         self._set_canais_mode(self._canais_mode.get())
 
     def _normalize_canais_indicator(self, indicator_name: str) -> str:
-        if indicator_name == "Bandas de Bollinger":
+        if indicator_name in self._canais_indicator_config:
             return indicator_name
         return "Bandas de Bollinger"
 
