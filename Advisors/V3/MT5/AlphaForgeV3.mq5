@@ -107,8 +107,15 @@ datetime g_last_signal_bar_time = 0;
 CAlphaForgeChartTheme g_chart_theme;
 CTrade g_trade;
 SRuntimeConfig g_config;
-int g_channel_visual_handle = INVALID_HANDLE;
-bool g_channel_visual_attached = false;
+
+struct SAttachedChartIndicator
+  {
+   int    handle;
+   string short_name;
+   int    subwindow;
+  };
+
+SAttachedChartIndicator g_attached_chart_indicators[];
 
 #include "Runtime/RuntimeValidation.mqh"
 #include "Runtime/RuntimeApply.mqh"
@@ -1701,14 +1708,117 @@ void DestroySignalMarkers()
      }
   }
 
+int FindAttachedChartIndicatorByHandle(const int handle)
+  {
+   int total=ArraySize(g_attached_chart_indicators);
+   for(int index=0;index<total;index++)
+     {
+      if(g_attached_chart_indicators[index].handle==handle)
+         return(index);
+     }
+   return(-1);
+  }
+
+void ReadChartIndicatorShortNames(const int subwindow,string &names[])
+  {
+   int total=ChartIndicatorsTotal(0,subwindow);
+   ArrayResize(names,total);
+   for(int index=0;index<total;index++)
+      names[index]=ChartIndicatorName(0,subwindow,index);
+  }
+
+bool ContainsIndicatorShortName(const string &names[],const string short_name)
+  {
+   int total=ArraySize(names);
+   for(int index=0;index<total;index++)
+     {
+      if(names[index]==short_name)
+         return(true);
+     }
+   return(false);
+  }
+
+string ResolveNewChartIndicatorShortName(const int subwindow,const string &existing_names[])
+  {
+   int total=ChartIndicatorsTotal(0,subwindow);
+   for(int index=0;index<total;index++)
+     {
+      string short_name=ChartIndicatorName(0,subwindow,index);
+      if(short_name!="" && !ContainsIndicatorShortName(existing_names,short_name))
+         return(short_name);
+     }
+
+   if(total>0)
+     {
+      string fallback_name=ChartIndicatorName(0,subwindow,total-1);
+      if(fallback_name!="")
+         return(fallback_name);
+     }
+
+   return("");
+  }
+
+bool RegisterAttachedChartIndicator(const int handle,const int subwindow,const string short_name)
+  {
+   if(handle==INVALID_HANDLE || short_name=="")
+      return(false);
+
+   int existing_index=FindAttachedChartIndicatorByHandle(handle);
+   if(existing_index>=0)
+        {
+         g_attached_chart_indicators[existing_index].short_name=short_name;
+         g_attached_chart_indicators[existing_index].subwindow=subwindow;
+         return(true);
+        }
+
+   int total=ArraySize(g_attached_chart_indicators);
+   ArrayResize(g_attached_chart_indicators,total+1);
+   g_attached_chart_indicators[total].handle=handle;
+   g_attached_chart_indicators[total].short_name=short_name;
+   g_attached_chart_indicators[total].subwindow=subwindow;
+   return(true);
+  }
+
+void DetachAttachedChartIndicator(const int handle)
+  {
+   int index=FindAttachedChartIndicatorByHandle(handle);
+   if(index<0)
+     {
+      if(handle!=INVALID_HANDLE)
+         IndicatorRelease(handle);
+      return;
+     }
+
+   string short_name=g_attached_chart_indicators[index].short_name;
+   int subwindow=g_attached_chart_indicators[index].subwindow;
+
+   if(short_name!="")
+      ChartIndicatorDelete(0,subwindow,short_name);
+
+   if(handle!=INVALID_HANDLE)
+      IndicatorRelease(handle);
+
+   int total=ArraySize(g_attached_chart_indicators);
+   for(int cursor=index;cursor<total-1;cursor++)
+      g_attached_chart_indicators[cursor]=g_attached_chart_indicators[cursor+1];
+   ArrayResize(g_attached_chart_indicators,total-1);
+  }
+
+void DetachAllAttachedChartIndicators()
+  {
+   for(int index=ArraySize(g_attached_chart_indicators)-1;index>=0;index--)
+      DetachAttachedChartIndicator(g_attached_chart_indicators[index].handle);
+  }
+
+int g_channel_visual_handle = INVALID_HANDLE;
+
 void DetachChannelVisual()
   {
    if(g_channel_visual_handle!=INVALID_HANDLE)
      {
-      IndicatorRelease(g_channel_visual_handle);
+      DetachAttachedChartIndicator(g_channel_visual_handle);
       g_channel_visual_handle=INVALID_HANDLE;
      }
-   g_channel_visual_attached=false;
   }
 
 bool AttachChannelVisual(const ENUM_TIMEFRAMES timeframe)
@@ -1716,6 +1826,9 @@ bool AttachChannelVisual(const ENUM_TIMEFRAMES timeframe)
    DetachChannelVisual();
    if(!g_config.signals.channels.enabled)
       return(false);
+
+   string existing_names[];
+   ReadChartIndicatorShortNames(0,existing_names);
 
    string indicator_name=NormalizeText(g_config.signals.channels.indicator);
    ENUM_APPLIED_PRICE applied_price=ResolveAppliedPrice(g_config.signals.channels.price_mode);
@@ -1742,7 +1855,17 @@ bool AttachChannelVisual(const ENUM_TIMEFRAMES timeframe)
       return(false);
      }
 
-   g_channel_visual_attached=true;
+   string short_name=ResolveNewChartIndicatorShortName(0,existing_names);
+   if(!RegisterAttachedChartIndicator(g_channel_visual_handle,0,short_name))
+     {
+      Print("AlphaForge V3: falha ao registrar o indicador anexado no grafico. Indicador=",indicator_name);
+      if(short_name!="")
+         ChartIndicatorDelete(0,0,short_name);
+      IndicatorRelease(g_channel_visual_handle);
+      g_channel_visual_handle=INVALID_HANDLE;
+      return(false);
+     }
+
    return(true);
   }
 
@@ -1750,12 +1873,12 @@ void EnsureChannelVisual(const ENUM_TIMEFRAMES timeframe)
   {
    if(!g_config.signals.channels.enabled)
      {
-      if(g_channel_visual_attached || g_channel_visual_handle!=INVALID_HANDLE)
+      if(g_channel_visual_handle!=INVALID_HANDLE)
          DetachChannelVisual();
       return;
      }
 
-   if(g_channel_visual_attached)
+   if(g_channel_visual_handle!=INVALID_HANDLE)
       return;
 
    AttachChannelVisual(timeframe);
@@ -2677,7 +2800,8 @@ void OnDeinit(const int reason)
       DestroyControlPanel();
       Comment("");
      }
-   DetachChannelVisual();
+   DetachAllAttachedChartIndicators();
+   g_channel_visual_handle=INVALID_HANDLE;
    DestroySignalMarkers();
    if(HasInteractiveChart())
       g_chart_theme.RestoreTheme();
