@@ -117,6 +117,7 @@ void NormalizeRuntimeConfig(SRuntimeConfig &config)
       && config.signals.channels.indicator!="Keltner")
       config.signals.channels.indicator="Bandas de Bollinger";
    if(config.signals.channels.signal!="Fechou fora"
+      && config.signals.channels.signal!="Toque"
       && config.signals.channels.signal!="Fechou fora e voltou"
       && config.signals.channels.signal!="Fechou dentro e saiu"
       && config.signals.channels.signal!="Estando fora")

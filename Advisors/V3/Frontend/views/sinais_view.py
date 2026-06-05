@@ -571,6 +571,7 @@ class SinaisView(ctk.CTkFrame):
             card,
             [
                 "Fechou fora",
+                "Toque",
                 "Fechou fora e voltou",
                 "Fechou dentro e saiu",
                 "Estando fora",
@@ -1197,6 +1198,7 @@ class SinaisView(ctk.CTkFrame):
     def _build_canais_indicator_config(self) -> dict[str, dict[str, object]]:
         default_signals = [
             "Fechou fora",
+            "Toque",
             "Fechou fora e voltou",
             "Fechou dentro e saiu",
             "Estando fora",

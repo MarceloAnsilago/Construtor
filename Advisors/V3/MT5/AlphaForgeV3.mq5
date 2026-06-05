@@ -2023,6 +2023,37 @@ bool ResolveBandDirection(const int band_position,int &direction)
    return(direction!=0);
   }
 
+bool ResolveBandTouchDirection(const MqlRates &bar,const double upper_band,const double lower_band,int &direction)
+  {
+   bool touched_upper=(bar.high>=upper_band);
+   bool touched_lower=(bar.low<=lower_band);
+
+   direction=0;
+   if(touched_upper && !touched_lower)
+     {
+      direction=-1;
+      return(true);
+     }
+
+   if(touched_lower && !touched_upper)
+     {
+      direction=1;
+      return(true);
+     }
+
+   if(touched_upper && touched_lower)
+     {
+      int configured_direction=ResolveConfiguredSignalDirection();
+      if(configured_direction!=0)
+        {
+         direction=configured_direction;
+         return(true);
+        }
+     }
+
+   return(false);
+  }
+
 bool ReadBollingerBandValue(const ENUM_TIMEFRAMES timeframe,const int period,const double deviation,const int bands_shift,const ENUM_APPLIED_PRICE applied_price,const int buffer_index,const int bar_shift,double &value)
   {
    int handle=iBands(_Symbol,timeframe,period,bands_shift,deviation,applied_price);
@@ -2147,6 +2178,11 @@ bool EvaluateChannelSignal(const string indicator_name,const ENUM_TIMEFRAMES tim
    if(signal_mode=="Fechou fora")
      {
       return(ResolveBandDirection(current_position,direction));
+     }
+
+   if(signal_mode=="Toque")
+     {
+      return(ResolveBandTouchDirection(current_bar,current_upper,current_lower,direction));
      }
 
    if(signal_mode=="Fechou fora e voltou")

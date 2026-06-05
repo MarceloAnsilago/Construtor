@@ -99,7 +99,7 @@
     "signals.channels.signal": {
       "type": "string",
       "default": "Fechou fora",
-      "enum": ["Fechou fora", "Fechou fora e voltou", "Fechou dentro e saiu", "Estando fora"]
+      "enum": ["Fechou fora", "Toque", "Fechou fora e voltou", "Fechou dentro e saiu", "Estando fora"]
     },
     "signals.channels.period": {
       "type": "string",

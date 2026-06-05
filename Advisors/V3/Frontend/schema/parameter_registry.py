@@ -169,7 +169,7 @@ PARAMETERS: tuple[ParameterDefinition, ...] = (
         "string",
         "Fechou fora",
         "signals.channels",
-        ("Fechou fora", "Fechou fora e voltou", "Fechou dentro e saiu", "Estando fora"),
+        ("Fechou fora", "Toque", "Fechou fora e voltou", "Fechou dentro e saiu", "Estando fora"),
     ),
     ParameterDefinition(
         "signals.channels.period",
