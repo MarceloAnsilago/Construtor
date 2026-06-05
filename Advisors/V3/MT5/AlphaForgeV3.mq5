@@ -1738,6 +1738,21 @@ bool ContainsIndicatorShortName(const string &names[],const string short_name)
    return(false);
   }
 
+bool IsManagedChartIndicatorName(const string short_name)
+  {
+   string normalized=short_name;
+   StringToLower(normalized);
+   if(StringFind(normalized,"bands(")>=0)
+      return(true);
+   if(StringFind(normalized,"bollinger")>=0)
+      return(true);
+   if(StringFind(normalized,"keltner")>=0)
+      return(true);
+   if(StringFind(normalized,"alphaforge")>=0)
+      return(true);
+   return(false);
+  }
+
 string ResolveNewChartIndicatorShortName(const int subwindow,const string &existing_names[])
   {
    int total=ChartIndicatorsTotal(0,subwindow);
@@ -1808,6 +1823,28 @@ void DetachAllAttachedChartIndicators()
   {
    for(int index=ArraySize(g_attached_chart_indicators)-1;index>=0;index--)
       DetachAttachedChartIndicator(g_attached_chart_indicators[index].handle);
+  }
+
+void RemoveManagedIndicatorsFromChart()
+  {
+   long windows_total=0;
+   if(!ChartGetInteger(0,CHART_WINDOWS_TOTAL,0,windows_total))
+      windows_total=1;
+
+   for(int subwindow=(int)windows_total-1;subwindow>=0;subwindow--)
+     {
+      for(int index=ChartIndicatorsTotal(0,subwindow)-1;index>=0;index--)
+        {
+         string short_name=ChartIndicatorName(0,subwindow,index);
+         if(short_name=="" || !IsManagedChartIndicatorName(short_name))
+            continue;
+
+         if(!ChartIndicatorDelete(0,subwindow,short_name))
+            Print("AlphaForge V3: falha ao remover indicador do grafico no desligamento. Nome=",short_name," Error=",GetLastError());
+        }
+     }
+
+   ChartRedraw();
   }
 
 int g_channel_visual_handle = INVALID_HANDLE;
@@ -2801,6 +2838,7 @@ void OnDeinit(const int reason)
       Comment("");
      }
    DetachAllAttachedChartIndicators();
+   RemoveManagedIndicatorsFromChart();
    g_channel_visual_handle=INVALID_HANDLE;
    DestroySignalMarkers();
    if(HasInteractiveChart())
