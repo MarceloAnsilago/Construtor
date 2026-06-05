@@ -1834,7 +1834,68 @@ bool ReadBollingerBandsAtShift(const ENUM_TIMEFRAMES timeframe,const int bar_shi
    return(true);
   }
 
-bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
+bool ReadMovingAverageValue(const ENUM_TIMEFRAMES timeframe,const int period,const int ma_shift,const ENUM_MA_METHOD ma_method,const ENUM_APPLIED_PRICE applied_price,const int bar_shift,double &value)
+  {
+   int handle=iMA(_Symbol,timeframe,period,ma_shift,ma_method,applied_price);
+   if(handle==INVALID_HANDLE)
+      return(false);
+
+   double buffer[];
+   ArraySetAsSeries(buffer,true);
+   bool copied=(CopyBuffer(handle,0,bar_shift,1,buffer)==1);
+   IndicatorRelease(handle);
+   if(!copied)
+      return(false);
+
+   value=buffer[0];
+   return(true);
+  }
+
+bool ReadAtrValue(const ENUM_TIMEFRAMES timeframe,const int period,const int bar_shift,double &value)
+  {
+   int handle=iATR(_Symbol,timeframe,period);
+   if(handle==INVALID_HANDLE)
+      return(false);
+
+   double buffer[];
+   ArraySetAsSeries(buffer,true);
+   bool copied=(CopyBuffer(handle,0,bar_shift,1,buffer)==1);
+   IndicatorRelease(handle);
+   if(!copied)
+      return(false);
+
+   value=buffer[0];
+   return(true);
+  }
+
+bool ReadKeltnerBandsAtShift(const ENUM_TIMEFRAMES timeframe,const int bar_shift,double &upper_band,double &middle_band,double &lower_band)
+  {
+   int period=g_config.signals.channels.period;
+   double deviation=g_config.signals.channels.deviation;
+   int bands_shift=g_config.signals.channels.shift;
+   ENUM_APPLIED_PRICE applied_price=ResolveAppliedPrice(g_config.signals.channels.price_mode);
+   double atr_value=0.0;
+
+   if(!ReadMovingAverageValue(timeframe,period,bands_shift,MODE_EMA,applied_price,bar_shift,middle_band))
+      return(false);
+   if(!ReadAtrValue(timeframe,period,bar_shift,atr_value))
+      return(false);
+
+   upper_band=middle_band+(deviation*atr_value);
+   lower_band=middle_band-(deviation*atr_value);
+   return(true);
+  }
+
+bool ReadChannelBandsAtShift(const string indicator_name,const ENUM_TIMEFRAMES timeframe,const int bar_shift,double &upper_band,double &middle_band,double &lower_band)
+  {
+   if(indicator_name=="Bandas de Bollinger")
+      return(ReadBollingerBandsAtShift(timeframe,bar_shift,upper_band,middle_band,lower_band));
+   if(indicator_name=="Keltner")
+      return(ReadKeltnerBandsAtShift(timeframe,bar_shift,upper_band,middle_band,lower_band));
+   return(false);
+  }
+
+bool EvaluateChannelSignal(const string indicator_name,const ENUM_TIMEFRAMES timeframe,const string signal_mode,int &direction)
   {
    MqlRates current_bar;
    MqlRates previous_bar;
@@ -1849,9 +1910,9 @@ bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
    double previous_upper=0.0;
    double previous_middle=0.0;
    double previous_lower=0.0;
-   if(!ReadBollingerBandsAtShift(timeframe,1,current_upper,current_middle,current_lower))
+   if(!ReadChannelBandsAtShift(indicator_name,timeframe,1,current_upper,current_middle,current_lower))
       return(false);
-   if(!ReadBollingerBandsAtShift(timeframe,2,previous_upper,previous_middle,previous_lower))
+   if(!ReadChannelBandsAtShift(indicator_name,timeframe,2,previous_upper,previous_middle,previous_lower))
       return(false);
 
    ENUM_APPLIED_PRICE applied_price=ResolveAppliedPrice(g_config.signals.channels.price_mode);
@@ -1859,7 +1920,6 @@ bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
    double previous_price=ResolveBarPrice(previous_bar,applied_price);
    int current_position=ClassifyBandPosition(current_price,current_upper,current_lower);
    int previous_position=ClassifyBandPosition(previous_price,previous_upper,previous_lower);
-   string signal_mode=NormalizeText(g_config.signals.channels.signal);
 
    direction=0;
    if(signal_mode=="Fechou fora")
@@ -1893,6 +1953,16 @@ bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
    return(false);
   }
 
+bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
+  {
+   return(EvaluateChannelSignal("Bandas de Bollinger",timeframe,NormalizeText(g_config.signals.channels.signal),direction));
+  }
+
+bool EvaluateKeltnerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
+  {
+   return(EvaluateChannelSignal("Keltner",timeframe,NormalizeText(g_config.signals.channels.signal),direction));
+  }
+
 bool EvaluateSignalChannels(const ENUM_TIMEFRAMES timeframe,int &direction)
   {
    direction=0;
@@ -1900,13 +1970,18 @@ bool EvaluateSignalChannels(const ENUM_TIMEFRAMES timeframe,int &direction)
       return(true);
 
    string indicator_name=NormalizeText(g_config.signals.channels.indicator);
-   if(indicator_name!="Bandas de Bollinger")
+   bool evaluated=false;
+   if(indicator_name=="Bandas de Bollinger")
+      evaluated=EvaluateBollingerSignal(timeframe,direction);
+   else if(indicator_name=="Keltner")
+      evaluated=EvaluateKeltnerSignal(timeframe,direction);
+   else
      {
       Print("AlphaForge V3: indicador de canais ainda nao suportado no runtime: ",indicator_name);
       return(false);
      }
 
-   if(!EvaluateBollingerSignal(timeframe,direction))
+   if(!evaluated)
       return(false);
 
    return(direction!=0);
