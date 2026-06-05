@@ -1765,11 +1765,28 @@ ENUM_APPLIED_PRICE ResolveAppliedPrice(const string price_mode)
    return(PRICE_CLOSE);
   }
 
-int ClassifyBandPosition(const double close_price,const double upper_band,const double lower_band)
+double ResolveBarPrice(const MqlRates &bar,const ENUM_APPLIED_PRICE applied_price)
   {
-   if(close_price>upper_band)
+   if(applied_price==PRICE_OPEN)
+      return(bar.open);
+   if(applied_price==PRICE_HIGH)
+      return(bar.high);
+   if(applied_price==PRICE_LOW)
+      return(bar.low);
+   if(applied_price==PRICE_MEDIAN)
+      return((bar.high+bar.low)/2.0);
+   if(applied_price==PRICE_TYPICAL)
+      return((bar.high+bar.low+bar.close)/3.0);
+   if(applied_price==PRICE_WEIGHTED)
+      return((bar.high+bar.low+(2.0*bar.close))/4.0);
+   return(bar.close);
+  }
+
+int ClassifyBandPosition(const double price_value,const double upper_band,const double lower_band)
+  {
+   if(price_value>upper_band)
       return(1);
-   if(close_price<lower_band)
+   if(price_value<lower_band)
       return(-1);
    return(0);
   }
@@ -1837,8 +1854,11 @@ bool EvaluateBollingerSignal(const ENUM_TIMEFRAMES timeframe,int &direction)
    if(!ReadBollingerBandsAtShift(timeframe,2,previous_upper,previous_middle,previous_lower))
       return(false);
 
-   int current_position=ClassifyBandPosition(current_bar.close,current_upper,current_lower);
-   int previous_position=ClassifyBandPosition(previous_bar.close,previous_upper,previous_lower);
+   ENUM_APPLIED_PRICE applied_price=ResolveAppliedPrice(g_config.signals.channels.price_mode);
+   double current_price=ResolveBarPrice(current_bar,applied_price);
+   double previous_price=ResolveBarPrice(previous_bar,applied_price);
+   int current_position=ClassifyBandPosition(current_price,current_upper,current_lower);
+   int previous_position=ClassifyBandPosition(previous_price,previous_upper,previous_lower);
    string signal_mode=NormalizeText(g_config.signals.channels.signal);
 
    direction=0;
