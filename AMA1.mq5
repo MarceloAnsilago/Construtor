@@ -75,5 +75,10 @@ void OnTick()
   {
 //---
    int Mybars = iBars(_Symbol, _Period); // Obtém o número de barras no gráfico atual
+   if (mybars < 60 return; // Se houver menos de 100 barras, não faz nada
+    {
+      Alert("Não há barras suficientes para operar. Aguarde mais barras.");
+      return;
+    }
   }
 //+------------------------------------------------------------------+
