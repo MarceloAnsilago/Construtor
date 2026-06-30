@@ -3,12 +3,23 @@
 
 #include "..\\CEFGuiAliases.mqh"
 
-const color V2_COLOR_CARD_BACK=C'233,220,203';
-const color V2_COLOR_CARD_BORDER=C'197,168,136';
-const color V2_COLOR_FIELD_BORDER=C'91,78,64';
-const color V2_COLOR_TEXT_PRIMARY=C'43,43,43';
-const color V2_COLOR_TEXT_SECONDARY=C'91,78,64';
-const color V2_COLOR_SURFACE=C'239,231,218';
+const color V2_COLOR_WINDOW_BACK=C'245,247,250';
+const color V2_COLOR_SURFACE=C'255,255,255';
+const color V2_COLOR_CARD_BACK=C'255,255,255';
+const color V2_COLOR_CARD_BORDER=C'214,220,229';
+const color V2_COLOR_FIELD_BORDER=C'198,206,217';
+const color V2_COLOR_TEXT_PRIMARY=C'33,37,41';
+const color V2_COLOR_TEXT_SECONDARY=C'108,117,125';
+const color V2_COLOR_TAB_BACK=C'248,249,251';
+const color V2_COLOR_TAB_BACK_HOVER=C'240,243,247';
+const color V2_COLOR_TAB_ACTIVE=C'255,255,255';
+const color V2_COLOR_TAB_BORDER=C'214,220,229';
+const color V2_COLOR_ACCENT=C'73,118,189';
+const color V2_COLOR_SIDEBAR_BACK=C'35,41,52';
+const color V2_COLOR_SIDEBAR_BACK_HOVER=C'45,52,64';
+const color V2_COLOR_SIDEBAR_ACTIVE=C'58,110,165';
+const color V2_COLOR_SIDEBAR_BORDER=C'68,76,89';
+const color V2_COLOR_SIDEBAR_TEXT=C'222,226,230';
 
 int V2ClampIndex(const int value,const int min_value,const int max_value)
   {
@@ -153,9 +164,9 @@ void V2StyleCombo(CEF_CComboBox &combo,const color border,const int width,const 
   {
    combo.XSize(width);
    combo.YSize(20);
-   combo.BackColor(clrWhite);
-   combo.BackColorHover(clrWhite);
-   combo.BackColorPressed(clrWhite);
+   combo.BackColor(V2_COLOR_SURFACE);
+   combo.BackColorHover(V2_COLOR_SURFACE);
+   combo.BackColorPressed(V2_COLOR_SURFACE);
    combo.BorderColor(border);
    combo.BorderColorHover(border);
    combo.BorderColorPressed(border);
@@ -165,9 +176,9 @@ void V2StyleCombo(CEF_CComboBox &combo,const color border,const int width,const 
    combo.GetButtonPointer().XGap(1);
    combo.GetButtonPointer().YSize(20);
    combo.GetButtonPointer().AnchorRightWindowSide(false);
-   combo.GetButtonPointer().BackColor(clrWhite);
-   combo.GetButtonPointer().BackColorHover(clrWhite);
-   combo.GetButtonPointer().BackColorPressed(clrWhite);
+   combo.GetButtonPointer().BackColor(V2_COLOR_SURFACE);
+   combo.GetButtonPointer().BackColorHover(V2_COLOR_SURFACE);
+   combo.GetButtonPointer().BackColorPressed(V2_COLOR_SURFACE);
    combo.GetButtonPointer().BorderColor(border);
    combo.GetButtonPointer().BorderColorHover(border);
    combo.GetButtonPointer().BorderColorPressed(border);
@@ -176,7 +187,7 @@ void V2StyleCombo(CEF_CComboBox &combo,const color border,const int width,const 
    combo.GetButtonPointer().LabelColor(V2_COLOR_TEXT_PRIMARY);
    combo.GetListViewPointer().YSize(list_height);
    combo.GetListViewPointer().LightsHover(true);
-   combo.GetListViewPointer().BackColor(clrWhite);
+   combo.GetListViewPointer().BackColor(V2_COLOR_SURFACE);
   }
 
 void V2StyleSpin(CEF_CTextEdit &spin,const color back,const color border,const int width,const double max_value,const double min_value,const double step,const int digits,const string value)
@@ -199,21 +210,21 @@ void V2StyleSpin(CEF_CTextEdit &spin,const color back,const color border,const i
    spin.BorderColor(border);
    spin.BorderColorHover(border);
    spin.BorderColorPressed(border);
-   spin.GetTextBoxPointer().BackColor(clrWhite);
-   spin.GetTextBoxPointer().BackColorHover(clrWhite);
-   spin.GetTextBoxPointer().BackColorPressed(clrWhite);
+   spin.GetTextBoxPointer().BackColor(V2_COLOR_SURFACE);
+   spin.GetTextBoxPointer().BackColorHover(V2_COLOR_SURFACE);
+   spin.GetTextBoxPointer().BackColorPressed(V2_COLOR_SURFACE);
    spin.GetTextBoxPointer().BorderColor(border);
    spin.GetTextBoxPointer().BorderColorHover(border);
    spin.GetTextBoxPointer().BorderColorPressed(border);
-   spin.GetIncButtonPointer().BackColor(clrWhite);
-   spin.GetIncButtonPointer().BackColorHover(clrWhite);
-   spin.GetIncButtonPointer().BackColorPressed(clrWhite);
+   spin.GetIncButtonPointer().BackColor(V2_COLOR_SURFACE);
+   spin.GetIncButtonPointer().BackColorHover(V2_COLOR_SURFACE);
+   spin.GetIncButtonPointer().BackColorPressed(V2_COLOR_SURFACE);
    spin.GetIncButtonPointer().BorderColor(border);
    spin.GetIncButtonPointer().BorderColorHover(border);
    spin.GetIncButtonPointer().BorderColorPressed(border);
-   spin.GetDecButtonPointer().BackColor(clrWhite);
-   spin.GetDecButtonPointer().BackColorHover(clrWhite);
-   spin.GetDecButtonPointer().BackColorPressed(clrWhite);
+   spin.GetDecButtonPointer().BackColor(V2_COLOR_SURFACE);
+   spin.GetDecButtonPointer().BackColorHover(V2_COLOR_SURFACE);
+   spin.GetDecButtonPointer().BackColorPressed(V2_COLOR_SURFACE);
    spin.GetDecButtonPointer().BorderColor(border);
    spin.GetDecButtonPointer().BorderColorHover(border);
    spin.GetDecButtonPointer().BorderColorPressed(border);
@@ -225,15 +236,15 @@ void V2StyleTextEdit(CEF_CTextEdit &edit,const color border,const int width)
    edit.YSize(20);
    edit.CheckBoxMode(false);
    edit.SpinEditMode(false);
-   edit.BackColor(clrWhite);
-   edit.BackColorHover(clrWhite);
-   edit.BackColorPressed(clrWhite);
+   edit.BackColor(V2_COLOR_SURFACE);
+   edit.BackColorHover(V2_COLOR_SURFACE);
+   edit.BackColorPressed(V2_COLOR_SURFACE);
    edit.BorderColor(border);
    edit.BorderColorHover(border);
    edit.BorderColorPressed(border);
-   edit.GetTextBoxPointer().BackColor(clrWhite);
-   edit.GetTextBoxPointer().BackColorHover(clrWhite);
-   edit.GetTextBoxPointer().BackColorPressed(clrWhite);
+   edit.GetTextBoxPointer().BackColor(V2_COLOR_SURFACE);
+   edit.GetTextBoxPointer().BackColorHover(V2_COLOR_SURFACE);
+   edit.GetTextBoxPointer().BackColorPressed(V2_COLOR_SURFACE);
    edit.GetTextBoxPointer().BorderColor(border);
    edit.GetTextBoxPointer().BorderColorHover(border);
    edit.GetTextBoxPointer().BorderColorPressed(border);
@@ -292,8 +303,8 @@ public:
       m_bar.FontSize(9);
       m_bar.LabelColor(V2_COLOR_TEXT_SECONDARY);
       m_bar.BorderColor(V2_COLOR_CARD_BORDER);
-      m_bar.IndicatorBackColor(clrWhite);
-      m_bar.IndicatorColor(C'226,114,64');
+      m_bar.IndicatorBackColor(V2_COLOR_SURFACE);
+      m_bar.IndicatorColor(V2_COLOR_ACCENT);
       if(!wnd.CreateProgressBar(m_bar,text,owner,window_index,x,y))
          return(false);
 

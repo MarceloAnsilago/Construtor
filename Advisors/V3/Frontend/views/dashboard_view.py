@@ -28,9 +28,10 @@ class DashboardView(ctk.CTkFrame):
 
         self._hero = ctk.CTkFrame(
             self,
-            fg_color="transparent",
-            corner_radius=0,
-            border_width=0,
+            fg_color=self._theme.colors.surface,
+            corner_radius=20,
+            border_width=1,
+            border_color=self._theme.colors.border,
         )
         self._hero.grid(row=0, column=0, sticky="ew")
         self._hero.grid_columnconfigure(0, weight=1)
@@ -40,9 +41,9 @@ class DashboardView(ctk.CTkFrame):
             text="",
             anchor="w",
             text_color=theme.colors.text,
-            font=theme.font("title"),
+            font=theme.font("title", weight="bold"),
         )
-        self._title.grid(row=0, column=0, sticky="ew", padx=0, pady=(12, 4))
+        self._title.grid(row=0, column=0, sticky="ew", padx=22, pady=(18, 4))
 
         self._description = ctk.CTkLabel(
             self._hero,
@@ -53,16 +54,16 @@ class DashboardView(ctk.CTkFrame):
             text_color=theme.colors.text_muted,
             font=theme.font("body"),
         )
-        self._description.grid(row=1, column=0, sticky="ew", padx=0, pady=(0, 8))
+        self._description.grid(row=1, column=0, sticky="ew", padx=22, pady=(0, 18))
 
         self._placeholder = ctk.CTkFrame(
             self,
-            fg_color=theme.colors.card_soft,
-            corner_radius=0,
-            border_width=0,
+            fg_color=theme.colors.surface,
+            corner_radius=22,
+            border_width=1,
             border_color=theme.colors.border,
         )
-        self._placeholder.grid(row=1, column=0, sticky="nsew", pady=(10, 0))
+        self._placeholder.grid(row=1, column=0, sticky="nsew", pady=(14, 0))
         self._placeholder.grid_columnconfigure(0, weight=1)
         self._placeholder.grid_rowconfigure(0, weight=1)
         self._current_body = None
@@ -165,7 +166,7 @@ class DashboardView(ctk.CTkFrame):
 
     def _create_view(self, view_class, **kwargs):
         view = view_class(self._placeholder, self._theme, **kwargs)
-        view.grid(row=0, column=0, sticky="nsew", padx=14, pady=14)
+        view.grid(row=0, column=0, sticky="nsew", padx=18, pady=18)
         view.grid_remove()
         return view
 

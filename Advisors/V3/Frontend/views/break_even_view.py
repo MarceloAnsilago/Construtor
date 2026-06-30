@@ -16,7 +16,7 @@ class BreakEvenView(ctk.CTkFrame):
         self._scroll = ctk.CTkScrollableFrame(
             self,
             fg_color="transparent",
-            corner_radius=0,
+            corner_radius=14,
         )
         self._scroll.grid(row=0, column=0, sticky="nsew")
         self._scroll.grid_columnconfigure((0, 1, 2), weight=1, uniform="break-even")
@@ -28,7 +28,7 @@ class BreakEvenView(ctk.CTkFrame):
         header = ctk.CTkFrame(
             self._scroll,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=0,
             border_color=self._theme.colors.border,
         )
@@ -59,7 +59,7 @@ class BreakEvenView(ctk.CTkFrame):
         card = ctk.CTkFrame(
             self._scroll,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=0,
             border_color=self._theme.colors.border,
         )
@@ -107,8 +107,8 @@ class BreakEvenView(ctk.CTkFrame):
             master,
             values=values,
             variable=variable,
-            height=32,
-            corner_radius=0,
+            height=38,
+            corner_radius=14,
             border_width=1,
             fg_color=self._theme.colors.surface_alt,
             border_color=self._theme.colors.border,
@@ -125,8 +125,8 @@ class BreakEvenView(ctk.CTkFrame):
     def _create_entry(self, master, value: str) -> ctk.CTkEntry:
         entry = ctk.CTkEntry(
             master,
-            height=32,
-            corner_radius=0,
+            height=38,
+            corner_radius=14,
             border_width=1,
             fg_color=self._theme.colors.surface_alt,
             border_color=self._theme.colors.border,

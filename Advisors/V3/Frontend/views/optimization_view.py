@@ -19,7 +19,7 @@ class OptimizationView(ctk.CTkFrame):
         header = ctk.CTkFrame(
             self,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=0,
             border_color=self._theme.colors.border,
         )
@@ -72,7 +72,7 @@ class OptimizationView(ctk.CTkFrame):
         card = ctk.CTkFrame(
             master,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=0,
             border_color=self._theme.colors.border,
         )
@@ -99,7 +99,7 @@ class OptimizationView(ctk.CTkFrame):
         container = ctk.CTkFrame(
             card,
             fg_color=self._theme.colors.surface_alt,
-            corner_radius=0,
+            corner_radius=14,
             border_width=0,
             border_color=self._theme.colors.border,
         )

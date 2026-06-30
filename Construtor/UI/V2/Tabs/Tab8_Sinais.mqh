@@ -56,10 +56,10 @@ public:
       m_inner_tabs.IsCenterText(true);
       m_inner_tabs.PositionMode(TABS_TOP);
       m_inner_tabs.TabsYSize(tab_h);
-      m_inner_tabs.BackColorPressed(V2_COLOR_CARD_BACK);
-      m_inner_tabs.BorderColor(V2_COLOR_CARD_BORDER);
-      m_inner_tabs.BorderColorHover(V2_COLOR_CARD_BORDER);
-      m_inner_tabs.BorderColorPressed(V2_COLOR_CARD_BORDER);
+      m_inner_tabs.BackColorPressed(V2_COLOR_SURFACE);
+      m_inner_tabs.BorderColor(V2_COLOR_TAB_BORDER);
+      m_inner_tabs.BorderColorHover(V2_COLOR_TAB_BORDER);
+      m_inner_tabs.BorderColorPressed(V2_COLOR_TAB_BORDER);
 
       for(int i=0;i<2;i++)
          m_inner_tabs.AddTab(inner_text[i],inner_widths[i]);
@@ -77,16 +77,16 @@ public:
          for(int i=0;i<2;i++)
            {
             bg.GetButtonPointer(i).FontSize(9);
-            bg.GetButtonPointer(i).BackColor(C'39,54,78');
-            bg.GetButtonPointer(i).BackColorHover(C'62,79,101');
-            bg.GetButtonPointer(i).BackColorPressed(C'226,114,64');
-            bg.GetButtonPointer(i).BorderColor(C'18,29,43');
-            bg.GetButtonPointer(i).BorderColorHover(C'62,79,101');
-            bg.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
-            bg.GetButtonPointer(i).LabelColor(clrWhite);
-            bg.GetButtonPointer(i).LabelColorHover(clrWhite);
-            bg.GetButtonPointer(i).LabelColorPressed(clrWhite);
-           }
+            bg.GetButtonPointer(i).BackColor(V2_COLOR_TAB_BACK);
+            bg.GetButtonPointer(i).BackColorHover(V2_COLOR_TAB_BACK_HOVER);
+            bg.GetButtonPointer(i).BackColorPressed(V2_COLOR_TAB_ACTIVE);
+            bg.GetButtonPointer(i).BorderColor(V2_COLOR_TAB_BORDER);
+            bg.GetButtonPointer(i).BorderColorHover(V2_COLOR_TAB_BORDER);
+            bg.GetButtonPointer(i).BorderColorPressed(V2_COLOR_TAB_BORDER);
+            bg.GetButtonPointer(i).LabelColor(V2_COLOR_TEXT_SECONDARY);
+            bg.GetButtonPointer(i).LabelColorHover(V2_COLOR_TEXT_PRIMARY);
+            bg.GetButtonPointer(i).LabelColorPressed(V2_COLOR_TEXT_PRIMARY);
+          }
         }
 
       if(!m_sinais_view.Create(*m_host,m_window_index,m_inner_tabs,0))

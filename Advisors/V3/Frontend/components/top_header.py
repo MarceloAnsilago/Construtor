@@ -8,9 +8,9 @@ class TopHeader(ctk.CTkFrame):
         super().__init__(
             master,
             fg_color=theme.colors.surface,
-            corner_radius=0,
-            height=54,
-            border_width=0,
+            corner_radius=18,
+            height=82,
+            border_width=1,
             border_color=theme.colors.border,
         )
         self.grid_columnconfigure(0, weight=1)
@@ -23,19 +23,27 @@ class TopHeader(ctk.CTkFrame):
         stripe = ctk.CTkFrame(
             self,
             fg_color=theme.colors.accent,
-            corner_radius=0,
-            height=3,
+            corner_radius=8,
+            height=5,
             border_width=0,
         )
-        stripe.grid(row=2, column=0, columnspan=4, sticky="ew", padx=12, pady=(2, 8))
+        stripe.grid(row=2, column=0, columnspan=4, sticky="ew", padx=18, pady=(0, 12))
 
         ctk.CTkLabel(
             self,
-            text="AlphaForge V3",
+            text="Criando seu robo",
             text_color=theme.colors.text,
-            font=theme.font("subtitle", weight="normal"),
+            font=theme.font("subtitle", weight="bold"),
             anchor="w",
-        ).grid(row=1, column=0, sticky="w", padx=12, pady=(10, 6))
+        ).grid(row=0, column=0, sticky="w", padx=18, pady=(14, 0))
+
+        ctk.CTkLabel(
+            self,
+            text="Robos > Modo > Estrategia > Ambiente > Configurar",
+            text_color=theme.colors.text_subtle,
+            font=theme.font("label"),
+            anchor="w",
+        ).grid(row=1, column=0, sticky="w", padx=18, pady=(4, 10))
 
         self._status = ctk.CTkLabel(
             self,
@@ -44,35 +52,37 @@ class TopHeader(ctk.CTkFrame):
             font=theme.font("label"),
             anchor="e",
         )
-        self._status.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(10, 6))
+        self._status.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(4, 10))
 
         self._import_button = ctk.CTkButton(
             self,
             text="Abrir .set",
             command=on_import_set,
-            height=32,
-            width=132,
-            corner_radius=0,
-            fg_color=theme.colors.header_dark,
+            height=38,
+            width=136,
+            corner_radius=12,
+            fg_color=theme.colors.surface_alt,
             hover_color=theme.colors.sidebar_item_hover,
-            text_color=theme.colors.header_text,
+            text_color=theme.colors.text,
+            border_width=1,
+            border_color=theme.colors.border,
             font=theme.font("label", weight="bold"),
         )
-        self._import_button.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(10, 6))
+        self._import_button.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(4, 10))
 
         self._export_button = ctk.CTkButton(
             self,
             text="Exportar .set",
             command=on_export_set,
-            height=32,
-            width=132,
-            corner_radius=0,
-            fg_color=theme.colors.header_dark,
-            hover_color=theme.colors.sidebar_item_hover,
+            height=38,
+            width=144,
+            corner_radius=12,
+            fg_color=theme.colors.accent,
+            hover_color=theme.colors.accent_hover,
             text_color=theme.colors.header_text,
             font=theme.font("label", weight="bold"),
         )
-        self._export_button.grid(row=1, column=3, sticky="e", padx=(0, 10), pady=(10, 6))
+        self._export_button.grid(row=1, column=3, sticky="e", padx=(0, 18), pady=(4, 10))
 
     def set_status(self, text: str, success: bool = True) -> None:
         color = self._theme.colors.text if success else self._theme.colors.accent_soft

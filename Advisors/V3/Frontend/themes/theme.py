@@ -10,8 +10,8 @@ DEFAULT_THEME_PRESET = "v2_classic"
 
 @dataclass(frozen=True)
 class TypographyScale:
-    title: tuple[str, int] = ("Segoe UI", 20)
-    subtitle: tuple[str, int] = ("Segoe UI", 15)
+    title: tuple[str, int] = ("Segoe UI Semibold", 26)
+    subtitle: tuple[str, int] = ("Segoe UI Semibold", 17)
     body: tuple[str, int] = ("Segoe UI", 13)
     label: tuple[str, int] = ("Segoe UI", 11)
     caption: tuple[str, int] = ("Segoe UI", 12)

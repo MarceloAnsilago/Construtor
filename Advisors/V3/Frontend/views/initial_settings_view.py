@@ -28,7 +28,7 @@ class InitialSettingsView(ctk.CTkFrame):
         self._scroll = ctk.CTkScrollableFrame(
             self,
             fg_color="transparent",
-            corner_radius=0,
+            corner_radius=14,
         )
         self._scroll.grid(row=0, column=0, sticky="nsew")
         self._scroll.grid_columnconfigure((0, 1, 2, 3), weight=1, uniform="card")
@@ -95,7 +95,7 @@ class InitialSettingsView(ctk.CTkFrame):
         card = ctk.CTkFrame(
             self._scroll,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=0,
             border_color=self._theme.colors.border,
         )
@@ -127,8 +127,8 @@ class InitialSettingsView(ctk.CTkFrame):
         entry = ctk.CTkEntry(
             card,
             textvariable=variable,
-            height=32,
-            corner_radius=0,
+            height=38,
+            corner_radius=14,
             border_width=1,
             fg_color=self._theme.colors.surface_alt,
             border_color=self._theme.colors.border,
@@ -158,8 +158,8 @@ class InitialSettingsView(ctk.CTkFrame):
             card,
             values=values,
             variable=variable,
-            height=32,
-            corner_radius=0,
+            height=38,
+            corner_radius=14,
             border_width=1,
             fg_color=self._theme.colors.surface_alt,
             border_color=self._theme.colors.border,
@@ -193,9 +193,9 @@ class InitialSettingsView(ctk.CTkFrame):
         hour_combo = ctk.CTkComboBox(
             card,
             values=hours,
-            height=32,
+            height=38,
             width=92,
-            corner_radius=0,
+            corner_radius=14,
             border_width=1,
             fg_color=self._theme.colors.surface_alt,
             border_color=self._theme.colors.border,
@@ -226,9 +226,9 @@ class InitialSettingsView(ctk.CTkFrame):
         minute_combo = ctk.CTkComboBox(
             minute_wrap,
             values=minutes,
-            height=32,
+            height=38,
             width=92,
-            corner_radius=0,
+            corner_radius=14,
             border_width=1,
             fg_color=self._theme.colors.surface_alt,
             border_color=self._theme.colors.border,

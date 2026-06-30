@@ -101,14 +101,14 @@ private:
          group.GetButtonPointer(i).FontSize(vertical ? 9 : 10);
          group.GetButtonPointer(i).LabelXGap(0);
          group.GetButtonPointer(i).LabelYGap(0);
-         group.GetButtonPointer(i).BackColor(C'39,54,78');
-         group.GetButtonPointer(i).BackColorHover(C'62,79,101');
-         group.GetButtonPointer(i).BackColorPressed(C'226,114,64');
-         group.GetButtonPointer(i).BorderColor(C'18,29,43');
-         group.GetButtonPointer(i).BorderColorHover(C'62,79,101');
-         group.GetButtonPointer(i).BorderColorPressed(C'240,140,86');
-         group.GetButtonPointer(i).LabelColor(clrWhite);
-         group.GetButtonPointer(i).LabelColorHover(clrWhite);
+         group.GetButtonPointer(i).BackColor(vertical ? V2_COLOR_SIDEBAR_BACK : V2_COLOR_TAB_BACK);
+         group.GetButtonPointer(i).BackColorHover(vertical ? V2_COLOR_SIDEBAR_BACK_HOVER : V2_COLOR_TAB_BACK_HOVER);
+         group.GetButtonPointer(i).BackColorPressed(vertical ? V2_COLOR_SIDEBAR_ACTIVE : V2_COLOR_TAB_ACTIVE);
+         group.GetButtonPointer(i).BorderColor(vertical ? V2_COLOR_SIDEBAR_BORDER : V2_COLOR_TAB_BORDER);
+         group.GetButtonPointer(i).BorderColorHover(vertical ? V2_COLOR_SIDEBAR_BORDER : V2_COLOR_TAB_BORDER);
+         group.GetButtonPointer(i).BorderColorPressed(vertical ? V2_COLOR_SIDEBAR_BORDER : V2_COLOR_TAB_BORDER);
+         group.GetButtonPointer(i).LabelColor(vertical ? V2_COLOR_SIDEBAR_TEXT : V2_COLOR_TEXT_SECONDARY);
+         group.GetButtonPointer(i).LabelColorHover(vertical ? clrWhite : V2_COLOR_TEXT_PRIMARY);
          group.GetButtonPointer(i).LabelColorPressed(clrWhite);
         }
      }
@@ -121,10 +121,10 @@ private:
       tabs.IsCenterText(true);
       tabs.PositionMode(TABS_LEFT);
       tabs.TabsYSize(30);
-      tabs.BackColorPressed(C'247,241,231');
-      tabs.BorderColor(C'220,207,186');
-      tabs.BorderColorHover(C'220,207,186');
-      tabs.BorderColorPressed(C'220,207,186');
+      tabs.BackColorPressed(V2_COLOR_SURFACE);
+      tabs.BorderColor(V2_COLOR_TAB_BORDER);
+      tabs.BorderColorHover(V2_COLOR_TAB_BORDER);
+      tabs.BorderColorPressed(V2_COLOR_TAB_BORDER);
 
       for(int i=0;i<count;i++)
          tabs.AddTab(labels[i],240);
@@ -309,16 +309,18 @@ public:
 
       m_window_index=WindowsTotal()-1;
       Hide();
+      m_window.BackColor(V2_COLOR_WINDOW_BACK);
+      m_window.BorderColor(V2_COLOR_TAB_BORDER);
 
-      if(!CreateTextLabel(m_title,"Construtor (Easy GUI) | EasyPanel V2",m_window,m_window_index,16,40,520,22))
+      if(!CreateTextLabel(m_title,"Construtor",m_window,m_window_index,16,40,520,22))
          return(false);
       m_title.FontSize(14);
-      m_title.LabelColor(C'43,43,43');
+      m_title.LabelColor(V2_COLOR_TEXT_PRIMARY);
 
-      if(!CreateTextLabel(m_note,"Estrutura modular da V2 com abas superiores e laterais separadas por arquivo.",m_window,m_window_index,16,64,760,18))
+      if(!CreateTextLabel(m_note,"Formulario enxuto com abas e campos essenciais.",m_window,m_window_index,16,64,760,18))
          return(false);
       m_note.FontSize(10);
-      m_note.LabelColor(C'91,78,64');
+      m_note.LabelColor(V2_COLOR_TEXT_SECONDARY);
 
       const int busy_w=280;
       const int busy_x=(chart_w-busy_w-24>560 ? chart_w-busy_w-24 : 560);
@@ -350,10 +352,10 @@ public:
       m_top_tabs.AutoYResizeMode(true);
       m_top_tabs.AutoXResizeRightOffset(padding);
       m_top_tabs.AutoYResizeBottomOffset(padding);
-      m_top_tabs.BackColorPressed(C'247,241,231');
-      m_top_tabs.BorderColor(C'220,207,186');
-      m_top_tabs.BorderColorHover(C'220,207,186');
-      m_top_tabs.BorderColorPressed(C'220,207,186');
+      m_top_tabs.BackColorPressed(V2_COLOR_SURFACE);
+      m_top_tabs.BorderColor(V2_COLOR_TAB_BORDER);
+      m_top_tabs.BorderColorHover(V2_COLOR_TAB_BORDER);
+      m_top_tabs.BorderColorPressed(V2_COLOR_TAB_BORDER);
 
       for(int i=0;i<TOP_TAB_COUNT;i++)
          m_top_tabs.AddTab(top_text[i],top_widths[i]);
@@ -422,8 +424,11 @@ public:
       if(!m_painel.Create(*this,m_window_index,m_exec_tabs,1))
          return(false);
 
-      if(!CreateButton(m_btn_apply,"Aplicar",m_top_tabs,m_window_index,top_tabs_w-156,top_tabs_h-44,120,false,false,C'39,54,78',C'62,79,101',C'226,114,64',clrWhite,C'18,29,43'))
+      if(!CreateButton(m_btn_apply,"Aplicar",m_top_tabs,m_window_index,top_tabs_w-156,top_tabs_h-44,120,false,false,V2_COLOR_TAB_BACK,V2_COLOR_TAB_BACK_HOVER,V2_COLOR_ACCENT,V2_COLOR_TEXT_PRIMARY,V2_COLOR_TAB_BORDER))
          return(false);
+      m_btn_apply.LabelColor(V2_COLOR_TEXT_PRIMARY);
+      m_btn_apply.LabelColorHover(V2_COLOR_TEXT_PRIMARY);
+      m_btn_apply.LabelColorPressed(clrWhite);
       m_top_tabs.AddToElementsArray(0,m_btn_apply);
       m_top_tabs.AddToElementsArray(1,m_btn_apply);
 

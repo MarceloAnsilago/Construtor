@@ -48,7 +48,7 @@ class AlphaForgeApp(ctk.CTk):
             fg_color=self._theme.colors.app_background,
             corner_radius=0,
         )
-        main_shell.grid(row=0, column=1, sticky="nsew")
+        main_shell.grid(row=0, column=1, sticky="nsew", padx=(18, 18), pady=18)
         main_shell.grid_rowconfigure(1, weight=1)
         main_shell.grid_columnconfigure(0, weight=1)
 
@@ -62,7 +62,7 @@ class AlphaForgeApp(ctk.CTk):
         self._header = header
 
         self._content = DashboardView(main_shell, self._theme)
-        self._content.grid(row=1, column=0, sticky="nsew", padx=20, pady=(10, 16))
+        self._content.grid(row=1, column=0, sticky="nsew", pady=(14, 0))
 
     def _select_item(self, item: NavigationItem) -> None:
         self._active_item = item

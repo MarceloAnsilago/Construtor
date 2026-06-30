@@ -61,7 +61,6 @@ private:
    CEF_CTextEdit       m_volume_edit;
    CEF_CTextLabel      m_spread_label;
    CEF_CTextEdit       m_spread_edit;
-   CEF_CTextLabel      m_debug_label;
 
    void GenerateMagicFromName(const bool redraw=true)
      {
@@ -205,11 +204,6 @@ public:
       const int v_gap=10;
       const int start_y=44;
       const int list_h=200;
-
-      if(!CreateTextLabel(m_debug_label,"TAB1 DEBUG OK",tabs,m_window_index,tabs,m_tab_index,24,78,220,18))
-         return(false);
-      m_debug_label.FontSize(10);
-      m_debug_label.LabelColor(clrRed);
 
       if(!V2CreateCard(*m_host,m_card_basic,tabs,m_window_index,m_tab_index,content_pad,content_y,card_w,card_h,V2_COLOR_CARD_BACK,V2_COLOR_CARD_BORDER))
          return(false);

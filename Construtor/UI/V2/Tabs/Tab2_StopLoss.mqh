@@ -306,15 +306,15 @@ public:
          for(int b=0;b<3;b++)
            {
             calc_bg.GetButtonPointer(b).FontSize(8);
-            calc_bg.GetButtonPointer(b).BackColor(C'39,54,78');
-            calc_bg.GetButtonPointer(b).BackColorHover(C'62,79,101');
-            calc_bg.GetButtonPointer(b).BackColorPressed(C'226,114,64');
-            calc_bg.GetButtonPointer(b).BorderColor(C'18,29,43');
-            calc_bg.GetButtonPointer(b).BorderColorHover(C'62,79,101');
-            calc_bg.GetButtonPointer(b).BorderColorPressed(C'240,140,86');
-            calc_bg.GetButtonPointer(b).LabelColor(clrWhite);
-            calc_bg.GetButtonPointer(b).LabelColorHover(clrWhite);
-            calc_bg.GetButtonPointer(b).LabelColorPressed(clrWhite);
+            calc_bg.GetButtonPointer(b).BackColor(V2_COLOR_TAB_BACK);
+            calc_bg.GetButtonPointer(b).BackColorHover(V2_COLOR_TAB_BACK_HOVER);
+            calc_bg.GetButtonPointer(b).BackColorPressed(V2_COLOR_TAB_ACTIVE);
+            calc_bg.GetButtonPointer(b).BorderColor(V2_COLOR_TAB_BORDER);
+            calc_bg.GetButtonPointer(b).BorderColorHover(V2_COLOR_TAB_BORDER);
+            calc_bg.GetButtonPointer(b).BorderColorPressed(V2_COLOR_TAB_BORDER);
+            calc_bg.GetButtonPointer(b).LabelColor(V2_COLOR_TEXT_SECONDARY);
+            calc_bg.GetButtonPointer(b).LabelColorHover(V2_COLOR_TEXT_PRIMARY);
+            calc_bg.GetButtonPointer(b).LabelColorPressed(V2_COLOR_TEXT_PRIMARY);
            }
         }
 

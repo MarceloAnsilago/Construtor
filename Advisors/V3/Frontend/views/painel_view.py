@@ -20,7 +20,7 @@ class PainelView(ctk.CTkFrame):
         header = ctk.CTkFrame(
             self,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=1,
             border_color=self._theme.colors.border,
         )
@@ -49,7 +49,7 @@ class PainelView(ctk.CTkFrame):
         self._body = ctk.CTkScrollableFrame(
             self,
             fg_color="transparent",
-            corner_radius=0,
+            corner_radius=14,
             border_width=0,
             scrollbar_button_color=self._theme.colors.accent,
             scrollbar_button_hover_color=self._theme.colors.accent_hover,
@@ -73,7 +73,7 @@ class PainelView(ctk.CTkFrame):
         card = ctk.CTkFrame(
             self._body,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=1,
             border_color=self._theme.colors.border,
         )
@@ -104,7 +104,7 @@ class PainelView(ctk.CTkFrame):
         card = ctk.CTkFrame(
             self._body,
             fg_color=self._theme.colors.card,
-            corner_radius=0,
+            corner_radius=14,
             border_width=1,
             border_color=self._theme.colors.border,
         )
@@ -132,7 +132,7 @@ class PainelView(ctk.CTkFrame):
             line = ctk.CTkFrame(
                 card,
                 fg_color=self._theme.colors.surface_alt,
-                corner_radius=0,
+                corner_radius=14,
                 border_width=1,
                 border_color=self._theme.colors.border,
             )
