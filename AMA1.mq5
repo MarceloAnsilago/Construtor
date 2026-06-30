@@ -71,6 +71,8 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
+MqlTick lastest_price;
+Mqlrates mrates[];
 void OnTick()
   {
 //---
@@ -80,5 +82,10 @@ void OnTick()
       Alert("Não há barras suficientes para operar. Aguarde mais barras.");
       return;
     }
+   
+
+
+
+
   }
 //+------------------------------------------------------------------+
